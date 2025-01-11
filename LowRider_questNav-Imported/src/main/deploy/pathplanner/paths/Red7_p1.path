@@ -1,0 +1,94 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 15.770766171103977,
+        "y": 4.365853095342555
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 13.475894672270071,
+        "y": 1.2127369709284874
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.316900270164176,
+        "y": 0.7276421825570925
+      },
+      "prevControl": {
+        "x": 10.863647909113999,
+        "y": 1.0448195441845427
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Red_A7_note1"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [
+    {
+      "name": "New Constraints Zone",
+      "minWaypointRelativePos": 0.0,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 5.0,
+        "maxAcceleration": 4.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0
+      }
+    }
+  ],
+  "eventMarkers": [
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0.025,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "FireNote"
+              }
+            },
+            {
+              "type": "wait",
+              "data": {
+                "waitTime": 0.5
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "Intake"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 5.0,
+    "maxAcceleration": 4.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 186.70983680775691,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Red_7_Stage_4B",
+  "previewStartingState": {
+    "rotation": 238.13402230639628,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

@@ -1,0 +1,76 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 11.740747929249313,
+        "y": 1.6232017918581303
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 10.196153285039074,
+        "y": 1.4557994962169707
+      },
+      "isLocked": false,
+      "linkedName": "Red_Blu9_p2_end"
+    },
+    {
+      "anchor": {
+        "x": 8.083681621908699,
+        "y": 2.6493638441822336
+      },
+      "prevControl": {
+        "x": 8.984564776708167,
+        "y": 1.8292358995469271
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Red_Blu9_p3_end"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": 144.02928963863206,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0.15,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Intake"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 5.0,
+    "maxAcceleration": 4.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 140.52754015165598,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Red_9_Line_4",
+  "previewStartingState": {
+    "rotation": 221.30149076181178,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

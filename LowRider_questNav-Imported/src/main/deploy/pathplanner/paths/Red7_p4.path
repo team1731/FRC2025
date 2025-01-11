@@ -1,0 +1,82 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 8.037235794952316,
+        "y": 2.3042002447641265
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 9.688423824601102,
+        "y": 1.6138730459279103
+      },
+      "isLocked": false,
+      "linkedName": "Red_A7_note7"
+    },
+    {
+      "anchor": {
+        "x": 13.01,
+        "y": 2.556076384880043
+      },
+      "prevControl": {
+        "x": 10.528553582561711,
+        "y": 0.9981758145334474
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Red_A7_shoot2"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [
+    {
+      "name": "New Constraints Zone",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 0,
+      "constraints": {
+        "maxVelocity": 5.0,
+        "maxAcceleration": 3.5,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0
+      }
+    }
+  ],
+  "eventMarkers": [
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0.05,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "SetWristR_7_3"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 5.0,
+    "maxAcceleration": 4.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 220.10090754621223,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Red_7_Stage_4B",
+  "previewStartingState": {
+    "rotation": 157.2855876468328,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

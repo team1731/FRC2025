@@ -1,0 +1,93 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.9346195897199046,
+        "y": 3.7874708476689682
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 9.958957456577455,
+        "y": 3.6661971505761195
+      },
+      "isLocked": false,
+      "linkedName": "Red_A2_4"
+    },
+    {
+      "anchor": {
+        "x": 13.603395999999998,
+        "y": 5.18
+      },
+      "prevControl": {
+        "x": 11.737646813956186,
+        "y": 4.582960260465976
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Red_A2_5"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.3,
+      "rotationDegrees": 179.30271538430384,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0.95,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "FireNote"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0.85,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "SetWristR_2_2"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 5.0,
+    "maxAcceleration": 4.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 179.09061955080097,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Red_2_Speaker_4",
+  "previewStartingState": {
+    "rotation": 216.63411387596747,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}
