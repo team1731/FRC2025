@@ -1,0 +1,70 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 13.569182131572262,
+        "y": 6.9499157180132425
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 12.524164684693003,
+        "y": 7.061860669175885
+      },
+      "isLocked": false,
+      "linkedName": "Red_pickup1"
+    },
+    {
+      "anchor": {
+        "x": 7.85046297365322,
+        "y": 7.528297965686841
+      },
+      "prevControl": {
+        "x": 9.147158657953678,
+        "y": 7.33239430115224
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Red_pickup4"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0.15,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Intake"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 5.0,
+    "maxAcceleration": 4.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 175.333141628561,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Red_1_Speaker_6",
+  "previewStartingState": {
+    "rotation": 159.71744091108337,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

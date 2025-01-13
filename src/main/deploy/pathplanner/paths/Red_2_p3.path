@@ -1,0 +1,76 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 8.046564540882535,
+        "y": 5.69986376336389
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 10.397408515297757,
+        "y": 6.586094626734709
+      },
+      "isLocked": false,
+      "linkedName": "Red_A2_2"
+    },
+    {
+      "anchor": {
+        "x": 12.673395999999999,
+        "y": 5.47
+      },
+      "prevControl": {
+        "x": 10.7236881005842,
+        "y": 6.589449511626297
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Red_A2_3"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.15,
+      "rotationDegrees": 180.0,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0.15,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "SetWristR_2_2"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 5.0,
+    "maxAcceleration": 4.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 180.42948438181358,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Red_2_Speaker_4",
+  "previewStartingState": {
+    "rotation": 197.74467162505695,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}
