@@ -2,6 +2,9 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+// (SCH) This RobotContainer can just be replaced with the old one.
+// However, look in the configureBindings() method for another (SCH) note.
+
 package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
@@ -55,6 +58,10 @@ public class RobotContainer {
         joystick.b().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
+
+        // (SCH) NOTE: These sysId calls aren't strictly necessary,
+        // though they seem to be a different method of controlling the drivetrain.
+        // I would say copy these and assign them to unused buttons in the new RobotContainer to see what they do
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.

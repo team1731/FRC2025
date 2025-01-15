@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.*;
-
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -22,23 +21,50 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.swerve.SwerveDrivetrain;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
+// (SCH) FIXME: These imports don't seem to exist anymore in 2025.
+// You'll need to check the Pathplanner docs for what happened to these classes
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
+
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Robot;
+import frc.robot.RobotContainer;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.subsystems.ToggleableSubsystem;
+
+import static edu.wpi.first.units.Units.*;
+
+class FlipRedBlueSupplier implements BooleanSupplier {
+    @Override
+    public boolean getAsBoolean() {
+        // (SCH) FIXME: This will be fixed when bringing in the original RobotContainer
+        return RobotContainer.isFlipRedBlue();
+    }
+}
 
 /**
- * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
- * Subsystem so it can easily be used in command-based projects.
+ * Class that extends the Phoenix SwerveDrivetrain class and implements subsystem
+ * so it can be used in command-based projects easily.
  */
-public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
-    private static final double kSimLoopPeriod = 0.005; // 5 ms
-    private Notifier m_simNotifier = null;
-    private double m_lastSimTime;
-
-    /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
-    private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
+public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements ToggleableSubsystem {
+    // private static final double kSimLoopPeriod = 0.005; // 5 ms
+    // private Notifier m_simNotifier = null;
+    // private double m_lastSimTime;
+    private boolean enabled;
+    private final SwerveRequest.ApplyRobotSpeeds autoRequest = new SwerveRequest.ApplyRobotSpeeds();
+        /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
+    private final Rotation2d BlueAlliancePerspectiveRotation = Rotation2d.fromDegrees(0);
     /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
-    private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
+    private final Rotation2d RedAlliancePerspectiveRotation = Rotation2d.fromDegrees(180);
     /* Keep track if we've ever applied the operator perspective before or not */
-    private boolean m_hasAppliedOperatorPerspective = false;
+    private boolean hasAppliedOperatorPerspective = false;
 
     /* Swerve requests to apply during SysId characterization */
     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
@@ -106,91 +132,134 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     /* The SysId routine to test */
     private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineTranslation;
-
-    /**
-     * Constructs a CTRE SwerveDrivetrain using the specified constants.
-     * <p>
-     * This constructs the underlying hardware devices, so users should not construct
-     * the devices themselves. If they need the devices, they can access them through
-     * getters in the classes.
-     *
-     * @param drivetrainConstants   Drivetrain-wide constants for the swerve drive
-     * @param modules               Constants for each specific module
-     */
-    public CommandSwerveDrivetrain(
-        SwerveDrivetrainConstants drivetrainConstants,
-        SwerveModuleConstants<?, ?, ?>... modules
-    ) {
-        super(drivetrainConstants, modules);
-        if (Utils.isSimulation()) {
-            startSimThread();
-        }
+    
+    private void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
-    /**
-     * Constructs a CTRE SwerveDrivetrain using the specified constants.
-     * <p>
-     * This constructs the underlying hardware devices, so users should not construct
-     * the devices themselves. If they need the devices, they can access them through
-     * getters in the classes.
-     *
-     * @param drivetrainConstants     Drivetrain-wide constants for the swerve drive
-     * @param odometryUpdateFrequency The frequency to run the odometry loop. If
-     *                                unspecified or set to 0 Hz, this is 250 Hz on
-     *                                CAN FD, and 100 Hz on CAN 2.0.
-     * @param modules                 Constants for each specific module
-     */
-    public CommandSwerveDrivetrain(
-        SwerveDrivetrainConstants drivetrainConstants,
-        double odometryUpdateFrequency,
-        SwerveModuleConstants<?, ?, ?>... modules
-    ) {
-        super(drivetrainConstants, odometryUpdateFrequency, modules);
-        if (Utils.isSimulation()) {
-            startSimThread();
-        }
+    @Override
+    public boolean isEnabled() {
+        return enabled;
     }
 
-    /**
-     * Constructs a CTRE SwerveDrivetrain using the specified constants.
-     * <p>
-     * This constructs the underlying hardware devices, so users should not construct
-     * the devices themselves. If they need the devices, they can access them through
-     * getters in the classes.
-     *
-     * @param drivetrainConstants       Drivetrain-wide constants for the swerve drive
-     * @param odometryUpdateFrequency   The frequency to run the odometry loop. If
-     *                                  unspecified or set to 0 Hz, this is 250 Hz on
-     *                                  CAN FD, and 100 Hz on CAN 2.0.
-     * @param odometryStandardDeviation The standard deviation for odometry calculation
-     *                                  in the form [x, y, theta]ᵀ, with units in meters
-     *                                  and radians
-     * @param visionStandardDeviation   The standard deviation for vision calculation
-     *                                  in the form [x, y, theta]ᵀ, with units in meters
-     *                                  and radians
-     * @param modules                   Constants for each specific module
-     */
-    public CommandSwerveDrivetrain(
-        SwerveDrivetrainConstants drivetrainConstants,
-        double odometryUpdateFrequency,
-        Matrix<N3, N1> odometryStandardDeviation,
-        Matrix<N3, N1> visionStandardDeviation,
-        SwerveModuleConstants<?, ?, ?>... modules
-    ) {
-        super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation, modules);
-        if (Utils.isSimulation()) {
-            startSimThread();
-        }
+    public CommandSwerveDrivetrain(boolean enabled, SwerveDrivetrainConstants driveTrainConstants, double OdometryUpdateFrequency, SwerveModuleConstants<?, ?, ?>... modules) {
+        super(driveTrainConstants, OdometryUpdateFrequency, modules);
+        setEnabled(enabled);
+        if(!enabled) return;
+        configurePathPlanner(true);
+    }
+    
+    public CommandSwerveDrivetrain(boolean enabled, SwerveDrivetrainConstants driveTrainConstants, SwerveModuleConstants... modules) {
+        super(driveTrainConstants, modules);
+        setEnabled(enabled);
+        if(!enabled) return;
+        configurePathPlanner(true);
     }
 
-    /**
-     * Returns a command that applies the specified control request to this swerve drivetrain.
-     *
-     * @param request Function returning the request to apply
-     * @return Command to run
-     */
+    public void configurePathPlanner(boolean redBlueFlipping) {
+        if(!enabled) return;
+        double driveBaseRadius = 0;
+        // (SCH) FIXME: Use getModuleLocations() instead. m_moduleLocations is now private
+        for (var moduleLocation : m_moduleLocations) {
+            driveBaseRadius = Math.max(driveBaseRadius, moduleLocation.getNorm());
+        }
+
+        System.out.println("Configuring AutoBuilder!");
+
+        // (SCH) FIXME: This is related to the Pathbuilder imports at the top of the file
+        AutoBuilder.configureHolonomic(
+            ()->this.getState().Pose, // Supplier of current robot pose
+            this::seedFieldRelative,  // Consumer for seeding pose against auto
+            this::getCurrentRobotChassisSpeeds,
+            (speeds)->this.setControl(autoRequest.withSpeeds(speeds)), // Consumer of ChassisSpeeds to drive the robot
+            // (SCH) FIXME: This is related to the Pathbuilder imports at the top of the file
+            new HolonomicPathFollowerConfig(new PIDConstants(10, 0, 0),
+                                            new PIDConstants(10, 0, 0),
+                                            TunerConstants.kSpeedAt12VoltsMps,
+                                            driveBaseRadius,
+                                            // (SCH) FIXME: This is related to the Pathbuilder imports at the top of the file
+                                            new ReplanningConfig()),
+            new FlipRedBlueSupplier(), // ()->false, // Change this if the path needs to be flipped on red vs blue
+            this); // Subsystem for requirements
+    }
+
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
+        if(!enabled) return new Command(){};
         return run(() -> this.setControl(requestSupplier.get()));
+    }
+
+    public Command getAutoPath(String pathName) {
+        if(!enabled) return new Command(){};
+        return new PathPlannerAuto(pathName);
+    }
+
+    public ChassisSpeeds getCurrentRobotChassisSpeeds() {
+        if(!enabled || Robot.isSimulation()) return new ChassisSpeeds();
+        // (SCH) FIXME: Use getKinematics() instead
+        return m_kinematics.toChassisSpeeds(getState().ModuleStates);
+    }
+
+    public void periodic() {
+       // logCurrentAndVelocity();
+        /* Periodically try to apply the operator perspective */
+        /* If we haven't applied the operator perspective before, then we should apply it regardless of DS state */
+        /* This allows us to correct the perspective in case the robot code restarts mid-match */
+        /* Otherwise, only check and apply the operator perspective if the DS is disabled */
+        /* This ensures driving behavior doesn't change until an explicit disable event occurs during testing*/
+        if (!hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
+            DriverStation.getAlliance().ifPresent((allianceColor) -> {
+                this.setOperatorPerspectiveForward(
+                        allianceColor == Alliance.Red ? RedAlliancePerspectiveRotation
+                                : BlueAlliancePerspectiveRotation);
+                hasAppliedOperatorPerspective = true;
+            });
+        }
+    }
+    public double getXVelocity() {
+        ChassisSpeeds chassisSpeeds = getCurrentRobotChassisSpeeds();
+        return chassisSpeeds.vxMetersPerSecond;
+    }
+    public double getYVelocity() {
+        ChassisSpeeds chassisSpeeds = getCurrentRobotChassisSpeeds();
+        return chassisSpeeds.vyMetersPerSecond;
+        
+    }
+
+/**
+Log the torque current and velocity
+ */
+    public void logCurrentAndVelocity() {
+       
+
+        //Iterate through each module.
+        for (int i = 0; i < 4; ++i) {
+            //Get the Configurator for the current drive motor.
+            // (SCH) FIXME: Modules is now private, use getModule(i) instead
+            SmartDashboard.putNumber("Module " + i + "Torque Current" ,Modules[i].getDriveMotor().getTorqueCurrent().getValueAsDouble());
+            SmartDashboard.putNumber("Module " + i + "Velocity" ,Modules[i].getDriveMotor().getVelocity().getValueAsDouble());
+        }
+    }
+
+        /** Log various drivetrain values to the dashboard. */
+    public void log() {
+        // String table = "Drive/";
+        // Pose2d pose = this.getState().Pose;
+        // SmartDashboard.putNumber(table + "X", pose.getX());
+        // SmartDashboard.putNumber(table + "Y", pose.getY());
+        // SmartDashboard.putNumber(table + "Heading", pose.getRotation().getDegrees());
+        // ChassisSpeeds chassisSpeeds = getCurrentRobotChassisSpeeds();
+        // SmartDashboard.putNumber(table + "VX", chassisSpeeds.vxMetersPerSecond);
+        // SmartDashboard.putNumber(table + "VY", chassisSpeeds.vyMetersPerSecond);
+        // SmartDashboard.putNumber(
+        //         table + "Omega Degrees", Math.toDegrees(chassisSpeeds.omegaRadiansPerSecond));
+        // SmartDashboard.putNumber(table + "Target VX", targetChassisSpeeds.vxMetersPerSecond);
+        // SmartDashboard.putNumber(table + "Target VY", targetChassisSpeeds.vyMetersPerSecond);
+        // SmartDashboard.putNumber(
+        //         table + "Target Omega Degrees", Math.toDegrees(targetChassisSpeeds.omegaRadiansPerSecond));
+
+        // for (SwerveModule module : swerveMods) {
+        //     module.log();
+        // }
     }
 
     /**
@@ -214,40 +283,5 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public Command sysIdDynamic(SysIdRoutine.Direction direction) {
         return m_sysIdRoutineToApply.dynamic(direction);
     }
-
-    @Override
-    public void periodic() {
-        /*
-         * Periodically try to apply the operator perspective.
-         * If we haven't applied the operator perspective before, then we should apply it regardless of DS state.
-         * This allows us to correct the perspective in case the robot code restarts mid-match.
-         * Otherwise, only check and apply the operator perspective if the DS is disabled.
-         * This ensures driving behavior doesn't change until an explicit disable event occurs during testing.
-         */
-        if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
-            DriverStation.getAlliance().ifPresent(allianceColor -> {
-                setOperatorPerspectiveForward(
-                    allianceColor == Alliance.Red
-                        ? kRedAlliancePerspectiveRotation
-                        : kBlueAlliancePerspectiveRotation
-                );
-                m_hasAppliedOperatorPerspective = true;
-            });
-        }
-    }
-
-    private void startSimThread() {
-        m_lastSimTime = Utils.getCurrentTimeSeconds();
-
-        /* Run simulation at a faster rate so PID gains behave more reasonably */
-        m_simNotifier = new Notifier(() -> {
-            final double currentTime = Utils.getCurrentTimeSeconds();
-            double deltaTime = currentTime - m_lastSimTime;
-            m_lastSimTime = currentTime;
-
-            /* use the measured time delta, get battery voltage from WPILib */
-            updateSimState(deltaTime, RobotController.getBatteryVoltage());
-        });
-        m_simNotifier.startPeriodic(kSimLoopPeriod);
-    }
 }
+
