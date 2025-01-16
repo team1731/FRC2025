@@ -1,17 +1,18 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkLimitSwitch;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLimitSwitch;
+import com.revrobotics.spark.config.SparkBaseConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 
 
 public class IntakeSubsystem  extends SubsystemBase implements ToggleableSubsystem {
-    private CANSparkMax intakeMotor;
-    private CANSparkMax feederMotor;
+    private SparkMax intakeMotor;
+    private SparkMax feederMotor;
 
     private SparkLimitSwitch m_forwardLimit;
     private SparkLimitSwitch m_reverseLimit;
@@ -32,14 +33,19 @@ public class IntakeSubsystem  extends SubsystemBase implements ToggleableSubsyst
         if (enabled) {
             System.out.println("IntakeSubsystem: Starting up & Initializine Intake motors !!!!!!!!!!!!!!");
 
-            intakeMotor = new CANSparkMax(IntakeConstants.intakeCancoderId, MotorType.kBrushless);
-            intakeMotor.restoreFactoryDefaults();
+
+
+            intakeMotor = new SparkMax(IntakeConstants.intakeCancoderId, MotorType.kBrushless);
+            //intakeMotor.restoreFactoryDefaults();
+            intakeMotor.configure(null, null, null);
             intakeMotor.setSmartCurrentLimit(IntakeConstants.INTAKE_CURRENT_LIMIT_A);
             intakeMotor.setInverted(true);
-            intakeMotor.setIdleMode(IdleMode.kCoast);
+            intakeMotor.setIdleMode(SparkBaseConfig.IdleMode.kCoast);
             
-            feederMotor = new CANSparkMax(IntakeConstants.feederCancoderId, MotorType.kBrushless);
-            feederMotor.restoreFactoryDefaults();
+            
+            feederMotor = new SparkMax(IntakeConstants.feederCancoderId, MotorType.kBrushless);
+            //feederMotor.restoreFactoryDefaults();
+            intakeMotor.configure(null, null, null)
             feederMotor.setSmartCurrentLimit(IntakeConstants.FEEDER_CURRENT_LIMIT_A);
             feederMotor.setInverted(true);
             feederMotor.setIdleMode(IdleMode.kBrake);

@@ -18,7 +18,8 @@ public class ShooterSubsystem extends SubsystemBase implements ToggleableSubsyst
     private static final String canBusName = Constants.CANBUS_NAME;
     private final TalonFX m_fx = new TalonFX(Constants.ShooterConstants.shooterCancoderId1, canBusName);
     private final TalonFX m_fllr = new TalonFX(Constants.ShooterConstants.shooterCancoderId2, canBusName);
-    private final VelocityVoltage m_voltageVelocity = new VelocityVoltage(0, 0, false, 0, 0, false, false, false);
+   // private final VelocityVoltage m_voltageVelocity = new VelocityVoltage(0, 0, false, 0, 0, false, false, false);
+    private final VelocityVoltage m_voltageVelocity = new VelocityVoltage(0);
     private final NeutralOut m_brake = new NeutralOut();
     private boolean enabled;
 
