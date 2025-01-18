@@ -75,7 +75,8 @@ public class TunerConstants {
     // Theoretical free speed (m/s) at 12 V applied output;
     // This needs to be tuned to your individual robot
     public static final LinearVelocity kSpeedAt12Volts = MetersPerSecond.of(5.96);
-
+    public static final double kSpeedAt12VoltsMps = 5.96;
+    
     // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
     // This may need to be tuned to your individual robot
     private static final double kCoupleRatio = 3.125;
@@ -196,7 +197,7 @@ public class TunerConstants {
      * This should only be called once in your robot program,.
      */
     public static CommandSwerveDrivetrain createDrivetrain() {
-        return new CommandSwerveDrivetrain(
+        return new CommandSwerveDrivetrain(true,
             DrivetrainConstants, FrontLeft, FrontRight, BackLeft, BackRight
         );
     }

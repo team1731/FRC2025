@@ -12,12 +12,14 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.CommandSwerveDrivetrain;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.VisionSubsystem;
 
 class Pose {
@@ -96,20 +98,20 @@ public class DriveToTrapCommand extends Command {
       // The rotation component in these poses represents the direction of travel
       Pose2d startPos = new Pose2d(currentPose.getTranslation(),currentPose.getRotation());
       
-      List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(startPos, waypointPose, finalPose);
-      PathPlannerPath path = new PathPlannerPath(
-        bezierPoints, 
-        new PathConstraints(
-          2.0, 2.0, 
-          Units.degreesToRadians(360), Units.degreesToRadians(540)
-        ),  
-        new GoalEndState(0.0, finalPose.getRotation())
-      );
+    //   List<Waypoint> bezierPoints = PathPlannerPath.bezierFromPoses(startPos, waypointPose, finalPose);
+    //   PathPlannerPath path = new PathPlannerPath(
+    //     bezierPoints, 
+    //     new PathConstraints(
+    //       2.0, 2.0, 
+    //       Units.degreesToRadians(360), Units.degreesToRadians(540)
+    //     ),  
+    //     new GoalEndState(0.0, finalPose.getRotation())
+    //   );
 
       // Prevent this path from being flipped on the red alliance, since the given positions are already correct
-      path.preventFlipping = true;
+      //path.preventFlipping = true;
 	  
-	  pathFollowingCommand = AutoBuilder.followPath(path);
+	//  pathFollowingCommand = AutoBuilder.followPath(path);
 	  System.out.println("Initialization complete");
 
     }

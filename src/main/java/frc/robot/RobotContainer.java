@@ -375,7 +375,7 @@ public class RobotContainer {
 
  
 
-    kStart.onTrue(driveSubsystem.runOnce(() -> driveSubsystem.seedFieldRelative()));
+    kStart.onTrue(driveSubsystem.runOnce(() -> driveSubsystem.seedFieldCentric()));
     
     operatorkLeftBumper.onTrue(new InstantCommand(() -> {
       shooterSubsystem.stopShooting();

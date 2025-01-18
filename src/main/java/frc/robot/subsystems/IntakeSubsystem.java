@@ -5,6 +5,8 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.LimitSwitchConfig;
+import com.revrobotics.spark.config.LimitSwitchConfigAccessor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
@@ -15,6 +17,8 @@ import frc.robot.Constants.IntakeConstants;
 public class IntakeSubsystem  extends SubsystemBase implements ToggleableSubsystem {
     private SparkMax intakeMotor;
     private SparkMax feederMotor;
+
+    private SparkMaxConfig feederConfig = new SparkMaxConfig(); //Create a config for the feeder motor
 
     private SparkLimitSwitch m_forwardLimit;
     private SparkLimitSwitch m_reverseLimit;
@@ -49,10 +53,11 @@ public class IntakeSubsystem  extends SubsystemBase implements ToggleableSubsyst
             //intakeMotor.setIdleMode(IdleMode.kBrake);
             
             
-            SparkMaxConfig feederConfig = new SparkMaxConfig();     //Create a config for the feeder motor
             feederConfig.smartCurrentLimit(IntakeConstants.FEEDER_CURRENT_LIMIT_A);     //pass the intake current limit from the generated values in Constants
             feederConfig.inverted(enabled);     //inverts the feeder motor
-            feederConfig.idleMode(IdleMode.kBrake);     //prevents the motor from coasting 
+            feederConfig.idleMode(IdleMode.kBrake);     //prevents the motor from coasting
+            feederConfig.limitSwitch.forwardLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen);
+            feederConfig.limitSwitch.reverseLimitSwitchType(LimitSwitchConfig.Type.kNormallyClosed);
 
             feederMotor = new SparkMax(IntakeConstants.intakeCancoderId, MotorType.kBrushless);     
             feederMotor.configure(null, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);      //resets all configuration
@@ -62,8 +67,19 @@ public class IntakeSubsystem  extends SubsystemBase implements ToggleableSubsyst
             //feederMotor.setInverted(true);
             //feederMotor.setIdleMode(IdleMode.kBrake);
 
-            m_forwardLimit = feederMotor.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
-            m_reverseLimit = feederMotor.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyClosed);
+            m_forwardLimit = feederMotor.getForwardLimitSwitch();
+            m_reverseLimit = feederMotor.getReverseLimitSwitch();      
+
+
+            // LimitSwitchConfig forwardLimitSwitchToggleOn = new LimitSwitchConfig();
+            // forwardLimitSwitchToggleOn.forwardLimitSwitchEnabled(true);
+            // LimitSwitchConfig forwardLimitSwitchToggleOff = new LimitSwitchConfig();
+            // forwardLimitSwitchToggleOff.forwardLimitSwitchEnabled(false);
+
+            // LimitSwitchConfig reverseLimitSwitchToggleOn = new LimitSwitchConfig();
+            // reverseLimitSwitchToggleOn.reverseLimitSwitchEnabled(true);
+            // LimitSwitchConfig reverseLimitSwitchToggleOff = new LimitSwitchConfig();
+            // reverseLimitSwitchToggleOff.reverseLimitSwitchEnabled(false);
 
             enableReverseLimitSwitch();
             enableLimitSwitch();
@@ -90,27 +106,35 @@ public class IntakeSubsystem  extends SubsystemBase implements ToggleableSubsyst
     }
 
     public void disableLimitSwitch() {
-        m_forwardLimit.enableLimitSwitch(false);
+       // m_forwardLimit.enableLimitSwitch(false);
+       feederConfig.limitSwitch.forwardLimitSwitchEnabled(false);
+       feederMotor.configure(feederConfig, null, null); 
     }
 
     public void disableReverseLimitSwitch() {
-        m_reverseLimit.enableLimitSwitch(false);
+       // m_reverseLimit.enableLimitSwitch(false);
+       feederConfig.limitSwitch.reverseLimitSwitchEnabled(false);
+       feederMotor.configure(feederConfig, null, null); 
     }
 
     public void enableLimitSwitch() {
-        m_forwardLimit.enableLimitSwitch(true);
+      //  m_forwardLimit.enableLimitSwitch(true);
+      feederConfig.limitSwitch.forwardLimitSwitchEnabled(true);
+      feederMotor.configure(feederConfig, null, null);        //applies the configurations
+
     }
 
     public void enableReverseLimitSwitch() {
-        m_reverseLimit.enableLimitSwitch(true);
+       // m_reverseLimit.enableLimitSwitch(true);
+       feederConfig.limitSwitch.reverseLimitSwitchEnabled(true);
+       feederMotor.configure(feederConfig, null, null); 
     }
     
     public boolean hasNote() {
-       return (feederMotor.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen).isPressed()) || 
-             (!feederMotor.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyClosed).isPressed());
+       return (m_forwardLimit.isPressed()) || (!m_reverseLimit.isPressed());
     }
 
     public boolean noteSettled() {
-        return feederMotor.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyClosed).isPressed();
+        return m_reverseLimit.isPressed();
     }
 }

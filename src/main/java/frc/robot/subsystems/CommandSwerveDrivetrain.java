@@ -32,8 +32,8 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 // You'll need to check the Pathplanner docs for what happened to these classes
 //import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.ReplanningConfig;
+//import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+//import com.pathplanner.lib.util.ReplanningConfig;
 
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -170,27 +170,27 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         if(!enabled) return;
         double driveBaseRadius = 0;
         // (SCH) FIXME: Use getModuleLocations() instead. m_moduleLocations is now private
-        for (var moduleLocation : m_moduleLocations) {
+        for (var moduleLocation : getModuleLocations()) {
             driveBaseRadius = Math.max(driveBaseRadius, moduleLocation.getNorm());
         }
 
         System.out.println("Configuring AutoBuilder!");
 
         // (SCH) FIXME: This is related to the Pathbuilder imports at the top of the file
-        AutoBuilder.configureHolonomic(
-            ()->this.getState().Pose, // Supplier of current robot pose
-            this::seedFieldRelative,  // Consumer for seeding pose against auto
-            this::getCurrentRobotChassisSpeeds,
-            (speeds)->this.setControl(autoRequest.withSpeeds(speeds)), // Consumer of ChassisSpeeds to drive the robot
-            // (SCH) FIXME: This is related to the Pathbuilder imports at the top of the file
-            new HolonomicPathFollowerConfig(new PIDConstants(10, 0, 0),
-                                            new PIDConstants(10, 0, 0),
-                                            TunerConstants.kSpeedAt12VoltsMps,
-                                            driveBaseRadius,
-                                            // (SCH) FIXME: This is related to the Pathbuilder imports at the top of the file
-                                            new ReplanningConfig()),
-            new FlipRedBlueSupplier(), // ()->false, // Change this if the path needs to be flipped on red vs blue
-            this); // Subsystem for requirements
+        // AutoBuilder.configureHolonomic(
+        //     ()->this.getState().Pose, // Supplier of current robot pose
+        //     this::seedFieldRelative,  // Consumer for seeding pose against auto
+        //     this::getCurrentRobotChassisSpeeds,
+        //     (speeds)->this.setControl(autoRequest.withSpeeds(speeds)), // Consumer of ChassisSpeeds to drive the robot
+        //     // (SCH) FIXME: This is related to the Pathbuilder imports at the top of the file
+        //     new HolonomicPathFollowerConfig(new PIDConstants(10, 0, 0),
+        //                                     new PIDConstants(10, 0, 0),
+        //                                     TunerConstants.kSpeedAt12VoltsMps,
+        //                                     driveBaseRadius,
+        //                                     // (SCH) FIXME: This is related to the Pathbuilder imports at the top of the file
+        //                                     new ReplanningConfig()),
+        //     new FlipRedBlueSupplier(), // ()->false, // Change this if the path needs to be flipped on red vs blue
+        //     this); // Subsystem for requirements
     }
 
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
@@ -203,11 +203,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         return new PathPlannerAuto(pathName);
     }
 
-    public SwerveDriveKinematics getCurrentRobotChassisSpeeds() {
-        if(!enabled || Robot.isSimulation()) return new SwerveDriveKinematics();
+    public ChassisSpeeds getCurrentRobotChassisSpeeds() {
+        if(!enabled || Robot.isSimulation()) return new ChassisSpeeds();
         // (SCH) FIXME: Use getKinematics() instead
-   //     return m_kinematics.toChassisSpeeds(getState().ModuleStates);
-        return getKinematics();
+        return getKinematics().toChassisSpeeds(getState().ModuleStates);
+       // return getKinematics();
     }
 
     public void periodic() {
@@ -231,11 +231,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
     }
 
     public double getXVelocity() {
-        ChassisSpeeds chassisSpeeds = vxMetersPerSecond();
+        var chassisSpeeds = getCurrentRobotChassisSpeeds();
         return chassisSpeeds.vxMetersPerSecond;
     }
     public double getYVelocity() {
-        ChassisSpeeds chassisSpeeds = vyMetersPerSecond();
+        var chassisSpeeds = getCurrentRobotChassisSpeeds();
         return chassisSpeeds.vyMetersPerSecond;
         
     }

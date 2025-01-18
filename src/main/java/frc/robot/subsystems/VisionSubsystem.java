@@ -49,7 +49,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.CommandSwerveDrivetrain;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.Robot;
 import frc.robot.util.log.Logger;
 
@@ -149,7 +149,7 @@ public class VisionSubsystem extends SubsystemBase implements ToggleableSubsyste
         if (photonVisionTable.containsKey("hasTarget")) {
             cameraFront = new PhotonCamera(kCameraNameFront);
             photonEstimatorFront = new PhotonPoseEstimator(
-                kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, cameraFront, kRobotToCamFront);
+                kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, kRobotToCamFront);
             photonEstimatorFront.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
             initialized = true;
             System.out.println("VisionSubsystem: Adding camera " + kCameraNameFront + "!!!!!!! ");
@@ -159,8 +159,8 @@ public class VisionSubsystem extends SubsystemBase implements ToggleableSubsyste
         if (photonVisionTable.containsKey("hasTarget")) {
             cameraBack = new PhotonCamera(kCameraNameBack);
             photonEstimatorBack = new PhotonPoseEstimator(
-                kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, cameraBack, kRobotToCamBack);
-            photonEstimatorBack.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+                kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, kRobotToCamBack);
+              photonEstimatorBack.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
             initialized = true;
             System.out.println("VisionSubsystem: Adding camera " + kCameraNameBack + "!!!!!!! ");
         }
@@ -322,7 +322,7 @@ public class VisionSubsystem extends SubsystemBase implements ToggleableSubsyste
      *         used for estimation.
      */
     private Optional<EstimatedRobotPose> getEstimatedGlobalPoseFront() {
-        var visionEst = photonEstimatorFront.update();
+        var visionEst = photonEstimatorFront.update(cameraFront.getLatestResult());
         // double latestTimestamp = cameraFront.getLatestResult().getTimestampSeconds();
         // boolean newResult = Math.abs(latestTimestamp - lastEstTimestampFront) > 1e-5;
         // if (newResult)
@@ -331,7 +331,7 @@ public class VisionSubsystem extends SubsystemBase implements ToggleableSubsyste
     }
 
     private Optional<EstimatedRobotPose> getEstimatedGlobalPoseBack() {
-        var visionEst = photonEstimatorBack.update();
+        var visionEst = photonEstimatorBack.update(cameraBack.getLatestResult());
         // double latestTimestamp = cameraBack.getLatestResult().getTimestampSeconds();
         // boolean newResult = Math.abs(latestTimestamp - lastEstTimestampBack) > 1e-5;
         // if (newResult)
