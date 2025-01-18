@@ -46,6 +46,9 @@ import frc.robot.subsystems.ToggleableSubsystem;
 
 import static edu.wpi.first.units.Units.*;
 
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import com.ctre.phoenix6.swerve.jni.SwerveJNI.ControlParams;
+
 class FlipRedBlueSupplier implements BooleanSupplier {
     @Override
     public boolean getAsBoolean() {
@@ -200,10 +203,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         return new PathPlannerAuto(pathName);
     }
 
-    public ChassisSpeeds getCurrentRobotChassisSpeeds() {
-        if(!enabled || Robot.isSimulation()) return new ChassisSpeeds();
+    public SwerveDriveKinematics getCurrentRobotChassisSpeeds() {
+        if(!enabled || Robot.isSimulation()) return new SwerveDriveKinematics();
         // (SCH) FIXME: Use getKinematics() instead
-        return m_kinematics.toChassisSpeeds(getState().ModuleStates);
+   //     return m_kinematics.toChassisSpeeds(getState().ModuleStates);
+        return getKinematics();
     }
 
     public void periodic() {
@@ -227,11 +231,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
     }
 
     public double getXVelocity() {
-        ChassisSpeeds chassisSpeeds = getCurrentRobotChassisSpeeds();
+        ChassisSpeeds chassisSpeeds = vxMetersPerSecond();
         return chassisSpeeds.vxMetersPerSecond;
     }
     public double getYVelocity() {
-        ChassisSpeeds chassisSpeeds = getCurrentRobotChassisSpeeds();
+        ChassisSpeeds chassisSpeeds = vyMetersPerSecond();
         return chassisSpeeds.vyMetersPerSecond;
         
     }
@@ -246,8 +250,8 @@ Log the torque current and velocity
         for (int i = 0; i < 4; ++i) {
             //Get the Configurator for the current drive motor.
             // (SCH) FIXME: Modules is now private, use getModule(i) instead
-            SmartDashboard.putNumber("Module " + i + "Torque Current" ,Modules[i].getDriveMotor().getTorqueCurrent().getValueAsDouble());
-            SmartDashboard.putNumber("Module " + i + "Velocity" ,Modules[i].getDriveMotor().getVelocity().getValueAsDouble());
+            SmartDashboard.putNumber("Module " + i + "Torque Current" ,getModules()[i].getDriveMotor().getTorqueCurrent().getValueAsDouble());
+            SmartDashboard.putNumber("Module " + i + "Velocity" ,getModules()[i].getDriveMotor().getVelocity().getValueAsDouble());
         }
     }
 
