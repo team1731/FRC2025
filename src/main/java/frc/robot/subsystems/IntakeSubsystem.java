@@ -120,7 +120,7 @@ public class IntakeSubsystem  extends SubsystemBase implements ToggleableSubsyst
     public void enableLimitSwitch() {
       //  m_forwardLimit.enableLimitSwitch(true);
       feederConfig.limitSwitch.forwardLimitSwitchEnabled(true);
-      feederMotor.configure(feederConfig, null, null);        //applies the configurations
+      feederMotor.configure(feederConfig, null, null);
 
     }
 

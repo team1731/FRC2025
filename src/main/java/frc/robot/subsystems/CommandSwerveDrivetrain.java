@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import java.util.EnumSet;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
@@ -10,13 +11,25 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.FloatArraySubscriber;
+import edu.wpi.first.networktables.IntegerPublisher;
+import edu.wpi.first.networktables.IntegerSubscriber;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEvent;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -27,19 +40,22 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import static frc.robot.Constants.Vision.*;
 
 // (SCH) FIXME: These imports don't seem to exist anymore in 2025.
 // You'll need to check the Pathplanner docs for what happened to these classes
-//import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.config.PIDConstants;
+//import com.pathplanner.lib.util.PIDConstants;
 //import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 //import com.pathplanner.lib.util.ReplanningConfig;
 
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
+import frc.robot.Constants.Vision;
 import frc.robot.generated.TunerConstants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.subsystems.ToggleableSubsystem;
@@ -52,7 +68,6 @@ import com.ctre.phoenix6.swerve.jni.SwerveJNI.ControlParams;
 class FlipRedBlueSupplier implements BooleanSupplier {
     @Override
     public boolean getAsBoolean() {
-        // (SCH) FIXME: This will be fixed when bringing in the original RobotContainer
         return RobotContainer.isFlipRedBlue();
     }
 }
@@ -75,6 +90,25 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
     private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
     /* Keep track if we've ever applied the operator perspective before or not */
     private boolean m_hasAppliedOperatorPerspective = false;
+
+    /* VSLAM Updates */
+    boolean useVSLAM = true;
+    private final Field2d vslamfield = new Field2d();
+    int connListenerHandle;
+    int positionListenerHandle;
+    int topicListenerHandle;
+
+    private IntegerSubscriber questMiso;
+    private IntegerPublisher questMosi;
+    private IntegerSubscriber questFrameCount;
+    private DoubleSubscriber questTimestamp;
+    private FloatArraySubscriber questPosition;
+    private FloatArraySubscriber questQuaternion;
+    private FloatArraySubscriber questEulerAngles;
+    private DoubleSubscriber questBattery;
+
+    private float yaw_offset = 0.0f;
+    private Pose2d startingOffset = new Pose2d();
 
     /* Swerve requests to apply during SysId characterization */
     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
@@ -156,42 +190,125 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         super(driveTrainConstants, OdometryUpdateFrequency, modules);
         setEnabled(enabled);
         if(!enabled) return;
-        configurePathPlanner(true);
+        //configurePathPlanner(true);
+        configureVSLAM();
     }
     
     public CommandSwerveDrivetrain(boolean enabled, SwerveDrivetrainConstants driveTrainConstants, SwerveModuleConstants... modules) {
         super(driveTrainConstants, modules);
         setEnabled(enabled);
         if(!enabled) return;
-        configurePathPlanner(true);
+        //configurePathPlanner(true);
+        configureVSLAM();
     }
 
-    public void configurePathPlanner(boolean redBlueFlipping) {
-        if(!enabled) return;
-        double driveBaseRadius = 0;
-        // (SCH) FIXME: Use getModuleLocations() instead. m_moduleLocations is now private
-        for (var moduleLocation : getModuleLocations()) {
-            driveBaseRadius = Math.max(driveBaseRadius, moduleLocation.getNorm());
-        }
+        public void configureVSLAM() {
 
-        System.out.println("Configuring AutoBuilder!");
+        NetworkTableInstance inst = NetworkTableInstance.getDefault();
 
-        // (SCH) FIXME: This is related to the Pathbuilder imports at the top of the file
-        // AutoBuilder.configureHolonomic(
-        //     ()->this.getState().Pose, // Supplier of current robot pose
-        //     this::seedFieldRelative,  // Consumer for seeding pose against auto
-        //     this::getCurrentRobotChassisSpeeds,
-        //     (speeds)->this.setControl(autoRequest.withSpeeds(speeds)), // Consumer of ChassisSpeeds to drive the robot
-        //     // (SCH) FIXME: This is related to the Pathbuilder imports at the top of the file
-        //     new HolonomicPathFollowerConfig(new PIDConstants(10, 0, 0),
-        //                                     new PIDConstants(10, 0, 0),
-        //                                     TunerConstants.kSpeedAt12VoltsMps,
-        //                                     driveBaseRadius,
-        //                                     // (SCH) FIXME: This is related to the Pathbuilder imports at the top of the file
-        //                                     new ReplanningConfig()),
-        //     new FlipRedBlueSupplier(), // ()->false, // Change this if the path needs to be flipped on red vs blue
-        //     this); // Subsystem for requirements
-    }
+        // add a connection listener; the first parameter will cause the
+        // callback to be called immediately for any current connections
+        connListenerHandle = inst.addConnectionListener(true, event -> {
+            if (event.is(NetworkTableEvent.Kind.kConnected)) {
+                System.out.println("Connected to " + event.connInfo.remote_id);
+            } else if (event.is(NetworkTableEvent.Kind.kDisconnected)) {
+                System.out.println("Disconnected from " + event.connInfo.remote_id);
+            }
+        });
+
+        // get the subtable called "questnav"
+        NetworkTable datatable = inst.getTable("questnav");
+        questMiso = datatable.getIntegerTopic("miso").subscribe(0);
+        questMosi = datatable.getIntegerTopic("mosi").publish();
+        questFrameCount = datatable.getIntegerTopic("frameCount").subscribe(0);
+        questTimestamp = datatable.getDoubleTopic("timestamp").subscribe(0.0f);
+        questPosition = datatable.getFloatArrayTopic("position")
+                .subscribe(new float[] { 0.0f, 0.0f, 0.0f });
+        questQuaternion = datatable.getFloatArrayTopic("quaternion")
+                .subscribe(new float[] { 0.0f, 0.0f, 0.0f, 0.0f });
+        questEulerAngles = datatable.getFloatArrayTopic("eulerAngles")
+                .subscribe(new float[] { 0.0f, 0.0f, 0.0f });
+        questBattery = datatable.getDoubleTopic("batteryLevel").subscribe(0.0f);
+       
+        
+        ShuffleboardTab tab = Shuffleboard.getTab("test");
+  
+        tab.add(vslamfield);
+
+       
+        System.out.println("addind listener******************************************8");
+        // add a listener to only value changes on the Y subscriber
+        positionListenerHandle = inst.addListener(
+                questPosition,
+                EnumSet.of(NetworkTableEvent.Kind.kValueAll),
+                event -> {
+
+                    var timestampedPosition = questPosition.getAtomic();
+                    float[] oculusPosition = timestampedPosition.value;
+                    double timestamp = timestampedPosition.timestamp;
+                    timestamp = timestamp/1000000;
+                    Translation2d oculousRawPosition = new Translation2d(-oculusPosition[2], oculusPosition[0]);
+                    Translation2d  oculousPositionCompensated = oculousRawPosition.plus(new Translation2d(0.3333* Math.cos(Math.toRadians(getOculusYaw())), 0.333*Math.sin(Math.toRadians(getOculusYaw())))); // TODO GET Numbers since robot is not in the center of the robot
+                    oculousPositionCompensated = oculousPositionCompensated.plus(startingOffset.getTranslation());  // translate by the starting position
+
+                    Rotation2d oculousRawRotation = Rotation2d.fromDegrees(getOculusYaw()).plus(Rotation2d.fromDegrees(0));  // since camera is on back of robot
+                    Rotation2d  oculousCompensatedRotation = oculousRawRotation.plus(startingOffset.getRotation());
+                    
+                    Pose2d estPose = new Pose2d(oculousPositionCompensated, oculousCompensatedRotation);
+                    
+                    //System.out.println("addind a vslam");
+                    vslamfield.getObject("MyRobotVSLAM").setPose(estPose);
+                    SmartDashboard.putString("VSLAM pose", String.format("(%.2f, %.2f) %.2f %.2f %.2f",
+                            estPose.getTranslation().getX(),
+                            estPose.getTranslation().getY(),
+                            estPose.getRotation().getDegrees(),
+                            timestamp,
+                            Timer.getFPGATimestamp()));
+                    if (useVSLAM) {
+                        this.addVisionMeasurement(estPose,
+                               timestamp, kVSLAMStdDevs);
+                    } 
+                });
+
+        // add a listener to see when new topics are published within datatable
+        // the string array is an array of topic name prefixes.
+        topicListenerHandle = inst.addListener(
+                new String[] { datatable.getPath() + "/" },
+                EnumSet.of(NetworkTableEvent.Kind.kTopic),
+                event -> {
+                    if (event.is(NetworkTableEvent.Kind.kPublish)) {
+                        // topicInfo.name is the full topic name, e.g. "/datatable/X"
+                        System.out.println("newly published " + event.topicInfo.name);
+                    }
+                });
+            }
+
+    // public void configurePathPlanner(boolean redBlueFlipping) {
+    //     if(!enabled) return;
+    //     double driveBaseRadius = 0;
+  
+    //     for (var moduleLocation : getModuleLocations()) {
+    //         driveBaseRadius = Math.max(driveBaseRadius, moduleLocation.getNorm());
+    //     }
+
+    //     System.out.println("Configuring AutoBuilder!");
+    // //FIXME:Broken Pathplanner libaries, disabled to build code
+    //     // (SCH) FIXME: This is related to the Pathbuilder imports at the top of the file
+    //      AutoBuilder.configureHolonomic(
+    //          ()->this.getState().Pose, // Supplier of current robot pose
+    //          this::seedFieldRelative,  // Consumer for seeding pose against auto
+    //          this::getCurrentRobotChassisSpeeds,
+    //          (speeds)->this.setControl(autoRequest.withSpeeds(speeds)), // Consumer of ChassisSpeeds to drive the robot
+    //          // (SCH) FIXME: This is related to the Pathbuilder imports at the top of the file
+    //          new HolonomicPathFollowerConfig(new PIDConstants(10, 0, 0),
+    //                                          new PIDConstants(10, 0, 0),
+    //                                         TunerConstants.kSpeedAt12VoltsMps,
+    //                                          driveBaseRadius,
+    //                                         // (SCH) FIXME: This is related to the Pathbuilder imports at the top of the file
+    //                                         new ReplanningConfig()),
+    //          new FlipRedBlueSupplier(), // ()->false, // Change this if the path needs to be flipped on red vs blue
+    //          this); // Subsystem for requirements
+    // }
 
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
         if(!enabled) return new Command(){};
@@ -205,12 +322,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
 
     public ChassisSpeeds getCurrentRobotChassisSpeeds() {
         if(!enabled || Robot.isSimulation()) return new ChassisSpeeds();
-        // (SCH) FIXME: Use getKinematics() instead
         return getKinematics().toChassisSpeeds(getState().ModuleStates);
        // return getKinematics();
     }
 
     public void periodic() {
+        vslamfield.setRobotPose(this.getState().Pose);
         /*
          * Periodically try to apply the operator perspective.
          * If we haven't applied the operator perspective before, then we should apply it regardless of DS state.
@@ -249,7 +366,6 @@ Log the torque current and velocity
         //Iterate through each module.
         for (int i = 0; i < 4; ++i) {
             //Get the Configurator for the current drive motor.
-            // (SCH) FIXME: Modules is now private, use getModule(i) instead
             SmartDashboard.putNumber("Module " + i + "Torque Current" ,getModules()[i].getDriveMotor().getTorqueCurrent().getValueAsDouble());
             SmartDashboard.putNumber("Module " + i + "Velocity" ,getModules()[i].getDriveMotor().getVelocity().getValueAsDouble());
         }
@@ -313,5 +429,61 @@ Log the torque current and velocity
         });
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
+
+    public void zeroHeading() {
+        float[] eulerAngles = questEulerAngles.get();
+        yaw_offset = eulerAngles[1];
+       // angleSetpoint = 0.0;
+      }
+    
+      // Zero the absolute 3D position of the robot (similar to long-pressing the quest logo)
+      @Override
+      public void resetPose(Pose2d position) {
+        System.out.println("Adjusting the position of the robot");
+       super.resetPose(position);
+       Translation2d cameraoffset = position.getTranslation().minus(new Translation2d(.33333,0));
+        startingOffset = new Pose2d(cameraoffset,position.getRotation());
+        if (questMiso.get() != 99) {
+          questMosi.set(1);
+        }
+      }
+    
+      // Clean up oculus subroutine messages after processing on the headset
+      public void cleanUpOculusMessages() {
+        if (questMiso.get() == 99) {
+          questMosi.set(0);
+        }
+      }
+    
+      // Return the robot heading in degrees, between -180 and 180 degrees
+      public double getHeading() {
+        return Rotation2d.fromDegrees(getOculusYaw()).getDegrees();
+      }
+    
+      // Get the rotation rate of the robot
+      public double getTurnRate() {
+        return getOculusYaw() ; //* (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+      }
+    
+      // Get the yaw Euler angle of the headset
+      private float getOculusYaw() {
+        float[] eulerAngles = questEulerAngles.get();
+        var ret = eulerAngles[1] - yaw_offset;
+        ret %= 360;
+        if (ret < 0) {
+          ret += 360;
+        }
+        return ret*-1;
+      }
+    
+      private Translation2d getOculusPosition() {
+        float[] oculusPosition = questPosition.get();
+        return new Translation2d(oculusPosition[2], -oculusPosition[0]);
+      }
+    
+      private Pose2d getOculusPose() {
+        var oculousPositionCompensated = getOculusPosition().minus(new Translation2d(0, 0.1651)); // 6.5
+        return new Pose2d(oculousPositionCompensated, Rotation2d.fromDegrees(getOculusYaw()));
+      }    
 }
 

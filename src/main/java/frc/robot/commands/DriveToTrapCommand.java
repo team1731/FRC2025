@@ -97,8 +97,8 @@ public class DriveToTrapCommand extends Command {
       finalPose = closestPoses[1];
       // The rotation component in these poses represents the direction of travel
       Pose2d startPos = new Pose2d(currentPose.getTranslation(),currentPose.getRotation());
-      
-    //   List<Waypoint> bezierPoints = PathPlannerPath.bezierFromPoses(startPos, waypointPose, finalPose);
+    //FIXME:Broken due to Pathplanner imports
+    //   List<Translations2d> bezierPoints = PathPlannerPath.bezierFromPoses(startPos, waypointPose, finalPose);
     //   PathPlannerPath path = new PathPlannerPath(
     //     bezierPoints, 
     //     new PathConstraints(

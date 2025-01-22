@@ -18,6 +18,7 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -376,6 +377,14 @@ public class RobotContainer {
  
 
     kStart.onTrue(driveSubsystem.runOnce(() -> driveSubsystem.seedFieldCentric()));
+
+    kStart.onTrue(new InstantCommand(() -> {
+      driveSubsystem.resetPose(new Pose2d(1.47,5.51, new Rotation2d (0)));
+      Rotation2d operatorPerspective = Robot.isRedAlliance()? new Rotation2d(Math.toRadians(180)): new Rotation2d(Math.toRadians(0));
+      Pose2d resetPosition = Robot.isRedAlliance()? new Pose2d(15.03,5.51,operatorPerspective): new Pose2d(1.47,5.51,operatorPerspective);
+      driveSubsystem.resetPose(resetPosition);
+      driveSubsystem.setOperatorPerspectiveForward(operatorPerspective);  // Just a Hack
+    }));
     
     operatorkLeftBumper.onTrue(new InstantCommand(() -> {
       shooterSubsystem.stopShooting();
