@@ -119,7 +119,7 @@ public class Robot extends TimedRobot {
 
     wristSubsystem.retractTrapFlap();
 	PathPlannerLogging.setLogActivePathCallback(null);
-	//FIXME:line below is from questNav
+	//line below is from questNav
 	Pose2d startingConfiguration = Robot.isRedAlliance()? new Pose2d(15.07,5.57, new Rotation2d(Math.toRadians(180))): new Pose2d(1.47,5.51, new Rotation2d (0));
 	//Pose2d startingConfiguration = new Pose2d(1.47,5.51, new Rotation2d (0));
 	driveSubsystem.resetPose(startingConfiguration);
@@ -251,8 +251,7 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-//FIXME:questnav broken due to Pathplanner
-    //driveSubsystem.cleanUpOculusMessages();
+    driveSubsystem.cleanUpOculusMessages();
 	//m_robotContainer.displayEncoders();
   }
 

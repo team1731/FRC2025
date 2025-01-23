@@ -283,13 +283,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
                 });
             }
 
-    // public void configurePathPlanner(boolean redBlueFlipping) {
-    //     if(!enabled) return;
-    //     double driveBaseRadius = 0;
+     public void configurePathPlanner(boolean redBlueFlipping) {
+         if(!enabled) return;
+         double driveBaseRadius = 0;
   
-    //     for (var moduleLocation : getModuleLocations()) {
-    //         driveBaseRadius = Math.max(driveBaseRadius, moduleLocation.getNorm());
-    //     }
+        for (var moduleLocation : getModuleLocations()) {
+             driveBaseRadius = Math.max(driveBaseRadius, moduleLocation.getNorm());
+         }
 
     //     System.out.println("Configuring AutoBuilder!");
     // //FIXME:Broken Pathplanner libaries, disabled to build code
@@ -308,7 +308,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
     //                                         new ReplanningConfig()),
     //          new FlipRedBlueSupplier(), // ()->false, // Change this if the path needs to be flipped on red vs blue
     //          this); // Subsystem for requirements
-    // }
+    }
+
+            
+
 
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
         if(!enabled) return new Command(){};
