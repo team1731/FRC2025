@@ -39,13 +39,15 @@ public class IntakeSubsystem  extends SubsystemBase implements ToggleableSubsyst
         if (enabled) {
             System.out.println("IntakeSubsystem: Starting up & Initializine Intake motors !!!!!!!!!!!!!!");
 
+            SparkMaxConfig factoryReset = new SparkMaxConfig();
+
             SparkMaxConfig intakeConfig = new SparkMaxConfig();     //Create a config for the intake motor
             intakeConfig.smartCurrentLimit(IntakeConstants.INTAKE_CURRENT_LIMIT_A);     //pass the intake current limit from the generated values in Constants
             intakeConfig.inverted(enabled);     //inverts the intake motor
             intakeConfig.idleMode(IdleMode.kBrake);     //prevents the motor from coasting 
 
             intakeMotor = new SparkMax(IntakeConstants.intakeCancoderId, MotorType.kBrushless);     
-            intakeMotor.configure(null, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);      //resets all configuration
+            intakeMotor.configure(factoryReset, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);      //resets all configuration
             intakeMotor.configure(intakeConfig, null, null);        //applies the configurations
             //restoreFactoryDefaults();
             //intakeMotor.setSmartCurrentLimit(IntakeConstants.INTAKE_CURRENT_LIMIT_A);
@@ -59,8 +61,8 @@ public class IntakeSubsystem  extends SubsystemBase implements ToggleableSubsyst
             feederConfig.limitSwitch.forwardLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen);
             feederConfig.limitSwitch.reverseLimitSwitchType(LimitSwitchConfig.Type.kNormallyClosed);
 
-            feederMotor = new SparkMax(IntakeConstants.intakeCancoderId, MotorType.kBrushless);     
-            feederMotor.configure(null, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);      //resets all configuration
+            feederMotor = new SparkMax(IntakeConstants.feederCancoderId, MotorType.kBrushless);     
+            feederMotor.configure(factoryReset, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);      //resets all configuration
             feederMotor.configure(feederConfig, null, null);        //applies the configurations
             //restoreFactoryDefaults();
             //feederMotor.setSmartCurrentLimit(IntakeConstants.FEEDER_CURRENT_LIMIT_A);
