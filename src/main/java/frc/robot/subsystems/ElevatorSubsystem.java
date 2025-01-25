@@ -15,8 +15,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.ISInput;
-import frc.robot.IntakeShootStateMachine;
 import frc.robot.Robot;
 import frc.robot.Constants.ElevatorConstants;
 
@@ -28,9 +26,6 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
     private TalonFX elevatorMotor2;
     private double desiredPosition;
     private double arbitraryFeedForward;
-    private WristSubsystem m_wristSubsystem;
-    private IntakeSubsystem m_intakeSubsystem;
-    private IntakeShootStateMachine m_intakeShootStateMachine;
     private Orchestra m_orchestra = new Orchestra();
     private MotionMagicVoltage mmReq1= new MotionMagicVoltage(0);
     // private MotionMagicVoltage mmReq2;
@@ -46,9 +41,7 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
         return enabled;
     }
 
-    public ElevatorSubsystem(boolean enabled, WristSubsystem wristSubsystem, IntakeShootStateMachine intakeShootStateMachine) {
-        m_wristSubsystem = wristSubsystem;
-        m_intakeShootStateMachine = intakeShootStateMachine;
+    public ElevatorSubsystem(boolean enabled) {
         this.enabled = enabled;
         if(!enabled) return;
         initializeElevatorMotors();
@@ -151,25 +144,12 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
         //Only Move the elevator if the wrist is above the clearance zone 
 
         
-		if (m_wristSubsystem.getWristPosition() > Constants.ElevatorConstants.wristClearsPosition){
-			elevatorMotor1.setControl(mmReq1.withPosition(desiredPosition).withFeedForward(arbitraryFeedForward));
-            elevatorMotor2.setControl(mmReq1.withPosition(desiredPosition).withFeedForward(arbitraryFeedForward));
-		} else {
-            elevatorMotor1.setControl(mmReq1.withPosition(0.0).withFeedForward(arbitraryFeedForward));
-            elevatorMotor2.setControl(mmReq1.withPosition(0.0).withFeedForward(arbitraryFeedForward));
-            
-        }
+
         if (ampTimeStarted != 0 && (Timer.getFPGATimestamp() - ampTimeStarted > 0.3)) {
-            m_intakeShootStateMachine.setCurrentInput(frc.robot.ISInput.STOP_AMP);
            // m_intakeSubsystem.shootAmpStop();
             ampTimeStarted = 0; 
             moveElevator(Constants.ElevatorConstants.elevatorHomePosition);
 
-        }
-
-        if (sendWristHomeWhenElevatorDown == true && Math.abs(elevatorMotor1.getPosition().getValueAsDouble() - 0.0) < 2) {
-            m_wristSubsystem.moveWrist(Constants.WristConstants.wristHomePosition);
-            sendWristHomeWhenElevatorDown = false;
         }
 
 
@@ -182,8 +162,6 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
 
     public void moveElevatorAndWristHome() {
         if(!enabled) return;
-
-        m_intakeShootStateMachine.setCurrentInput(ISInput.START_AMP);
 
         sendWristHomeWhenElevatorDown = true;
         ampTimeStarted = Timer.getFPGATimestamp();       

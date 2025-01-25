@@ -326,7 +326,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
     public ChassisSpeeds getCurrentRobotChassisSpeeds() {
         if(!enabled || Robot.isSimulation()) return new ChassisSpeeds();
         return getKinematics().toChassisSpeeds(getState().ModuleStates);
-       // return getKinematics();
     }
 
     public void periodic() {

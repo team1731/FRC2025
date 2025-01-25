@@ -53,12 +53,8 @@ public class Robot extends TimedRobot {
   
   private CommandSwerveDrivetrain driveSubsystem;
   private VisionSubsystem visionSubsystem;
-  private ShooterSubsystem shooterSubsystem;
-  private IntakeSubsystem intakeSubsystem;
   private ElevatorSubsystem elevatorSubsystem;
-  private WristSubsystem wristSubsystem;
-  private IntakeShootStateMachine intakeShootStateMachine;
-  private ClimbStateMachine climbStateMachine;
+
  
 
   public Robot() {
@@ -104,20 +100,16 @@ public class Robot extends TimedRobot {
     driveSubsystem = new CommandSwerveDrivetrain(true, TunerConstants.DrivetrainConstants, TunerConstants.FrontLeft, TunerConstants.FrontRight, TunerConstants.BackLeft, TunerConstants.BackRight);
 
 	ledSubsystem = new LEDStringSubsystem(true);
-	intakeSubsystem = new IntakeSubsystem(true);
 	
 
-	shooterSubsystem = new ShooterSubsystem(true);
 	visionSubsystem = new VisionSubsystem(true, driveSubsystem);
-    wristSubsystem = new WristSubsystem(true, visionSubsystem);
-	intakeShootStateMachine = new IntakeShootStateMachine(intakeSubsystem, shooterSubsystem, ledSubsystem, visionSubsystem);
-	elevatorSubsystem = new ElevatorSubsystem(true, wristSubsystem, intakeShootStateMachine);
-	 climbStateMachine = new ClimbStateMachine(elevatorSubsystem, wristSubsystem, intakeShootStateMachine);
+
+	elevatorSubsystem = new ElevatorSubsystem(true);
+
 	// Instantiate our robot container. This will perform all of our button bindings,
 	// and put our autonomous chooser on the dashboard
-	m_robotContainer = new RobotContainer(driveSubsystem, shooterSubsystem, visionSubsystem, intakeSubsystem,  wristSubsystem, ledSubsystem, elevatorSubsystem,intakeShootStateMachine, climbStateMachine);
+	m_robotContainer = new RobotContainer(driveSubsystem, visionSubsystem, ledSubsystem, elevatorSubsystem);
 
-    wristSubsystem.retractTrapFlap();
 	PathPlannerLogging.setLogActivePathCallback(null);
 	//line below is from questNav
 	Pose2d startingConfiguration = Robot.isRedAlliance()? new Pose2d(15.07,5.57, new Rotation2d(Math.toRadians(180))): new Pose2d(1.47,5.51, new Rotation2d (0));
@@ -129,7 +121,6 @@ public class Robot extends TimedRobot {
 	
 	initSubsystems();
     visionSubsystem.useVision(false);
-	intakeShootStateMachine.turnOnLED();
 	ledSubsystem.setColor(LedOption.INIT);
 	//m_robotContainer.buildAuto10();
 	String[] autoModes = RobotContainer.deriveAutoModes();
@@ -315,7 +306,6 @@ public class Robot extends TimedRobot {
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
   @Override
   public void autonomousInit() {
-	    intakeShootStateMachine.startLEDs();
 		visionSubsystem.useVision(false);
     	System.out.println("AUTO INIT");
 		CommandScheduler.getInstance().cancelAll();
@@ -350,10 +340,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {	
 
-	intakeShootStateMachine.startLEDs();
 	visionSubsystem.useVision(false);
 	ledSubsystem.setColor(LedOption.GREEN);
-	wristSubsystem.stopMoveWristToTarget();
     /* 
 	intakeSubsystem.stopIntake();
 	intakeSubsystem.stopJiggle();
@@ -366,8 +354,6 @@ public class Robot extends TimedRobot {
 	System.out.println("TELEOP INIT");
 	CommandScheduler.getInstance().cancelAll();
 	initSubsystems();
-	intakeShootStateMachine.setCurrentInput(ISInput.STOP_INTAKE);
-	intakeShootStateMachine.setCurrentInput(ISInput.STOP_SPEAKER);
 
 	if (m_autonomousCommand != null) {
 		m_autonomousCommand.cancel();
