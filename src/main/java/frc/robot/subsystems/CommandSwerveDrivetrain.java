@@ -38,16 +38,7 @@ import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathPlannerAuto;
 import static frc.robot.Constants.Vision.*;
-
-// (SCH) FIXME: These imports don't seem to exist anymore in 2025.
-// You'll need to check the Pathplanner docs for what happened to these classes
-import com.pathplanner.lib.config.PIDConstants;
-//import com.pathplanner.lib.util.PIDConstants;
-//import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-//import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -186,7 +177,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         setEnabled(enabled);
         if (!enabled)
             return;
-        // configurePathPlanner(true);
         configureVSLAM();
     }
 
@@ -196,7 +186,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         setEnabled(enabled);
         if (!enabled)
             return;
-        // configurePathPlanner(true);
         configureVSLAM();
     }
 
@@ -229,7 +218,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         questBattery = datatable.getDoubleTopic("batteryLevel").subscribe(0.0f);
 
         ShuffleboardTab tab = Shuffleboard.getTab("test");
-        // FIXME:
+
+        //FIXME: this line will prevent code from building
         // tab.add(vslamfield);
 
         System.out.println("addind listener******************************************8");
@@ -282,34 +272,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
                 });
     }
 
-    public void configurePathPlanner(boolean redBlueFlipping) {
-        if (!enabled)
-            return;
-        double driveBaseRadius = 0;
-
-        for (var moduleLocation : getModuleLocations()) {
-            driveBaseRadius = Math.max(driveBaseRadius, moduleLocation.getNorm());
-        }
-
-        // System.out.println("Configuring AutoBuilder!");
-        // //FIXME:Broken Pathplanner libaries, disabled to build code
-    //     // (SCH) FIXME: This is related to the Pathbuilder imports at the top of the file
-    //      AutoBuilder.configureHolonomic(
-    //          ()->this.getState().Pose, // Supplier of current robot pose
-    //          this::seedFieldRelative,  // Consumer for seeding pose against auto
-    //          this::getCurrentRobotChassisSpeeds,
-    //          (speeds)->this.setControl(autoRequest.withSpeeds(speeds)), // Consumer of ChassisSpeeds to drive the robot
-    //          // (SCH) FIXME: This is related to the Pathbuilder imports at the top of the file
-    //          new HolonomicPathFollowerConfig(new PIDConstants(10, 0, 0),
-    //                                          new PIDConstants(10, 0, 0),
-    //                                         TunerConstants.kSpeedAt12VoltsMps,
-    //                                          driveBaseRadius,
-    //                                         // (SCH) FIXME: This is related to the Pathbuilder imports at the top of the file
-    //                                         new ReplanningConfig()),
-    //          new FlipRedBlueSupplier(), // ()->false, // Change this if the path needs to be flipped on red vs blue
-    //          this); // Subsystem for requirements
-    }
-
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
         if (!enabled)
             return new Command() {
@@ -317,12 +279,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         return run(() -> this.setControl(requestSupplier.get()));
     }
 
-    public Command getAutoPath(String pathName) {
-        if (!enabled)
-            return new Command() {
-            };
-        return new PathPlannerAuto(pathName);
-    }
+    // public Command getAutoPath(String pathName) {
+    //     if (!enabled)
+    //         return new Command() {
+    //         };
+    //     return new PathPlannerAuto(pathName);
+    // }
 
     public ChassisSpeeds getCurrentRobotChassisSpeeds() {
         if (!enabled || Robot.isSimulation())
@@ -378,28 +340,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
 
     /** Log various drivetrain values to the dashboard. */
     public void log() {
-        // String table = "Drive/";
-        // Pose2d pose = this.getState().Pose;
-        // SmartDashboard.putNumber(table + "X", pose.getX());
-        // SmartDashboard.putNumber(table + "Y", pose.getY());
-        // SmartDashboard.putNumber(table + "Heading", pose.getRotation().getDegrees());
-        // ChassisSpeeds chassisSpeeds = getCurrentRobotChassisSpeeds();
-        // SmartDashboard.putNumber(table + "VX", chassisSpeeds.vxMetersPerSecond);
-        // SmartDashboard.putNumber(table + "VY", chassisSpeeds.vyMetersPerSecond);
-        // SmartDashboard.putNumber(
-        // table + "Omega Degrees",
-        // Math.toDegrees(chassisSpeeds.omegaRadiansPerSecond));
-        // SmartDashboard.putNumber(table + "Target VX",
-        // targetChassisSpeeds.vxMetersPerSecond);
-        // SmartDashboard.putNumber(table + "Target VY",
-        // targetChassisSpeeds.vyMetersPerSecond);
-        // SmartDashboard.putNumber(
-        // table + "Target Omega Degrees",
-        // Math.toDegrees(targetChassisSpeeds.omegaRadiansPerSecond));
-
-        // for (SwerveModule module : swerveMods) {
-        // module.log();
-        // }
+    
     }
 
     /**

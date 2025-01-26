@@ -11,7 +11,6 @@ import java.util.OptionalInt;
 import java.util.Scanner;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
-import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -108,7 +107,7 @@ public class Robot extends TimedRobot {
 		// and put our autonomous chooser on the dashboard
 		m_robotContainer = new RobotContainer(driveSubsystem, visionSubsystem, ledSubsystem, elevatorSubsystem);
 
-		PathPlannerLogging.setLogActivePathCallback(null);
+
 		// line below is from questNav
 		Pose2d startingConfiguration = Robot.isRedAlliance()
 				? new Pose2d(15.07, 5.57, new Rotation2d(Math.toRadians(180)))

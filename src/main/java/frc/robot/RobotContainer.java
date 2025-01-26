@@ -16,7 +16,6 @@ import java.util.List;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -37,7 +36,6 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.LEDStringSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 
-import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -229,10 +227,10 @@ public class RobotContainer {
     }));
 
     operatorkPOVLeft.onTrue(new InstantCommand(() -> {
-      visionSubsystem.shootOnMoveFudgeDown();
+
     }));
     operatorkPOVRight.onTrue(new InstantCommand(() -> {
-      visionSubsystem.shootOnMoveFudgeUp();
+
     }));
     /*
      * operatorkStart
@@ -298,37 +296,38 @@ public class RobotContainer {
     return autoPaths;
   }
 
-  public Command getNamedAutonomousCommand(String autoName, boolean redAlliance) {
-    String alliancePathName = autoName;
-    if (!autoName.startsWith("Red_") && !autoName.startsWith("Blu_")) {
-      alliancePathName = (redAlliance ? "Red" : "Blu") + "_" + autoName;
-    }
-    // if the named auto (red or blue) exists, use it as-is and do NOT flip the
-    // field (red/blue)
-    if (autoPaths.keySet().contains(alliancePathName)) {
-      flipRedBlue = false;
-    }
-    // if the named auto does not exist (so there isn't a red one), use the blue one
-    // and flip the field
-    else if (redAlliance && alliancePathName.startsWith("Red_")) {
-      alliancePathName = alliancePathName.replace("Red_", "Blu_");
-      assert autoPaths.keySet().contains(alliancePathName) : "ERROR: you need to create " + alliancePathName;
-      flipRedBlue = true;
-    } else {
-      System.out
-          .println("ERROR: no such auto path name found in src/main/deploy/pathplanner/autos: " + alliancePathName);
-    }
-    // System.out.println("About to get Auto Path: " + alliancePathName);
+    //FIXME:Not sure how to remove pathplanner but also keep this code
+  // public Command getNamedAutonomousCommand(String autoName, boolean redAlliance) {
+  //   String alliancePathName = autoName;
+  //   if (!autoName.startsWith("Red_") && !autoName.startsWith("Blu_")) {
+  //     alliancePathName = (redAlliance ? "Red" : "Blu") + "_" + autoName;
+  //   }
+  //   // if the named auto (red or blue) exists, use it as-is and do NOT flip the
+  //   // field (red/blue)
+  //   if (autoPaths.keySet().contains(alliancePathName)) {
+  //     flipRedBlue = false;
+  //   }
+  //   // if the named auto does not exist (so there isn't a red one), use the blue one
+  //   // and flip the field
+  //   else if (redAlliance && alliancePathName.startsWith("Red_")) {
+  //     alliancePathName = alliancePathName.replace("Red_", "Blu_");
+  //     assert autoPaths.keySet().contains(alliancePathName) : "ERROR: you need to create " + alliancePathName;
+  //     flipRedBlue = true;
+  //   } else {
+  //     System.out
+  //         .println("ERROR: no such auto path name found in src/main/deploy/pathplanner/autos: " + alliancePathName);
+  //   }
+  //   // System.out.println("About to get Auto Path: " + alliancePathName);
 
-    Command command = driveSubsystem.getAutoPath(alliancePathName);
-    assert command != null : "ERROR: unable to get AUTO path for: " + alliancePathName + ".auto";
-    System.out.println("\nAUTO CODE being used by the software --> " + alliancePathName + ", RED/BLUE flipping is "
-        + (flipRedBlue ? "ON" : "OFF") + "\n");
-    SmartDashboard.putString("AUTO_FILE_IN_USE", alliancePathName);
-    SmartDashboard.putBoolean("RED_BLUE_FLIPPING", flipRedBlue);
+  //   Command command = driveSubsystem.getAutoPath(alliancePathName);
+  //   assert command != null : "ERROR: unable to get AUTO path for: " + alliancePathName + ".auto";
+  //   System.out.println("\nAUTO CODE being used by the software --> " + alliancePathName + ", RED/BLUE flipping is "
+  //       + (flipRedBlue ? "ON" : "OFF") + "\n");
+  //   SmartDashboard.putString("AUTO_FILE_IN_USE", alliancePathName);
+  //   SmartDashboard.putBoolean("RED_BLUE_FLIPPING", flipRedBlue);
 
-    return command;
-  }
+  //   return command;
+  // }
   /*
 public  void buildAuto10() {
 
