@@ -9,9 +9,8 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import java.util.HashSet;
 import java.util.Set;
 
-
 public class TestWheelLockCommand extends Command {
-    
+
     // private Swerve swerve;
 
     /**
@@ -25,7 +24,7 @@ public class TestWheelLockCommand extends Command {
     public Set<Subsystem> getRequirements() {
         Set<Subsystem> subsystems = new HashSet<Subsystem>();
         // subsystems.add(swerve);
-        return subsystems; 
+        return subsystems;
     }
 
     @Override

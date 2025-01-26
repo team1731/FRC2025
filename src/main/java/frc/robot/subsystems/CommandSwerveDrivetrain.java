@@ -49,7 +49,6 @@ import com.pathplanner.lib.config.PIDConstants;
 //import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 //import com.pathplanner.lib.util.ReplanningConfig;
 
-
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -73,7 +72,8 @@ class FlipRedBlueSupplier implements BooleanSupplier {
 }
 
 /**
- * Class that extends the Phoenix SwerveDrivetrain class and implements subsystem
+ * Class that extends the Phoenix SwerveDrivetrain class and implements
+ * subsystem
  * so it can be used in command-based projects easily.
  */
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements ToggleableSubsystem {
@@ -84,7 +84,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
     private boolean enabled;
     private final SwerveRequest.ApplyRobotSpeeds autoRequest = new SwerveRequest.ApplyRobotSpeeds();
 
-         /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
+    /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
     /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
     private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
@@ -115,37 +115,34 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
     private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
     private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
 
-    /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
+    /*
+     * SysId routine for characterizing translation. This is used to find PID gains
+     * for the drive motors.
+     */
     private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(
-        new SysIdRoutine.Config(
+            new SysIdRoutine.Config(
             null,        // Use default ramp rate (1 V/s)
-            Volts.of(4), // Reduce dynamic step voltage to 4 V to prevent brownout
+                    Volts.of(4), // Reduce dynamic step voltage to 4 V to prevent brownout
             null,        // Use default timeout (10 s)
-            // Log state with SignalLogger class
-            state -> SignalLogger.writeString("SysIdTranslation_State", state.toString())
-        ),
-        new SysIdRoutine.Mechanism(
-            output -> setControl(m_translationCharacterization.withVolts(output)),
-            null,
-            this
-        )
-    );
+                    // Log state with SignalLogger class
+                    state -> SignalLogger.writeString("SysIdTranslation_State", state.toString())),
+            new SysIdRoutine.Mechanism(
+                    output -> setControl(m_translationCharacterization.withVolts(output)),
+                    null,
+                    this));
 
     /* SysId routine for characterizing steer. This is used to find PID gains for the steer motors. */
     private final SysIdRoutine m_sysIdRoutineSteer = new SysIdRoutine(
-        new SysIdRoutine.Config(
+            new SysIdRoutine.Config(
             null,        // Use default ramp rate (1 V/s)
-            Volts.of(7), // Use dynamic voltage of 7 V
+                    Volts.of(7), // Use dynamic voltage of 7 V
             null,        // Use default timeout (10 s)
-            // Log state with SignalLogger class
-            state -> SignalLogger.writeString("SysIdSteer_State", state.toString())
-        ),
-        new SysIdRoutine.Mechanism(
-            volts -> setControl(m_steerCharacterization.withVolts(volts)),
-            null,
-            this
-        )
-    );
+                    // Log state with SignalLogger class
+                    state -> SignalLogger.writeString("SysIdSteer_State", state.toString())),
+            new SysIdRoutine.Mechanism(
+                    volts -> setControl(m_steerCharacterization.withVolts(volts)),
+                    null,
+                    this));
 
     /*
      * SysId routine for characterizing rotation.
@@ -153,30 +150,27 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
      * See the documentation of SwerveRequest.SysIdSwerveRotation for info on importing the log to SysId.
      */
     private final SysIdRoutine m_sysIdRoutineRotation = new SysIdRoutine(
-        new SysIdRoutine.Config(
-            /* This is in radians per second², but SysId only supports "volts per second" */
-            Volts.of(Math.PI / 6).per(Second),
-            /* This is in radians per second, but SysId only supports "volts" */
-            Volts.of(Math.PI),
-            null, // Use default timeout (10 s)
-            // Log state with SignalLogger class
-            state -> SignalLogger.writeString("SysIdRotation_State", state.toString())
-        ),
-        new SysIdRoutine.Mechanism(
-            output -> {
-                /* output is actually radians per second, but SysId only supports "volts" */
-                setControl(m_rotationCharacterization.withRotationalRate(output.in(Volts)));
-                /* also log the requested output for SysId */
-                SignalLogger.writeDouble("Rotational_Rate", output.in(Volts));
-            },
-            null,
-            this
-        )
-    );
+            new SysIdRoutine.Config(
+                    /* This is in radians per second², but SysId only supports "volts per second" */
+                    Volts.of(Math.PI / 6).per(Second),
+                    /* This is in radians per second, but SysId only supports "volts" */
+                    Volts.of(Math.PI),
+                    null, // Use default timeout (10 s)
+                    // Log state with SignalLogger class
+                    state -> SignalLogger.writeString("SysIdRotation_State", state.toString())),
+            new SysIdRoutine.Mechanism(
+                    output -> {
+                        /* output is actually radians per second, but SysId only supports "volts" */
+                        setControl(m_rotationCharacterization.withRotationalRate(output.in(Volts)));
+                        /* also log the requested output for SysId */
+                        SignalLogger.writeDouble("Rotational_Rate", output.in(Volts));
+                    },
+                    null,
+                    this));
 
     /* The SysId routine to test */
     private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineTranslation;
-    
+
     private void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
@@ -186,23 +180,27 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         return enabled;
     }
 
-    public CommandSwerveDrivetrain(boolean enabled, SwerveDrivetrainConstants driveTrainConstants, double OdometryUpdateFrequency, SwerveModuleConstants<?, ?, ?>... modules) {
+    public CommandSwerveDrivetrain(boolean enabled, SwerveDrivetrainConstants driveTrainConstants,
+            double OdometryUpdateFrequency, SwerveModuleConstants<?, ?, ?>... modules) {
         super(driveTrainConstants, OdometryUpdateFrequency, modules);
         setEnabled(enabled);
-        if(!enabled) return;
-        //configurePathPlanner(true);
-        configureVSLAM();
-    }
-    
-    public CommandSwerveDrivetrain(boolean enabled, SwerveDrivetrainConstants driveTrainConstants, SwerveModuleConstants... modules) {
-        super(driveTrainConstants, modules);
-        setEnabled(enabled);
-        if(!enabled) return;
-        //configurePathPlanner(true);
+        if (!enabled)
+            return;
+        // configurePathPlanner(true);
         configureVSLAM();
     }
 
-        public void configureVSLAM() {
+    public CommandSwerveDrivetrain(boolean enabled, SwerveDrivetrainConstants driveTrainConstants,
+            SwerveModuleConstants... modules) {
+        super(driveTrainConstants, modules);
+        setEnabled(enabled);
+        if (!enabled)
+            return;
+        // configurePathPlanner(true);
+        configureVSLAM();
+    }
+
+    public void configureVSLAM() {
 
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
 
@@ -229,13 +227,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         questEulerAngles = datatable.getFloatArrayTopic("eulerAngles")
                 .subscribe(new float[] { 0.0f, 0.0f, 0.0f });
         questBattery = datatable.getDoubleTopic("batteryLevel").subscribe(0.0f);
-       
-        
-        ShuffleboardTab tab = Shuffleboard.getTab("test");
-        //FIXME: 
-        tab.add(vslamfield);
 
-       
+        ShuffleboardTab tab = Shuffleboard.getTab("test");
+        // FIXME:
+        // tab.add(vslamfield);
+
         System.out.println("addind listener******************************************8");
         // add a listener to only value changes on the Y subscriber
         positionListenerHandle = inst.addListener(
@@ -246,17 +242,20 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
                     var timestampedPosition = questPosition.getAtomic();
                     float[] oculusPosition = timestampedPosition.value;
                     double timestamp = timestampedPosition.timestamp;
-                    timestamp = timestamp/1000000;
+                    timestamp = timestamp / 1000000;
                     Translation2d oculousRawPosition = new Translation2d(-oculusPosition[2], oculusPosition[0]);
-                    Translation2d  oculousPositionCompensated = oculousRawPosition.plus(new Translation2d(0.3333* Math.cos(Math.toRadians(getOculusYaw())), 0.333*Math.sin(Math.toRadians(getOculusYaw())))); // TODO GET Numbers since robot is not in the center of the robot
-                    oculousPositionCompensated = oculousPositionCompensated.plus(startingOffset.getTranslation());  // translate by the starting position
+                    Translation2d oculousPositionCompensated = oculousRawPosition
+                            .plus(new Translation2d(0.3333 * Math.cos(Math.toRadians(getOculusYaw())),
+                                    0.333 * Math.sin(Math.toRadians(getOculusYaw())))); // TODO GET Numbers since robot is not in the center of the robot
+                    oculousPositionCompensated = oculousPositionCompensated.plus(startingOffset.getTranslation()); // translate by the starting position
 
-                    Rotation2d oculousRawRotation = Rotation2d.fromDegrees(getOculusYaw()).plus(Rotation2d.fromDegrees(0));  // since camera is on back of robot
-                    Rotation2d  oculousCompensatedRotation = oculousRawRotation.plus(startingOffset.getRotation());
-                    
+                    Rotation2d oculousRawRotation = Rotation2d.fromDegrees(getOculusYaw())
+                            .plus(Rotation2d.fromDegrees(0)); // since camera is on back of robot
+                    Rotation2d oculousCompensatedRotation = oculousRawRotation.plus(startingOffset.getRotation());
+
                     Pose2d estPose = new Pose2d(oculousPositionCompensated, oculousCompensatedRotation);
-                    
-                    //System.out.println("addind a vslam");
+
+                    // System.out.println("addind a vslam");
                     vslamfield.getObject("MyRobotVSLAM").setPose(estPose);
                     SmartDashboard.putString("VSLAM pose", String.format("(%.2f, %.2f) %.2f %.2f %.2f",
                             estPose.getTranslation().getX(),
@@ -266,8 +265,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
                             Timer.getFPGATimestamp()));
                     if (useVSLAM) {
                         this.addVisionMeasurement(estPose,
-                               timestamp, kVSLAMStdDevs);
-                    } 
+                                timestamp, kVSLAMStdDevs);
+                    }
                 });
 
         // add a listener to see when new topics are published within datatable
@@ -281,18 +280,19 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
                         System.out.println("newly published " + event.topicInfo.name);
                     }
                 });
-            }
+    }
 
-     public void configurePathPlanner(boolean redBlueFlipping) {
-         if(!enabled) return;
-         double driveBaseRadius = 0;
-  
+    public void configurePathPlanner(boolean redBlueFlipping) {
+        if (!enabled)
+            return;
+        double driveBaseRadius = 0;
+
         for (var moduleLocation : getModuleLocations()) {
-             driveBaseRadius = Math.max(driveBaseRadius, moduleLocation.getNorm());
-         }
+            driveBaseRadius = Math.max(driveBaseRadius, moduleLocation.getNorm());
+        }
 
-    //     System.out.println("Configuring AutoBuilder!");
-    // //FIXME:Broken Pathplanner libaries, disabled to build code
+        // System.out.println("Configuring AutoBuilder!");
+        // //FIXME:Broken Pathplanner libaries, disabled to build code
     //     // (SCH) FIXME: This is related to the Pathbuilder imports at the top of the file
     //      AutoBuilder.configureHolonomic(
     //          ()->this.getState().Pose, // Supplier of current robot pose
@@ -310,21 +310,23 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
     //          this); // Subsystem for requirements
     }
 
-            
-
-
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
-        if(!enabled) return new Command(){};
+        if (!enabled)
+            return new Command() {
+            };
         return run(() -> this.setControl(requestSupplier.get()));
     }
 
     public Command getAutoPath(String pathName) {
-        if(!enabled) return new Command(){};
+        if (!enabled)
+            return new Command() {
+            };
         return new PathPlannerAuto(pathName);
     }
 
     public ChassisSpeeds getCurrentRobotChassisSpeeds() {
-        if(!enabled || Robot.isSimulation()) return new ChassisSpeeds();
+        if (!enabled || Robot.isSimulation())
+            return new ChassisSpeeds();
         return getKinematics().toChassisSpeeds(getState().ModuleStates);
     }
 
@@ -340,10 +342,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
             DriverStation.getAlliance().ifPresent(allianceColor -> {
                 setOperatorPerspectiveForward(
-                    allianceColor == Alliance.Red
-                        ? kRedAlliancePerspectiveRotation
-                        : kBlueAlliancePerspectiveRotation
-                );
+                        allianceColor == Alliance.Red
+                                ? kRedAlliancePerspectiveRotation
+                                : kBlueAlliancePerspectiveRotation);
                 m_hasAppliedOperatorPerspective = true;
             });
         }
@@ -353,27 +354,29 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         var chassisSpeeds = getCurrentRobotChassisSpeeds();
         return chassisSpeeds.vxMetersPerSecond;
     }
+
     public double getYVelocity() {
         var chassisSpeeds = getCurrentRobotChassisSpeeds();
         return chassisSpeeds.vyMetersPerSecond;
-        
+
     }
 
-/**
-Log the torque current and velocity
- */
+    /**
+     * Log the torque current and velocity
+     */
     public void logCurrentAndVelocity() {
-       
 
-        //Iterate through each module.
+        // Iterate through each module.
         for (int i = 0; i < 4; ++i) {
-            //Get the Configurator for the current drive motor.
-            SmartDashboard.putNumber("Module " + i + "Torque Current" ,getModules()[i].getDriveMotor().getTorqueCurrent().getValueAsDouble());
-            SmartDashboard.putNumber("Module " + i + "Velocity" ,getModules()[i].getDriveMotor().getVelocity().getValueAsDouble());
+            // Get the Configurator for the current drive motor.
+            SmartDashboard.putNumber("Module " + i + "Torque Current",
+                    getModules()[i].getDriveMotor().getTorqueCurrent().getValueAsDouble());
+            SmartDashboard.putNumber("Module " + i + "Velocity",
+                    getModules()[i].getDriveMotor().getVelocity().getValueAsDouble());
         }
     }
 
-        /** Log various drivetrain values to the dashboard. */
+    /** Log various drivetrain values to the dashboard. */
     public void log() {
         // String table = "Drive/";
         // Pose2d pose = this.getState().Pose;
@@ -384,14 +387,18 @@ Log the torque current and velocity
         // SmartDashboard.putNumber(table + "VX", chassisSpeeds.vxMetersPerSecond);
         // SmartDashboard.putNumber(table + "VY", chassisSpeeds.vyMetersPerSecond);
         // SmartDashboard.putNumber(
-        //         table + "Omega Degrees", Math.toDegrees(chassisSpeeds.omegaRadiansPerSecond));
-        // SmartDashboard.putNumber(table + "Target VX", targetChassisSpeeds.vxMetersPerSecond);
-        // SmartDashboard.putNumber(table + "Target VY", targetChassisSpeeds.vyMetersPerSecond);
+        // table + "Omega Degrees",
+        // Math.toDegrees(chassisSpeeds.omegaRadiansPerSecond));
+        // SmartDashboard.putNumber(table + "Target VX",
+        // targetChassisSpeeds.vxMetersPerSecond);
+        // SmartDashboard.putNumber(table + "Target VY",
+        // targetChassisSpeeds.vyMetersPerSecond);
         // SmartDashboard.putNumber(
-        //         table + "Target Omega Degrees", Math.toDegrees(targetChassisSpeeds.omegaRadiansPerSecond));
+        // table + "Target Omega Degrees",
+        // Math.toDegrees(targetChassisSpeeds.omegaRadiansPerSecond));
 
         // for (SwerveModule module : swerveMods) {
-        //     module.log();
+        // module.log();
         // }
     }
 
@@ -435,57 +442,57 @@ Log the torque current and velocity
     public void zeroHeading() {
         float[] eulerAngles = questEulerAngles.get();
         yaw_offset = eulerAngles[1];
-       // angleSetpoint = 0.0;
-      }
-    
-      // Zero the absolute 3D position of the robot (similar to long-pressing the quest logo)
-      @Override
-      public void resetPose(Pose2d position) {
+        // angleSetpoint = 0.0;
+    }
+
+    // Zero the absolute 3D position of the robot (similar to long-pressing the
+    // quest logo)
+    @Override
+    public void resetPose(Pose2d position) {
         System.out.println("Adjusting the position of the robot");
-       super.resetPose(position);
-       Translation2d cameraoffset = position.getTranslation().minus(new Translation2d(.33333,0));
-        startingOffset = new Pose2d(cameraoffset,position.getRotation());
+        super.resetPose(position);
+        Translation2d cameraoffset = position.getTranslation().minus(new Translation2d(.33333, 0));
+        startingOffset = new Pose2d(cameraoffset, position.getRotation());
         if (questMiso.get() != 99) {
-          questMosi.set(1);
+            questMosi.set(1);
         }
-      }
-    
-      // Clean up oculus subroutine messages after processing on the headset
-      public void cleanUpOculusMessages() {
+    }
+
+    // Clean up oculus subroutine messages after processing on the headset
+    public void cleanUpOculusMessages() {
         if (questMiso.get() == 99) {
-          questMosi.set(0);
+            questMosi.set(0);
         }
-      }
-    
-      // Return the robot heading in degrees, between -180 and 180 degrees
-      public double getHeading() {
+    }
+
+    // Return the robot heading in degrees, between -180 and 180 degrees
+    public double getHeading() {
         return Rotation2d.fromDegrees(getOculusYaw()).getDegrees();
-      }
-    
-      // Get the rotation rate of the robot
-      public double getTurnRate() {
-        return getOculusYaw() ; //* (DriveConstants.kGyroReversed ? -1.0 : 1.0);
-      }
-    
-      // Get the yaw Euler angle of the headset
-      private float getOculusYaw() {
+    }
+
+    // Get the rotation rate of the robot
+    public double getTurnRate() {
+        return getOculusYaw(); // * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+    }
+
+    // Get the yaw Euler angle of the headset
+    private float getOculusYaw() {
         float[] eulerAngles = questEulerAngles.get();
         var ret = eulerAngles[1] - yaw_offset;
         ret %= 360;
         if (ret < 0) {
-          ret += 360;
+            ret += 360;
         }
-        return ret*-1;
-      }
-    
-      private Translation2d getOculusPosition() {
+        return ret * -1;
+    }
+
+    private Translation2d getOculusPosition() {
         float[] oculusPosition = questPosition.get();
         return new Translation2d(oculusPosition[2], -oculusPosition[0]);
-      }
-    
-      private Pose2d getOculusPose() {
+    }
+
+    private Pose2d getOculusPose() {
         var oculousPositionCompensated = getOculusPosition().minus(new Translation2d(0, 0.1651)); // 6.5
         return new Pose2d(oculousPositionCompensated, Rotation2d.fromDegrees(getOculusYaw()));
-      }    
+    }
 }
-

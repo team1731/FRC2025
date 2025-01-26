@@ -49,7 +49,7 @@ public class LEDStringSubsystem extends SubsystemBase implements ToggleableSubsy
       // Set the data
       m_led.setData(m_ledBuffer);
       m_led.start();
-      this.currentColor = LedOption.BLACK;  // set to Off
+      this.currentColor = LedOption.BLACK; // set to Off
       System.out.println("ledSubsystem initailized to: " + this.currentColor.toString());
     }
   }

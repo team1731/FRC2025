@@ -42,127 +42,128 @@ import frc.robot.subsystems.*;
  * project.
  */
 public class Robot extends TimedRobot {
-  private RobotContainer m_robotContainer;
-  private Command m_autonomousCommand;
-  private final SendableChooser<String> autoChooser = new SendableChooser<>();
-  private String autoCode;
-  private String currentKeypadCommand = "";
-  private boolean redAlliance;
-  private int stationNumber = 0;
-  public static long millis = System.currentTimeMillis();
-  
-  private CommandSwerveDrivetrain driveSubsystem;
-  private VisionSubsystem visionSubsystem;
-  private ElevatorSubsystem elevatorSubsystem;
+	private RobotContainer m_robotContainer;
+	private Command m_autonomousCommand;
+	private final SendableChooser<String> autoChooser = new SendableChooser<>();
+	private String autoCode;
+	private String currentKeypadCommand = "";
+	private boolean redAlliance;
+	private int stationNumber = 0;
+	public static long millis = System.currentTimeMillis();
 
- 
+	private CommandSwerveDrivetrain driveSubsystem;
+	private VisionSubsystem visionSubsystem;
+	private ElevatorSubsystem elevatorSubsystem;
 
-  public Robot() {
-  }
+	public Robot() {
+	}
 
-  // SUBSYSTEM DECLARATION
-  private LEDStringSubsystem ledSubsystem;
+	// SUBSYSTEM DECLARATION
+	private LEDStringSubsystem ledSubsystem;
 
-  // NOTE: FOR TESTING PURPOSES ONLY!
-  //private final Joystick driver = new Joystick(0);
-  //private final JoystickButton blinker = null; //new JoystickButton(driver, XboxController.Button.kX.value);
+	// NOTE: FOR TESTING PURPOSES ONLY!
+	// private final Joystick driver = new Joystick(0);
+	// private final JoystickButton blinker = null; //new JoystickButton(driver,
+	// XboxController.Button.kX.value);
 
-
-  /**
+	/**
    * This function is run when the robot is first started up and should be used for any
-   * initialization code.
-   * 
+	 * initialization code.
+	 * 
    * NOTE: ASCII ART from https://textfancy.com/text-art/  ("small negative")
-   */
+	 */
 //   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 //   ██ ▄▄▀██ ▄▄▄ ██ ▄▄▀██ ▄▄▄ █▄▄ ▄▄███▄ ▄██ ▀██ █▄ ▄█▄▄ ▄▄
 //   ██ ▀▀▄██ ███ ██ ▄▄▀██ ███ ███ ██████ ███ █ █ ██ ████ ██
 //   ██ ██ ██ ▀▀▀ ██ ▀▀ ██ ▀▀▀ ███ █████▀ ▀██ ██▄ █▀ ▀███ ██
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-  @Override
-  public void robotInit() {
-	DataLogManager.start();
-	PortForwarder.add(5800, "photonvision.local", 5800);
-	PortForwarder.add(1181, "photonvision.local", 1181);
-	PortForwarder.add(1182, "photonvision.local", 1182);
-	PortForwarder.add(1183, "photonvision.local", 1183);
-	PortForwarder.add(1184, "photonvision.local", 1184);
-	PortForwarder.add(1185, "photonvision.local", 1185);
-	PortForwarder.add(1186, "photonvision.local", 1186);
-	PortForwarder.add(1187, "photonvision.local", 1187);
-//	LogWriter.setupLogging();
-	MessageLog.start();
-	System.out.println("\n\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  EVENT: " + DriverStation.getEventName() + " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n");
+	@Override
+	public void robotInit() {
+		DataLogManager.start();
+		PortForwarder.add(5800, "photonvision.local", 5800);
+		PortForwarder.add(1181, "photonvision.local", 1181);
+		PortForwarder.add(1182, "photonvision.local", 1182);
+		PortForwarder.add(1183, "photonvision.local", 1183);
+		PortForwarder.add(1184, "photonvision.local", 1184);
+		PortForwarder.add(1185, "photonvision.local", 1185);
+		PortForwarder.add(1186, "photonvision.local", 1186);
+		PortForwarder.add(1187, "photonvision.local", 1187);
+		// LogWriter.setupLogging();
+		MessageLog.start();
+		System.out.println("\n\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  EVENT: " + DriverStation.getEventName()
+				+ " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n");
 
-	LiveWindow.disableAllTelemetry();
-	
+		LiveWindow.disableAllTelemetry();
 
-    driveSubsystem = new CommandSwerveDrivetrain(true, TunerConstants.DrivetrainConstants, TunerConstants.FrontLeft, TunerConstants.FrontRight, TunerConstants.BackLeft, TunerConstants.BackRight);
+		driveSubsystem = new CommandSwerveDrivetrain(true, TunerConstants.DrivetrainConstants, TunerConstants.FrontLeft,
+				TunerConstants.FrontRight, TunerConstants.BackLeft, TunerConstants.BackRight);
 
-	ledSubsystem = new LEDStringSubsystem(true);
-	
+		ledSubsystem = new LEDStringSubsystem(true);
 
-	visionSubsystem = new VisionSubsystem(true, driveSubsystem);
+		visionSubsystem = new VisionSubsystem(true, driveSubsystem);
 
-	elevatorSubsystem = new ElevatorSubsystem(true);
+		elevatorSubsystem = new ElevatorSubsystem(true);
 
 	// Instantiate our robot container. This will perform all of our button bindings,
-	// and put our autonomous chooser on the dashboard
-	m_robotContainer = new RobotContainer(driveSubsystem, visionSubsystem, ledSubsystem, elevatorSubsystem);
+		// and put our autonomous chooser on the dashboard
+		m_robotContainer = new RobotContainer(driveSubsystem, visionSubsystem, ledSubsystem, elevatorSubsystem);
 
-	PathPlannerLogging.setLogActivePathCallback(null);
-	//line below is from questNav
-	Pose2d startingConfiguration = Robot.isRedAlliance()? new Pose2d(15.07,5.57, new Rotation2d(Math.toRadians(180))): new Pose2d(1.47,5.51, new Rotation2d (0));
-	//Pose2d startingConfiguration = new Pose2d(1.47,5.51, new Rotation2d (0));
-	driveSubsystem.resetPose(startingConfiguration);
-	Rotation2d operatorPerspective = Robot.isRedAlliance()? new Rotation2d(Math.toRadians(180)): new Rotation2d(Math.toRadians(0));
-	driveSubsystem.setOperatorPerspectiveForward(operatorPerspective);
-	
-	
-	initSubsystems();
-    visionSubsystem.useVision(false);
-	ledSubsystem.setColor(LedOption.INIT);
-	//m_robotContainer.buildAuto10();
-	String[] autoModes = RobotContainer.deriveAutoModes();
-	for(String autoMode: autoModes){
-	
-		autoChooser.addOption(autoMode, autoMode);
-		System.out.println("Added autoMode '" + autoMode + "' to autoChooser.");
-	}
-	autoChooser.setDefaultOption(Constants.AutoConstants.kAutoDefault, Constants.AutoConstants.kAutoDefault);
-    SmartDashboard.putData(AutoConstants.kAutoCodeKey, autoChooser);
-	SmartDashboard.putString("Build Info - Branch", "N/A");
-	SmartDashboard.putString("Build Info - Commit Hash", "N/A");
-	SmartDashboard.putString("Build Info - Date", "N/A");
+		PathPlannerLogging.setLogActivePathCallback(null);
+		// line below is from questNav
+		Pose2d startingConfiguration = Robot.isRedAlliance()
+				? new Pose2d(15.07, 5.57, new Rotation2d(Math.toRadians(180)))
+				: new Pose2d(1.47, 5.51, new Rotation2d(0));
+		// Pose2d startingConfiguration = new Pose2d(1.47,5.51, new Rotation2d (0));
+		driveSubsystem.resetPose(startingConfiguration);
+		Rotation2d operatorPerspective = Robot.isRedAlliance() ? new Rotation2d(Math.toRadians(180))
+				: new Rotation2d(Math.toRadians(0));
+		driveSubsystem.setOperatorPerspectiveForward(operatorPerspective);
 
-	/*
-	 * Note: do not think this is implemented in the gradle build, if we want to print this we will need to carry that over
-	 */
-	try {
-		File buildInfoFile = new File(Filesystem.getDeployDirectory(), "DeployedBranchInfo.txt");
-		if(buildInfoFile.exists() && buildInfoFile.canRead()){
-			Scanner reader = new Scanner(buildInfoFile);
-			int i = 0;
-			while(reader.hasNext()){
-				if(i == 0){
-					SmartDashboard.putString("Build Info - Branch", reader.nextLine());
-				} else if(i == 1){
-					SmartDashboard.putString("Build Info - Commit Hash", reader.nextLine());
-				} else {
-					SmartDashboard.putString("Build Info - Date", reader.nextLine());
-				}
-				i++;
-			}			
-			reader.close();
+		initSubsystems();
+		visionSubsystem.useVision(false);
+		ledSubsystem.setColor(LedOption.INIT);
+		// m_robotContainer.buildAuto10();
+		String[] autoModes = RobotContainer.deriveAutoModes();
+		for (String autoMode : autoModes) {
+
+			autoChooser.addOption(autoMode, autoMode);
+			System.out.println("Added autoMode '" + autoMode + "' to autoChooser.");
 		}
-	} catch (FileNotFoundException fnf) {
-		System.err.println("DeployedBranchInfo.txt not found");
-		fnf.printStackTrace();
+		autoChooser.setDefaultOption(Constants.AutoConstants.kAutoDefault, Constants.AutoConstants.kAutoDefault);
+		SmartDashboard.putData(AutoConstants.kAutoCodeKey, autoChooser);
+		SmartDashboard.putString("Build Info - Branch", "N/A");
+		SmartDashboard.putString("Build Info - Commit Hash", "N/A");
+		SmartDashboard.putString("Build Info - Date", "N/A");
+
+		/*
+		 * Note: do not think this is implemented in the gradle build, if we want to
+		 * print this we will need to carry that over
+		 */
+		try {
+			File buildInfoFile = new File(Filesystem.getDeployDirectory(), "DeployedBranchInfo.txt");
+			if (buildInfoFile.exists() && buildInfoFile.canRead()) {
+				Scanner reader = new Scanner(buildInfoFile);
+				int i = 0;
+				while (reader.hasNext()) {
+					if (i == 0) {
+						SmartDashboard.putString("Build Info - Branch", reader.nextLine());
+					} else if (i == 1) {
+						SmartDashboard.putString("Build Info - Commit Hash", reader.nextLine());
+					} else {
+						SmartDashboard.putString("Build Info - Date", reader.nextLine());
+					}
+					i++;
+				}
+				reader.close();
+			}
+		} catch (FileNotFoundException fnf) {
+			System.err.println("DeployedBranchInfo.txt not found");
+			fnf.printStackTrace();
+		}
+		SmartDashboard.updateValues();
+		autoInitPreload();
 	}
-	SmartDashboard.updateValues();
-	autoInitPreload();
-  }
-  
+
 
 //   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 //   █▄ ▄██ ▄▄▄ ████ ▄▄▀██ ▄▄▄██ ▄▄▀███ ▄▄▀██ █████ ████▄ ▄█ ▄▄▀██ ▀██ ██ ▄▄▀██ ▄▄▄
@@ -170,22 +171,21 @@ public class Robot extends TimedRobot {
 //   █▀ ▀██ ▀▀▀ ████ ██ ██ ▀▀▀██ ▀▀ ███ ██ ██ ▀▀ ██ ▀▀ █▀ ▀█ ██ ██ ██▄ ██ ▀▀▄██ ▀▀▀
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
   public static boolean isRedAlliance(){
-	Optional<Alliance> alliance = DriverStation.getAlliance();
-	if(alliance.isPresent()){
-		return alliance.get() == DriverStation.Alliance.Red;
+		Optional<Alliance> alliance = DriverStation.getAlliance();
+		if (alliance.isPresent()) {
+			return alliance.get() == DriverStation.Alliance.Red;
+		}
+		return false;
 	}
-	return false;
-  }
-
 
 // ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 // ██ ▄▄ ██ ▄▄▄█▄▄ ▄▄████ ▄▄▄ █▄▄ ▄▄█ ▄▄▀█▄▄ ▄▄█▄ ▄██ ▄▄▄ ██ ▀██ ████ ▀██ ██ ██ ██ ▄▀▄ ██ ▄▄▀██ ▄▄▄██ ▄▄▀
 // ██ █▀▀██ ▄▄▄███ ██████▄▄▄▀▀███ ███ ▀▀ ███ ████ ███ ███ ██ █ █ ████ █ █ ██ ██ ██ █ █ ██ ▄▄▀██ ▄▄▄██ ▀▀▄
 // ██ ▀▀▄██ ▀▀▀███ ██████ ▀▀▀ ███ ███ ██ ███ ███▀ ▀██ ▀▀▀ ██ ██▄ ████ ██▄ ██▄▀▀▄██ ███ ██ ▀▀ ██ ▀▀▀██ ██ 
 // ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-  private OptionalInt getStationNumber(){
-	return DriverStation.getLocation();
-  }
+	private OptionalInt getStationNumber() {
+		return DriverStation.getLocation();
+	}
 
 
 //   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
@@ -193,24 +193,23 @@ public class Robot extends TimedRobot {
 //   █ ▀▀ ██ ██ ███ ████ ███ ████ ███ █ █ ██ ████ ██████ ▀▀ ██ ▀▀▄██ ▄▄▄██ █████ ███ █ ▀▀ ██ ██ 
 //   █ ██ ██▄▀▀▄███ ████ ▀▀▀ ███▀ ▀██ ██▄ █▀ ▀███ ██████ █████ ██ ██ ▀▀▀██ ▀▀ ██ ▀▀▀ █ ██ ██ ▀▀ 
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-  private void autoInitPreload() {
-	m_autonomousCommand = null;
+	private void autoInitPreload() {
+		m_autonomousCommand = null;
 
-	String useCode = autoChooser.getSelected();
-	if(useCode == null){
-		useCode = (autoCode == null ? Constants.AutoConstants.kAutoDefault : autoCode);
-	}
+		String useCode = autoChooser.getSelected();
+		if (useCode == null) {
+			useCode = (autoCode == null ? Constants.AutoConstants.kAutoDefault : autoCode);
+		}
 
-	System.out.println("\nPreloading AUTO CODE --> " + useCode);
+		System.out.println("\nPreloading AUTO CODE --> " + useCode);
 	//m_autonomousCommand = m_robotContainer.getNamedAutonomousCommand(useCode, redAlliance);
-	if(m_autonomousCommand != null){
-		autoCode = useCode;
-		System.out.println("\n=====>>> PRELOADED AUTONOMOUS COMMAND: " + m_autonomousCommand);
+	if (m_autonomousCommand != null){
+			autoCode = useCode;
+			System.out.println("\n=====>>> PRELOADED AUTONOMOUS COMMAND: " + m_autonomousCommand);
+		} else {
+			System.out.println("\nAUTO CODE " + useCode + " IS NOT IMPLEMENTED -- STAYING WITH AUTO CODE " + autoCode);
+		}
 	}
-	else{
-		System.out.println("\nAUTO CODE " + useCode + " IS NOT IMPLEMENTED -- STAYING WITH AUTO CODE " + autoCode);
-	}
-}
 
 
 //   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
@@ -218,46 +217,44 @@ public class Robot extends TimedRobot {
 //   ██ ███ █ █ ██ ████ ██████▄▄▄▀▀██ ██ ██ ▄▄▀██▄▄▄▀▀██▄▀▀▀▄██▄▄▄▀▀███ ████ ▄▄▄██ █ █ ██▄▄▄▀▀
 //   █▀ ▀██ ██▄ █▀ ▀███ ██████ ▀▀▀ ██▄▀▀▄██ ▀▀ ██ ▀▀▀ ████ ████ ▀▀▀ ███ ████ ▀▀▀██ ███ ██ ▀▀▀ 
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-  private void initSubsystems() {
-	ledSubsystem.init();
-  }
-  
+	private void initSubsystems() {
+		ledSubsystem.init();
+	}
 
-  /**
+	/**
    * This function is called every robot packet, no matter the mode. Use this for items like
    * diagnostics that you want ran during disabled, autonomous, teleoperated and test.
-   *
+	 *
    * <p>This runs after the mode specific periodic functions, but before LiveWindow and
-   * SmartDashboard integrated updating.
-   */
+	 * SmartDashboard integrated updating.
+	 */
 // ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 // ██ ▄▄▀██ ▄▄▄ ██ ▄▄▀██ ▄▄▄ █▄▄ ▄▄████ ▄▄ ██ ▄▄▄██ ▄▄▀█▄ ▄██ ▄▄▄ ██ ▄▄▀█▄ ▄██ ▄▄▀
 // ██ ▀▀▄██ ███ ██ ▄▄▀██ ███ ███ ██████ ▀▀ ██ ▄▄▄██ ▀▀▄██ ███ ███ ██ ██ ██ ███ ███
 // ██ ██ ██ ▀▀▀ ██ ▀▀ ██ ▀▀▀ ███ ██████ █████ ▀▀▀██ ██ █▀ ▀██ ▀▀▀ ██ ▀▀ █▀ ▀██ ▀▀▄
 // ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-  @Override
-  public void robotPeriodic() {
+	@Override
+	public void robotPeriodic() {
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
-    // block in order for anything in the Command-based framework to work.
-    CommandScheduler.getInstance().run();
-    driveSubsystem.cleanUpOculusMessages();
-	//m_robotContainer.displayEncoders();
-  }
+		// block in order for anything in the Command-based framework to work.
+		CommandScheduler.getInstance().run();
+		driveSubsystem.cleanUpOculusMessages();
+		// m_robotContainer.displayEncoders();
+	}
 
-
-/** This function is called once each time the robot enters Disabled mode. */
+	/** This function is called once each time the robot enters Disabled mode. */
 //   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 //   ██ ▄▄▀█▄ ▄██ ▄▄▄ █ ▄▄▀██ ▄▄▀██ █████ ▄▄▄██ ▄▄▀███▄ ▄██ ▀██ █▄ ▄█▄▄ ▄▄
 //   ██ ██ ██ ███▄▄▄▀▀█ ▀▀ ██ ▄▄▀██ █████ ▄▄▄██ ██ ████ ███ █ █ ██ ████ ██
 //   ██ ▀▀ █▀ ▀██ ▀▀▀ █ ██ ██ ▀▀ ██ ▀▀ ██ ▀▀▀██ ▀▀ ███▀ ▀██ ██▄ █▀ ▀███ ██
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-  @Override
-  public void disabledInit() {
-	ledSubsystem.setBlink(false);
-	ledSubsystem.setColor(OpConstants.LedOption.INIT);
-  }
+	@Override
+	public void disabledInit() {
+		ledSubsystem.setBlink(false);
+		ledSubsystem.setColor(OpConstants.LedOption.INIT);
+	}
 
 
 //   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
@@ -265,37 +262,40 @@ public class Robot extends TimedRobot {
 //   ██ ██ ██ ███▄▄▄▀▀█ ▀▀ ██ ▄▄▀██ █████ ▄▄▄██ ██ ████ ▀▀ ██ ▄▄▄██ ▀▀▄██ ███ ███ ██ ██ ██ ███ ███
 //   ██ ▀▀ █▀ ▀██ ▀▀▀ █ ██ ██ ▀▀ ██ ▀▀ ██ ▀▀▀██ ▀▀ ████ █████ ▀▀▀██ ██ █▀ ▀██ ▀▀▀ ██ ▀▀ █▀ ▀██ ▀▀▄
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-  @Override
-  public void disabledPeriodic() {
-	String newCode = autoChooser.getSelected();
-	if(newCode == null) newCode = Constants.AutoConstants.kAutoDefault;
-	if(!newCode.equals(autoCode)) {
-		System.out.println("New Auto Code read from dashboard. OLD: " + autoCode + ", NEW: " + newCode);
-		autoInitPreload();
-	}
+	@Override
+	public void disabledPeriodic() {
+		String newCode = autoChooser.getSelected();
+		if (newCode == null)
+			newCode = Constants.AutoConstants.kAutoDefault;
+		if (!newCode.equals(autoCode)) {
+			System.out.println("New Auto Code read from dashboard. OLD: " + autoCode + ", NEW: " + newCode);
+			autoInitPreload();
+		}
 
-	boolean redAlliance = Robot.isRedAlliance();
-	if(this.redAlliance != redAlliance){
-		this.redAlliance = redAlliance;
-		System.out.println("\n\n===============>>>>>>>>>>>>>>  WE ARE " + (redAlliance?"RED":"BLUE") + " ALLIANCE  <<<<<<<<<<<<=========================");
-		this.autoInitPreload();
-	}
+		boolean redAlliance = Robot.isRedAlliance();
+		if (this.redAlliance != redAlliance) {
+			this.redAlliance = redAlliance;
+			System.out.println("\n\n===============>>>>>>>>>>>>>>  WE ARE " + (redAlliance ? "RED" : "BLUE")
+					+ " ALLIANCE  <<<<<<<<<<<<=========================");
+			this.autoInitPreload();
+		}
 
-	if(Robot.isReal()){
-		try{
-			OptionalInt stationNumberInt = getStationNumber();
-			if(stationNumberInt.isPresent()) {
-				int stationNumber = stationNumberInt.getAsInt();
-				if(this.stationNumber != stationNumber){
-					this.stationNumber = stationNumber;
-					System.out.println("===============>>>>>>>>>>>>>>  WE ARE STATION NUMBER " + stationNumber + "  <<<<<<<<<<<<=========================\n");
+		if (Robot.isReal()) {
+			try {
+				OptionalInt stationNumberInt = getStationNumber();
+				if (stationNumberInt.isPresent()) {
+					int stationNumber = stationNumberInt.getAsInt();
+					if (this.stationNumber != stationNumber) {
+						this.stationNumber = stationNumber;
+						System.out.println("===============>>>>>>>>>>>>>>  WE ARE STATION NUMBER " + stationNumber
+								+ "  <<<<<<<<<<<<=========================\n");
+					}
 				}
+			} catch (Exception e) {
+				System.out.println("Exception caught while looking for station number! == " + e);
 			}
-		} catch (Exception e){
-			System.out.println("Exception caught while looking for station number! == " + e);
 		}
 	}
-  }
 
 
 /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
@@ -304,21 +304,20 @@ public class Robot extends TimedRobot {
 //   █ ▀▀ ██ ██ ███ ████ ███ ██ █ █ ██ ███ ██ █ █ ██ ███ ██ ██ ██▄▄▄▀▀████ ███ █ █ ██ ████ ██
 //   █ ██ ██▄▀▀▄███ ████ ▀▀▀ ██ ██▄ ██ ▀▀▀ ██ ███ ██ ▀▀▀ ██▄▀▀▄██ ▀▀▀ ███▀ ▀██ ██▄ █▀ ▀███ ██
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-  @Override
-  public void autonomousInit() {
+	@Override
+	public void autonomousInit() {
 		visionSubsystem.useVision(false);
-    	System.out.println("AUTO INIT");
+		System.out.println("AUTO INIT");
 		CommandScheduler.getInstance().cancelAll();
 
-	if(m_autonomousCommand == null) {
-		System.out.println("SOMETHING WENT WRONG - UNABLE TO RUN AUTONOMOUS! CHECK SOFTWARE!");
-	}
-	else {
-        	System.out.println("------------> RUNNING AUTONOMOUS COMMAND: " + m_autonomousCommand + " <----------");
+		if (m_autonomousCommand == null) {
+			System.out.println("SOMETHING WENT WRONG - UNABLE TO RUN AUTONOMOUS! CHECK SOFTWARE!");
+		} else {
+			System.out.println("------------> RUNNING AUTONOMOUS COMMAND: " + m_autonomousCommand + " <----------");
 			m_autonomousCommand.schedule();
 		}
-    	System.out.println("autonomousInit: End");
-  }
+		System.out.println("autonomousInit: End");
+	}
 
 
 //   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
@@ -326,94 +325,93 @@ public class Robot extends TimedRobot {
 //   █ ▀▀ ██ ██ ███ ████ ███ ██ █ █ ██ ███ ██ █ █ ██ ███ ██ ██ ██▄▄▄▀▀████ ▀▀ ██ ▄▄▄██ ▀▀▄██ ███ ███ ██ ██ ██ ███ ███
 //   █ ██ ██▄▀▀▄███ ████ ▀▀▀ ██ ██▄ ██ ▀▀▀ ██ ███ ██ ▀▀▀ ██▄▀▀▄██ ▀▀▀ ████ █████ ▀▀▀██ ██ █▀ ▀██ ▀▀▀ ██ ▀▀ █▀ ▀██ ▀▀▄
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-  @Override
-  public void autonomousPeriodic() {
-    if(doSD()){ System.out.println("AUTO PERIODIC");}
-  }
-
+	@Override
+	public void autonomousPeriodic() {
+		if (doSD()) {
+			System.out.println("AUTO PERIODIC");
+		}
+	}
 
 //   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 //   █▄▄ ▄▄██ ▄▄▄██ █████ ▄▄▄██ ▄▄▄ ██ ▄▄ ███▄ ▄██ ▀██ █▄ ▄█▄▄ ▄▄
 //   ███ ████ ▄▄▄██ █████ ▄▄▄██ ███ ██ ▀▀ ████ ███ █ █ ██ ████ ██
 //   ███ ████ ▀▀▀██ ▀▀ ██ ▀▀▀██ ▀▀▀ ██ ██████▀ ▀██ ██▄ █▀ ▀███ ██
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-  @Override
-  public void teleopInit() {	
+	@Override
+	public void teleopInit() {
 
-	visionSubsystem.useVision(false);
-	ledSubsystem.setColor(LedOption.GREEN);
-    /* 
+		visionSubsystem.useVision(false);
+		ledSubsystem.setColor(LedOption.GREEN);
+		/*
 	intakeSubsystem.stopIntake();
 	intakeSubsystem.stopJiggle();
 	intakeSubsystem.stopFireNote();
-	*/
+		 */
 	//driveSubsystem.seedFieldRelative(new Pose2d(new Translation2d(0,0), new Rotation2d(120)));
-	
-	// Record both DS control and joystick data in TELEOP
-	MessageLog.getLogger();
-	System.out.println("TELEOP INIT");
-	CommandScheduler.getInstance().cancelAll();
-	initSubsystems();
 
-	if (m_autonomousCommand != null) {
-		m_autonomousCommand.cancel();
+		// Record both DS control and joystick data in TELEOP
+		MessageLog.getLogger();
+		System.out.println("TELEOP INIT");
+		CommandScheduler.getInstance().cancelAll();
+		initSubsystems();
+
+		if (m_autonomousCommand != null) {
+			m_autonomousCommand.cancel();
+		}
+		currentKeypadCommand = "";
+		SmartDashboard.getString("keypadCommand", currentKeypadCommand);
 	}
-	currentKeypadCommand = "";
-	SmartDashboard.getString("keypadCommand", currentKeypadCommand);
-  }
 
 //   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 //   ██ ▄▄▀██ ▄▄▄ ████ ▄▄▄ ██ ▄▄▀
 //   ██ ██ ██ ███ ████▄▄▄▀▀██ ██ 
 //   ██ ▀▀ ██ ▀▀▀ ████ ▀▀▀ ██ ▀▀ 
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-  public static boolean doSD() {
-	long now = System.currentTimeMillis();
-	if (now - millis > 1000) {
-		MessageLog.getLogger().flush();
-		millis = now;
-		return true;
+	public static boolean doSD() {
+		long now = System.currentTimeMillis();
+		if (now - millis > 1000) {
+			MessageLog.getLogger().flush();
+			millis = now;
+			return true;
+		}
+		return false;
 	}
-	return false;
-  }
 
-/** This function is called periodically during operator control. */
+	/** This function is called periodically during operator control. */
 //   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 //   █▄▄ ▄▄██ ▄▄▄██ █████ ▄▄▄██ ▄▄▄ ██ ▄▄ ████ ▄▄ ██ ▄▄▄██ ▄▄▀█▄ ▄██ ▄▄▄ ██ ▄▄▀█▄ ▄██ ▄▄▀
 //   ███ ████ ▄▄▄██ █████ ▄▄▄██ ███ ██ ▀▀ ████ ▀▀ ██ ▄▄▄██ ▀▀▄██ ███ ███ ██ ██ ██ ███ ███
 //   ███ ████ ▀▀▀██ ▀▀ ██ ▀▀▀██ ▀▀▀ ██ ███████ █████ ▀▀▀██ ██ █▀ ▀██ ▀▀▀ ██ ▀▀ █▀ ▀██ ▀▀▄
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-  @Override
-  public void teleopPeriodic() {
+	@Override
+	public void teleopPeriodic() {
 
-	//if(doSD()){
-	//	System.out.println("TELEOP PERIODIC");
-	//}
-		
-  }
+		// if(doSD()){
+		// System.out.println("TELEOP PERIODIC");
+		// }
 
+	}
 
 //   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 //   █▄▄ ▄▄██ ▄▄▄██ ▄▄▄ █▄▄ ▄▄███▄ ▄██ ▀██ █▄ ▄█▄▄ ▄▄
 //   ███ ████ ▄▄▄██▄▄▄▀▀███ ██████ ███ █ █ ██ ████ ██
 //   ███ ████ ▀▀▀██ ▀▀▀ ███ █████▀ ▀██ ██▄ █▀ ▀███ ██
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-  @Override
-  public void testInit() {
-    // Cancels all running commands at the start of test mode.
-	CommandScheduler.getInstance().cancelAll();
-  }
+	@Override
+	public void testInit() {
+		// Cancels all running commands at the start of test mode.
+		CommandScheduler.getInstance().cancelAll();
+	}
 
-
-  /** This function is called periodically during test mode. */
+	/** This function is called periodically during test mode. */
 //   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 //   █▄▄ ▄▄██ ▄▄▄██ ▄▄▄ █▄▄ ▄▄████ ▄▄ ██ ▄▄▄██ ▄▄▀█▄ ▄██ ▄▄▄ ██ ▄▄▀█▄ ▄██ ▄▄▀
 //   ███ ████ ▄▄▄██▄▄▄▀▀███ ██████ ▀▀ ██ ▄▄▄██ ▀▀▄██ ███ ███ ██ ██ ██ ███ ███
 //   ███ ████ ▀▀▀██ ▀▀▀ ███ ██████ █████ ▀▀▀██ ██ █▀ ▀██ ▀▀▀ ██ ▀▀ █▀ ▀██ ▀▀▄
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-  @Override
-  public void testPeriodic() {
+	@Override
+	public void testPeriodic() {
 
-  }
+	}
 
 }
