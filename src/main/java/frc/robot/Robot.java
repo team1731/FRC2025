@@ -171,7 +171,7 @@ public class Robot extends TimedRobot {
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
   public static boolean isRedAlliance(){
 	Optional<Alliance> alliance = DriverStation.getAlliance();
-	if(alliance != null){
+	if(alliance.isPresent()){
 		return alliance.get() == DriverStation.Alliance.Red;
 	}
 	return false;
@@ -202,7 +202,7 @@ public class Robot extends TimedRobot {
 	}
 
 	System.out.println("\nPreloading AUTO CODE --> " + useCode);
-	m_autonomousCommand = m_robotContainer.getNamedAutonomousCommand(useCode, redAlliance);
+	//m_autonomousCommand = m_robotContainer.getNamedAutonomousCommand(useCode, redAlliance);
 	if(m_autonomousCommand != null){
 		autoCode = useCode;
 		System.out.println("\n=====>>> PRELOADED AUTONOMOUS COMMAND: " + m_autonomousCommand);
