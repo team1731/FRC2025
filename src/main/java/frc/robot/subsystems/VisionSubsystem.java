@@ -225,8 +225,6 @@ public class VisionSubsystem extends SubsystemBase implements ToggleableSubsyste
             }
         }
 
-        getDistanceToSpeakerInMeters(); // probably want to comment this out after testing
-
         if (enabled && initialized) {
 
             if (photonEstimatorFront != null) {
@@ -261,7 +259,7 @@ public class VisionSubsystem extends SubsystemBase implements ToggleableSubsyste
                 }
             }
 
-            if ((photonEstimatorBack != null) && !runningTrapPath && !isZoomCameraReadingValid) {
+            if ((photonEstimatorBack != null) && !runningTrapPath && !isZoomCameraReadingValid) {  
                 // Correct pose estimate with vision measurements
                 try {
                     var visionEstBack = getEstimatedGlobalPoseBack();
@@ -378,31 +376,14 @@ public class VisionSubsystem extends SubsystemBase implements ToggleableSubsyste
 
         return estStdDevs;
     }
-
-    public Rotation2d getHeadingToSpeakerInRad() {
-        Pose2d target = Robot.isRedAlliance() ? redGoal : blueGoal;
-        Pose2d robot = getAdjustedRobotPose();
-        double headingToTarget = Math.atan((target.getY() - robot.getY()) / (robot.getX() - target.getX()));
-        SmartDashboard.putNumber("HeadingToTarget", headingToTarget);
-        // System.out.println("getting heading");
-        return new Rotation2d(-headingToTarget);
-    }
-
-    public double getDistanceToSpeakerInMeters() {
-        Pose2d target = Robot.isRedAlliance() ? redGoal : blueGoal;
-        Pose2d robot = getAdjustedRobotPose();
-        double distance = PhotonUtils.getDistanceToPose(target, robot);
-        // SmartDashboard.putNumber("DistanceToTarget", distance);
-        return distance;
-    }
-
-    public double getStaticDistanceToSpeakerInMeters() {
-        Pose2d target = Robot.isRedAlliance() ? redGoal : blueGoal;
-        Pose2d robot = m_driveSubsystem.getState().Pose;
-        double distance = PhotonUtils.getDistanceToPose(target, robot);
-        SmartDashboard.putNumber("DistanceToTarget", distance);
-        return distance;
-    }
+        //FIXME: getDistanceToSpeakerInMeters() should to be removed for 2025
+    // public double getStaticDistanceToSpeakerInMeters() {
+    //     Pose2d target = Robot.isRedAlliance() ? redGoal : blueGoal;
+    //     Pose2d robot = m_driveSubsystem.getState().Pose;
+    //     double distance = PhotonUtils.getDistanceToPose(target, robot);
+    //     SmartDashboard.putNumber("DistanceToTarget", distance);
+    //     return distance;
+    // }
 
     public double getDistanceToTargetForAuto() {
         // double robotXSpeed = m_driveSubsystem.getXVelocity();
@@ -432,65 +413,47 @@ public class VisionSubsystem extends SubsystemBase implements ToggleableSubsyste
         return (mypigeon.getAccelerationY().getValueAsDouble()) * 9.81;
     }
 
-    public Pose2d getAdjustedRobotPose() {
-        double robotXSpeed = m_driveSubsystem.getXVelocity();
-        double robotYSpeed = m_driveSubsystem.getYVelocity();
-        double robotXAcceleration = -getAccelerationY();
-        double robotYAcceleration = getAccelerationX();
-        Pose2d robot = new Pose2d(m_driveSubsystem.getState().Pose.getX(), m_driveSubsystem.getState().Pose.getY(),
-                m_driveSubsystem.getState().Pose.getRotation());
+        //FIXME: code below utilzes getDistanceToSpeakerInMeters() which should to be removed for 2025
+    // public Pose2d getAdjustedRobotPose() {
+    //     double robotXSpeed = m_driveSubsystem.getXVelocity();
+    //     double robotYSpeed = m_driveSubsystem.getYVelocity();
+    //     double robotXAcceleration = -getAccelerationY();
+    //     double robotYAcceleration = getAccelerationX();
+    //     Pose2d robot = new Pose2d(m_driveSubsystem.getState().Pose.getX(), m_driveSubsystem.getState().Pose.getY(),
+    //             m_driveSubsystem.getState().Pose.getRotation());
 
-        double shotTime = (getStaticDistanceToSpeakerInMeters() / (3.81 * 2 * Math.PI)) * shootOnMoveFudgeFactor; //speed of shot in m/s
+    //     double shotTime = (getStaticDistanceToSpeakerInMeters() / (3.81 * 2 * Math.PI)) * shootOnMoveFudgeFactor; //speed of shot in m/s
 
-        SmartDashboard.putNumber("ShootOnMove Fudge Factor: ", shootOnMoveFudgeFactor);
 
-        Transform2d adjustment = new Transform2d(
-                robotXSpeed * shotTime + 0.5 * robotXAcceleration * shotTime * shotTime,
-                robotYSpeed * shotTime + 0.5 * robotYAcceleration * shotTime * shotTime, new Rotation2d());
+    //     Transform2d adjustment = new Transform2d(
+    //             robotXSpeed * shotTime + 0.5 * robotXAcceleration * shotTime * shotTime,
+    //             robotYSpeed * shotTime + 0.5 * robotYAcceleration * shotTime * shotTime, new Rotation2d());
 
-        SmartDashboard.putNumber("x adjustment",
-                robotXSpeed * shotTime + 0.5 * robotXAcceleration * shotTime * shotTime);
-        SmartDashboard.putNumber("y adjustment",
-                robotYSpeed * shotTime + 0.5 * robotYAcceleration * shotTime * shotTime);
+    //     SmartDashboard.putNumber("x adjustment",
+    //             robotXSpeed * shotTime + 0.5 * robotXAcceleration * shotTime * shotTime);
+    //     SmartDashboard.putNumber("y adjustment",
+    //             robotYSpeed * shotTime + 0.5 * robotYAcceleration * shotTime * shotTime);
 
-        if (Robot.isRedAlliance()) {
-            robot.rotateBy(new Rotation2d(Math.toRadians(180)));
-        }
+    //     if (Robot.isRedAlliance()) {
+    //         robot.rotateBy(new Rotation2d(Math.toRadians(180)));
+    //     }
 
-        SmartDashboard.putNumber("RobotXSpeed", robotXSpeed);
-        SmartDashboard.putNumber("RobotYSpeed", robotYSpeed);
-        SmartDashboard.putNumber("RobotXAcceleration", robotXAcceleration);
-        SmartDashboard.putNumber("RobotYAcceleration", robotYAcceleration);
+    //     SmartDashboard.putNumber("RobotXSpeed", robotXSpeed);
+    //     SmartDashboard.putNumber("RobotYSpeed", robotYSpeed);
+    //     SmartDashboard.putNumber("RobotXAcceleration", robotXAcceleration);
+    //     SmartDashboard.putNumber("RobotYAcceleration", robotYAcceleration);
 
-        robot.rotateBy(m_driveSubsystem.getState().Pose.getRotation());
+    //     robot.rotateBy(m_driveSubsystem.getState().Pose.getRotation());
 
-        Pose2d adjustedRobotPose = robot.plus(adjustment);
+    //     Pose2d adjustedRobotPose = robot.plus(adjustment);
 
-        // field2d.getObject("MyRobotAdjusted").setPose(adjustedRobotPose);
+    //     // field2d.getObject("MyRobotAdjusted").setPose(adjustedRobotPose);
 
-        return adjustedRobotPose;
-    }
-
-    public void shootOnMoveFudgeDown() {
-        shootOnMoveFudgeFactor = shootOnMoveFudgeFactor - .1;
-        System.out.println("NEW ShootOnMove FUDGE FACTOR: " + shootOnMoveFudgeFactor);
-    }
-
-    public void shootOnMoveFudgeUp() {
-        shootOnMoveFudgeFactor = shootOnMoveFudgeFactor + .1;
-        System.out.println("NEW ShootOnMove FUDGE FACTOR: " + shootOnMoveFudgeFactor);
-    }
+    //     return adjustedRobotPose;
+    // }
 
     public void useVision(boolean useCameraVision) {
         useVision = useCameraVision;
-    }
-
-    public void stopDrivingToTrap() {
-        runningTrapPath = false;
-    }
-
-    public void drivingToTrap() {
-        runningTrapPath = true;
     }
 
     public boolean haveGoodVisionLock() {

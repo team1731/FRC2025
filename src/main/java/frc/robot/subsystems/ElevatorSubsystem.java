@@ -30,7 +30,6 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
     // private final VelocityVoltage m_voltageVelocity = new VelocityVoltage(0, 0, true, 0, 0, false, false, false);
 
     private boolean enabled;
-    private boolean sendWristHomeWhenElevatorDown = false;
     private double ampTimeStarted;
     private int TEST_ONLY_COUNTER_REMOVE_ME;
 
@@ -161,23 +160,13 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
             // m_intakeSubsystem.shootAmpStop();
             ampTimeStarted = 0;
             moveElevator(Constants.ElevatorConstants.elevatorHomePosition);
-
         }
-
     }
 
     public double getElevatorPosition() {
         if (!enabled)
             return 0;
         return elevatorMotor1.getPosition().getValueAsDouble();
-    }
-
-    public void moveElevatorAndWristHome() {
-        if (!enabled)
-            return;
-
-        sendWristHomeWhenElevatorDown = true;
-        ampTimeStarted = Timer.getFPGATimestamp();
     }
 
     public boolean isAtPosition(double elevatorTrapPosition) {
