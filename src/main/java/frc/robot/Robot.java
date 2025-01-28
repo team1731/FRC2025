@@ -103,7 +103,7 @@ public class Robot extends TimedRobot {
 
 		elevatorSubsystem = new ElevatorSubsystem(true);
 
-	// Instantiate our robot container. This will perform all of our button bindings,
+		// Instantiate our robot container. This will perform all of our button bindings,
 		// and put our autonomous chooser on the dashboard
 		m_robotContainer = new RobotContainer(driveSubsystem, visionSubsystem, ledSubsystem, elevatorSubsystem);
 
@@ -128,7 +128,8 @@ public class Robot extends TimedRobot {
 			autoChooser.addOption(autoMode, autoMode);
 			System.out.println("Added autoMode '" + autoMode + "' to autoChooser.");
 		}
-		autoChooser.setDefaultOption(Constants.AutoConstants.kAutoDefault, Constants.AutoConstants.kAutoDefault);
+		//Re-enable defaulting once we have a list of real autos
+		//autoChooser.setDefaultOption(Constants.AutoConstants.kAutoDefault, Constants.AutoConstants.kAutoDefault);
 		SmartDashboard.putData(AutoConstants.kAutoCodeKey, autoChooser);
 		SmartDashboard.putString("Build Info - Branch", "N/A");
 		SmartDashboard.putString("Build Info - Commit Hash", "N/A");
@@ -201,8 +202,8 @@ public class Robot extends TimedRobot {
 		}
 
 		System.out.println("\nPreloading AUTO CODE --> " + useCode);
-	//m_autonomousCommand = m_robotContainer.getNamedAutonomousCommand(useCode, redAlliance);
-	if (m_autonomousCommand != null){
+		m_autonomousCommand = m_robotContainer.getNamedAutonomousCommand(useCode, redAlliance);
+		if (m_autonomousCommand != null){
 			autoCode = useCode;
 			System.out.println("\n=====>>> PRELOADED AUTONOMOUS COMMAND: " + m_autonomousCommand);
 		} else {

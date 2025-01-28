@@ -54,6 +54,7 @@ import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import com.ctre.phoenix6.swerve.jni.SwerveJNI.ControlParams;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
 class FlipRedBlueSupplier implements BooleanSupplier {
     @Override
@@ -279,12 +280,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         return run(() -> this.setControl(requestSupplier.get()));
     }
 
-    // public Command getAutoPath(String pathName) {
-    //     if (!enabled)
-    //         return new Command() {
-    //         };
-    //     return new PathPlannerAuto(pathName);
-    // }
+    public Command getAutoPath(String pathName) {
+        if(!enabled) return new Command() {};
+        return new PathPlannerAuto(pathName);
+    }
 
     public ChassisSpeeds getCurrentRobotChassisSpeeds() {
         if (!enabled || Robot.isSimulation())
