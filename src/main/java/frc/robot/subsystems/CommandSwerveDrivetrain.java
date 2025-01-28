@@ -46,6 +46,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.Vision;
+import frc.robot.autos.AutoFactory;
 import frc.robot.generated.TunerConstants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.subsystems.ToggleableSubsystem;
@@ -54,12 +55,11 @@ import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import com.ctre.phoenix6.swerve.jni.SwerveJNI.ControlParams;
-import com.pathplanner.lib.commands.PathPlannerAuto;
 
 class FlipRedBlueSupplier implements BooleanSupplier {
     @Override
     public boolean getAsBoolean() {
-        return RobotContainer.isFlipRedBlue();
+        return AutoFactory.isFlipRedBlue();
     }
 }
 
@@ -280,10 +280,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         return run(() -> this.setControl(requestSupplier.get()));
     }
 
-    public Command getAutoPath(String pathName) {
-        if(!enabled) return new Command() {};
-        return new PathPlannerAuto(pathName);
-    }
+    
 
     public ChassisSpeeds getCurrentRobotChassisSpeeds() {
         if (!enabled || Robot.isSimulation())

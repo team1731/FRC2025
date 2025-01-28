@@ -29,6 +29,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.OpConstants;
 import frc.robot.Constants.OpConstants.LedOption;
+import frc.robot.autos.AutoFactory;
+import frc.robot.autos.AutoLoader;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.log.LogWriter;
 import frc.robot.util.log.MessageLog;
@@ -121,10 +123,9 @@ public class Robot extends TimedRobot {
 		initSubsystems();
 		visionSubsystem.useVision(false);
 		ledSubsystem.setColor(LedOption.INIT);
-		// m_robotContainer.buildAuto10();
-		String[] autoModes = RobotContainer.deriveAutoModes();
-		for (String autoMode : autoModes) {
 
+		String[] autoModes = AutoLoader.getAutoModes();
+		for (String autoMode : autoModes) {
 			autoChooser.addOption(autoMode, autoMode);
 			System.out.println("Added autoMode '" + autoMode + "' to autoChooser.");
 		}
@@ -202,7 +203,7 @@ public class Robot extends TimedRobot {
 		}
 
 		System.out.println("\nPreloading AUTO CODE --> " + useCode);
-		m_autonomousCommand = m_robotContainer.getNamedAutonomousCommand(useCode, redAlliance);
+		m_autonomousCommand = AutoFactory.getAutonomousCommand(useCode, redAlliance);
 		if (m_autonomousCommand != null){
 			autoCode = useCode;
 			System.out.println("\n=====>>> PRELOADED AUTONOMOUS COMMAND: " + m_autonomousCommand);
