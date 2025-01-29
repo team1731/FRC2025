@@ -258,6 +258,7 @@ public class RobotContainer {
     driveSubsystem.registerTelemetry(logger::telemeterize);
   }
 
+  /*
   public static String[] deriveAutoModes() {
     autoPaths = findPaths(new File(Filesystem.getLaunchDirectory(),
         (Robot.isReal() ? "home/lvuser" : "src/main") + "/deploy/pathplanner/autos"));
@@ -297,7 +298,7 @@ public class RobotContainer {
     }
     return autoPaths;
   }
-
+  */
     //FIXME:Not sure how to remove pathplanner but also keep this code
   // public Command getNamedAutonomousCommand(String autoName, boolean redAlliance) {
   //   String alliancePathName = autoName;

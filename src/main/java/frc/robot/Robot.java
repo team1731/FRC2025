@@ -122,6 +122,7 @@ public class Robot extends TimedRobot {
 		visionSubsystem.useVision(false);
 		ledSubsystem.setColor(LedOption.INIT);
 		// m_robotContainer.buildAuto10();
+		/*
 		String[] autoModes = RobotContainer.deriveAutoModes();
 		for (String autoMode : autoModes) {
 
@@ -129,7 +130,8 @@ public class Robot extends TimedRobot {
 			System.out.println("Added autoMode '" + autoMode + "' to autoChooser.");
 		}
 		autoChooser.setDefaultOption(Constants.AutoConstants.kAutoDefault, Constants.AutoConstants.kAutoDefault);
-		SmartDashboard.putData(AutoConstants.kAutoCodeKey, autoChooser);
+		*/
+		//SmartDashboard.putData(AutoConstants.kAutoCodeKey, autoChooser);
 		SmartDashboard.putString("Build Info - Branch", "N/A");
 		SmartDashboard.putString("Build Info - Commit Hash", "N/A");
 		SmartDashboard.putString("Build Info - Date", "N/A");
@@ -160,7 +162,7 @@ public class Robot extends TimedRobot {
 			fnf.printStackTrace();
 		}
 		SmartDashboard.updateValues();
-		autoInitPreload();
+		//autoInitPreload();
 	}
 
 
@@ -192,6 +194,7 @@ public class Robot extends TimedRobot {
 //   █ ▀▀ ██ ██ ███ ████ ███ ████ ███ █ █ ██ ████ ██████ ▀▀ ██ ▀▀▄██ ▄▄▄██ █████ ███ █ ▀▀ ██ ██ 
 //   █ ██ ██▄▀▀▄███ ████ ▀▀▀ ███▀ ▀██ ██▄ █▀ ▀███ ██████ █████ ██ ██ ▀▀▀██ ▀▀ ██ ▀▀▀ █ ██ ██ ▀▀ 
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+	/*
 	private void autoInitPreload() {
 		m_autonomousCommand = null;
 
@@ -209,6 +212,7 @@ public class Robot extends TimedRobot {
 			System.out.println("\nAUTO CODE " + useCode + " IS NOT IMPLEMENTED -- STAYING WITH AUTO CODE " + autoCode);
 		}
 	}
+	*/
 
 
 //   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
@@ -263,6 +267,7 @@ public class Robot extends TimedRobot {
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	@Override
 	public void disabledPeriodic() {
+		/* 
 		String newCode = autoChooser.getSelected();
 		if (newCode == null)
 			newCode = Constants.AutoConstants.kAutoDefault;
@@ -278,6 +283,7 @@ public class Robot extends TimedRobot {
 					+ " ALLIANCE  <<<<<<<<<<<<=========================");
 			this.autoInitPreload();
 		}
+		*/
 
 		if (Robot.isReal()) {
 			try {
@@ -308,13 +314,14 @@ public class Robot extends TimedRobot {
 		visionSubsystem.useVision(false);
 		System.out.println("AUTO INIT");
 		CommandScheduler.getInstance().cancelAll();
-
+		/*
 		if (m_autonomousCommand == null) {
 			System.out.println("SOMETHING WENT WRONG - UNABLE TO RUN AUTONOMOUS! CHECK SOFTWARE!");
 		} else {
 			System.out.println("------------> RUNNING AUTONOMOUS COMMAND: " + m_autonomousCommand + " <----------");
 			m_autonomousCommand.schedule();
 		}
+		*/
 		System.out.println("autonomousInit: End");
 	}
 
@@ -353,7 +360,7 @@ public class Robot extends TimedRobot {
 		System.out.println("TELEOP INIT");
 		CommandScheduler.getInstance().cancelAll();
 		initSubsystems();
-
+		
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.cancel();
 		}
