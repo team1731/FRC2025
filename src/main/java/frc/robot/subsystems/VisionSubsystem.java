@@ -35,6 +35,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.FloatArraySubscriber;
 import edu.wpi.first.networktables.IntegerPublisher;
@@ -134,6 +135,17 @@ public class VisionSubsystem extends SubsystemBase implements ToggleableSubsyste
 
     public boolean isInitialized() {
         return initialized;
+    }
+
+    public static void setupPortForwarding() {
+        PortForwarder.add(5800, "photonvision.local", 5800);
+		PortForwarder.add(1181, "photonvision.local", 1181);
+		PortForwarder.add(1182, "photonvision.local", 1182);
+		PortForwarder.add(1183, "photonvision.local", 1183);
+		PortForwarder.add(1184, "photonvision.local", 1184);
+		PortForwarder.add(1185, "photonvision.local", 1185);
+		PortForwarder.add(1186, "photonvision.local", 1186);
+		PortForwarder.add(1187, "photonvision.local", 1187);
     }
 
     public void visionInitialization() {

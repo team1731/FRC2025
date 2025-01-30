@@ -6,12 +6,28 @@ import java.util.HashMap;
 import java.util.List;
 
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import frc.robot.Constants;
 import frc.robot.Robot;
 
 public class AutoLoader {
+    private static final SendableChooser<String> autoChooser = new SendableChooser<>();
     private static HashMap<String, String> autoPaths;
+
+    public static SendableChooser<String> loadAutoChooser() {
+        String[] autoModes = getAutoModes();
+		for (String autoMode : autoModes) {
+			autoChooser.addOption(autoMode, autoMode);
+			System.out.println("Added autoMode '" + autoMode + "' to autoChooser.");
+		}
+		
+		// pre-load the default auto
+		autoChooser.setDefaultOption(Constants.AutoConstants.kAutoDefault, Constants.AutoConstants.kAutoDefault);
+        
+        return autoChooser;
+    }
     
-    public static String[] getAutoModes() {
+    private static String[] getAutoModes() {
         autoPaths = findPaths(new File(Filesystem.getLaunchDirectory(),
             (Robot.isReal() ? "home/lvuser" : "src/main") + "/deploy/pathplanner/autos"));
         List<String> autoModes = new ArrayList<String>();

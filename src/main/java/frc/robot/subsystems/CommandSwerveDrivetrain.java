@@ -1,21 +1,15 @@
 package frc.robot.subsystems;
 
 import java.util.EnumSet;
-import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
-
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-
-import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.FloatArraySubscriber;
 import edu.wpi.first.networktables.IntegerPublisher;
@@ -31,15 +25,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 import static frc.robot.Constants.Vision.*;
-
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -50,18 +37,14 @@ import frc.robot.autos.AutoFactory;
 import frc.robot.generated.TunerConstants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.subsystems.ToggleableSubsystem;
-
 import static edu.wpi.first.units.Units.*;
-
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import com.ctre.phoenix6.swerve.jni.SwerveJNI.ControlParams;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
-class FlipRedBlueSupplier implements BooleanSupplier {
-    @Override
-    public boolean getAsBoolean() {
-        return AutoFactory.isFlipRedBlue();
-    }
-}
 
 /**
  * Class that extends the Phoenix SwerveDrivetrain class and implements
@@ -359,6 +342,38 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
      */
     public Command sysIdDynamic(SysIdRoutine.Direction direction) {
         return m_sysIdRoutineToApply.dynamic(direction);
+    }
+
+    public void configureInitialPosition() {
+        // line below is from questNav
+		Pose2d startingConfiguration = Robot.isRedAlliance()
+        ? new Pose2d(15.07, 5.57, new Rotation2d(Math.toRadians(180)))
+        : new Pose2d(1.47, 5.51, new Rotation2d(0));
+        // Pose2d startingConfiguration = new Pose2d(1.47,5.51, new Rotation2d (0));
+        resetPose(startingConfiguration);
+        Rotation2d operatorPerspective = Robot.isRedAlliance() ? new Rotation2d(Math.toRadians(180))
+                : new Rotation2d(Math.toRadians(0));
+        setOperatorPerspectiveForward(operatorPerspective);
+    }
+
+    public void configureAutoBindings() {
+        try {
+            var config = RobotConfig.fromGUISettings();
+            AutoBuilder.configure(
+                ()->this.getState().Pose,
+                this::resetPose, 
+                this::getCurrentRobotChassisSpeeds, 
+                // Consumer of ChassisSpeeds to drive the robot
+                (speeds, feedsforwards)->this.setControl(autoRequest.withSpeeds(speeds)),
+                new PPHolonomicDriveController(
+                    new PIDConstants(10, 0, 0),
+                    new PIDConstants(10, 0, 0)),
+                config,
+                () -> AutoFactory.isFlipRedBlue(),
+                this);
+        } catch(Exception e) {
+            System.out.println("CommandSwerveDrivetrain error - failed to configure auto bindings");
+        }
     }
 
     private void startSimThread() {

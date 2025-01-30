@@ -45,7 +45,7 @@ import frc.robot.subsystems.*;
 public class Robot extends TimedRobot {
 	private RobotContainer m_robotContainer;
 	private Command m_autonomousCommand;
-	private final SendableChooser<String> autoChooser = new SendableChooser<>();
+	private SendableChooser<String> autoChooser;
 	private String autoCode;
 	private String currentKeypadCommand = "";
 	private boolean redAlliance;
@@ -80,22 +80,17 @@ public class Robot extends TimedRobot {
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	@Override
 	public void robotInit() {
-		DataLogManager.start();
-		PortForwarder.add(5800, "photonvision.local", 5800);
-		PortForwarder.add(1181, "photonvision.local", 1181);
-		PortForwarder.add(1182, "photonvision.local", 1182);
-		PortForwarder.add(1183, "photonvision.local", 1183);
-		PortForwarder.add(1184, "photonvision.local", 1184);
-		PortForwarder.add(1185, "photonvision.local", 1185);
-		PortForwarder.add(1186, "photonvision.local", 1186);
-		PortForwarder.add(1187, "photonvision.local", 1187);
-		// LogWriter.setupLogging();
+		//DataLogManager.start();
+		//LogWriter.setupLogging();
 		MessageLog.start();
 		System.out.println("\n\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  EVENT: " + DriverStation.getEventName()
 				+ " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n");
-
+		VisionSubsystem.setupPortForwarding();
 		LiveWindow.disableAllTelemetry();
 
+		/*
+		 * Instantiate subsystems and provide them to the robot container
+		 */
 		driveSubsystem = new CommandSwerveDrivetrain(true, TunerConstants.DrivetrainConstants, TunerConstants.FrontLeft,
 				TunerConstants.FrontRight, TunerConstants.BackLeft, TunerConstants.BackRight);
 
@@ -106,31 +101,18 @@ public class Robot extends TimedRobot {
 		elevatorSubsystem = new ElevatorSubsystem(true);
 
 		// Instantiate our robot container. This will perform all of our button bindings,
-		// and put our autonomous chooser on the dashboard
 		m_robotContainer = new RobotContainer(driveSubsystem, visionSubsystem, ledSubsystem, elevatorSubsystem);
-
-
-		// line below is from questNav
-		Pose2d startingConfiguration = Robot.isRedAlliance()
-				? new Pose2d(15.07, 5.57, new Rotation2d(Math.toRadians(180)))
-				: new Pose2d(1.47, 5.51, new Rotation2d(0));
-		// Pose2d startingConfiguration = new Pose2d(1.47,5.51, new Rotation2d (0));
-		driveSubsystem.resetPose(startingConfiguration);
-		Rotation2d operatorPerspective = Robot.isRedAlliance() ? new Rotation2d(Math.toRadians(180))
-				: new Rotation2d(Math.toRadians(0));
-		driveSubsystem.setOperatorPerspectiveForward(operatorPerspective);
-
+		
+		/*
+		 * Complete initialization setup/configuration
+		 */
 		initSubsystems();
-		visionSubsystem.useVision(false);
-		ledSubsystem.setColor(LedOption.INIT);
+		autoChooser = AutoLoader.loadAutoChooser();
+		autoInitPreload();
+		setupSmartDashboard();
+	}
 
-		String[] autoModes = AutoLoader.getAutoModes();
-		for (String autoMode : autoModes) {
-			autoChooser.addOption(autoMode, autoMode);
-			System.out.println("Added autoMode '" + autoMode + "' to autoChooser.");
-		}
-		//Re-enable defaulting once we have a list of real autos
-		//autoChooser.setDefaultOption(Constants.AutoConstants.kAutoDefault, Constants.AutoConstants.kAutoDefault);
+	private void setupSmartDashboard() {
 		SmartDashboard.putData(AutoConstants.kAutoCodeKey, autoChooser);
 		SmartDashboard.putString("Build Info - Branch", "N/A");
 		SmartDashboard.putString("Build Info - Commit Hash", "N/A");
@@ -162,7 +144,6 @@ public class Robot extends TimedRobot {
 			fnf.printStackTrace();
 		}
 		SmartDashboard.updateValues();
-		autoInitPreload();
 	}
 
 
@@ -171,7 +152,7 @@ public class Robot extends TimedRobot {
 //   ██ ███▄▄▄▀▀████ ▀▀▄██ ▄▄▄██ ██ ███ ▀▀ ██ █████ █████ ██ ▀▀ ██ █ █ ██ █████ ▄▄▄
 //   █▀ ▀██ ▀▀▀ ████ ██ ██ ▀▀▀██ ▀▀ ███ ██ ██ ▀▀ ██ ▀▀ █▀ ▀█ ██ ██ ██▄ ██ ▀▀▄██ ▀▀▀
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-  public static boolean isRedAlliance(){
+  	public static boolean isRedAlliance(){
 		Optional<Alliance> alliance = DriverStation.getAlliance();
 		if (alliance.isPresent()) {
 			return alliance.get() == DriverStation.Alliance.Red;
@@ -197,18 +178,22 @@ public class Robot extends TimedRobot {
 	private void autoInitPreload() {
 		m_autonomousCommand = null;
 
-		String useCode = autoChooser.getSelected();
-		if (useCode == null) {
-			useCode = (autoCode == null ? Constants.AutoConstants.kAutoDefault : autoCode);
+		String selectedAutoCode = autoChooser.getSelected();
+		if(selectedAutoCode == null) {
+			selectedAutoCode = (autoCode == null ? Constants.AutoConstants.kAutoDefault : autoCode);
 		}
+		
+		if(!selectedAutoCode.equals(autoCode)) {
+			System.out.println("New Auto Code read from dashboard. OLD: " + autoCode + ", NEW: " + selectedAutoCode);
+			System.out.println("\nPreloading AUTO CODE --> " + selectedAutoCode);
 
-		System.out.println("\nPreloading AUTO CODE --> " + useCode);
-		m_autonomousCommand = AutoFactory.getAutonomousCommand(useCode, redAlliance);
-		if (m_autonomousCommand != null){
-			autoCode = useCode;
-			System.out.println("\n=====>>> PRELOADED AUTONOMOUS COMMAND: " + m_autonomousCommand);
-		} else {
-			System.out.println("\nAUTO CODE " + useCode + " IS NOT IMPLEMENTED -- STAYING WITH AUTO CODE " + autoCode);
+			m_autonomousCommand = AutoFactory.getAutonomousCommand(selectedAutoCode, redAlliance);
+			if (m_autonomousCommand != null){
+				autoCode = selectedAutoCode;
+				System.out.println("\n=====>>> PRELOADED AUTONOMOUS COMMAND: " + m_autonomousCommand);
+			} else {
+				System.out.println("\nAUTO CODE " + selectedAutoCode + " IS NOT IMPLEMENTED -- STAYING WITH AUTO CODE " + autoCode);
+			}
 		}
 	}
 
@@ -219,7 +204,11 @@ public class Robot extends TimedRobot {
 //   █▀ ▀██ ██▄ █▀ ▀███ ██████ ▀▀▀ ██▄▀▀▄██ ▀▀ ██ ▀▀▀ ████ ████ ▀▀▀ ███ ████ ▀▀▀██ ███ ██ ▀▀▀ 
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	private void initSubsystems() {
+		driveSubsystem.configureInitialPosition();
+		driveSubsystem.configureAutoBindings();
 		ledSubsystem.init();
+		ledSubsystem.setColor(LedOption.INIT);
+		visionSubsystem.useVision(false);
 	}
 
 	/**
@@ -265,20 +254,16 @@ public class Robot extends TimedRobot {
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	@Override
 	public void disabledPeriodic() {
-		String newCode = autoChooser.getSelected();
-		if (newCode == null)
-			newCode = Constants.AutoConstants.kAutoDefault;
-		if (!newCode.equals(autoCode)) {
-			System.out.println("New Auto Code read from dashboard. OLD: " + autoCode + ", NEW: " + newCode);
-			autoInitPreload();
-		}
+		// call during periodic to detect changes in auto selection
+		autoInitPreload();
 
 		boolean redAlliance = Robot.isRedAlliance();
 		if (this.redAlliance != redAlliance) {
 			this.redAlliance = redAlliance;
 			System.out.println("\n\n===============>>>>>>>>>>>>>>  WE ARE " + (redAlliance ? "RED" : "BLUE")
 					+ " ALLIANCE  <<<<<<<<<<<<=========================");
-			this.autoInitPreload();
+			// call if alliance designation switches to ensure the right auto command is created
+			autoInitPreload();
 		}
 
 		if (Robot.isReal()) {
@@ -343,12 +328,7 @@ public class Robot extends TimedRobot {
 
 		visionSubsystem.useVision(false);
 		ledSubsystem.setColor(LedOption.GREEN);
-		/*
-	intakeSubsystem.stopIntake();
-	intakeSubsystem.stopJiggle();
-	intakeSubsystem.stopFireNote();
-		 */
-	//driveSubsystem.seedFieldRelative(new Pose2d(new Translation2d(0,0), new Rotation2d(120)));
+		//driveSubsystem.seedFieldRelative(new Pose2d(new Translation2d(0,0), new Rotation2d(120)));
 
 		// Record both DS control and joystick data in TELEOP
 		MessageLog.getLogger();
