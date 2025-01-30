@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.drive;
 
 import java.util.function.Supplier;
 import com.ctre.phoenix6.SignalLogger;
@@ -18,6 +18,9 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.subsystems.ToggleableSubsystem;
+import frc.robot.subsystems.vision.VSLAMSubsystem;
+
 import static edu.wpi.first.units.Units.*;
 import frc.robot.autos.AutoFactory;
 import com.pathplanner.lib.auto.AutoBuilder;

@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.score;
 
 import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.StatusCode;
@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.Constants.ElevatorConstants;
+import frc.robot.subsystems.ToggleableSubsystem;
 
 public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsystem {
 
