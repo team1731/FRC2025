@@ -184,6 +184,8 @@ public class RobotContainer {
       driveSubsystem.setOperatorPerspectiveForward(operatorPerspective); // Just a Hack
     }));
 
+    kx.onTrue(new ElevatorTestCommand(elevatorSubsystem));
+
     operatorkLeftBumper.onTrue(new InstantCommand(() -> {
 
     }));
