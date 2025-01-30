@@ -262,7 +262,7 @@ public final class Constants {
     }
 
     public static final class AutoConstants {
-        public static final String kAutoDefault = "5_JustDrive"; // "Amp_1";
+        public static final String kAutoDefault = "AutoTest"; // TODO replace this when we have a real default auto
         public static final String kAutoCodeKey = "Auto Selector";
 
         public static final double kMaxSpeedMetersPerSecond = 0.5; // disabled for testing = 3;

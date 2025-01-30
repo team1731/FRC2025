@@ -101,17 +101,6 @@ public class RobotContainer {
   private VisionSubsystem visionSubsystem;
   private final LEDStringSubsystem m_ledstring;
   private ElevatorSubsystem elevatorSubsystem;
-  // private Command Blu_10_Command;
-  // private Command Red_10_Command;
-
-  /* Auto Paths */
-  private static HashMap<String, String> autoPaths;
-
-  private static boolean flipRedBlue;
-
-  public static boolean isFlipRedBlue() {
-    return flipRedBlue;
-  }
 
   public RobotContainer(
       CommandSwerveDrivetrain s_driveSubsystem,
@@ -123,23 +112,6 @@ public class RobotContainer {
     elevatorSubsystem = s_elevatorSubsystem;
     visionSubsystem = s_visionSubsystem;
     m_ledstring = s_ledstring;
-
-    if (driveSubsystem.isEnabled()) {
-      // NamedCommands.registerCommand("RotateLeft", 
-     // new SequentialCommandGroup(driveSubsystem.rotateRelative(-45.0) ));
-      // NamedCommands.registerCommand("RotateRight", 
-     // new SequentialCommandGroup(driveSubsystem.rotateRelative(-45.0) ));
-
-      // NamedCommands.registerCommand("Blu_10_Command", Blu_10_Command);
-      // NamedCommands.registerCommand("JustShoot", new SequentialCommandGroup(
-      // new IntakeShootStateMachineOneShotCommand(intakeShootStateMachine,
-      // ISInput.JUST_SHOOT)));
-
-      // buildAuto10();
-      // NamedCommands.registerCommand("Red_10_Command", Red_10_Command);
-      // NamedCommands.registerCommand("Blu_10_Command", Blu_10_Command);
-
-    }
 
     // Configure the button bindings
     configureBindings();
@@ -255,133 +227,4 @@ public class RobotContainer {
 
     driveSubsystem.registerTelemetry(logger::telemeterize);
   }
-
-  public static String[] deriveAutoModes() {
-    autoPaths = findPaths(new File(Filesystem.getLaunchDirectory(),
-        (Robot.isReal() ? "home/lvuser" : "src/main") + "/deploy/pathplanner/autos"));
-    List<String> autoModes = new ArrayList<String>();
-    for (String key : autoPaths.keySet()) {
-      String stripKey = key.toString();
-      if (stripKey.startsWith("Red_") || stripKey.startsWith("Blu_")) {
-        stripKey = stripKey.substring(4, stripKey.length());
-      }
-      if (!autoModes.contains(stripKey)) {
-        autoModes.add(stripKey);
-      }
-    }
-    autoModes.sort((p1, p2) -> p1.compareTo(p2));
-    return autoModes.toArray(String[]::new);
-  }
-
-  private static HashMap<String, String> findPaths(File directory) {
-    HashMap<String, String> autoPaths = new HashMap<String, String>();
-    if (!directory.exists()) {
-      System.out.println("FATAL: path directory not found! " + directory.getAbsolutePath());
-    } else {
-      File[] files = directory.listFiles();
-      if (files == null) {
-        System.out.println("FATAL: I/O error or NOT a directory: " + directory);
-      } else {
-        for (File file : files) {
-          String fileName = file.getName();
-          if ((fileName.startsWith("Blu") || fileName.startsWith("Red")) && fileName.endsWith(".auto")) {
-            String key = fileName.replace(".auto", "");
-            String path = file.getAbsolutePath();
-            System.out.println(path);
-            autoPaths.put(key, path);
-          }
-        }
-      }
-    }
-    return autoPaths;
-  }
-
-    //FIXME:Not sure how to remove pathplanner but also keep this code
-  // public Command getNamedAutonomousCommand(String autoName, boolean redAlliance) {
-  //   String alliancePathName = autoName;
-  //   if (!autoName.startsWith("Red_") && !autoName.startsWith("Blu_")) {
-  //     alliancePathName = (redAlliance ? "Red" : "Blu") + "_" + autoName;
-  //   }
-  //   // if the named auto (red or blue) exists, use it as-is and do NOT flip the
-  //   // field (red/blue)
-  //   if (autoPaths.keySet().contains(alliancePathName)) {
-  //     flipRedBlue = false;
-  //   }
-  //   // if the named auto does not exist (so there isn't a red one), use the blue one
-  //   // and flip the field
-  //   else if (redAlliance && alliancePathName.startsWith("Red_")) {
-  //     alliancePathName = alliancePathName.replace("Red_", "Blu_");
-  //     assert autoPaths.keySet().contains(alliancePathName) : "ERROR: you need to create " + alliancePathName;
-  //     flipRedBlue = true;
-  //   } else {
-  //     System.out
-  //         .println("ERROR: no such auto path name found in src/main/deploy/pathplanner/autos: " + alliancePathName);
-  //   }
-  //   // System.out.println("About to get Auto Path: " + alliancePathName);
-
-  //   Command command = driveSubsystem.getAutoPath(alliancePathName);
-  //   assert command != null : "ERROR: unable to get AUTO path for: " + alliancePathName + ".auto";
-  //   System.out.println("\nAUTO CODE being used by the software --> " + alliancePathName + ", RED/BLUE flipping is "
-  //       + (flipRedBlue ? "ON" : "OFF") + "\n");
-  //   SmartDashboard.putString("AUTO_FILE_IN_USE", alliancePathName);
-  //   SmartDashboard.putBoolean("RED_BLUE_FLIPPING", flipRedBlue);
-
-  //   return command;
-  // }
-  /*
-public  void buildAuto10() {
-
-Blu_10_Command =
-        Commands.sequence(
-            driveSubsystem.getAutoPath("B_10_Pickup_1"),  // p1
-            Commands.either(
-                driveSubsystem.getAutoPath("B_10_Score1_Pickup2"), //p2, p3
-                driveSubsystem.getAutoPath("B_10_Pickup_2"),  // p4
-                intakeSubsystem::hasNote),
-            Commands.either(
-                driveSubsystem.getAutoPath("B_10_Score2_Pickup3"), //p5, p6
-                driveSubsystem.getAutoPath("B_10_Pickup_3"), //p7
-                intakeSubsystem::hasNote),
-            Commands.either(
-                driveSubsystem.getAutoPath("B_10_Score3_Pickup4"), //p8, p9
-                driveSubsystem.getAutoPath("B_10_Pickup_4"), //p10
-                intakeSubsystem::hasNote),
-           Commands.either(
-                driveSubsystem.getAutoPath("B_10_Score4_Pickup5"), //p11, p12
-                driveSubsystem.getAutoPath("B_10_Pickup_5"), //p13
-                intakeSubsystem::hasNote),
-           Commands.either(
-                driveSubsystem.getAutoPath("B_10_Score_5"), //14
-                Commands.none(), 
-                intakeSubsystem::hasNote));
-
-
-
-Red_10_Command =
-        Commands.sequence(
-            driveSubsystem.getAutoPath("R_10_Pickup_1"),  // p1
-            Commands.either(
-                driveSubsystem.getAutoPath("R_10_Score1_Pickup2"), //p2, p3
-                driveSubsystem.getAutoPath("R_10_Pickup_2"),  // p4
-                intakeSubsystem::hasNote),
-            Commands.either(
-                driveSubsystem.getAutoPath("R_10_Score2_Pickup3"), //p5, p6
-                driveSubsystem.getAutoPath("R_10_Pickup_3"), //p7
-                intakeSubsystem::hasNote),
-            Commands.either(
-                driveSubsystem.getAutoPath("R_10_Score3_Pickup4"), //p8, p9
-                driveSubsystem.getAutoPath("R_10_Pickup_4"), //p10
-                intakeSubsystem::hasNote),
-           Commands.either(
-                driveSubsystem.getAutoPath("R_10_Score4_Pickup5"), //p11, p12
-                driveSubsystem.getAutoPath("R_10_Pickup_5"), //p13
-                intakeSubsystem::hasNote),
-           Commands.either(
-                driveSubsystem.getAutoPath("R_10_Score_5"), //14
-                Commands.none(), 
-                intakeSubsystem::hasNote));
-                
-
-}
-   */
 }
