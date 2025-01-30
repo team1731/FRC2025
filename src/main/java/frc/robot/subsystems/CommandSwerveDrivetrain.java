@@ -1,12 +1,15 @@
 package frc.robot.subsystems;
 
+import java.util.function.BooleanSupplier;
 import java.util.EnumSet;
 import java.util.function.Supplier;
 import com.ctre.phoenix6.SignalLogger;
-import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -19,19 +22,17 @@ import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import static frc.robot.Constants.Vision.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
+import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+import static edu.wpi.first.units.Units.*;
 import frc.robot.Constants.Vision;
 import frc.robot.autos.AutoFactory;
 import frc.robot.generated.TunerConstants;
@@ -52,12 +53,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
  * so it can be used in command-based projects easily.
  */
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements ToggleableSubsystem {
-    private static final double kSimLoopPeriod = 0.005; // 5 ms
-    private Notifier m_simNotifier = null;
-    private double m_lastSimTime;
-
     private boolean enabled;
-    private final SwerveRequest.ApplyRobotSpeeds autoRequest = new SwerveRequest.ApplyRobotSpeeds();
 
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
@@ -67,23 +63,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
     private boolean m_hasAppliedOperatorPerspective = false;
 
     /* VSLAM Updates */
-    boolean useVSLAM = true;
-    private final Field2d vslamfield = new Field2d();
-    int connListenerHandle;
-    int positionListenerHandle;
-    int topicListenerHandle;
-
-    private IntegerSubscriber questMiso;
-    private IntegerPublisher questMosi;
-    private IntegerSubscriber questFrameCount;
-    private DoubleSubscriber questTimestamp;
-    private FloatArraySubscriber questPosition;
-    private FloatArraySubscriber questQuaternion;
-    private FloatArraySubscriber questEulerAngles;
-    private DoubleSubscriber questBattery;
-
-    private float yaw_offset = 0.0f;
-    private Pose2d startingOffset = new Pose2d();
+    private boolean useVSLAM = true;
+    private VSLAMSubsystem vslamSubsystem;
+    private DrivetrainVisionCallback visionCallback = (Pose2d pose, double timestamp, Matrix<N3,N1> visionMeasurementStdDevs) -> {
+        this.addVisionMeasurement(pose, timestamp, visionMeasurementStdDevs);
+    };
 
     /* Swerve requests to apply during SysId characterization */
     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
@@ -159,101 +143,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
             double OdometryUpdateFrequency, SwerveModuleConstants<?, ?, ?>... modules) {
         super(driveTrainConstants, OdometryUpdateFrequency, modules);
         setEnabled(enabled);
-        if (!enabled)
-            return;
-        configureVSLAM();
+        if(!enabled) return;
+        if(useVSLAM) vslamSubsystem = new VSLAMSubsystem(visionCallback);
     }
 
     public CommandSwerveDrivetrain(boolean enabled, SwerveDrivetrainConstants driveTrainConstants,
             SwerveModuleConstants... modules) {
         super(driveTrainConstants, modules);
         setEnabled(enabled);
-        if (!enabled)
-            return;
-        configureVSLAM();
-    }
-
-    public void configureVSLAM() {
-
-        NetworkTableInstance inst = NetworkTableInstance.getDefault();
-
-        // add a connection listener; the first parameter will cause the
-        // callback to be called immediately for any current connections
-        connListenerHandle = inst.addConnectionListener(true, event -> {
-            if (event.is(NetworkTableEvent.Kind.kConnected)) {
-                System.out.println("Connected to " + event.connInfo.remote_id);
-            } else if (event.is(NetworkTableEvent.Kind.kDisconnected)) {
-                System.out.println("Disconnected from " + event.connInfo.remote_id);
-            }
-        });
-
-        // get the subtable called "questnav"
-        NetworkTable datatable = inst.getTable("questnav");
-        questMiso = datatable.getIntegerTopic("miso").subscribe(0);
-        questMosi = datatable.getIntegerTopic("mosi").publish();
-        questFrameCount = datatable.getIntegerTopic("frameCount").subscribe(0);
-        questTimestamp = datatable.getDoubleTopic("timestamp").subscribe(0.0f);
-        questPosition = datatable.getFloatArrayTopic("position")
-                .subscribe(new float[] { 0.0f, 0.0f, 0.0f });
-        questQuaternion = datatable.getFloatArrayTopic("quaternion")
-                .subscribe(new float[] { 0.0f, 0.0f, 0.0f, 0.0f });
-        questEulerAngles = datatable.getFloatArrayTopic("eulerAngles")
-                .subscribe(new float[] { 0.0f, 0.0f, 0.0f });
-        questBattery = datatable.getDoubleTopic("batteryLevel").subscribe(0.0f);
-
-        ShuffleboardTab tab = Shuffleboard.getTab("test");
-
-        //FIXME: this line will prevent code from building
-        // tab.add(vslamfield);
-
-        System.out.println("addind listener******************************************8");
-        // add a listener to only value changes on the Y subscriber
-        positionListenerHandle = inst.addListener(
-                questPosition,
-                EnumSet.of(NetworkTableEvent.Kind.kValueAll),
-                event -> {
-
-                    var timestampedPosition = questPosition.getAtomic();
-                    float[] oculusPosition = timestampedPosition.value;
-                    double timestamp = timestampedPosition.timestamp;
-                    timestamp = timestamp / 1000000;
-                    Translation2d oculousRawPosition = new Translation2d(-oculusPosition[2], oculusPosition[0]);
-                    Translation2d oculousPositionCompensated = oculousRawPosition
-                            .plus(new Translation2d(0.3333 * Math.cos(Math.toRadians(getOculusYaw())),
-                                    0.333 * Math.sin(Math.toRadians(getOculusYaw())))); // TODO GET Numbers since robot is not in the center of the robot
-                    oculousPositionCompensated = oculousPositionCompensated.plus(startingOffset.getTranslation()); // translate by the starting position
-
-                    Rotation2d oculousRawRotation = Rotation2d.fromDegrees(getOculusYaw())
-                            .plus(Rotation2d.fromDegrees(0)); // since camera is on back of robot
-                    Rotation2d oculousCompensatedRotation = oculousRawRotation.plus(startingOffset.getRotation());
-
-                    Pose2d estPose = new Pose2d(oculousPositionCompensated, oculousCompensatedRotation);
-
-                    // System.out.println("addind a vslam");
-                    vslamfield.getObject("MyRobotVSLAM").setPose(estPose);
-                    SmartDashboard.putString("VSLAM pose", String.format("(%.2f, %.2f) %.2f %.2f %.2f",
-                            estPose.getTranslation().getX(),
-                            estPose.getTranslation().getY(),
-                            estPose.getRotation().getDegrees(),
-                            timestamp,
-                            Timer.getFPGATimestamp()));
-                    if (useVSLAM) {
-                        this.addVisionMeasurement(estPose,
-                                timestamp, kVSLAMStdDevs);
-                    }
-                });
-
-        // add a listener to see when new topics are published within datatable
-        // the string array is an array of topic name prefixes.
-        topicListenerHandle = inst.addListener(
-                new String[] { datatable.getPath() + "/" },
-                EnumSet.of(NetworkTableEvent.Kind.kTopic),
-                event -> {
-                    if (event.is(NetworkTableEvent.Kind.kPublish)) {
-                        // topicInfo.name is the full topic name, e.g. "/datatable/X"
-                        System.out.println("newly published " + event.topicInfo.name);
-                    }
-                });
+        if(!enabled) return;
+        if(useVSLAM) vslamSubsystem = new VSLAMSubsystem(visionCallback);
     }
 
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
@@ -263,8 +162,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         return run(() -> this.setControl(requestSupplier.get()));
     }
 
-    
-
     public ChassisSpeeds getCurrentRobotChassisSpeeds() {
         if (!enabled || Robot.isSimulation())
             return new ChassisSpeeds();
@@ -272,7 +169,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
     }
 
     public void periodic() {
-        vslamfield.setRobotPose(this.getState().Pose);
+        if(useVSLAM) {
+            vslamSubsystem.setPose(this.getState().Pose);
+            vslamSubsystem.cleanUpSubroutineMessages(); 
+        }
+
         /*
          * Periodically try to apply the operator perspective.
          * If we haven't applied the operator perspective before, then we should apply it regardless of DS state.
@@ -319,7 +220,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
 
     /** Log various drivetrain values to the dashboard. */
     public void log() {
-    
+        // Nothing defined yet
     }
 
     /**
@@ -343,7 +244,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
     public Command sysIdDynamic(SysIdRoutine.Direction direction) {
         return m_sysIdRoutineToApply.dynamic(direction);
     }
-
+    
     public void configureInitialPosition() {
         // line below is from questNav
 		Pose2d startingConfiguration = Robot.isRedAlliance()
@@ -397,54 +298,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         // angleSetpoint = 0.0;
     }
 
-    // Zero the absolute 3D position of the robot (similar to long-pressing the
-    // quest logo)
+    // Zero the absolute 3D position of the robot
     @Override
     public void resetPose(Pose2d position) {
         System.out.println("Adjusting the position of the robot");
         super.resetPose(position);
-        Translation2d cameraoffset = position.getTranslation().minus(new Translation2d(.33333, 0));
-        startingOffset = new Pose2d(cameraoffset, position.getRotation());
-        if (questMiso.get() != 99) {
-            questMosi.set(1);
+        if(useVSLAM) {
+            vslamSubsystem.calculateNewOffset(position);
         }
-    }
-
-    // Clean up oculus subroutine messages after processing on the headset
-    public void cleanUpOculusMessages() {
-        if (questMiso.get() == 99) {
-            questMosi.set(0);
-        }
-    }
-
-    // Return the robot heading in degrees, between -180 and 180 degrees
-    public double getHeading() {
-        return Rotation2d.fromDegrees(getOculusYaw()).getDegrees();
-    }
-
-    // Get the rotation rate of the robot
-    public double getTurnRate() {
-        return getOculusYaw(); // * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
-    }
-
-    // Get the yaw Euler angle of the headset
-    private float getOculusYaw() {
-        float[] eulerAngles = questEulerAngles.get();
-        var ret = eulerAngles[1] - yaw_offset;
-        ret %= 360;
-        if (ret < 0) {
-            ret += 360;
-        }
-        return ret * -1;
-    }
-
-    private Translation2d getOculusPosition() {
-        float[] oculusPosition = questPosition.get();
-        return new Translation2d(oculusPosition[2], -oculusPosition[0]);
-    }
-
-    private Pose2d getOculusPose() {
-        var oculousPositionCompensated = getOculusPosition().minus(new Translation2d(0, 0.1651)); // 6.5
-        return new Pose2d(oculousPositionCompensated, Rotation2d.fromDegrees(getOculusYaw()));
     }
 }
