@@ -10,12 +10,12 @@ public class ScoreStateMachine extends StateMachine {
     private Object STATE_TRANSITION_TABLE[][] = {
         // CURRENT                           INPUT                                  OPERATION                    NEXT
         {ScoreState.HOME,                    ScoreInput.BEGIN,                      "raiseElevator",             ScoreState.RAISING},
-        {ScoreState.RAISING,                 ScoreInput.ELEVATOR_THRESHOLD,         "positionArmToScore",        ScoreState.POSITIONING},
+        {ScoreState.RAISING,                 ScoreInput.ELEVATOR_THRESHOLD_MET,     "positionArmToScore",        ScoreState.POSITIONING},
         {ScoreState.POSITIONING,             ScoreInput.ARM_DONE,                   "scoreGamePiece",            ScoreState.SCORING},
         {ScoreState.SCORING,                 ScoreInput.PIECE_SCORED,               "moveArmHome",               ScoreState.ARM_RESETTING},
         {ScoreState.ARM_RESETTING,           ScoreInput.ARM_DONE,                   "lowerElevator",             ScoreState.LOWERING},
         {ScoreState.LOWERING,                ScoreInput.ELEVATOR_DONE,              "doSafetyCheck",             ScoreState.CHECKING_SAFETY},
-        {ScoreState.CHECKING_SAFETY,         ScoreInput.READY,                      null,                        ScoreState.HOME}
+        {ScoreState.CHECKING_SAFETY,         ScoreInput.IS_SAFE,                    null,                        ScoreState.HOME}
         // TODO define state sequence for recovery
         // TODO define state sequence for retrieving from floor pickup
     };
