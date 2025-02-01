@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.Constants.ElevatorConstants;
+import frc.robot.state.StateMachineCallback;
 import frc.robot.subsystems.ToggleableSubsystem;
 
 public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsystem {
@@ -34,6 +35,10 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
     private double ampTimeStarted;
     private int TEST_ONLY_COUNTER_REMOVE_ME;
 
+    
+    private StateMachineCallback scoreStateMachineCallback;
+    
+    
     @Override
     public boolean isEnabled() {
         return enabled;
@@ -45,7 +50,11 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
             return;
         initializeElevatorMotors();
     }
-
+    
+    public void setScoreStateMachineCallback(StateMachineCallback callback) {
+        scoreStateMachineCallback = callback;
+    }
+    
     /*
      * Elevator MOTOR MOVEMENT
      */
