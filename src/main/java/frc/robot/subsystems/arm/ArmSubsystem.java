@@ -17,8 +17,6 @@ import frc.robot.Constants;
 import frc.robot.state.StateMachineCallback;
 import frc.robot.state.score.ScoreInput;
 import frc.robot.subsystems.ToggleableSubsystem;
-import frc.robot.subsystems.hand.HandConstants;
-
 
 
 public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
@@ -49,7 +47,16 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
     //movement control
     public void moveArm(double position){
         if(!enabled) return;
-        desiredPosition = position;
+
+        // do not go outside boundary thresholds
+        if(position > ArmConstants.maxArmPosition) {
+            desiredPosition = ArmConstants.maxArmPosition;
+        } else if(position < ArmConstants.minArmPosition) {
+            desiredPosition = ArmConstants.minArmPosition;
+        } else {
+            desiredPosition = position;
+        }
+
         armMotor.setControl(mmReq.withPosition(desiredPosition).withFeedForward(arbitraryFeedForward));
     }
 
