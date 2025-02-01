@@ -1,6 +1,5 @@
 package frc.robot.subsystems.score;
 
-import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
@@ -17,16 +16,16 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.state.StateMachineCallback;
+import frc.robot.state.score.ScoreInput;
 import frc.robot.subsystems.ToggleableSubsystem;
 
 public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsystem {
 
     // motors for the elevator
     private TalonFX elevatorMotor1;
-    //private TalonFX elevatorMotor2;
+    private TalonFX elevatorMotor2;
     private double desiredPosition;
     private double arbitraryFeedForward;
-    private Orchestra m_orchestra = new Orchestra();
     private MotionMagicVoltage mmReq1 = new MotionMagicVoltage(0);
     // private MotionMagicVoltage mmReq2;
     // private final VelocityVoltage m_voltageVelocity = new VelocityVoltage(0, 0, true, 0, 0, false, false, false);
@@ -51,10 +50,6 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
         initializeElevatorMotors();
     }
     
-    public void setScoreStateMachineCallback(StateMachineCallback callback) {
-        scoreStateMachineCallback = callback;
-    }
-    
     /*
      * Elevator MOTOR MOVEMENT
      */
@@ -62,7 +57,14 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
     public void moveElevator(double position) {
         if(!enabled) return;
         desiredPosition = position;
-        m_orchestra.play();
+        elevatorMotor1.setControl(mmReq1.withPosition(desiredPosition).withFeedForward(arbitraryFeedForward));
+        elevatorMotor2.setControl(mmReq1.withPosition(desiredPosition).withFeedForward(arbitraryFeedForward));
+       
+    }
+
+    public void moveElevator(double position, StateMachineCallback callback){
+        scoreStateMachineCallback = callback;
+        moveElevator(position);
     }
 
     // Initialize Motors
@@ -72,13 +74,13 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
 
         System.out.println("elevatorSubsystem: Starting UP & Initializing elevator motors !!!!!!");
         elevatorMotor1 = new TalonFX(ElevatorConstants.elevatorCanId1, "canivore1");
-        //elevatorMotor2 = new TalonFX(ElevatorConstants.elevatorCanId2, "canivore1");
+        elevatorMotor2 = new TalonFX(ElevatorConstants.elevatorCanId2, "canivore1");
         TalonFXConfiguration cfg = new TalonFXConfiguration();
         elevatorMotor1.getConfigurator().apply(cfg);
-        //elevatorMotor2.getConfigurator().apply(cfg);
+        elevatorMotor2.getConfigurator().apply(cfg);
 
         elevatorMotor1.setNeutralMode(NeutralModeValue.Brake);
-        //elevatorMotor2.setNeutralMode(NeutralModeValue.Brake);
+        elevatorMotor2.setNeutralMode(NeutralModeValue.Brake);
 
         /* Configure current limits */
         MotionMagicConfigs mm = cfg.MotionMagic;
@@ -97,8 +99,6 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
         FeedbackConfigs fdb = cfg.Feedback;
         fdb.SensorToMechanismRatio = 1;
 
-        m_orchestra.addInstrument(elevatorMotor1);
-        m_orchestra.loadMusic("lowrider.chrp");
         // Apply the configs for Motor 1
         cfg.MotorOutput.Inverted = ElevatorConstants.elevatorDirection;
         StatusCode status = StatusCode.StatusCodeNotInitialized;
@@ -114,7 +114,7 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
         // Apply the configs for Motor 2
         cfg.MotorOutput.Inverted = ElevatorConstants.elevatorDirection;
         status = StatusCode.StatusCodeNotInitialized;
-        /* 
+         
         for (int i = 0; i < 5; ++i) {
             status = elevatorMotor2.getConfigurator().apply(cfg);
             if (status.isOK())
@@ -123,55 +123,24 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
         if (!status.isOK()) {
             System.out.println("Could not configure device. Error: " + status.toString());
         }
-        */
+        
 
         elevatorMotor1.setPosition(0);
-        //elevatorMotor2.setPosition(0);
+        elevatorMotor2.setPosition(0);
         elevatorMotor1.setNeutralMode(NeutralModeValue.Brake);
-        //elevatorMotor2.setNeutralMode(NeutralModeValue.Brake);
+        elevatorMotor2.setNeutralMode(NeutralModeValue.Brake);
 
     }
 
     public void periodic() {
-        if (!enabled)
-            return;
+        if (!enabled) return;
 
-        if ((desiredPosition == 0.0) && ((elevatorMotor1.getStatorCurrent().getValueAsDouble() > 260)
-                || (elevatorMotor1.getStatorCurrent().getValueAsDouble() > 260))) {
-            // we must be climbing?
-            arbitraryFeedForward = 0.01;
-        } else {
-            arbitraryFeedForward = 0;
+        if (isAtPosition(desiredPosition) && scoreStateMachineCallback != null){
+            scoreStateMachineCallback.setInput(ScoreInput.ELEVATOR_DONE);
+            scoreStateMachineCallback = null;
         }
 
-        SmartDashboard.putNumber("elevator motor 1 position", elevatorMotor1.getPosition().getValueAsDouble());
-        //SmartDashboard.putNumber("elevator motor 2 position", elevatorMotor2.getPosition().getValueAsDouble());
-        SmartDashboard.putNumber("elevator desired position", desiredPosition);
-        SmartDashboard.putNumber("elevator motor 1 closedLoopError",
-                elevatorMotor1.getClosedLoopError().getValueAsDouble());
-        SmartDashboard.putNumber("elevator motor 1 closedLoopError",
-                elevatorMotor1.getClosedLoopError().getValueAsDouble());
-        SmartDashboard.putNumber("elevator motor 1 closedLoopReference",
-                elevatorMotor1.getClosedLoopReference().getValueAsDouble());
-        //SmartDashboard.putNumber("elevator motor 2 closedLoopReference",
-        //        elevatorMotor2.getClosedLoopReference().getValueAsDouble());
-        SmartDashboard.putNumber("elevator motor 1 closedLoopOutput",
-                elevatorMotor1.getClosedLoopOutput().getValueAsDouble());
-        //SmartDashboard.putNumber("elevator motor 2 closedLoopOutput",
-        //        elevatorMotor2.getClosedLoopOutput().getValueAsDouble());
-        SmartDashboard.putNumber("elevator motor 1 statorCurrent",
-                elevatorMotor1.getStatorCurrent().getValueAsDouble());
-        //SmartDashboard.putNumber("elevator motor 2 statorCurrent",
-        //        elevatorMotor2.getStatorCurrent().getValueAsDouble());
-        SmartDashboard.putNumber("Arbitrary Feed Forward", arbitraryFeedForward);
-
-        // Only Move the elevator if the wrist is above the clearance zone
-
-        if (ampTimeStarted != 0 && (Timer.getFPGATimestamp() - ampTimeStarted > 0.3)) {
-            // m_intakeSubsystem.shootAmpStop();
-            ampTimeStarted = 0;
-            moveElevator(Constants.ElevatorConstants.elevatorHomePosition);
-        }
+        log();
     }
 
     public double getElevatorPosition() {
@@ -180,12 +149,31 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
         return elevatorMotor1.getPosition().getValueAsDouble();
     }
 
-    public boolean isAtPosition(double elevatorTrapPosition) {
-        if (Robot.isSimulation()) {
-            if (TEST_ONLY_COUNTER_REMOVE_ME++ > 3)
-                return true;
-        }
+    public boolean isAtPosition(double position) {
         double tolerance = 2;
-        return Math.abs(getElevatorPosition() - elevatorTrapPosition) < tolerance;
+        return Math.abs(getElevatorPosition() - position) < tolerance;
+    }
+
+    private void log(){
+        SmartDashboard.putNumber("elevator motor 1 position", elevatorMotor1.getPosition().getValueAsDouble());
+        SmartDashboard.putNumber("elevator motor 2 position", elevatorMotor2.getPosition().getValueAsDouble());
+        SmartDashboard.putNumber("elevator desired position", desiredPosition);
+        SmartDashboard.putNumber("elevator motor 1 closedLoopError",
+                elevatorMotor1.getClosedLoopError().getValueAsDouble());
+        SmartDashboard.putNumber("elevator motor 1 closedLoopError",
+                elevatorMotor1.getClosedLoopError().getValueAsDouble());
+        SmartDashboard.putNumber("elevator motor 1 closedLoopReference",
+                elevatorMotor1.getClosedLoopReference().getValueAsDouble());
+        SmartDashboard.putNumber("elevator motor 2 closedLoopReference",
+                elevatorMotor2.getClosedLoopReference().getValueAsDouble());
+        SmartDashboard.putNumber("elevator motor 1 closedLoopOutput",
+                elevatorMotor1.getClosedLoopOutput().getValueAsDouble());
+        SmartDashboard.putNumber("elevator motor 2 closedLoopOutput",
+                elevatorMotor2.getClosedLoopOutput().getValueAsDouble());
+        SmartDashboard.putNumber("elevator motor 1 statorCurrent",
+                elevatorMotor1.getStatorCurrent().getValueAsDouble());
+        SmartDashboard.putNumber("elevator motor 2 statorCurrent",
+                elevatorMotor2.getStatorCurrent().getValueAsDouble());
+        SmartDashboard.putNumber("Arbitrary Feed Forward", arbitraryFeedForward);
     }
 }

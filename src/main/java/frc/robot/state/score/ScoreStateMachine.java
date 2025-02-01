@@ -23,7 +23,6 @@ public class ScoreStateMachine extends StateMachine {
 
     public ScoreStateMachine(ElevatorSubsystem elevatorSubsystem) {
         this.elevatorSubsystem = elevatorSubsystem;
-        this.elevatorSubsystem.setScoreStateMachineCallback(inputCallback);
         setStateTransitionTable(STATE_TRANSITION_TABLE);
         setCurrentState(ScoreState.HOME);
     }
