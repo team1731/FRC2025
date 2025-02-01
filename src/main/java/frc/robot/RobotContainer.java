@@ -182,7 +182,23 @@ public class RobotContainer {
       driveSubsystem.setOperatorPerspectiveForward(operatorPerspective); // Just a Hack
     }));
 
-    kx.onTrue(new ElevatorTestCommand(elevatorSubsystem));
+    /*
+     * !!!!!!!!!!!!!!!!!
+     * START TESTING COMMANDS
+     * !!!!!!!!!!!!!!!!!
+     */
+
+    // move elevator up
+    ky.onTrue(new InstantCommand(() -> elevatorSubsystem.moveElevator(0)));
+
+    // move elevator down
+    kb.onTrue(new InstantCommand(() -> elevatorSubsystem.moveElevator(0)));
+
+    /*
+     * !!!!!!!!!!!!!!!!!
+     * END TESTING COMMANDS
+     * !!!!!!!!!!!!!!!!!
+     */
 
     operatorkLeftBumper.onTrue(new InstantCommand(() -> {
 
