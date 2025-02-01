@@ -9,11 +9,8 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-import frc.robot.Robot;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.state.StateMachineCallback;
 import frc.robot.state.score.ScoreInput;
@@ -25,16 +22,10 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
     private TalonFX elevatorMotor1;
     private TalonFX elevatorMotor2;
     private double desiredPosition;
-    private double arbitraryFeedForward;
+    private double arbitraryFeedForward = 0;
     private MotionMagicVoltage mmReq1 = new MotionMagicVoltage(0);
-    // private MotionMagicVoltage mmReq2;
-    // private final VelocityVoltage m_voltageVelocity = new VelocityVoltage(0, 0, true, 0, 0, false, false, false);
 
     private boolean enabled;
-    private double ampTimeStarted;
-    private int TEST_ONLY_COUNTER_REMOVE_ME;
-
-    
     private StateMachineCallback scoreStateMachineCallback;
     
     

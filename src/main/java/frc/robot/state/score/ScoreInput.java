@@ -10,5 +10,6 @@ public enum ScoreInput implements Input {
     // Subsystem feedback
     ELEVATOR_THRESHOLD_MET,
     ELEVATOR_DONE,
-    ARM_DONE
+    ARM_DONE,
+    HAND_DONE
 }
