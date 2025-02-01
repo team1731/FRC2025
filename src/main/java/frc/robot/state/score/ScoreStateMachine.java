@@ -24,8 +24,6 @@ public class ScoreStateMachine extends StateMachine {
         {ScoreState.ELEVATOR_LOWERING,       ScoreInput.ELEVATOR_DONE,              "moveArmBack",               ScoreState.ARM_MOVING_BACK},
         {ScoreState.ARM_MOVING_BACK,         ScoreInput.ARM_DONE,                   "doSafetyCheck",             ScoreState.CHECKING_SAFETY},
         {ScoreState.CHECKING_SAFETY,         ScoreInput.IS_SAFE,                    null,                        ScoreState.HOME}
-        // TODO define state sequence for recovery
-        // TODO define state sequence for retrieving from floor pickup
     };
 
 
