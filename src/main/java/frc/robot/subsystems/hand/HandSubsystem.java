@@ -67,6 +67,11 @@ public class HandSubsystem extends SubsystemBase implements ToggleableSubsystem 
     public void close() {
         moveHand(0.0);
     }
+
+    public void close(StateMachineCallback callback) {
+        scoreStateMachineCallback = callback;
+        moveHand(0.0);
+    }
     
 
     /*

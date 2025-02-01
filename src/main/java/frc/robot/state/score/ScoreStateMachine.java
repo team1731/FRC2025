@@ -48,7 +48,7 @@ public class ScoreStateMachine extends StateMachine {
      */
 
      public boolean openHand(){
-        handSubsystem.open(0);
+        handSubsystem.open(0, inputCallback);
         return true;
      }
 
@@ -63,32 +63,34 @@ public class ScoreStateMachine extends StateMachine {
      }
 
      public boolean closeHand(){
-        handSubsystem.close();
+        handSubsystem.close(inputCallback);
         return true;
      }
 
      public boolean raiseElevator(){
-        elevatorSubsystem.moveElevator(0);
+        elevatorSubsystem.moveElevator(0, inputCallback);
         return true;
      }
 
      public boolean moveArmForward(){
-        armSubsystem.moveArm(0);
+        armSubsystem.moveArm(0, inputCallback);
         return true;
      }
 
      public boolean lowerElevator(){
-        elevatorSubsystem.moveElevator(0);
+        elevatorSubsystem.moveElevator(0, inputCallback);
         return true;
      }
 
      public boolean moveArmBack(){
-        armSubsystem.moveArm(0);
+        armSubsystem.moveArm(0, inputCallback);
         return true;
      }
 
      public boolean doSafetyCheck() {
-        // TODO
+        // TODO, implement proper safety check
+        setInput(ScoreInput.IS_SAFE);
+        processComplete();
         return true;
     }
 
