@@ -2,6 +2,7 @@ package frc.robot.subsystems.hand;
 
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -40,6 +41,12 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
     public void release(double velocity) {
         VelocityDutyCycle velocityDutyCycle = new VelocityDutyCycle(velocity);
         motor.setControl(velocityDutyCycle);
+    }
+
+    public void hold() {
+        if(!enabled) return;
+        DutyCycleOut dutyCycleOut = new DutyCycleOut(HandConstants.intakeHoldOutput);
+        motor.setControl(dutyCycleOut);
     }
 
     public void stop() {
