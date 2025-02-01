@@ -42,7 +42,16 @@ public class HandSubsystem extends SubsystemBase implements ToggleableSubsystem 
 
     private void moveHand(double position) {
         if(!enabled) return;
-        desiredPosition = position;
+
+        // do not go outside boundary thresholds
+        if(position > HandConstants.maxHandPosition) {
+            desiredPosition = HandConstants.maxHandPosition;
+        } else if(position < HandConstants.minHandPosition) {
+            desiredPosition = HandConstants.minHandPosition;
+        } else {
+            desiredPosition = position;
+        }
+
         motor.setControl(mmReq1.withPosition(desiredPosition).withFeedForward(arbitraryFeedForward));
     }
 

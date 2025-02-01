@@ -46,7 +46,16 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
 
     public void moveElevator(double position) {
         if(!enabled) return;
-        desiredPosition = position;
+
+        // do not go outside boundary thresholds
+        if(position > ElevatorConstants.maxElevatorPosition) {
+            desiredPosition = ElevatorConstants.maxElevatorPosition;
+        } else if(position < ElevatorConstants.minElevatorPosition) {
+            desiredPosition = ElevatorConstants.minElevatorPosition;
+        } else {
+            desiredPosition = position;
+        }
+
         elevatorMotor1.setControl(mmReq1.withPosition(desiredPosition).withFeedForward(arbitraryFeedForward));
         elevatorMotor2.setControl(mmReq1.withPosition(desiredPosition).withFeedForward(arbitraryFeedForward));
        
