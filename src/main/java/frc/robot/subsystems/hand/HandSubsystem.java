@@ -68,7 +68,6 @@ public class HandSubsystem extends SubsystemBase implements ToggleableSubsystem 
         motor = new TalonFX(HandConstants.handCanId, Constants.CANBUS_NAME);
         TalonFXConfiguration cfg = new TalonFXConfiguration();
         motor.getConfigurator().apply(cfg);
-        motor.setNeutralMode(NeutralModeValue.Brake);
 
         /* Configure current limits */
         MotionMagicConfigs mm = cfg.MotionMagic;

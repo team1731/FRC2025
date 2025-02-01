@@ -13,9 +13,11 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.state.StateMachineCallback;
 import frc.robot.state.score.ScoreInput;
 import frc.robot.subsystems.ToggleableSubsystem;
+import frc.robot.subsystems.hand.HandConstants;
 
 
 
@@ -61,26 +63,25 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
 
         System.out.println("armSubsystem: Starting UP & Initializing arm motor!");
 
-        armMotor = new TalonFX(0);
+        armMotor = new TalonFX(ArmConstants.armCanId, Constants.CANBUS_NAME);
         TalonFXConfiguration config = new TalonFXConfiguration();
 
         armMotor.getConfigurator().apply(config);
-        armMotor.setNeutralMode(NeutralModeValue.Brake);    //see if we can include this in the config
 
         //TODO: setup and apply current limits to config
         /* Configure current limits */
         MotionMagicConfigs mm = config.MotionMagic;
-        mm.MotionMagicCruiseVelocity = 0; // 5 rotations per second cruise
-        mm.MotionMagicAcceleration = 0; // Ta200ke approximately 0.5 seconds to reach max vel
+        mm.MotionMagicCruiseVelocity = 70; // 5 rotations per second cruise
+        mm.MotionMagicAcceleration = 250; // Ta200ke approximately 0.5 seconds to reach max vel
         // Take approximately 0.2 seconds to reach max accel
         mm.MotionMagicJerk = 0;
 
         Slot0Configs slot0 = config.Slot0;
-        slot0.kP = 0;
+        slot0.kP = 4.9;
         slot0.kI = 0;
-        slot0.kD = 0;
-        slot0.kV = 0;
-        slot0.kS = 0; // Approximately 0.25V to get the mechanism moving
+        slot0.kD = 0.0078125;
+        slot0.kV = 0.009375;
+        slot0.kS = 0.02; // Approximately 0.25V to get the mechanism moving
 
         FeedbackConfigs fdb = config.Feedback;
         fdb.SensorToMechanismRatio = 1;
@@ -99,7 +100,7 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
         }
 
         armMotor.setPosition(0);
-        armMotor.setNeutralMode(NeutralModeValue.Brake);    //see if we can include this in the config
+        armMotor.setNeutralMode(NeutralModeValue.Brake);
 
     }
 
