@@ -38,7 +38,10 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
+import frc.robot.subsystems.score.ArmSubsystem;
 import frc.robot.subsystems.score.ElevatorSubsystem;
+import frc.robot.subsystems.score.HandIntakeSubsystem;
+import frc.robot.subsystems.score.HandSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 
 public class RobotContainer {
@@ -99,17 +102,26 @@ public class RobotContainer {
   private VisionSubsystem visionSubsystem;
   private final LEDStringSubsystem m_ledstring;
   private ElevatorSubsystem elevatorSubsystem;
+  private ArmSubsystem armSubsystem;
+  private HandSubsystem handSubsystem;
+  private HandIntakeSubsystem handIntakeSubsystem;
 
   public RobotContainer(
       CommandSwerveDrivetrain s_driveSubsystem,
       VisionSubsystem s_visionSubsystem,
       LEDStringSubsystem s_ledstring,
-      ElevatorSubsystem s_elevatorSubsystem) {
+      ElevatorSubsystem s_elevatorSubsystem,
+      ArmSubsystem s_ArmSubsystem,
+      HandSubsystem s_HandSubsystem,
+      HandIntakeSubsystem s_HandIntakeSubsystem) {
 
     driveSubsystem = s_driveSubsystem;
     elevatorSubsystem = s_elevatorSubsystem;
     visionSubsystem = s_visionSubsystem;
     m_ledstring = s_ledstring;
+    armSubsystem = s_ArmSubsystem;
+    handSubsystem = s_HandSubsystem;
+    handIntakeSubsystem = s_HandIntakeSubsystem;
 
     // Configure the button bindings
     configureBindings();
@@ -193,6 +205,22 @@ public class RobotContainer {
 
     // move elevator down
     kb.onTrue(new InstantCommand(() -> elevatorSubsystem.moveElevator(0)));
+
+    // move arm forward
+    kx.onTrue(new InstantCommand(() -> armSubsystem.moveArm(0)));
+
+    // move arm back
+    ka.onTrue(new InstantCommand(() -> armSubsystem.moveArm(0)));
+
+    // run hand intake
+    kLeftBumper.onTrue(new InstantCommand(() -> handIntakeSubsystem.intake(0))); 
+
+    // run hand release
+    kRightBumper.onTrue(new InstantCommand(() -> handIntakeSubsystem.release(0))); 
+
+    // run hand stop
+    kRightTrigger.onTrue(new InstantCommand(() -> handIntakeSubsystem.stop()));
+
 
     /*
      * !!!!!!!!!!!!!!!!!

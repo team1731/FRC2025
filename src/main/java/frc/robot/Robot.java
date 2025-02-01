@@ -31,7 +31,10 @@ import frc.robot.util.log.LogWriter;
 import frc.robot.util.log.MessageLog;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
+import frc.robot.subsystems.score.ArmSubsystem;
 import frc.robot.subsystems.score.ElevatorSubsystem;
+import frc.robot.subsystems.score.HandIntakeSubsystem;
+import frc.robot.subsystems.score.HandSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 
 /**
@@ -53,6 +56,9 @@ public class Robot extends TimedRobot {
 	private CommandSwerveDrivetrain driveSubsystem;
 	private VisionSubsystem visionSubsystem;
 	private ElevatorSubsystem elevatorSubsystem;
+	private ArmSubsystem armSubsystem;
+	private HandSubsystem handSubsystem;
+	private HandIntakeSubsystem handIntakeSubsystem;
 
 	public Robot() {
 	}
@@ -98,8 +104,14 @@ public class Robot extends TimedRobot {
 
 		elevatorSubsystem = new ElevatorSubsystem(true);
 
+		armSubsystem = new ArmSubsystem(true);
+
+		handSubsystem = new HandSubsystem(true);
+
+		handIntakeSubsystem = new HandIntakeSubsystem(true);
+
 		// Instantiate our robot container. This will perform all of our button bindings,
-		m_robotContainer = new RobotContainer(driveSubsystem, visionSubsystem, ledSubsystem, elevatorSubsystem);
+		m_robotContainer = new RobotContainer(driveSubsystem, visionSubsystem, ledSubsystem, elevatorSubsystem, armSubsystem, handSubsystem, handIntakeSubsystem);
 		
 		/*
 		 * Complete initialization setup/configuration
