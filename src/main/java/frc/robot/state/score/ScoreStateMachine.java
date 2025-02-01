@@ -28,8 +28,8 @@ public class ScoreStateMachine extends StateMachine {
         setCurrentState(ScoreState.HOME);
     }
 
-    public void setPositionMarkers() {
-        // TODO define flexibility to handle different elevator/arm positions for different scoring movements
+    public void setScoreConditions(ScoreAction action, GamePiece piece) {
+        // TODO define flexibility to handle different scoring behaviors and game pieces
     }
 
     /*
@@ -74,7 +74,7 @@ public class ScoreStateMachine extends StateMachine {
      * SAFETY AND RECOVERY METHODS
      */
 
-     public void interrupt() {
+    public void interrupt() {
         // TODO, stop and return to home position
     }
 

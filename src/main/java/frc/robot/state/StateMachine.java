@@ -10,9 +10,13 @@ public abstract class StateMachine {
   private HashMap<String, Method> methods;
   protected State currentState;
   protected CommandCallback commandCallback;
+
+  // will be passed to subsystems to receive feedback for state transitions
   protected StateMachineCallback inputCallback = (Input input) -> {
     run(input);
   };
+
+  public abstract void interrupt();
   
   public void setCallback(CommandCallback callback) {
     commandCallback = callback;
@@ -36,9 +40,11 @@ public abstract class StateMachine {
     stateTransitionTable = table;
     methods = new HashMap<String, Method>();
 
+    // cycle through state transition table and pre-load the operation methods 
     for(Object[] transition : stateTransitionTable) {
       String methodName = (String)transition[2];
       try {
+        // not every state transition will involve an operation, null is valid here
         if(methodName != null) {
           Method method = this.getClass().getMethod(methodName);
           if(method != null) {
@@ -56,6 +62,7 @@ public abstract class StateMachine {
   private void run(Input input) {
     Object[] operationAndNextState = lookupOperationAndNextState(currentState, input);
     if(operationAndNextState == null) {
+      // TODO log an error, no match found
       return;
     }
 
@@ -72,6 +79,8 @@ public abstract class StateMachine {
 
     if(method != null){
       try {
+        // only transition to the next state if the operation succeeds
+        // TODO should we define failure behavior here? Maybe just logging
         if((Boolean)method.invoke(this) && nextState != null){
           setCurrentState(nextState);
         }
@@ -79,11 +88,14 @@ public abstract class StateMachine {
         e.printStackTrace();
       }
     } else if(nextState != null) {
+      // no operation, just transition straight to the next state
       setCurrentState(nextState);
     }
   }
 
   private Object[] lookupOperationAndNextState(State currentState, Input currentInput) {
+    // cycle through the state transitions looking for a match for this state/input combination
+    // there should only ever be one unique combination of state and input
     if(currentState != null && currentInput != null){
         for(Object[] transition : stateTransitionTable){
             State state = (State) transition[0];
@@ -95,6 +107,7 @@ public abstract class StateMachine {
             }
         }
     }
+    // TODO should probably log an error here
     return null;
   }
 }
