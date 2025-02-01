@@ -30,11 +30,11 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.util.log.LogWriter;
 import frc.robot.util.log.MessageLog;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
-import frc.robot.subsystems.score.ArmSubsystem;
-import frc.robot.subsystems.score.ElevatorSubsystem;
-import frc.robot.subsystems.score.HandIntakeSubsystem;
-import frc.robot.subsystems.score.HandSubsystem;
+import frc.robot.subsystems.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.hand.HandIntakeSubsystem;
+import frc.robot.subsystems.hand.HandSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 
 /**

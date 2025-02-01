@@ -1,4 +1,4 @@
-package frc.robot.subsystems.score;
+package frc.robot.subsystems.elevator;
 
 public enum ElevatorPosition {
     HOME(0),

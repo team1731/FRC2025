@@ -1,7 +1,7 @@
 package frc.robot.state.score;
 
 import frc.robot.state.StateMachine;
-import frc.robot.subsystems.score.ElevatorSubsystem;
+import frc.robot.subsystems.elevator.ElevatorSubsystem;
 
 public class ScoreStateMachine extends StateMachine {
     private ElevatorSubsystem elevatorSubsystem;

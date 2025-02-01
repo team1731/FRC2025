@@ -1,4 +1,4 @@
-package frc.robot.subsystems.score;
+package frc.robot.subsystems.hand;
 
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.FeedbackConfigs;

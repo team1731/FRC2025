@@ -37,11 +37,11 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
-import frc.robot.subsystems.score.ArmSubsystem;
-import frc.robot.subsystems.score.ElevatorSubsystem;
-import frc.robot.subsystems.score.HandIntakeSubsystem;
-import frc.robot.subsystems.score.HandSubsystem;
+import frc.robot.subsystems.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.hand.HandIntakeSubsystem;
+import frc.robot.subsystems.hand.HandSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 
 public class RobotContainer {
@@ -212,6 +212,14 @@ public class RobotContainer {
     // move arm back
     ka.onTrue(new InstantCommand(() -> armSubsystem.moveArm(0)));
 
+
+    /* 
+    // open hand
+    ky.onTrue(new InstantCommand(() -> handSubsystem.open(0)));
+
+    // close hand
+    kb.onTrue(new InstantCommand(() -> handSubsystem.close()));
+
     // run hand intake
     kLeftBumper.onTrue(new InstantCommand(() -> handIntakeSubsystem.intake(0))); 
 
@@ -219,7 +227,8 @@ public class RobotContainer {
     kRightBumper.onTrue(new InstantCommand(() -> handIntakeSubsystem.release(0))); 
 
     // run hand stop
-    kRightTrigger.onTrue(new InstantCommand(() -> handIntakeSubsystem.stop()));
+    kx.onTrue(new InstantCommand(() -> handIntakeSubsystem.stop()));
+    */
 
 
     /*

@@ -1,4 +1,4 @@
-package frc.robot.subsystems.score;
+package frc.robot.subsystems.arm;
 
 import com.ctre.phoenix6.signals.InvertedValue;
 
