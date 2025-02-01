@@ -4,7 +4,8 @@ import frc.robot.state.Input;
 
 public enum ScoreInput implements Input {
     BEGIN,
-    PIECE_SCORED,
+    STOP_INTAKE,
+    CLOSE_HAND,
     IS_SAFE,
 
     // Subsystem feedback

@@ -78,9 +78,6 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
         elevatorMotor1.getConfigurator().apply(cfg);
         elevatorMotor2.getConfigurator().apply(cfg);
 
-        elevatorMotor1.setNeutralMode(NeutralModeValue.Brake);
-        elevatorMotor2.setNeutralMode(NeutralModeValue.Brake);
-
         /* Configure current limits */
         MotionMagicConfigs mm = cfg.MotionMagic;
         mm.MotionMagicCruiseVelocity = 70; // 5 rotations per second cruise
