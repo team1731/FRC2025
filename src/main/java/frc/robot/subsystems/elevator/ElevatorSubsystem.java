@@ -5,6 +5,7 @@ import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -14,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.state.StateMachineCallback;
 import frc.robot.state.score.ScoreInput;
 import frc.robot.subsystems.ToggleableSubsystem;
+import frc.robot.subsystems.hand.HandConstants;
 
 public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsystem {
 
@@ -64,6 +66,14 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
     public void moveElevator(double position, StateMachineCallback callback){
         scoreStateMachineCallback = callback;
         moveElevator(position);
+    }
+
+    public void stopElevator() {
+        DutyCycleOut dutyCycleOut = new DutyCycleOut(ElevatorConstants.idleOutput);
+        elevatorMotor1.setControl(dutyCycleOut);
+        elevatorMotor2.setControl(dutyCycleOut);
+        elevatorMotor1.setNeutralMode(NeutralModeValue.Brake);
+        elevatorMotor2.setNeutralMode(NeutralModeValue.Brake);
     }
 
     // Initialize Motors

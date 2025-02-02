@@ -26,7 +26,7 @@ public abstract class StateMachine {
     run(input);
   }
 
-  public void processComplete() {
+  protected void processComplete() {
     if(commandCallback != null) {
       commandCallback.processComplete();
     }

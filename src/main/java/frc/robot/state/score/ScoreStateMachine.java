@@ -1,16 +1,40 @@
 package frc.robot.state.score;
 
+import frc.robot.state.Input;
 import frc.robot.state.StateMachine;
+import frc.robot.state.StateMachineCallback;
+import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmSubsystem;
+import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
 import frc.robot.subsystems.hand.HandSubsystem;
 
 public class ScoreStateMachine extends StateMachine {
+
+    // subsystems
     private ElevatorSubsystem elevatorSubsystem;
     private ArmSubsystem armSubsystem;
-    private HandSubsystem handSubsystem;
-    private HandIntakeSubsystem handIntakeSubsystem;
+
+    // score tracking
+    private ScoreAction scoreAction;
+    private GamePiece gamePiece;
+    private ScorePositions scorePositions;
+
+    // reset/abort tracking
+    private boolean isResetting = false;
+    private boolean elevatorResetDone = false;
+    private boolean armResetDone = false;
+    private StateMachineCallback resetCallback = (Input input) -> {
+        if(isResetting) {
+            ScoreInput scoreInput = (ScoreInput)input;
+            if(scoreInput == ScoreInput.ELEVATOR_DONE) elevatorResetDone = true;
+            if(scoreInput == ScoreInput.ARM_DONE) armResetDone = true;
+            if(elevatorResetDone && armResetDone) {
+                setInput(ScoreInput.RESET_DONE);
+            }
+        }
+    };
 
     private Object STATE_TRANSITION_TABLE[][] = {
         // CURRENT                           INPUT                                  OPERATION                    NEXT
@@ -18,25 +42,25 @@ public class ScoreStateMachine extends StateMachine {
         {ScoreState.RAISING_ELEVATOR,        ScoreInput.ELEVATOR_DONE,              "moveArmForward",            ScoreState.MOVING_ARM_FORWARD},
         {ScoreState.MOVING_ARM_FORWARD,      ScoreInput.ARM_DONE,                   null,                        ScoreState.WAITING},
         {ScoreState.WAITING,                 ScoreInput.SCORE,                      "moveArmToScore",            ScoreState.SCORING},
-        {ScoreState.SCORING,                 ScoreInput.ARM_DONE,                   "lowerElevator",             ScoreState.LOWERING_ELEVATOR},
-        {ScoreState.LOWERING_ELEVATOR,       ScoreInput.ELEVATOR_DONE,              "moveArmBack",               ScoreState.MOVING_ARM_BACK},
-        {ScoreState.MOVING_ARM_BACK,         ScoreInput.ARM_DONE,                   "doSafetyCheck",             ScoreState.CHECKING_SAFETY},
-        {ScoreState.CHECKING_SAFETY,         ScoreInput.IS_SAFE,                    null,                        ScoreState.HOME}
+        {ScoreState.SCORING,                 ScoreInput.ARM_DONE,                   "reset",                     ScoreState.RESETTING},
+        {ScoreState.RESETTING,               ScoreInput.RESET_DONE,                 "doSafetyCheck",             ScoreState.CHECKING_SAFETY},
+        {ScoreState.ABORTING,                ScoreInput.RESET_DONE,                 "doSafetyCheck",             ScoreState.CHECKING_SAFETY},
+        {ScoreState.CHECKING_SAFETY,         ScoreInput.IS_SAFE,                    "resetInternalState",        ScoreState.HOME}
     };
 
 
     public ScoreStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandSubsystem handSubsystem, HandIntakeSubsystem handIntakeSubsystem) {
         this.elevatorSubsystem = elevatorSubsystem;
         this.armSubsystem = armSubsystem;
-        this.handSubsystem = handSubsystem;
-        this.handIntakeSubsystem = handIntakeSubsystem;
 
         setStateTransitionTable(STATE_TRANSITION_TABLE);
         setCurrentState(ScoreState.HOME);
     }
 
     public void setScoreConditions(ScoreAction action, GamePiece piece) {
-        // TODO define flexibility to handle different scoring behaviors and game pieces
+        scoreAction = action;
+        gamePiece = piece;
+        scorePositions = ScorePositionFactory.getScorePositions(action);
     }
 
     /*
@@ -44,34 +68,43 @@ public class ScoreStateMachine extends StateMachine {
      */
 
      public boolean raiseElevator(){
-        elevatorSubsystem.moveElevator(0, inputCallback);
-        return true;
-     }
-
-     public boolean lowerElevator(){
-        elevatorSubsystem.moveElevator(0, inputCallback);
+        elevatorSubsystem.moveElevator(scorePositions.raiseElevatorPosition, inputCallback);
         return true;
      }
 
      public boolean moveArmForward(){
-        armSubsystem.moveArm(0, inputCallback);
+        armSubsystem.moveArm(scorePositions.armForwardPosition, inputCallback);
         return true;
      }
 
      public boolean moveArmToScore(){
-        armSubsystem.moveArm(0, inputCallback);
+        armSubsystem.moveArm(scorePositions.armScoringPosition, inputCallback);
         return true;
      }
 
-     public boolean moveArmBack(){
-        armSubsystem.moveArm(0, inputCallback);
+     public boolean reset() {
+        elevatorSubsystem.moveElevator(ElevatorConstants.elevatorHomePosition, resetCallback);
+        armSubsystem.moveArm(ArmConstants.armHomePosition, resetCallback);
         return true;
      }
 
      public boolean doSafetyCheck() {
-        // TODO, implement proper safety check
-        setInput(ScoreInput.IS_SAFE);
-        processComplete();
+        if(isSafe()) {
+            setInput(ScoreInput.IS_SAFE);
+            processComplete();
+        } else {
+            recover();
+        }
+        return true;
+    }
+
+    public boolean resetInternalState() {
+        scoreAction = null;
+        gamePiece = null;
+        scorePositions = null;
+        isResetting = false;
+        elevatorResetDone = false;
+        armResetDone = false;
         return true;
     }
 
@@ -87,7 +120,8 @@ public class ScoreStateMachine extends StateMachine {
         if(currentState == ScoreState.WAITING) {
             setInput(ScoreInput.SCORE);
         } else {
-            // TODO, stop and return to home position
+            setCurrentState(ScoreState.ABORTING);
+            reset();
         }
     }
 
@@ -98,5 +132,6 @@ public class ScoreStateMachine extends StateMachine {
 
     public void recover() {
         // TODO, detects component positions and carefully returns to a safe/home state
+        // once determine is safe then re-run safety check method
     }
 }

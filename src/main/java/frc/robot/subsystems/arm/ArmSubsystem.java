@@ -7,6 +7,7 @@ import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -63,6 +64,12 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
     public void moveArm(double position, StateMachineCallback callback){
         scoreStateMachineCallback = callback;
         moveArm(position);
+    }
+
+    public void stopArm() {
+        DutyCycleOut dutyCycleOut = new DutyCycleOut(ArmConstants.idleOutput);
+        armMotor.setControl(dutyCycleOut);
+        armMotor.setNeutralMode(NeutralModeValue.Brake);
     }
 
     //initialize arm motor
