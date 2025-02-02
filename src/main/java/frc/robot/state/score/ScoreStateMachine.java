@@ -14,15 +14,13 @@ public class ScoreStateMachine extends StateMachine {
 
     private Object STATE_TRANSITION_TABLE[][] = {
         // CURRENT                           INPUT                                  OPERATION                    NEXT
-        {ScoreState.HOME,                    ScoreInput.BEGIN,                      "openHand",                  ScoreState.HAND_OPENING},
-        {ScoreState.HAND_OPENING,            ScoreInput.HAND_DONE,                  "startIntake",               ScoreState.INTAKE_STARTED},
-        {ScoreState.INTAKE_STARTED,          ScoreInput.STOP_INTAKE,                "stopIntake",                ScoreState.INTAKE_STOPPED},
-        {ScoreState.INTAKE_STOPPED,          ScoreInput.CLOSE_HAND,                 "closeHand",                 ScoreState.HAND_CLOSING},
-        {ScoreState.HAND_CLOSING,            ScoreInput.HAND_DONE,                  "raiseElevator",             ScoreState.RAISING_ELEVATOR},
+        {ScoreState.HOME,                    ScoreInput.BEGIN,                      "raiseElevator",             ScoreState.RAISING_ELEVATOR},
         {ScoreState.RAISING_ELEVATOR,        ScoreInput.ELEVATOR_DONE,              "moveArmForward",            ScoreState.MOVING_ARM_FORWARD},
-        {ScoreState.MOVING_ARM_FORWARD,      ScoreInput.ARM_DONE,                   "lowerElevator",             ScoreState.ELEVATOR_LOWERING},
-        {ScoreState.ELEVATOR_LOWERING,       ScoreInput.ELEVATOR_DONE,              "moveArmBack",               ScoreState.ARM_MOVING_BACK},
-        {ScoreState.ARM_MOVING_BACK,         ScoreInput.ARM_DONE,                   "doSafetyCheck",             ScoreState.CHECKING_SAFETY},
+        {ScoreState.MOVING_ARM_FORWARD,      ScoreInput.ARM_DONE,                   null,                        ScoreState.WAITING},
+        {ScoreState.WAITING,                 ScoreInput.SCORE,                      "moveArmToScore",            ScoreState.SCORING},
+        {ScoreState.SCORING,                 ScoreInput.ARM_DONE,                   "lowerElevator",             ScoreState.LOWERING_ELEVATOR},
+        {ScoreState.LOWERING_ELEVATOR,       ScoreInput.ELEVATOR_DONE,              "moveArmBack",               ScoreState.MOVING_ARM_BACK},
+        {ScoreState.MOVING_ARM_BACK,         ScoreInput.ARM_DONE,                   "doSafetyCheck",             ScoreState.CHECKING_SAFETY},
         {ScoreState.CHECKING_SAFETY,         ScoreInput.IS_SAFE,                    null,                        ScoreState.HOME}
     };
 
@@ -45,27 +43,12 @@ public class ScoreStateMachine extends StateMachine {
      * STATE OPERATION METHODS
      */
 
-     public boolean openHand(){
-        handSubsystem.open(0, inputCallback);
-        return true;
-     }
-
-     public boolean startIntake(){
-        handIntakeSubsystem.intake(0);
-        return true;
-     }
-
-     public boolean stopIntake(){
-        handIntakeSubsystem.stop();
-        return true;
-     }
-
-     public boolean closeHand(){
-        handSubsystem.close(inputCallback);
-        return true;
-     }
-
      public boolean raiseElevator(){
+        elevatorSubsystem.moveElevator(0, inputCallback);
+        return true;
+     }
+
+     public boolean lowerElevator(){
         elevatorSubsystem.moveElevator(0, inputCallback);
         return true;
      }
@@ -75,8 +58,8 @@ public class ScoreStateMachine extends StateMachine {
         return true;
      }
 
-     public boolean lowerElevator(){
-        elevatorSubsystem.moveElevator(0, inputCallback);
+     public boolean moveArmToScore(){
+        armSubsystem.moveArm(0, inputCallback);
         return true;
      }
 
@@ -101,7 +84,11 @@ public class ScoreStateMachine extends StateMachine {
      */
 
     public void interrupt() {
-        // TODO, stop and return to home position
+        if(currentState == ScoreState.WAITING) {
+            setInput(ScoreInput.SCORE);
+        } else {
+            // TODO, stop and return to home position
+        }
     }
 
     public boolean isSafe() {
