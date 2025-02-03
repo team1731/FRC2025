@@ -5,8 +5,8 @@ import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.state.StateMachineCallback;
 import frc.robot.state.score.ScoreInput;
 import frc.robot.subsystems.ToggleableSubsystem;
-import frc.robot.subsystems.hand.HandConstants;
 
 public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsystem {
 
@@ -23,8 +22,11 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
     private TalonFX elevatorMotor1;
     private TalonFX elevatorMotor2;
     private double desiredPosition;
+    private boolean callbackOnThreshold = false;
+    private double positionThreshold = 0;
     private double arbitraryFeedForward = 0;
     private MotionMagicVoltage mmReq1 = new MotionMagicVoltage(0);
+    private final NeutralOut brake = new NeutralOut();
 
     private boolean enabled;
     private StateMachineCallback scoreStateMachineCallback;
@@ -68,12 +70,17 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
         moveElevator(position);
     }
 
+    public void moveElevator(double position, StateMachineCallback callback, double threshold){
+        scoreStateMachineCallback = callback;
+        callbackOnThreshold = true;
+        positionThreshold = threshold;
+        moveElevator(position);
+    }
+
     public void stopElevator() {
-        DutyCycleOut dutyCycleOut = new DutyCycleOut(ElevatorConstants.idleOutput);
-        elevatorMotor1.setControl(dutyCycleOut);
-        elevatorMotor2.setControl(dutyCycleOut);
-        elevatorMotor1.setNeutralMode(NeutralModeValue.Brake);
-        elevatorMotor2.setNeutralMode(NeutralModeValue.Brake);
+        if(!enabled) return;
+        elevatorMotor1.setControl(brake);
+        elevatorMotor2.setControl(brake);
     }
 
     // Initialize Motors
@@ -106,7 +113,7 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
         fdb.SensorToMechanismRatio = 1;
 
         // Apply the configs for Motor 1
-        cfg.MotorOutput.Inverted = ElevatorConstants.elevatorDirection;
+        cfg.MotorOutput.Inverted = ElevatorConstants.elevatorMotor1Direction;
         StatusCode status = StatusCode.StatusCodeNotInitialized;
         for (int i = 0; i < 5; ++i) {
             status = elevatorMotor1.getConfigurator().apply(cfg);
@@ -118,7 +125,7 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
         }
 
         // Apply the configs for Motor 2
-        cfg.MotorOutput.Inverted = ElevatorConstants.elevatorDirection;
+        cfg.MotorOutput.Inverted = ElevatorConstants.elevatorMotor2Direction;
         status = StatusCode.StatusCodeNotInitialized;
          
         for (int i = 0; i < 5; ++i) {
@@ -139,10 +146,15 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
     }
 
     public void periodic() {
-        if (!enabled) return;
+        if(!enabled) return;
 
-        if (isAtPosition(desiredPosition) && scoreStateMachineCallback != null){
+        if(!callbackOnThreshold && isAtPosition(desiredPosition) && scoreStateMachineCallback != null){
             scoreStateMachineCallback.setInput(ScoreInput.ELEVATOR_DONE);
+            scoreStateMachineCallback = null;
+        } else if(callbackOnThreshold && getElevatorPosition() >= positionThreshold && scoreStateMachineCallback != null) {
+            scoreStateMachineCallback.setInput(ScoreInput.ELEVATOR_THRESHOLD_MET);
+            callbackOnThreshold = false;
+            positionThreshold = 0;
             scoreStateMachineCallback = null;
         }
 

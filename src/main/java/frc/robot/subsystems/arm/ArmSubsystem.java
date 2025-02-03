@@ -1,14 +1,12 @@
 package frc.robot.subsystems.arm;
 
-import java.security.PublicKey;
-
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -25,6 +23,7 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
     
     private TalonFX armMotor;
     private MotionMagicVoltage mmReq = new MotionMagicVoltage(0);
+    private final NeutralOut brake = new NeutralOut();
 
     private double desiredPosition;
     private boolean enabled;
@@ -67,9 +66,8 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
     }
 
     public void stopArm() {
-        DutyCycleOut dutyCycleOut = new DutyCycleOut(ArmConstants.idleOutput);
-        armMotor.setControl(dutyCycleOut);
-        armMotor.setNeutralMode(NeutralModeValue.Brake);
+        if(!enabled) return;
+        armMotor.setControl(brake);
     }
 
     //initialize arm motor
@@ -103,7 +101,7 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
 
         //applies config to ArmMotor
         StatusCode status = StatusCode.StatusCodeNotInitialized;
-               config.MotorOutput.Inverted = ArmConstants.armDirection;
+               config.MotorOutput.Inverted = ArmConstants.armMotorDirection;
         for (int i = 0; i < 5; ++i) {
             status = armMotor.getConfigurator().apply(config);
             if (status.isOK())

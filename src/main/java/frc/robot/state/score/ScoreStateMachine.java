@@ -8,7 +8,7 @@ import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
-import frc.robot.subsystems.hand.HandSubsystem;
+import frc.robot.subsystems.hand.HandClamperSubsystem;
 
 public class ScoreStateMachine extends StateMachine {
 
@@ -49,7 +49,7 @@ public class ScoreStateMachine extends StateMachine {
     };
 
 
-    public ScoreStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandSubsystem handSubsystem, HandIntakeSubsystem handIntakeSubsystem) {
+    public ScoreStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem handSubsystem, HandIntakeSubsystem handIntakeSubsystem) {
         this.elevatorSubsystem = elevatorSubsystem;
         this.armSubsystem = armSubsystem;
 
@@ -79,6 +79,12 @@ public class ScoreStateMachine extends StateMachine {
 
      public boolean moveArmToScore(){
         armSubsystem.moveArm(scorePositions.armScoringPosition, inputCallback);
+        return true;
+     }
+
+     public boolean stop() {
+        armSubsystem.stopArm();
+        elevatorSubsystem.stopElevator();
         return true;
      }
 
@@ -120,6 +126,7 @@ public class ScoreStateMachine extends StateMachine {
         if(currentState == ScoreState.WAITING) {
             setInput(ScoreInput.SCORE);
         } else {
+            stop();
             setCurrentState(ScoreState.ABORTING);
             reset();
         }

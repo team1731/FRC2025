@@ -15,7 +15,7 @@ import frc.robot.state.StateMachineCallback;
 import frc.robot.state.score.ScoreInput;
 import frc.robot.subsystems.ToggleableSubsystem;
 
-public class HandSubsystem extends SubsystemBase implements ToggleableSubsystem {
+public class HandClamperSubsystem extends SubsystemBase implements ToggleableSubsystem {
 
     private TalonFX motor;
     private double desiredPosition;
@@ -30,7 +30,7 @@ public class HandSubsystem extends SubsystemBase implements ToggleableSubsystem 
         return enabled;
     }
 
-    public HandSubsystem(boolean enabled) {
+    public HandClamperSubsystem(boolean enabled) {
         this.enabled = enabled;
         if(!enabled) return;
         initializeMotor();
@@ -44,10 +44,10 @@ public class HandSubsystem extends SubsystemBase implements ToggleableSubsystem 
         if(!enabled) return;
 
         // do not go outside boundary thresholds
-        if(position > HandConstants.maxHandPosition) {
-            desiredPosition = HandConstants.maxHandPosition;
-        } else if(position < HandConstants.minHandPosition) {
-            desiredPosition = HandConstants.minHandPosition;
+        if(position > HandConstants.maxClamperPosition) {
+            desiredPosition = HandConstants.maxClamperPosition;
+        } else if(position < HandConstants.minClamperPosition) {
+            desiredPosition = HandConstants.minClamperPosition;
         } else {
             desiredPosition = position;
         }
@@ -79,7 +79,7 @@ public class HandSubsystem extends SubsystemBase implements ToggleableSubsystem 
      */
     private void initializeMotor() {
         System.out.println("HandSubsystem: Starting UP & Initializing intake motor !!!!!!");
-        motor = new TalonFX(HandConstants.handCanId, Constants.CANBUS_NAME);
+        motor = new TalonFX(HandConstants.clamperCanId, Constants.CANBUS_NAME);
         TalonFXConfiguration cfg = new TalonFXConfiguration();
         motor.getConfigurator().apply(cfg);
 
@@ -101,7 +101,7 @@ public class HandSubsystem extends SubsystemBase implements ToggleableSubsystem 
         fdb.SensorToMechanismRatio = 1;
 
         // Apply the config changes
-        cfg.MotorOutput.Inverted = HandConstants.handDirection;
+        cfg.MotorOutput.Inverted = HandConstants.clamperMotorDirection;
         StatusCode status = StatusCode.StatusCodeNotInitialized;
         for (int i = 0; i < 5; ++i) {
             status = motor.getConfigurator().apply(cfg);

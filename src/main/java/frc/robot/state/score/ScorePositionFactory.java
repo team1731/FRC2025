@@ -11,18 +11,18 @@ public class ScorePositionFactory {
     }
 
     private static ScorePositions getL1CoralScorePositions() {
-        return new ScorePositions(0, 0, 0, 0);
+        return new ScorePositions(37, 37, 9, 15); // TODO need real positions
     }
 
     private static ScorePositions getL2CoralScorePositions() {
-        return new ScorePositions(0, 0, 0, 0);
+        return new ScorePositions(37, 37, 9, 15); // TODO need real positions
     }
 
     private static ScorePositions getL3CoralScorePositions() {
-        return new ScorePositions(0, 0, 0, 0);
+        return new ScorePositions(37, 37, 9, 15); // TODO need real positions
     }
 
     private static ScorePositions getL4CoralScorePositions() {
-        return new ScorePositions(0, 0, 0, 0);
+        return new ScorePositions(37, 37, 9, 15); // TODO need real positions
     }
 }

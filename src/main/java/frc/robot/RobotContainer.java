@@ -9,39 +9,24 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.generated.TunerConstants;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 
-import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
-import frc.robot.subsystems.hand.HandSubsystem;
+import frc.robot.subsystems.hand.HandClamperSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 
 public class RobotContainer {
@@ -103,7 +88,7 @@ public class RobotContainer {
   private final LEDStringSubsystem m_ledstring;
   private ElevatorSubsystem elevatorSubsystem;
   private ArmSubsystem armSubsystem;
-  private HandSubsystem handSubsystem;
+  private HandClamperSubsystem handClamperSubsystem;
   private HandIntakeSubsystem handIntakeSubsystem;
 
   public RobotContainer(
@@ -112,7 +97,7 @@ public class RobotContainer {
       LEDStringSubsystem s_ledstring,
       ElevatorSubsystem s_elevatorSubsystem,
       ArmSubsystem s_ArmSubsystem,
-      HandSubsystem s_HandSubsystem,
+      HandClamperSubsystem s_HandClamperSubsystem,
       HandIntakeSubsystem s_HandIntakeSubsystem) {
 
     driveSubsystem = s_driveSubsystem;
@@ -120,7 +105,7 @@ public class RobotContainer {
     visionSubsystem = s_visionSubsystem;
     m_ledstring = s_ledstring;
     armSubsystem = s_ArmSubsystem;
-    handSubsystem = s_HandSubsystem;
+    handClamperSubsystem = s_HandClamperSubsystem;
     handIntakeSubsystem = s_HandIntakeSubsystem;
 
     // Configure the button bindings

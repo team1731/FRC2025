@@ -6,7 +6,6 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.ToggleableSubsystem;
@@ -61,7 +60,7 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
      */
     private void initializeMotor() {
         System.out.println("HandIntakeSubsystem: Starting UP & Initializing motor !!!!!!");
-        motor = new TalonFX(HandConstants.handIntakeCanId, Constants.CANBUS_NAME);
+        motor = new TalonFX(HandConstants.intakeCanId, Constants.CANBUS_NAME);
         TalonFXConfiguration configs = new TalonFXConfiguration();
 
         /* Voltage-based velocity requires a feed forward to account for the back-emf of the motor */
@@ -74,7 +73,7 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
         configs.Voltage.PeakForwardVoltage = 12;
         configs.Voltage.PeakReverseVoltage = -12;
 
-        configs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        configs.MotorOutput.Inverted = HandConstants.intakeMotorDirection;
 
         /* Retry config apply up to 5 times, report if failure */
         StatusCode status = StatusCode.StatusCodeNotInitialized;
