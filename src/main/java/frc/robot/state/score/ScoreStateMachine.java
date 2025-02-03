@@ -17,8 +17,6 @@ public class ScoreStateMachine extends StateMachine {
     private ArmSubsystem armSubsystem;
 
     // score tracking
-    private ScoreAction scoreAction;
-    private GamePiece gamePiece;
     private ScorePositions scorePositions;
 
     // reset/abort tracking
@@ -57,10 +55,12 @@ public class ScoreStateMachine extends StateMachine {
         setCurrentState(ScoreState.HOME);
     }
 
-    public void setScoreConditions(ScoreAction action, GamePiece piece) {
-        scoreAction = action;
-        gamePiece = piece;
-        scorePositions = ScorePositionFactory.getScorePositions(action);
+    public void setScoreConditions(ScoreAction action) {
+        // set score positions
+        if(action == ScoreAction.CORAL_L1) scorePositions = ScorePositionConstants.L1CoralScorePositions;
+        if(action == ScoreAction.CORAL_L2) scorePositions = ScorePositionConstants.L2CoralScorePositions;
+        if(action == ScoreAction.CORAL_L3) scorePositions = ScorePositionConstants.L3CoralScorePositions;
+        if(action == ScoreAction.CORAL_L4) scorePositions = ScorePositionConstants.L4CoralScorePositions;
     }
 
     /*
@@ -105,8 +105,6 @@ public class ScoreStateMachine extends StateMachine {
     }
 
     public boolean resetInternalState() {
-        scoreAction = null;
-        gamePiece = null;
         scorePositions = null;
         isResetting = false;
         elevatorResetDone = false;
@@ -122,7 +120,7 @@ public class ScoreStateMachine extends StateMachine {
      * SAFETY AND RECOVERY METHODS
      */
 
-    public void interrupt() {
+    public void endSequence() {
         if(currentState == ScoreState.WAITING) {
             setInput(ScoreInput.SCORE);
         } else {
@@ -133,12 +131,14 @@ public class ScoreStateMachine extends StateMachine {
     }
 
     public boolean isSafe() {
-        // TODO, checks to see if the scoring system is in a safe/home position
+        elevatorSubsystem.isAtPosition(ElevatorConstants.elevatorHomePosition);
+        armSubsystem.isAtPosition(ArmConstants.armHomePosition);
         return true;
     }
 
     public void recover() {
-        // TODO, detects component positions and carefully returns to a safe/home state
-        // once determine is safe then re-run safety check method
+        // TODO need to implement
+        // May be able to detect positions with sensors (if available) and recover automatically
+        // Or, may need to hand over control to the operator to manually set to a safe position
     }
 }

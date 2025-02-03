@@ -16,7 +16,7 @@ public abstract class StateMachine {
     run(input);
   };
 
-  public abstract void interrupt();
+  public abstract void endSequence();
   
   public void setCallback(CommandCallback callback) {
     commandCallback = callback;

@@ -5,25 +5,25 @@ import frc.robot.subsystems.hand.HandIntakeSubsystem;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
 
 public class CoralIntakeCommand extends Command {
-    HandClamperSubsystem m_handSubsystem;
+    HandClamperSubsystem m_handClamperSubsystem;
     HandIntakeSubsystem m_handIntakeSubsystem;
     boolean isFinished = true;
 
-    public CoralIntakeCommand(HandClamperSubsystem handSubsystem, HandIntakeSubsystem handIntakeSubsystem) {
-        m_handSubsystem = handSubsystem;
+    public CoralIntakeCommand(HandClamperSubsystem handClamperSubsystem, HandIntakeSubsystem handIntakeSubsystem) {
+        m_handClamperSubsystem = handClamperSubsystem;
         m_handIntakeSubsystem = handIntakeSubsystem;
-        addRequirements(handSubsystem, handIntakeSubsystem);
+        addRequirements(m_handClamperSubsystem, handIntakeSubsystem);
     }
 
     @Override
     public void initialize() {
-        m_handSubsystem.open(0);
+        m_handClamperSubsystem.open(0);
         m_handIntakeSubsystem.intake(0);
     }
 
     @Override
     public void end(boolean interrupted) {
-        m_handSubsystem.close();
+        m_handClamperSubsystem.close();
         m_handIntakeSubsystem.stop();
         isFinished = true;
     }
