@@ -89,6 +89,7 @@ public class ScoreStateMachine extends StateMachine {
      }
 
      public boolean reset() {
+        isResetting = true;
         elevatorSubsystem.moveElevator(ElevatorConstants.elevatorHomePosition, resetCallback);
         armSubsystem.moveArm(ArmConstants.armHomePosition, resetCallback);
         return true;
@@ -121,7 +122,7 @@ public class ScoreStateMachine extends StateMachine {
      */
 
     public void endSequence() {
-        if(currentState == ScoreState.WAITING) {
+        if(currentState == ScoreState.WAITING) { // TODO need to check if close to end of arm movement?
             setInput(ScoreInput.SCORE);
         } else {
             stop();
