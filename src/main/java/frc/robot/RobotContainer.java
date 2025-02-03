@@ -18,9 +18,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-
+import frc.robot.commands.CoralIntakeCommand;
+import frc.robot.commands.ScoreCoralCommand;
 import frc.robot.generated.TunerConstants;
-
+import frc.robot.state.score.ScoreAction;
+import frc.robot.state.score.ScoreStateMachine;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
@@ -90,6 +92,7 @@ public class RobotContainer {
   private ArmSubsystem armSubsystem;
   private HandClamperSubsystem handClamperSubsystem;
   private HandIntakeSubsystem handIntakeSubsystem;
+  private ScoreStateMachine scoreStateMachine;
 
   public RobotContainer(
       CommandSwerveDrivetrain s_driveSubsystem,
@@ -107,6 +110,8 @@ public class RobotContainer {
     armSubsystem = s_ArmSubsystem;
     handClamperSubsystem = s_HandClamperSubsystem;
     handIntakeSubsystem = s_HandIntakeSubsystem;
+
+    scoreStateMachine = new ScoreStateMachine(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem);
 
     // Configure the button bindings
     configureBindings();
@@ -186,34 +191,40 @@ public class RobotContainer {
      */
 
     // move elevator up
-    ky.onTrue(new InstantCommand(() -> elevatorSubsystem.moveElevator(0)));
+    ky.onTrue(new InstantCommand(() -> elevatorSubsystem.moveElevator(37)));
 
     // move elevator down
     kb.onTrue(new InstantCommand(() -> elevatorSubsystem.moveElevator(0)));
 
     // move arm forward
-    kx.onTrue(new InstantCommand(() -> armSubsystem.moveArm(0)));
+    kx.onTrue(new InstantCommand(() -> armSubsystem.moveArm(15)));
 
     // move arm back
     ka.onTrue(new InstantCommand(() -> armSubsystem.moveArm(0)));
 
 
-    /* 
     // open hand
-    ky.onTrue(new InstantCommand(() -> handSubsystem.open(0)));
+    //ky.onTrue(new InstantCommand(() -> handSubsystem.open(2)));
 
     // close hand
-    kb.onTrue(new InstantCommand(() -> handSubsystem.close()));
+    //kb.onTrue(new InstantCommand(() -> handSubsystem.close()));
 
     // run hand intake
-    kLeftBumper.onTrue(new InstantCommand(() -> handIntakeSubsystem.intake(0))); 
+    //kLeftBumper.onTrue(new InstantCommand(() -> handIntakeSubsystem.intake(0))); 
 
     // run hand release
-    kRightBumper.onTrue(new InstantCommand(() -> handIntakeSubsystem.release(0))); 
+    //kRightBumper.onTrue(new InstantCommand(() -> handIntakeSubsystem.release(0))); 
 
     // run hand stop
-    kx.onTrue(new InstantCommand(() -> handIntakeSubsystem.stop()));
-    */
+    //kx.onTrue(new InstantCommand(() -> handIntakeSubsystem.stop()));
+
+
+    
+    // Intake coral
+    //ky.whileTrue(new CoralIntakeCommand(handClamperSubsystem, handIntakeSubsystem));
+
+    //score coral
+    //kb.whileTrue(new ScoreCoralCommand(scoreStateMachine, ScoreAction.CORAL_L2, elevatorSubsystem, armSubsystem));
 
 
     /*
