@@ -132,9 +132,13 @@ public class ScoreStateMachine extends StateMachine {
     }
 
     public boolean isSafe() {
-        elevatorSubsystem.isAtPosition(ElevatorConstants.elevatorHomePosition);
-        armSubsystem.isAtPosition(ArmConstants.armHomePosition);
-        return true;
+        if(elevatorSubsystem.isAtPosition(ElevatorConstants.elevatorHomePosition) &&
+           armSubsystem.isAtPosition(ArmConstants.armHomePosition)) {
+            return true;
+        } else {
+            System.out.println("ScoreStateMachine: Not in a safe position! One or both of elevator/arm subsystems are not at home");
+            return false;
+        }
     }
 
     public void recover() {
