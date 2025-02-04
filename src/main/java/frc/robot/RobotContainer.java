@@ -127,9 +127,9 @@ public class RobotContainer {
             .withRotationalRate(-xboxController.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
         ));
 
-    xboxController.a().whileTrue(drivetrain.applyRequest(() -> brake));
-    xboxController.b().whileTrue(drivetrain.applyRequest(
-        () -> point.withModuleDirection(new Rotation2d(-xboxController.getLeftY(), -xboxController.getLeftX()))));
+ //  xboxController.a().whileTrue(drivetrain.applyRequest(() -> brake));
+   // xboxController.b().whileTrue(drivetrain.applyRequest(
+     //   () -> point.withModuleDirection(new Rotation2d(-xboxController.getLeftY(), -xboxController.getLeftX()))));
 
     // (SCH) NOTE: These sysId calls aren't strictly necessary,
     // though they seem to be a different method of controlling the drivetrain.
@@ -191,40 +191,40 @@ public class RobotContainer {
      */
 
     // move elevator up
-    ky.onTrue(new InstantCommand(() -> elevatorSubsystem.moveElevator(37)));
+  //  ky.onTrue(new InstantCommand(() -> elevatorSubsystem.moveElevator(37)));
 
     // move elevator down
-    kb.onTrue(new InstantCommand(() -> elevatorSubsystem.moveElevator(0)));
+    //kb.onTrue(new InstantCommand(() -> elevatorSubsystem.moveElevator(0)));
 
     // move arm forward
-    kx.onTrue(new InstantCommand(() -> armSubsystem.moveArm(15)));
+    //kx.onTrue(new InstantCommand(() -> armSubsystem.moveArm(15)));
 
     // move arm back
-    ka.onTrue(new InstantCommand(() -> armSubsystem.moveArm(0)));
+    //ka.onTrue(new InstantCommand(() -> armSubsystem.moveArm(0)));
 
 
     // open hand
-    //ky.onTrue(new InstantCommand(() -> handSubsystem.open(2)));
+  //  ky.onTrue(new InstantCommand(() -> handClamperSubsystem.open(4)));
 
     // close hand
-    //kb.onTrue(new InstantCommand(() -> handSubsystem.close()));
+   // kb.onTrue(new InstantCommand(() -> handClamperSubsystem.close()));
 
     // run hand intake
-    //kLeftBumper.onTrue(new InstantCommand(() -> handIntakeSubsystem.intake(0))); 
+  //  kLeftBumper.onTrue(new InstantCommand(() -> handIntakeSubsystem.intake(5000/60))); 
 
     // run hand release
-    //kRightBumper.onTrue(new InstantCommand(() -> handIntakeSubsystem.release(0))); 
+//kRightBumper.onTrue(new InstantCommand(() -> handIntakeSubsystem.release(5000/60))); 
 
     // run hand stop
-    //kx.onTrue(new InstantCommand(() -> handIntakeSubsystem.stop()));
+   // kx.onTrue(new InstantCommand(() -> handIntakeSubsystem.stop()));
 
 
     
     // Intake coral
-    //ky.whileTrue(new CoralIntakeCommand(handClamperSubsystem, handIntakeSubsystem));
+    ky.whileTrue(new CoralIntakeCommand(handClamperSubsystem, handIntakeSubsystem));
 
     //score coral
-    //kb.whileTrue(new ScoreCoralCommand(scoreStateMachine, ScoreAction.CORAL_L2, elevatorSubsystem, armSubsystem));
+    kb.whileTrue(new ScoreCoralCommand(scoreStateMachine, ScoreAction.CORAL_L2, elevatorSubsystem, armSubsystem));
 
 
     /*

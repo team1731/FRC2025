@@ -13,7 +13,7 @@ public class ScoreCoralCommand extends Command {
     ElevatorSubsystem m_elevatorSubsystem;
     ArmSubsystem m_armSubsystem;
     boolean sequenceStarted = false;
-    boolean isFinished = true;
+    //boolean isFinished = false;
 
     public ScoreCoralCommand(ScoreStateMachine stateMachine, ScoreAction action, ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem) {
         scoreStateMachine = stateMachine;
@@ -24,6 +24,7 @@ public class ScoreCoralCommand extends Command {
     }
 
     public void runStateMachine() {
+        System.out.println("Running state machine!!!!!!!!!!!!!!!");
         sequenceStarted = true;
         scoreStateMachine.setScoreConditions(scoreAction);
         scoreStateMachine.setInput(ScoreInput.BEGIN);
@@ -31,6 +32,7 @@ public class ScoreCoralCommand extends Command {
 
     @Override
     public void initialize() {
+        System.out.println("State machine is ready? " + scoreStateMachine.isReady());
         if(scoreStateMachine.isReady()) {
             runStateMachine();
         }
@@ -45,12 +47,14 @@ public class ScoreCoralCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
+        System.out.println("Score command interrupted");
         scoreStateMachine.endSequence();
-        isFinished = true;
+        //isFinished = true;
     }
-
+    /* 
     @Override
     public boolean isFinished() {
         return isFinished;
     }
+        */
 }

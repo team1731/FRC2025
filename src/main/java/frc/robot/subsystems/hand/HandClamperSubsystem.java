@@ -79,7 +79,7 @@ public class HandClamperSubsystem extends SubsystemBase implements ToggleableSub
      */
     private void initializeMotor() {
         System.out.println("HandSubsystem: Starting UP & Initializing intake motor !!!!!!");
-        motor = new TalonFX(HandConstants.clamperCanId, Constants.CANBUS_NAME);
+        motor = new TalonFX(HandConstants.clamperCanId, "rio");
         TalonFXConfiguration cfg = new TalonFXConfiguration();
         motor.getConfigurator().apply(cfg);
 

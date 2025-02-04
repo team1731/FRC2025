@@ -25,12 +25,13 @@ public class ScoreStateMachine extends StateMachine {
     private boolean armResetDone = false;
     private StateMachineCallback resetCallback = (Input input) -> {
         if(isResetting) {
-            ScoreInput scoreInput = (ScoreInput)input;
-            if(scoreInput == ScoreInput.ELEVATOR_DONE) elevatorResetDone = true;
-            if(scoreInput == ScoreInput.ARM_DONE) armResetDone = true;
-            if(elevatorResetDone && armResetDone) {
+            System.out.println("reset done" + input + " " + elevatorResetDone + " " + armResetDone);
+            //ScoreInput scoreInput = (ScoreInput)input;
+            //if(scoreInput == ScoreInput.ELEVATOR_DONE) elevatorResetDone = true;
+            //if(scoreInput == ScoreInput.ARM_DONE) armResetDone = true;
+            //if(elevatorResetDone && armResetDone) {
                 setInput(ScoreInput.RESET_DONE);
-            }
+            //}
         }
     };
 
@@ -40,10 +41,10 @@ public class ScoreStateMachine extends StateMachine {
         {ScoreState.RAISING_ELEVATOR,        ScoreInput.ELEVATOR_DONE,              "moveArmForward",            ScoreState.MOVING_ARM_FORWARD},
         {ScoreState.MOVING_ARM_FORWARD,      ScoreInput.ARM_DONE,                   null,                        ScoreState.WAITING},
         {ScoreState.WAITING,                 ScoreInput.SCORE,                      "moveArmToScore",            ScoreState.SCORING},
-        {ScoreState.SCORING,                 ScoreInput.ARM_DONE,                   "reset",                     ScoreState.RESETTING},
-        {ScoreState.RESETTING,               ScoreInput.RESET_DONE,                 "doSafetyCheck",             ScoreState.CHECKING_SAFETY},
-        {ScoreState.ABORTING,                ScoreInput.RESET_DONE,                 "doSafetyCheck",             ScoreState.CHECKING_SAFETY},
-        {ScoreState.CHECKING_SAFETY,         ScoreInput.IS_SAFE,                    "resetInternalState",        ScoreState.HOME}
+        {ScoreState.SCORING,                 ScoreInput.ARM_DONE,                   "lowerElevator",             ScoreState.LOWERING},
+        {ScoreState.LOWERING,               ScoreInput.ELEVATOR_THRESHOLD_MET,      "moveArmBack",               ScoreState.RESETTING},
+        {ScoreState.RESETTING,               ScoreInput.ARM_DONE,                 null,                     ScoreState.HOME},
+        {ScoreState.ABORTING,                ScoreInput.ARM_DONE,                 "doSafetyCheck",             ScoreState.HOME}
     };
 
 
@@ -72,8 +73,19 @@ public class ScoreStateMachine extends StateMachine {
         return true;
      }
 
+     public boolean lowerElevator() {
+        elevatorSubsystem.moveElevator(ElevatorConstants.elevatorHomePosition, inputCallback, scorePositions.lowerElevatorThreshold);
+        return true;
+     }
+
      public boolean moveArmForward(){
         armSubsystem.moveArm(scorePositions.armForwardPosition, inputCallback);
+        return true;
+     }
+
+     public boolean moveArmBack(){
+        isResetting = true;
+        armSubsystem.moveArm(ArmConstants.armHomePosition, inputCallback);
         return true;
      }
 
@@ -90,19 +102,22 @@ public class ScoreStateMachine extends StateMachine {
 
      public boolean reset() {
         isResetting = true;
-        elevatorSubsystem.moveElevator(ElevatorConstants.elevatorHomePosition, resetCallback);
-        armSubsystem.moveArm(ArmConstants.armHomePosition, resetCallback);
+        //elevatorSubsystem.moveElevator(ElevatorConstants.elevatorHomePosition, resetCallback);
+        //armSubsystem.moveArm(ArmConstants.armHomePosition, resetCallback);
         return true;
      }
 
      public boolean doSafetyCheck() {
         if(isSafe()) {
-            setInput(ScoreInput.IS_SAFE);
-            processComplete();
+            System.out.println("yes is safe");
+            resetInternalState();
+           // processComplete();
+            return true;
         } else {
+            System.out.println("no is not safe");
             recover();
+            return false;
         }
-        return true;
     }
 
     public boolean resetInternalState() {
@@ -122,6 +137,7 @@ public class ScoreStateMachine extends StateMachine {
      */
 
     public void endSequence() {
+        System.out.println("ending sequence");
         if(currentState == ScoreState.WAITING) { // TODO need to check if close to end of arm movement?
             setInput(ScoreInput.SCORE);
         } else {
@@ -132,13 +148,17 @@ public class ScoreStateMachine extends StateMachine {
     }
 
     public boolean isSafe() {
-        if(elevatorSubsystem.isAtPosition(ElevatorConstants.elevatorHomePosition) &&
-           armSubsystem.isAtPosition(ArmConstants.armHomePosition)) {
-            return true;
-        } else {
-            System.out.println("ScoreStateMachine: Not in a safe position! One or both of elevator/arm subsystems are not at home");
-            return false;
-        }
+        System.out.println("is elevator safe? " + elevatorSubsystem.getElevatorPosition());
+        System.out.println("is arm safe? " + armSubsystem.getArmPosition());
+        // if(elevatorSubsystem.isAtPosition(ElevatorConstants.elevatorHomePosition) &&
+        //    armSubsystem.isAtPosition(ArmConstants.armHomePosition)) {
+        //     return true;
+        // } else {
+        //     System.out.println("ScoreStateMachine: Not in a safe position! One or both of elevator/arm subsystems are not at home");
+        // 
+        //    return false;
+        return true;
+        // }
     }
 
     public void recover() {

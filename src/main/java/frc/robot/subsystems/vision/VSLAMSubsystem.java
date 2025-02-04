@@ -56,8 +56,8 @@ public class VSLAMSubsystem {
         ntDatatable = networkTableInstance.getTable("questnav");
         populateFromDatatable();
 
-        ShuffleboardTab tab = Shuffleboard.getTab("test");
-        tab.add(vslamField);
+       // ShuffleboardTab tab = Shuffleboard.getTab("test");
+        //tab.add(vslamField);
 
         System.out.println("add ind listener******************************************");
         // add a listener to only value changes on the Y subscriber

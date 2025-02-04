@@ -24,6 +24,7 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
     private double desiredPosition;
     private boolean callbackOnThreshold = false;
     private double positionThreshold = 0;
+    private boolean thresholdAbove = false;
     private double arbitraryFeedForward = 0;
     private MotionMagicVoltage mmReq1 = new MotionMagicVoltage(0);
     private final NeutralOut brake = new NeutralOut();
@@ -74,6 +75,7 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
         scoreStateMachineCallback = callback;
         callbackOnThreshold = true;
         positionThreshold = threshold;
+        thresholdAbove = threshold < position;
         moveElevator(position);
     }
 
@@ -151,7 +153,12 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
         if(!callbackOnThreshold && isAtPosition(desiredPosition) && scoreStateMachineCallback != null){
             scoreStateMachineCallback.setInput(ScoreInput.ELEVATOR_DONE);
             scoreStateMachineCallback = null;
-        } else if(callbackOnThreshold && getElevatorPosition() >= positionThreshold && scoreStateMachineCallback != null) {
+        } else if(thresholdAbove && callbackOnThreshold && getElevatorPosition() >= positionThreshold && scoreStateMachineCallback != null) {
+            scoreStateMachineCallback.setInput(ScoreInput.ELEVATOR_THRESHOLD_MET);
+            callbackOnThreshold = false;
+            positionThreshold = 0;
+            scoreStateMachineCallback = null;
+        } else if(!thresholdAbove && callbackOnThreshold && getElevatorPosition() <= positionThreshold && scoreStateMachineCallback != null) {
             scoreStateMachineCallback.setInput(ScoreInput.ELEVATOR_THRESHOLD_MET);
             callbackOnThreshold = false;
             positionThreshold = 0;

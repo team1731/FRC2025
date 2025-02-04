@@ -8,6 +8,7 @@ public enum ScoreState implements State {
     MOVING_ARM_FORWARD,
     WAITING,
     SCORING,
+    LOWERING,
     RESETTING,
     ABORTING,
     CHECKING_SAFETY

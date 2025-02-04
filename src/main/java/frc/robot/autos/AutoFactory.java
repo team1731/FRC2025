@@ -8,13 +8,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 public class AutoFactory {
     private static boolean flipRedBlue;
-    private static HashMap<String, String> autoPaths;
 
     public static boolean isFlipRedBlue() {
         return flipRedBlue;
       }
     
     public static Command getAutonomousCommand(String autoName, boolean redAlliance) {
+        HashMap<String, String> autoPaths = AutoLoader.getAutoPaths();
+
         String alliancePathName = autoName;
         if (!autoName.startsWith("Red_") && !autoName.startsWith("Blu_")) {
         alliancePathName = (redAlliance ? "Red" : "Blu") + "_" + autoName;

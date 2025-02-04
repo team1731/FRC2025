@@ -75,7 +75,7 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
 
         System.out.println("armSubsystem: Starting UP & Initializing arm motor!");
 
-        armMotor = new TalonFX(ArmConstants.armCanId, Constants.CANBUS_NAME);
+        armMotor = new TalonFX(ArmConstants.armCanId, "rio");
         TalonFXConfiguration config = new TalonFXConfiguration();
 
         armMotor.getConfigurator().apply(config);
@@ -120,6 +120,7 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
         if (!enabled) return;
 
         if (isAtPosition(desiredPosition) && scoreStateMachineCallback != null){
+            System.out.println("Armsystem callback " + desiredPosition);
             scoreStateMachineCallback.setInput(ScoreInput.ARM_DONE);
             scoreStateMachineCallback = null;
         }

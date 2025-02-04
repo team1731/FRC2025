@@ -23,6 +23,7 @@ public abstract class StateMachine {
   }
 
   public void setInput(Input input) {
+    System.out.println("recevied input " + input);
     run(input);
   }
 
@@ -60,8 +61,10 @@ public abstract class StateMachine {
   }
 
   private void run(Input input) {
+    System.out.println("run input " + input);
     Object[] operationAndNextState = lookupOperationAndNextState(currentState, input);
     if(operationAndNextState == null) {
+      System.out.println("no match found" + currentState + " " + input);
       // TODO log an error, no match found
       return;
     }
@@ -82,7 +85,10 @@ public abstract class StateMachine {
         // only transition to the next state if the operation succeeds
         // TODO should we define failure behavior here? Maybe just logging
         if((Boolean)method.invoke(this) && nextState != null){
+          System.out.println("setting state" + nextState);
           setCurrentState(nextState);
+        }else{
+          System.out.println("invoke failed");
         }
       } catch (Exception e) {
         e.printStackTrace();
