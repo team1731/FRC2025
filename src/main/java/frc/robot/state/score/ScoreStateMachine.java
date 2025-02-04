@@ -98,7 +98,7 @@ public class ScoreStateMachine extends StateMachine {
         return true;
      }
 
-     public boolean grabGamePiece() {
+     public boolean prepareToIntake() {
         // TODO need to define
         return true;
      }
