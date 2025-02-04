@@ -9,7 +9,6 @@ public enum ScoreState implements State {
     WAITING,
     SCORING,
     LOWERING,
-    RESETTING,
-    ABORTING,
-    CHECKING_SAFETY
+    FINISHING,
+    ABORTING
 }

@@ -1,9 +1,10 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
+import frc.robot.state.intake.IntakePositionConstants;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
+import frc.robot.subsystems.hand.HandConstants;
 
 public class CoralIntakeCommand extends Command {
     HandClamperSubsystem m_handClamperSubsystem;
@@ -18,9 +19,8 @@ public class CoralIntakeCommand extends Command {
 
     @Override
     public void initialize() {
-        System.out.println("int coral intake command!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        m_handClamperSubsystem.open(4);
-        m_handIntakeSubsystem.intake(5000/60);
+        m_handClamperSubsystem.open(IntakePositionConstants.coralIntakeWidth);
+        m_handIntakeSubsystem.intake(HandConstants.intakeVelocity);
 
     }
 
@@ -28,8 +28,6 @@ public class CoralIntakeCommand extends Command {
     public void end(boolean interrupted) {
         m_handClamperSubsystem.close();
         m_handIntakeSubsystem.stop();
-        
-        
     }
 
 

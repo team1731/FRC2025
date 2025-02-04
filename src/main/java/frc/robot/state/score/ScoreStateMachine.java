@@ -3,6 +3,9 @@ package frc.robot.state.score;
 import frc.robot.state.Input;
 import frc.robot.state.StateMachine;
 import frc.robot.state.StateMachineCallback;
+import frc.robot.state.score.constants.ScorePositions;
+import frc.robot.state.score.sequence.Sequence;
+import frc.robot.state.score.sequence.SequenceFactory;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorConstants;
@@ -11,7 +14,6 @@ import frc.robot.subsystems.hand.HandIntakeSubsystem;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
 
 public class ScoreStateMachine extends StateMachine {
-
     // subsystems
     private ElevatorSubsystem elevatorSubsystem;
     private ArmSubsystem armSubsystem;
@@ -23,101 +25,110 @@ public class ScoreStateMachine extends StateMachine {
     private boolean isResetting = false;
     private boolean elevatorResetDone = false;
     private boolean armResetDone = false;
-    private StateMachineCallback resetCallback = (Input input) -> {
+
+    private StateMachineCallback subsystemCallback = (Input input) -> {
         if(isResetting) {
-            System.out.println("reset done" + input + " " + elevatorResetDone + " " + armResetDone);
-            //ScoreInput scoreInput = (ScoreInput)input;
-            //if(scoreInput == ScoreInput.ELEVATOR_DONE) elevatorResetDone = true;
-            //if(scoreInput == ScoreInput.ARM_DONE) armResetDone = true;
-            //if(elevatorResetDone && armResetDone) {
+            ScoreInput scoreInput = (ScoreInput)input;
+            if(scoreInput == ScoreInput.ELEVATOR_THRESHOLD_MET) setInput(input); // not home yet
+            if(scoreInput == ScoreInput.ELEVATOR_DONE) elevatorResetDone = true;
+            if(scoreInput == ScoreInput.ARM_DONE) armResetDone = true;
+            if(elevatorResetDone && armResetDone) {
                 setInput(ScoreInput.RESET_DONE);
-            //}
+            }
+        } else {
+            setInput(input);
         }
     };
-
-    private Object STATE_TRANSITION_TABLE[][] = {
-        // CURRENT                           INPUT                                  OPERATION                    NEXT
-        {ScoreState.HOME,                    ScoreInput.BEGIN,                      "raiseElevator",             ScoreState.RAISING_ELEVATOR},
-        {ScoreState.RAISING_ELEVATOR,        ScoreInput.ELEVATOR_DONE,              "moveArmForward",            ScoreState.MOVING_ARM_FORWARD},
-        {ScoreState.MOVING_ARM_FORWARD,      ScoreInput.ARM_DONE,                   null,                        ScoreState.WAITING},
-        {ScoreState.WAITING,                 ScoreInput.SCORE,                      "moveArmToScore",            ScoreState.SCORING},
-        {ScoreState.SCORING,                 ScoreInput.ARM_DONE,                   "lowerElevator",             ScoreState.LOWERING},
-        {ScoreState.LOWERING,               ScoreInput.ELEVATOR_THRESHOLD_MET,      "moveArmBack",               ScoreState.RESETTING},
-        {ScoreState.RESETTING,               ScoreInput.ARM_DONE,                 null,                     ScoreState.HOME},
-        {ScoreState.ABORTING,                ScoreInput.ARM_DONE,                 "doSafetyCheck",             ScoreState.HOME}
-    };
-
 
     public ScoreStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem handSubsystem, HandIntakeSubsystem handIntakeSubsystem) {
         this.elevatorSubsystem = elevatorSubsystem;
         this.armSubsystem = armSubsystem;
-
-        setStateTransitionTable(STATE_TRANSITION_TABLE);
         setCurrentState(ScoreState.HOME);
     }
 
-    public void setScoreConditions(ScoreAction action) {
-        // set score positions
-        if(action == ScoreAction.CORAL_L1) scorePositions = ScorePositionConstants.L1CoralScorePositions;
-        if(action == ScoreAction.CORAL_L2) scorePositions = ScorePositionConstants.L2CoralScorePositions;
-        if(action == ScoreAction.CORAL_L3) scorePositions = ScorePositionConstants.L3CoralScorePositions;
-        if(action == ScoreAction.CORAL_L4) scorePositions = ScorePositionConstants.L4CoralScorePositions;
+    /*
+     * COMMAND INTERFACE
+     */
+
+    public boolean isReady() {
+        return currentState == ScoreState.HOME;
+    }
+
+    public void setSequence(Sequence sequence) {
+        // the sequence determines the choreographed movement of elevator/arm/hand
+        setStateTransitionTable(SequenceFactory.getTransitionTable(sequence)); // state machine transitions
+        scorePositions = SequenceFactory.getPositions(sequence); // position constants for subsystems
+    }
+
+    public void endSequence() {
+        if(currentState == ScoreState.WAITING) { // TODO add support to check if *close* to end of movement
+            setInput(ScoreInput.SCORE);
+        } else {
+            abort();
+        }
     }
 
     /*
      * STATE OPERATION METHODS
      */
 
-     public boolean raiseElevator(){
-        elevatorSubsystem.moveElevator(scorePositions.raiseElevatorPosition, inputCallback);
+     public boolean raiseElevator() {
+        elevatorSubsystem.moveElevator(scorePositions.raiseElevatorPosition, subsystemCallback);
         return true;
      }
 
-     public boolean lowerElevator() {
-        elevatorSubsystem.moveElevator(ElevatorConstants.elevatorHomePosition, inputCallback, scorePositions.lowerElevatorThreshold);
-        return true;
-     }
-
-     public boolean moveArmForward(){
-        armSubsystem.moveArm(scorePositions.armForwardPosition, inputCallback);
-        return true;
-     }
-
-     public boolean moveArmBack(){
+     public boolean moveElevatorHome() {
         isResetting = true;
-        armSubsystem.moveArm(ArmConstants.armHomePosition, inputCallback);
+        elevatorSubsystem.moveElevator(ElevatorConstants.elevatorHomePosition, subsystemCallback, scorePositions.lowerElevatorThreshold);
         return true;
      }
 
-     public boolean moveArmToScore(){
-        armSubsystem.moveArm(scorePositions.armScoringPosition, inputCallback);
+     public boolean moveArmForward() {
+        armSubsystem.moveArm(scorePositions.armForwardPosition, subsystemCallback);
         return true;
      }
 
-     public boolean stop() {
-        armSubsystem.stopArm();
-        elevatorSubsystem.stopElevator();
+     public boolean moveArmToScore() {
+        armSubsystem.moveArm(scorePositions.armScoringPosition, subsystemCallback);
         return true;
      }
 
-     public boolean reset() {
-        isResetting = true;
-        //elevatorSubsystem.moveElevator(ElevatorConstants.elevatorHomePosition, resetCallback);
-        //armSubsystem.moveArm(ArmConstants.armHomePosition, resetCallback);
+     public boolean moveArmHome() {
+        armSubsystem.moveArm(ArmConstants.armHomePosition, subsystemCallback);
         return true;
      }
 
-     public boolean doSafetyCheck() {
+     public boolean grabGamePiece() {
+        // TODO need to define
+        return true;
+     }
+
+     public boolean shootToScore() {
+        // TODO need to define
+        return true;
+     }
+
+    /*
+     * RESET, SAFETY, AND RECOVERY METHODS
+     */
+
+    public boolean doSafetyCheck() {
         if(isSafe()) {
-            System.out.println("yes is safe");
             resetInternalState();
-           // processComplete();
+            processComplete();
             return true;
         } else {
-            System.out.println("no is not safe");
             recover();
             return false;
         }
+    }
+
+    public boolean isSafe() {
+        // TODO for now just printing out info, but at some point probably want reliable safety checks
+        System.out.println("ScoreStateMachine: checking safety -" + 
+            " elevator pos: " + elevatorSubsystem.getElevatorPosition() +
+            " arm pos: " + armSubsystem.getArmPosition());
+        return true;
     }
 
     public boolean resetInternalState() {
@@ -128,42 +139,20 @@ public class ScoreStateMachine extends StateMachine {
         return true;
     }
 
-    public boolean isReady() {
-        return currentState == ScoreState.HOME;
-    }
-
-    /*
-     * SAFETY AND RECOVERY METHODS
-     */
-
-    public void endSequence() {
-        System.out.println("ending sequence");
-        if(currentState == ScoreState.WAITING) { // TODO need to check if close to end of arm movement?
-            setInput(ScoreInput.SCORE);
-        } else {
-            stop();
-            setCurrentState(ScoreState.ABORTING);
-            reset();
-        }
-    }
-
-    public boolean isSafe() {
-        System.out.println("is elevator safe? " + elevatorSubsystem.getElevatorPosition());
-        System.out.println("is arm safe? " + armSubsystem.getArmPosition());
-        // if(elevatorSubsystem.isAtPosition(ElevatorConstants.elevatorHomePosition) &&
-        //    armSubsystem.isAtPosition(ArmConstants.armHomePosition)) {
-        //     return true;
-        // } else {
-        //     System.out.println("ScoreStateMachine: Not in a safe position! One or both of elevator/arm subsystems are not at home");
-        // 
-        //    return false;
-        return true;
-        // }
-    }
+    private void abort() {
+        setCurrentState(ScoreState.ABORTING);
+        isResetting = true;
+        // stop current movements
+        armSubsystem.stopArm();
+        elevatorSubsystem.stopElevator();
+        // move back home
+        armSubsystem.moveArm(ArmConstants.armHomePosition, subsystemCallback);
+        elevatorSubsystem.moveElevator(ElevatorConstants.elevatorHomePosition, subsystemCallback);
+     }
 
     public void recover() {
         // TODO need to implement
-        // May be able to detect positions with sensors (if available) and recover automatically
-        // Or, may need to hand over control to the operator to manually set to a safe position
+        // Move arm back into position using absolute encorder
+        // Move elevator and clamper back into position using resistence to indicated home, then reset motor encoders
     }
 }

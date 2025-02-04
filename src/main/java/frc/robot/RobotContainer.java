@@ -19,9 +19,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.CoralIntakeCommand;
-import frc.robot.commands.ScoreCoralCommand;
+import frc.robot.commands.ScoreCommand;
 import frc.robot.generated.TunerConstants;
-import frc.robot.state.score.ScoreAction;
 import frc.robot.state.score.ScoreStateMachine;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.arm.ArmSubsystem;
@@ -184,54 +183,13 @@ public class RobotContainer {
       driveSubsystem.setOperatorPerspectiveForward(operatorPerspective); // Just a Hack
     }));
 
-    /*
-     * !!!!!!!!!!!!!!!!!
-     * START TESTING COMMANDS
-     * !!!!!!!!!!!!!!!!!
-     */
-
-    // move elevator up
-  //  ky.onTrue(new InstantCommand(() -> elevatorSubsystem.moveElevator(37)));
-
-    // move elevator down
-    //kb.onTrue(new InstantCommand(() -> elevatorSubsystem.moveElevator(0)));
-
-    // move arm forward
-    //kx.onTrue(new InstantCommand(() -> armSubsystem.moveArm(15)));
-
-    // move arm back
-    //ka.onTrue(new InstantCommand(() -> armSubsystem.moveArm(0)));
-
-
-    // open hand
-  //  ky.onTrue(new InstantCommand(() -> handClamperSubsystem.open(4)));
-
-    // close hand
-   // kb.onTrue(new InstantCommand(() -> handClamperSubsystem.close()));
-
-    // run hand intake
-  //  kLeftBumper.onTrue(new InstantCommand(() -> handIntakeSubsystem.intake(5000/60))); 
-
-    // run hand release
-//kRightBumper.onTrue(new InstantCommand(() -> handIntakeSubsystem.release(5000/60))); 
-
-    // run hand stop
-   // kx.onTrue(new InstantCommand(() -> handIntakeSubsystem.stop()));
-
-
     
     // Intake coral
     ky.whileTrue(new CoralIntakeCommand(handClamperSubsystem, handIntakeSubsystem));
 
-    //score coral
-    kb.whileTrue(new ScoreCoralCommand(scoreStateMachine, ScoreAction.CORAL_L2, elevatorSubsystem, armSubsystem));
+    // score coral
+    kb.whileTrue(new ScoreCommand(scoreStateMachine, elevatorSubsystem, armSubsystem));
 
-
-    /*
-     * !!!!!!!!!!!!!!!!!
-     * END TESTING COMMANDS
-     * !!!!!!!!!!!!!!!!!
-     */
 
     operatorkLeftBumper.onTrue(new InstantCommand(() -> {
 

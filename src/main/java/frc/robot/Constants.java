@@ -31,14 +31,6 @@ public final class Constants {
     public static final int kTICKS = 33024; // 16.125 * 2048;
     public static final String CANBUS_NAME = "canivore1";
 
-    public static enum GamePiece {
-        CONE, CUBE
-    }
-
-    public static enum HighPickup {
-        FEEDER, SHELF
-    }
-
     public static final class LogConstants {
         /*
          * To write to a log you must:

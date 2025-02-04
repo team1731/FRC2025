@@ -11,26 +11,36 @@ public abstract class StateMachine {
   protected State currentState;
   protected CommandCallback commandCallback;
 
+  /*
+   * COMMAND INTERFACE
+   */
+
+  // gives the state machine a handle to notify the command
+  public void setCallback(CommandCallback callback) {
+    commandCallback = callback;
+  }
+
+  // handle command interruptions
+  public abstract void endSequence();
+
   // will be passed to subsystems to receive feedback for state transitions
   protected StateMachineCallback inputCallback = (Input input) -> {
     run(input);
   };
 
-  public abstract void endSequence();
-  
-  public void setCallback(CommandCallback callback) {
-    commandCallback = callback;
-  }
-
-  public void setInput(Input input) {
-    System.out.println("recevied input " + input);
-    run(input);
-  }
-
   protected void processComplete() {
     if(commandCallback != null) {
       commandCallback.processComplete();
     }
+  }
+
+  
+  /*
+   * INPUT AND STATE TRANSITION HANDLING METHODS
+   */
+
+  public void setInput(Input input) {
+    run(input);
   }
 
   protected void setCurrentState(State state) {
@@ -53,7 +63,7 @@ public abstract class StateMachine {
           }
         }
       } catch (NoSuchMethodException e) {
-        System.out.println(" ** ERROR: method '" + methodName + "()' NOT FOUND IN CLASS " + getClass().getSimpleName() + "! ** ");
+        System.out.println(getStateMachineName() + " ** ERROR: method '" + methodName + "()' NOT FOUND IN CLASS! ** ");
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -61,10 +71,9 @@ public abstract class StateMachine {
   }
 
   private void run(Input input) {
-    System.out.println("run input " + input);
     Object[] operationAndNextState = lookupOperationAndNextState(currentState, input);
     if(operationAndNextState == null) {
-      System.out.println("no match found" + currentState + " " + input);
+      System.out.println(getStateMachineName() +  " no transition found for state: " + currentState + ", and input: " + input);
       // TODO log an error, no match found
       return;
     }
@@ -74,7 +83,7 @@ public abstract class StateMachine {
     State nextState = (State) operationAndNextState[1];
     
     System.out.println(
-      getClass().getSimpleName() + 
+      getStateMachineName() + 
       " - received input: " + input + 
       ", state transition: " + currentState + 
       " to " + nextState
@@ -83,12 +92,10 @@ public abstract class StateMachine {
     if(method != null){
       try {
         // only transition to the next state if the operation succeeds
-        // TODO should we define failure behavior here? Maybe just logging
         if((Boolean)method.invoke(this) && nextState != null){
-          System.out.println("setting state" + nextState);
           setCurrentState(nextState);
-        }else{
-          System.out.println("invoke failed");
+        } else{
+          System.out.println(getStateMachineName() + " operation invocation failed: " + methodName);
         }
       } catch (Exception e) {
         e.printStackTrace();
@@ -113,8 +120,11 @@ public abstract class StateMachine {
             }
         }
     }
-    // TODO should probably log an error here
     return null;
+  }
+
+  private String getStateMachineName() {
+    return this.getClass().getSimpleName();
   }
 }
 

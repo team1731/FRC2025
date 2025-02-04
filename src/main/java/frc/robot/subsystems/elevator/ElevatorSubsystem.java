@@ -22,16 +22,19 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
     private TalonFX elevatorMotor1;
     private TalonFX elevatorMotor2;
     private double desiredPosition;
-    private boolean callbackOnThreshold = false;
-    private double positionThreshold = 0;
-    private boolean thresholdAbove = false;
+
+    // motor movement
     private double arbitraryFeedForward = 0;
     private MotionMagicVoltage mmReq1 = new MotionMagicVoltage(0);
     private final NeutralOut brake = new NeutralOut();
 
+    // state machine callback handling
+    private StateMachineCallback stateMachineCallback;
+    private boolean callbackOnThreshold = false;
+    private double positionThreshold = 0;
+    private boolean thresholdAbove = false;
+
     private boolean enabled;
-    private StateMachineCallback scoreStateMachineCallback;
-    
     
     @Override
     public boolean isEnabled() {
@@ -66,16 +69,16 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
        
     }
 
-    public void moveElevator(double position, StateMachineCallback callback){
-        scoreStateMachineCallback = callback;
+    public void moveElevator(double position, StateMachineCallback callback) {
+        stateMachineCallback = callback;
         moveElevator(position);
     }
 
-    public void moveElevator(double position, StateMachineCallback callback, double threshold){
-        scoreStateMachineCallback = callback;
+    public void moveElevator(double position, StateMachineCallback callback, double threshold) {
+        stateMachineCallback = callback;
         callbackOnThreshold = true;
         positionThreshold = threshold;
-        thresholdAbove = threshold < position;
+        thresholdAbove = threshold < position; // above = moving up, below = moving down
         moveElevator(position);
     }
 
@@ -150,19 +153,22 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
     public void periodic() {
         if(!enabled) return;
 
-        if(!callbackOnThreshold && isAtPosition(desiredPosition) && scoreStateMachineCallback != null){
-            scoreStateMachineCallback.setInput(ScoreInput.ELEVATOR_DONE);
-            scoreStateMachineCallback = null;
-        } else if(thresholdAbove && callbackOnThreshold && getElevatorPosition() >= positionThreshold && scoreStateMachineCallback != null) {
-            scoreStateMachineCallback.setInput(ScoreInput.ELEVATOR_THRESHOLD_MET);
-            callbackOnThreshold = false;
-            positionThreshold = 0;
-            scoreStateMachineCallback = null;
-        } else if(!thresholdAbove && callbackOnThreshold && getElevatorPosition() <= positionThreshold && scoreStateMachineCallback != null) {
-            scoreStateMachineCallback.setInput(ScoreInput.ELEVATOR_THRESHOLD_MET);
-            callbackOnThreshold = false;
-            positionThreshold = 0;
-            scoreStateMachineCallback = null;
+        /*
+         * Score State Machine callback handling
+         */
+        if(isAtPosition(desiredPosition) && stateMachineCallback != null) {
+            // final position reached, notify the state machine
+            stateMachineCallback.setInput(ScoreInput.ELEVATOR_DONE);
+            stateMachineCallback = null;
+        } else if(callbackOnThreshold && stateMachineCallback != null) {
+            // check to see if the threshold was met, if so notify the state machine
+            boolean thresholdMet = thresholdAbove && getElevatorPosition() >= positionThreshold ||
+                !thresholdAbove && getElevatorPosition() <= positionThreshold;
+            if(thresholdMet) {
+                stateMachineCallback.setInput(ScoreInput.ELEVATOR_THRESHOLD_MET);
+                callbackOnThreshold = false;
+                positionThreshold = 0;
+            }
         }
 
         log();

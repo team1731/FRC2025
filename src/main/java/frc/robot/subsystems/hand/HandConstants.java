@@ -7,8 +7,9 @@ public final class HandConstants {
     public final static int intakeCanId = 38;
 
     public final static double minClamperPosition = 0;
-    public final static double maxClamperPosition = 3;
+    public final static double maxClamperPosition = 6;
 
+    public final static double intakeVelocity = 5000/60;
     public final static double intakeHoldOutput = 0.1;
 
     // Motor Direction
