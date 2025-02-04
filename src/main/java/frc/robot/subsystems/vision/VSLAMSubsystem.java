@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.vision;
 
 import java.util.EnumSet;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.subsystems.drive.DrivetrainVisionCallback;
+
 import static frc.robot.Constants.Vision.*;
 
 
@@ -54,8 +56,8 @@ public class VSLAMSubsystem {
         ntDatatable = networkTableInstance.getTable("questnav");
         populateFromDatatable();
 
-        ShuffleboardTab tab = Shuffleboard.getTab("test");
-        tab.add(vslamField);
+       // ShuffleboardTab tab = Shuffleboard.getTab("test");
+        //tab.add(vslamField);
 
         System.out.println("add ind listener******************************************");
         // add a listener to only value changes on the Y subscriber

@@ -30,6 +30,12 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.util.log.LogWriter;
 import frc.robot.util.log.MessageLog;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.arm.ArmSubsystem;
+import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
+import frc.robot.subsystems.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.hand.HandIntakeSubsystem;
+import frc.robot.subsystems.hand.HandClamperSubsystem;
+import frc.robot.subsystems.vision.VisionSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -50,6 +56,9 @@ public class Robot extends TimedRobot {
 	private CommandSwerveDrivetrain driveSubsystem;
 	private VisionSubsystem visionSubsystem;
 	private ElevatorSubsystem elevatorSubsystem;
+	private ArmSubsystem armSubsystem;
+	private HandClamperSubsystem handClamperSubsystem;
+	private HandIntakeSubsystem handIntakeSubsystem;
 
 	public Robot() {
 	}
@@ -95,8 +104,14 @@ public class Robot extends TimedRobot {
 
 		elevatorSubsystem = new ElevatorSubsystem(true);
 
+		armSubsystem = new ArmSubsystem(true);
+
+		handClamperSubsystem = new HandClamperSubsystem(true);
+
+		handIntakeSubsystem = new HandIntakeSubsystem(true);
+
 		// Instantiate our robot container. This will perform all of our button bindings,
-		m_robotContainer = new RobotContainer(driveSubsystem, visionSubsystem, ledSubsystem, elevatorSubsystem);
+		m_robotContainer = new RobotContainer(driveSubsystem, visionSubsystem, ledSubsystem, elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem);
 		
 		/*
 		 * Complete initialization setup/configuration

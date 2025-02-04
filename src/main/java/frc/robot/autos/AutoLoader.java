@@ -14,6 +14,10 @@ public class AutoLoader {
     private static final SendableChooser<String> autoChooser = new SendableChooser<>();
     private static HashMap<String, String> autoPaths;
 
+    public static HashMap<String, String> getAutoPaths() {
+        return autoPaths;
+    }
+
     public static SendableChooser<String> loadAutoChooser() {
         String[] autoModes = getAutoModes();
 		for (String autoMode : autoModes) {
