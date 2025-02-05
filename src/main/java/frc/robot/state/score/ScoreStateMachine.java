@@ -40,10 +40,14 @@ public class ScoreStateMachine extends StateMachine {
         }
     };
 
-    public ScoreStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem handSubsystem, HandIntakeSubsystem handIntakeSubsystem) {
+    public ScoreStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem) {
         this.elevatorSubsystem = elevatorSubsystem;
         this.armSubsystem = armSubsystem;
         setCurrentState(ScoreState.HOME);
+    }
+
+    public StateMachineCallback getSubsystemCallback() {
+        return subsystemCallback;
     }
 
     /*
