@@ -40,10 +40,14 @@ public class ScoreStateMachine extends StateMachine {
         }
     };
 
-    public ScoreStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem handSubsystem, HandIntakeSubsystem handIntakeSubsystem) {
+    public ScoreStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem) {
         this.elevatorSubsystem = elevatorSubsystem;
         this.armSubsystem = armSubsystem;
         setCurrentState(ScoreState.HOME);
+    }
+
+    public StateMachineCallback getSubsystemCallback() {
+        return subsystemCallback;
     }
 
     /*
@@ -98,7 +102,7 @@ public class ScoreStateMachine extends StateMachine {
         return true;
      }
 
-     public boolean grabGamePiece() {
+     public boolean prepareToIntake() {
         // TODO need to define
         return true;
      }

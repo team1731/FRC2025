@@ -110,7 +110,7 @@ public class RobotContainer {
     handClamperSubsystem = s_HandClamperSubsystem;
     handIntakeSubsystem = s_HandIntakeSubsystem;
 
-    scoreStateMachine = new ScoreStateMachine(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem);
+    scoreStateMachine = new ScoreStateMachine(elevatorSubsystem, armSubsystem);
 
     // Configure the button bindings
     configureBindings();

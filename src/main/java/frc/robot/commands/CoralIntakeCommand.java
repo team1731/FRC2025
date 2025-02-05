@@ -2,7 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
-import frc.robot.state.intake.IntakePositionConstants;
+import frc.robot.state.score.constants.PositionConstants;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
 import frc.robot.subsystems.hand.HandConstants;
 
@@ -19,7 +19,7 @@ public class CoralIntakeCommand extends Command {
 
     @Override
     public void initialize() {
-        m_handClamperSubsystem.open(IntakePositionConstants.coralIntakeWidth);
+        m_handClamperSubsystem.open(PositionConstants.coralIntakeWidth);
         m_handIntakeSubsystem.intake(HandConstants.intakeVelocity);
 
     }

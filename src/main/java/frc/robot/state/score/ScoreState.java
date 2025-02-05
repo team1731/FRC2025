@@ -6,9 +6,9 @@ public enum ScoreState implements State {
     HOME,
     RAISING_ELEVATOR,
     MOVING_ARM_FORWARD,
-    WAITING,
+    WAITING, // for driver feedback or intake sensor feedback
     SCORING,
     LOWERING,
-    FINISHING,
-    ABORTING
+    FINISHING, // typically moving arm back
+    ABORTING // if driver ends command early
 }
