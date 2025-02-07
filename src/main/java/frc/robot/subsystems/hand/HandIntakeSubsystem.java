@@ -1,11 +1,14 @@
 package frc.robot.subsystems.hand;
 
 import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.ToggleableSubsystem;
@@ -74,6 +77,13 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
         configs.Voltage.PeakReverseVoltage = -12;
 
         configs.MotorOutput.Inverted = HandConstants.intakeMotorDirection;
+
+        var HWSwitchConfigs = new HardwareLimitSwitchConfigs();
+
+        HWSwitchConfigs.ForwardLimitEnable = true;
+        HWSwitchConfigs.ForwardLimitSource = ForwardLimitSourceValue.LimitSwitchPin;
+        configs.HardwareLimitSwitch = HWSwitchConfigs;
+
 
         /* Retry config apply up to 5 times, report if failure */
         StatusCode status = StatusCode.StatusCodeNotInitialized;
