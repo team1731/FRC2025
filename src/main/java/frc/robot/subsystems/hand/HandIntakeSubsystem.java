@@ -8,6 +8,7 @@ import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
+import com.ctre.phoenix6.signals.ForwardLimitValue;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.state.StateMachineCallback;
@@ -20,6 +21,7 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
     private final NeutralOut brake = new NeutralOut();
     private StateMachineCallback scoreStateMachineCallback;
     private boolean intaking = false;
+    private double releaseTime = 0;
     private boolean enabled;
     
     
@@ -49,10 +51,6 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
         intake(velocity);
     }
 
-    public boolean hasStoppedIntaking() {
-        return motor.getVelocity().getValueAsDouble() < HandConstants.intakeStoppedThreshold;
-    }
-
     public void release(double velocity) {
         VelocityDutyCycle velocityDutyCycle = new VelocityDutyCycle(velocity);
         motor.setControl(velocityDutyCycle);
@@ -67,6 +65,10 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
     public void stop() {
         if(!enabled) return;
         motor.setControl(brake);
+    }
+
+    public boolean limitSwitchFlipped() {
+        return motor.getForwardLimit().getValue() == ForwardLimitValue.ClosedToGround;
     }
 
     
@@ -120,10 +122,10 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
     public void periodic() {
         if(!enabled) return;
 
-        if(intaking && hasStoppedIntaking()) {
+        if(intaking && limitSwitchFlipped()) {
             intaking = false;
             if(scoreStateMachineCallback != null) {
-                System.out.println("HandIntakeSubsystem callback - intake stopped, should have game piece");
+                System.out.println("HandIntakeSubsystem limit switch flipped, should have game piece");
                 scoreStateMachineCallback.setInput(ScoreInput.DETECTED_PIECE);
                 scoreStateMachineCallback = null;
             }

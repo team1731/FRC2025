@@ -10,9 +10,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.state.StateMachineCallback;
 import frc.robot.state.score.ScoreInput;
+import frc.robot.state.score.constants.PositionConstants;
 import frc.robot.subsystems.ToggleableSubsystem;
 
 public class HandClamperSubsystem extends SubsystemBase implements ToggleableSubsystem {
@@ -65,12 +65,12 @@ public class HandClamperSubsystem extends SubsystemBase implements ToggleableSub
     }
 
     public void close() {
-        moveHand(0.0);
+        moveHand(PositionConstants.clamperClosedPosition);
     }
 
     public void close(StateMachineCallback callback) {
         scoreStateMachineCallback = callback;
-        moveHand(0.0);
+        close();
     }
     
 

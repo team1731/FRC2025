@@ -14,8 +14,16 @@ public class SequenceFactory {
         operatorActionSelection = action;
     }
 
+    public static Action getOperatorActionSelection() {
+        return operatorActionSelection;
+    }
+
     public static void setOperatorPieceSelection(GamePiece piece) {
         operatorPieceSelection = piece;
+    }
+
+    public static GamePiece getOperatorPieceSelection() {
+        return operatorPieceSelection;
     }
 
     public static Sequence getSequence() {

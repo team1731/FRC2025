@@ -15,6 +15,8 @@ import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.hand.HandClamperSubsystem;
+import frc.robot.subsystems.hand.HandIntakeSubsystem;
 
 public class ScoreStateMachineTest {
 
@@ -66,9 +68,11 @@ public class ScoreStateMachineTest {
         // mock the subsystems
         ElevatorSubsystem mockedElevatorSubsystem = mock(ElevatorSubsystem.class);
         ArmSubsystem mockedArmSubsystem = mock(ArmSubsystem.class);
+        HandClamperSubsystem mockedClamperSubsystem = mock(HandClamperSubsystem.class);
+        HandIntakeSubsystem mockedIntakeSubsystem = mock(HandIntakeSubsystem.class);
 
         // setup the state machine, sequence, and associated position values
-        ScoreStateMachine stateMachine = new ScoreStateMachine(mockedElevatorSubsystem, mockedArmSubsystem);
+        ScoreStateMachine stateMachine = new ScoreStateMachine(mockedElevatorSubsystem, mockedArmSubsystem, mockedClamperSubsystem, mockedIntakeSubsystem);
         ScorePositions positions = SequenceFactory.getPositions(sequence);
         StateMachineCallback callback = stateMachine.getSubsystemCallback();
         stateMachine.setSequence(sequence);
@@ -118,9 +122,11 @@ public class ScoreStateMachineTest {
         // mock the subsystems
         ElevatorSubsystem mockedElevatorSubsystem = mock(ElevatorSubsystem.class);
         ArmSubsystem mockedArmSubsystem = mock(ArmSubsystem.class);
+        HandClamperSubsystem mockedClamperSubsystem = mock(HandClamperSubsystem.class);
+        HandIntakeSubsystem mockedIntakeSubsystem = mock(HandIntakeSubsystem.class);
 
         // setup the state machine, sequence, and associated position values
-        ScoreStateMachine stateMachine = new ScoreStateMachine(mockedElevatorSubsystem, mockedArmSubsystem);
+        ScoreStateMachine stateMachine = new ScoreStateMachine(mockedElevatorSubsystem, mockedArmSubsystem, mockedClamperSubsystem, mockedIntakeSubsystem);
         ScorePositions positions = SequenceFactory.getPositions(sequence);
         StateMachineCallback callback = stateMachine.getSubsystemCallback();
         stateMachine.setSequence(sequence);

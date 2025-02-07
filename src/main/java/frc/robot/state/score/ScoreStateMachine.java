@@ -3,6 +3,7 @@ package frc.robot.state.score;
 import frc.robot.state.Input;
 import frc.robot.state.StateMachine;
 import frc.robot.state.StateMachineCallback;
+import frc.robot.state.score.constants.PositionConstants;
 import frc.robot.state.score.constants.ScorePositions;
 import frc.robot.state.score.sequence.Sequence;
 import frc.robot.state.score.sequence.SequenceFactory;
@@ -12,11 +13,14 @@ import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
+import frc.robot.subsystems.hand.HandConstants;
 
 public class ScoreStateMachine extends StateMachine {
     // subsystems
     private ElevatorSubsystem elevatorSubsystem;
     private ArmSubsystem armSubsystem;
+    private HandClamperSubsystem clamperSubsystem;
+    private HandIntakeSubsystem intakeSubsystem;
 
     // score tracking
     private ScorePositions scorePositions;
@@ -40,9 +44,11 @@ public class ScoreStateMachine extends StateMachine {
         }
     };
 
-    public ScoreStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem) {
+    public ScoreStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem clamperSubsystem, HandIntakeSubsystem intakeSubsystem) {
         this.elevatorSubsystem = elevatorSubsystem;
         this.armSubsystem = armSubsystem;
+        this.clamperSubsystem = clamperSubsystem;
+        this.intakeSubsystem = intakeSubsystem;
         setCurrentState(ScoreState.HOME);
     }
 
@@ -102,13 +108,26 @@ public class ScoreStateMachine extends StateMachine {
         return true;
      }
 
-     public boolean prepareToIntake() {
-        // TODO need to define
+     public boolean intake() {
+        if(SequenceFactory.getOperatorPieceSelection() == GamePiece.CORAL) {
+            clamperSubsystem.open(PositionConstants.coralIntakeWidth);
+            intakeSubsystem.intake(HandConstants.intakeVelocity, inputCallback);
+        } else { // ALGAE
+            clamperSubsystem.open(PositionConstants.algaeIntakeWidth);
+            intakeSubsystem.intake(HandConstants.intakeVelocity, inputCallback);
+        }
+        
+        return true;
+     }
+
+     public boolean closeHand() {
+        clamperSubsystem.close();
         return true;
      }
 
      public boolean shootToScore() {
-        // TODO need to define
+        intakeSubsystem.release(HandConstants.scoreAlgaeVelocity);
+        clamperSubsystem.close();
         return true;
      }
 
