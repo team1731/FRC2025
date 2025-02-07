@@ -1,6 +1,7 @@
 package frc.robot.state.score.constants;
 
 public final class PositionConstants {
+    public final static double clamperClosedPosition = 0;
     public final static double coralIntakeWidth = 4;
     public final static double algaeIntakeWidth = 6;
 
