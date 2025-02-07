@@ -46,8 +46,8 @@ public final class TransitionConstants {
         // CURRENT                           INPUT                                  OPERATION                    NEXT
         {ScoreState.HOME,                    ScoreInput.BEGIN,                      "raiseElevator",             ScoreState.RAISING_ELEVATOR},
         {ScoreState.RAISING_ELEVATOR,        ScoreInput.ELEVATOR_THRESHOLD_MET,     "moveArmForward",            ScoreState.MOVING_ARM_FORWARD},
-        {ScoreState.MOVING_ARM_FORWARD,      ScoreInput.ARM_DONE,                   "prepareToIntake",           ScoreState.WAITING},
-        {ScoreState.WAITING,                 ScoreInput.DETECTED_PIECE,             "moveElevatorHome",          ScoreState.LOWERING},
+        {ScoreState.MOVING_ARM_FORWARD,      ScoreInput.ARM_DONE,                   "prepareToIntake",           ScoreState.INTAKING},
+        {ScoreState.INTAKING,                ScoreInput.DETECTED_PIECE,             "moveElevatorHome",          ScoreState.LOWERING},
         {ScoreState.LOWERING,                ScoreInput.ELEVATOR_THRESHOLD_MET,     "moveArmHome",               ScoreState.FINISHING},
         {ScoreState.FINISHING,               ScoreInput.RESET_DONE,                 "doSafetyCheck",             ScoreState.HOME},
         {ScoreState.ABORTING,                ScoreInput.RESET_DONE,                 "doSafetyCheck",             ScoreState.HOME}

@@ -8,7 +8,9 @@ import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
+import com.ctre.phoenix6.signals.ForwardLimitValue;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.state.StateMachineCallback;
 import frc.robot.state.score.ScoreInput;
@@ -20,6 +22,8 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
     private final NeutralOut brake = new NeutralOut();
     private StateMachineCallback scoreStateMachineCallback;
     private boolean intaking = false;
+    private double releaseStartedTime = 0;
+    private double releaseRunningTime = 0;
     private boolean enabled;
     
     
@@ -49,13 +53,16 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
         intake(velocity);
     }
 
-    public boolean hasStoppedIntaking() {
-        return motor.getVelocity().getValueAsDouble() < HandConstants.intakeStoppedThreshold;
-    }
-
     public void release(double velocity) {
         VelocityDutyCycle velocityDutyCycle = new VelocityDutyCycle(velocity);
         motor.setControl(velocityDutyCycle);
+    }
+
+    public void release(double velocity, double runningTime, StateMachineCallback callback) {
+        releaseStartedTime = Timer.getFPGATimestamp();
+        releaseRunningTime = runningTime;
+        scoreStateMachineCallback = callback;
+        release(velocity);
     }
 
     public void hold() {
@@ -66,7 +73,12 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
 
     public void stop() {
         if(!enabled) return;
+        intaking = false;
         motor.setControl(brake);
+    }
+
+    public boolean limitSwitchFlipped() {
+        return motor.getForwardLimit().getValue() == ForwardLimitValue.ClosedToGround;
     }
 
     
@@ -120,10 +132,21 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
     public void periodic() {
         if(!enabled) return;
 
-        if(intaking && hasStoppedIntaking()) {
+        if(releaseRunningTime != 0 && Timer.getFPGATimestamp() - releaseStartedTime >= releaseRunningTime) {
+            stop();
+            releaseRunningTime = 0;
+            releaseStartedTime = 0;
+            if(scoreStateMachineCallback != null) {
+                System.out.println("HandIntakeSubsystem stopped release, should have finished shooting");
+                scoreStateMachineCallback.setInput(ScoreInput.RELEASED_PIECE);
+                scoreStateMachineCallback = null;
+            }
+        }
+
+        if(intaking && limitSwitchFlipped()) {
             intaking = false;
             if(scoreStateMachineCallback != null) {
-                System.out.println("HandIntakeSubsystem callback - intake stopped, should have game piece");
+                System.out.println("HandIntakeSubsystem limit switch flipped, should have game piece");
                 scoreStateMachineCallback.setInput(ScoreInput.DETECTED_PIECE);
                 scoreStateMachineCallback = null;
             }

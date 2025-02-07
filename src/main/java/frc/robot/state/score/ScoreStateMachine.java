@@ -39,6 +39,7 @@ public class ScoreStateMachine extends StateMachine {
                 setInput(ScoreInput.RESET_DONE);
             }
         } else {
+            if(input == ScoreInput.DETECTED_PIECE || input == ScoreInput.RELEASED_PIECE) closeHand();
             setInput(input);
         }
     };
@@ -46,6 +47,8 @@ public class ScoreStateMachine extends StateMachine {
     public ScoreStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem handClamperSubsystem, HandIntakeSubsystem handIntakeSubsystem) { //add hand here
         this.elevatorSubsystem = elevatorSubsystem;
         this.armSubsystem = armSubsystem;
+        this.handClamperSubsystem = handClamperSubsystem;
+        this.handIntakeSubsystem = handIntakeSubsystem;
         setCurrentState(ScoreState.HOME);
     }
 
@@ -79,42 +82,47 @@ public class ScoreStateMachine extends StateMachine {
      * STATE OPERATION METHODS
      */
 
-     public boolean raiseElevator() {
+    public boolean raiseElevator() {
         elevatorSubsystem.moveElevator(scorePositions.raiseElevatorPosition, subsystemCallback);
         return true;
-     }
+    }
 
-     public boolean moveElevatorHome() {
+    public boolean moveElevatorHome() {
         isResetting = true;
         elevatorSubsystem.moveElevator(ElevatorConstants.elevatorHomePosition, subsystemCallback, scorePositions.lowerElevatorThreshold);
         return true;
-     }
+    }
 
-     public boolean moveArmForward() {
+    public boolean moveArmForward() {
         armSubsystem.moveArm(scorePositions.armForwardPosition, subsystemCallback);
         return true;
-     }
+    }
 
-     public boolean moveArmToScore() {
+    public boolean moveArmToScore() {
         armSubsystem.moveArm(scorePositions.armScoringPosition, subsystemCallback);
         return true;
-     }
+    }
 
-     public boolean moveArmHome() {
+    public boolean moveArmHome() {
         armSubsystem.moveArm(ArmConstants.armHomePosition, subsystemCallback);
         return true;
+    }
+
+    public boolean closeHand() {
+        handClamperSubsystem.close();
+        return true;
      }
 
-     public boolean prepareToIntake() {
-        handClamperSubsystem.open(scorePositions.handClamperPosition);
+    public boolean prepareToIntake() {
+        handClamperSubsystem.open(scorePositions.handClamperPosition, subsystemCallback);
         handIntakeSubsystem.intake(HandConstants.intakeVelocity);
         return true;
-     }
+    }
 
-     public boolean shootToScore() {
-        handIntakeSubsystem.release(HandConstants.intakeVelocity); //should have a release velocity
+    public boolean shootToScore() {
+        handIntakeSubsystem.release(HandConstants.scoreAlgaeVelocity, HandConstants.defaultReleaseRuntime, subsystemCallback);
         return true;
-     }
+    }
 
     /*
      * RESET, SAFETY, AND RECOVERY METHODS

@@ -68,9 +68,11 @@ public class ScoreStateMachineTest {
         // mock the subsystems
         ElevatorSubsystem mockedElevatorSubsystem = mock(ElevatorSubsystem.class);
         ArmSubsystem mockedArmSubsystem = mock(ArmSubsystem.class);
+        HandIntakeSubsystem mockHandIntakeSubsystem = mock(HandIntakeSubsystem.class);
+        HandClamperSubsystem mockHandClamperSubsystem = mock(HandClamperSubsystem.class);
 
         // setup the state machine, sequence, and associated position values
-        ScoreStateMachine stateMachine = new ScoreStateMachine(mockedElevatorSubsystem, mockedArmSubsystem);
+        ScoreStateMachine stateMachine = new ScoreStateMachine(mockedElevatorSubsystem, mockedArmSubsystem, mockHandClamperSubsystem, mockHandIntakeSubsystem);
         ScorePositions positions = SequenceFactory.getPositions(sequence);
         StateMachineCallback callback = stateMachine.getSubsystemCallback();
         stateMachine.setSequence(sequence);
@@ -125,8 +127,7 @@ public class ScoreStateMachineTest {
         
 
         // setup the state machine, sequence, and associated position values
-        ScoreStateMachine stateMachine = new ScoreStateMachine(mockedElevatorSubsystem, mockedArmSubsystem,mockHandClamperSubsystem, mockHandIntakeSubsystem);
-        Sequence sequence = SequenceFactory.getSequence(Action.SCORE_L2, GamePiece.CORAL);
+        ScoreStateMachine stateMachine = new ScoreStateMachine(mockedElevatorSubsystem, mockedArmSubsystem, mockHandClamperSubsystem, mockHandIntakeSubsystem);
         ScorePositions positions = SequenceFactory.getPositions(sequence);
         StateMachineCallback callback = stateMachine.getSubsystemCallback();
         stateMachine.setSequence(sequence);
