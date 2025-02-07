@@ -15,8 +15,9 @@ import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
-import frc.robot.subsystems.hand.HandClamperSubsystem;
+import frc.robot.subsystems.hand.HandConstants;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
+import frc.robot.subsystems.hand.HandClamperSubsystem;
 
 public class ScoreStateMachineTest {
 

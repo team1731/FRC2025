@@ -19,8 +19,8 @@ public class ScoreStateMachine extends StateMachine {
     // subsystems
     private ElevatorSubsystem elevatorSubsystem;
     private ArmSubsystem armSubsystem;
-    private HandClamperSubsystem clamperSubsystem;
-    private HandIntakeSubsystem intakeSubsystem;
+    private HandIntakeSubsystem handIntakeSubsystem;
+    private HandClamperSubsystem handClamperSubsystem;
 
     // score tracking
     private ScorePositions scorePositions;
@@ -44,11 +44,11 @@ public class ScoreStateMachine extends StateMachine {
         }
     };
 
-    public ScoreStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem clamperSubsystem, HandIntakeSubsystem intakeSubsystem) {
+    public ScoreStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem handClamperSubsystem, HandIntakeSubsystem handIntakeSubsystem) {
         this.elevatorSubsystem = elevatorSubsystem;
         this.armSubsystem = armSubsystem;
-        this.clamperSubsystem = clamperSubsystem;
-        this.intakeSubsystem = intakeSubsystem;
+        this.handClamperSubsystem = handClamperSubsystem;
+        this.handIntakeSubsystem = handIntakeSubsystem;
         setCurrentState(ScoreState.HOME);
     }
 
@@ -107,16 +107,10 @@ public class ScoreStateMachine extends StateMachine {
         armSubsystem.moveArm(ArmConstants.armHomePosition, subsystemCallback);
         return true;
      }
-
+    
      public boolean intake() {
-        if(SequenceFactory.getOperatorPieceSelection() == GamePiece.CORAL) {
-            clamperSubsystem.open(PositionConstants.coralIntakeWidth);
-            intakeSubsystem.intake(HandConstants.intakeVelocity, inputCallback);
-        } else { // ALGAE
-            clamperSubsystem.open(PositionConstants.algaeIntakeWidth);
-            intakeSubsystem.intake(HandConstants.intakeVelocity, inputCallback);
-        }
-        
+        handClamperSubsystem.open(scorePositions.handClamperPosition);
+        handIntakeSubsystem.intake(HandConstants.intakeVelocity);
         return true;
      }
 
