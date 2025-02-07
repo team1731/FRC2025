@@ -10,13 +10,16 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import frc.robot.state.StateMachineCallback;
+import frc.robot.state.score.ScoreInput;
 import frc.robot.subsystems.ToggleableSubsystem;
 
 public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubsystem {
     
     private TalonFX motor;
     private final NeutralOut brake = new NeutralOut();
+    private StateMachineCallback scoreStateMachineCallback;
+    private boolean intaking = false;
     private boolean enabled;
     
     
@@ -38,6 +41,16 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
     public void intake(double velocity) {
         VelocityDutyCycle velocityDutyCycle = new VelocityDutyCycle(velocity * -1); // velocity, reverse motor direction
         motor.setControl(velocityDutyCycle);
+        intaking = true;
+    }
+
+    public void intake(double velocity, StateMachineCallback callback) {
+        scoreStateMachineCallback = callback;
+        intake(velocity);
+    }
+
+    public boolean hasStoppedIntaking() {
+        return motor.getVelocity().getValueAsDouble() < HandConstants.intakeStoppedThreshold;
     }
 
     public void release(double velocity) {
@@ -105,7 +118,16 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
      */
 
     public void periodic() {
-        if (!enabled) return;
+        if(!enabled) return;
+
+        if(intaking && hasStoppedIntaking()) {
+            intaking = false;
+            if(scoreStateMachineCallback != null) {
+                System.out.println("HandIntakeSubsystem callback - intake stopped, should have game piece");
+                scoreStateMachineCallback.setInput(ScoreInput.DETECTED_PIECE);
+                scoreStateMachineCallback = null;
+            }
+        }
 
         log();
     }
