@@ -15,7 +15,9 @@ import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
-
+import frc.robot.subsystems.hand.HandConstants;
+import frc.robot.subsystems.hand.HandIntakeSubsystem;
+import frc.robot.subsystems.hand.HandClamperSubsystem;
 public class ScoreStateMachineTest {
 
     @Test 
@@ -118,9 +120,13 @@ public class ScoreStateMachineTest {
         // mock the subsystems
         ElevatorSubsystem mockedElevatorSubsystem = mock(ElevatorSubsystem.class);
         ArmSubsystem mockedArmSubsystem = mock(ArmSubsystem.class);
+        HandIntakeSubsystem mockHandIntakeSubsystem = mock(HandIntakeSubsystem.class);
+        HandClamperSubsystem mockHandClamperSubsystem = mock(HandClamperSubsystem.class);
+        
 
         // setup the state machine, sequence, and associated position values
-        ScoreStateMachine stateMachine = new ScoreStateMachine(mockedElevatorSubsystem, mockedArmSubsystem);
+        ScoreStateMachine stateMachine = new ScoreStateMachine(mockedElevatorSubsystem, mockedArmSubsystem,mockHandClamperSubsystem, mockHandIntakeSubsystem);
+        Sequence sequence = SequenceFactory.getSequence(Action.SCORE_L2, GamePiece.CORAL);
         ScorePositions positions = SequenceFactory.getPositions(sequence);
         StateMachineCallback callback = stateMachine.getSubsystemCallback();
         stateMachine.setSequence(sequence);

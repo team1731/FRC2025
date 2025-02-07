@@ -12,11 +12,14 @@ import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
+import frc.robot.subsystems.hand.HandConstants;
 
 public class ScoreStateMachine extends StateMachine {
     // subsystems
     private ElevatorSubsystem elevatorSubsystem;
     private ArmSubsystem armSubsystem;
+    private HandIntakeSubsystem handIntakeSubsystem;
+    private HandClamperSubsystem handClamperSubsystem;
 
     // score tracking
     private ScorePositions scorePositions;
@@ -40,7 +43,7 @@ public class ScoreStateMachine extends StateMachine {
         }
     };
 
-    public ScoreStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem) {
+    public ScoreStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem handClamperSubsystem, HandIntakeSubsystem handIntakeSubsystem) { //add hand here
         this.elevatorSubsystem = elevatorSubsystem;
         this.armSubsystem = armSubsystem;
         setCurrentState(ScoreState.HOME);
@@ -103,12 +106,13 @@ public class ScoreStateMachine extends StateMachine {
      }
 
      public boolean prepareToIntake() {
-        // TODO need to define
+        handClamperSubsystem.open(scorePositions.handClamperPosition);
+        handIntakeSubsystem.intake(HandConstants.intakeVelocity);
         return true;
      }
 
      public boolean shootToScore() {
-        // TODO need to define
+        handIntakeSubsystem.release(HandConstants.intakeVelocity); //should have a release velocity
         return true;
      }
 
