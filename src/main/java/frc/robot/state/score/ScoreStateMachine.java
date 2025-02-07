@@ -12,11 +12,14 @@ import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
+import frc.robot.subsystems.hand.HandConstants;
 
 public class ScoreStateMachine extends StateMachine {
     // subsystems
     private ElevatorSubsystem elevatorSubsystem;
     private ArmSubsystem armSubsystem;
+    private HandIntakeSubsystem handIntakeSubsystem;
+    private HandClamperSubsystem handClamperSubsystem;
 
     // score tracking
     private ScorePositions scorePositions;
@@ -36,14 +39,21 @@ public class ScoreStateMachine extends StateMachine {
                 setInput(ScoreInput.RESET_DONE);
             }
         } else {
+            if(input == ScoreInput.DETECTED_PIECE || input == ScoreInput.RELEASED_PIECE) closeHand();
             setInput(input);
         }
     };
 
-    public ScoreStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem handSubsystem, HandIntakeSubsystem handIntakeSubsystem) {
+    public ScoreStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem handClamperSubsystem, HandIntakeSubsystem handIntakeSubsystem) { //add hand here
         this.elevatorSubsystem = elevatorSubsystem;
         this.armSubsystem = armSubsystem;
+        this.handClamperSubsystem = handClamperSubsystem;
+        this.handIntakeSubsystem = handIntakeSubsystem;
         setCurrentState(ScoreState.HOME);
+    }
+
+    public StateMachineCallback getSubsystemCallback() {
+        return subsystemCallback;
     }
 
     /*
@@ -72,41 +82,47 @@ public class ScoreStateMachine extends StateMachine {
      * STATE OPERATION METHODS
      */
 
-     public boolean raiseElevator() {
+    public boolean raiseElevator() {
         elevatorSubsystem.moveElevator(scorePositions.raiseElevatorPosition, subsystemCallback);
         return true;
-     }
+    }
 
-     public boolean moveElevatorHome() {
+    public boolean moveElevatorHome() {
         isResetting = true;
         elevatorSubsystem.moveElevator(ElevatorConstants.elevatorHomePosition, subsystemCallback, scorePositions.lowerElevatorThreshold);
         return true;
-     }
+    }
 
-     public boolean moveArmForward() {
+    public boolean moveArmForward() {
         armSubsystem.moveArm(scorePositions.armForwardPosition, subsystemCallback);
         return true;
-     }
+    }
 
-     public boolean moveArmToScore() {
+    public boolean moveArmToScore() {
         armSubsystem.moveArm(scorePositions.armScoringPosition, subsystemCallback);
         return true;
-     }
+    }
 
-     public boolean moveArmHome() {
+    public boolean moveArmHome() {
         armSubsystem.moveArm(ArmConstants.armHomePosition, subsystemCallback);
         return true;
-     }
+    }
 
-     public boolean grabGamePiece() {
-        // TODO need to define
+    public boolean closeHand() {
+        handClamperSubsystem.close();
         return true;
      }
 
-     public boolean shootToScore() {
-        // TODO need to define
+    public boolean prepareToIntake() {
+        handClamperSubsystem.open(scorePositions.handClamperPosition, subsystemCallback);
+        handIntakeSubsystem.intake(HandConstants.intakeVelocity);
         return true;
-     }
+    }
+
+    public boolean shootToScore() {
+        handIntakeSubsystem.release(HandConstants.scoreAlgaeVelocity, HandConstants.defaultReleaseRuntime, subsystemCallback);
+        return true;
+    }
 
     /*
      * RESET, SAFETY, AND RECOVERY METHODS

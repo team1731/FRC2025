@@ -43,6 +43,10 @@ public abstract class StateMachine {
     run(input);
   }
 
+  public State getCurrentState() {
+    return currentState;
+  }
+
   protected void setCurrentState(State state) {
     currentState = state;
   }

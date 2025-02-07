@@ -6,12 +6,12 @@ import frc.robot.state.score.constants.PositionConstants;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
 import frc.robot.subsystems.hand.HandConstants;
 
-public class CoralIntakeCommand extends Command {
+public class AlgaeIntakeCommand extends Command {
     HandClamperSubsystem m_handClamperSubsystem;
     HandIntakeSubsystem m_handIntakeSubsystem;
 
 
-    public CoralIntakeCommand(HandClamperSubsystem handClamperSubsystem, HandIntakeSubsystem handIntakeSubsystem) {
+    public AlgaeIntakeCommand(HandClamperSubsystem handClamperSubsystem, HandIntakeSubsystem handIntakeSubsystem) {
         m_handClamperSubsystem = handClamperSubsystem;
         m_handIntakeSubsystem = handIntakeSubsystem;
         addRequirements(m_handClamperSubsystem, handIntakeSubsystem);
@@ -19,15 +19,15 @@ public class CoralIntakeCommand extends Command {
 
     @Override
     public void initialize() {
-        m_handClamperSubsystem.open(PositionConstants.coralIntakeWidth);
+        m_handClamperSubsystem.open(PositionConstants.algaeIntakeWidth);
         m_handIntakeSubsystem.intake(HandConstants.intakeVelocity);
 
     }
 
     @Override
     public void end(boolean interrupted) {
-        m_handClamperSubsystem.close();
-        m_handIntakeSubsystem.stop();
+       // m_handClamperSubsystem.close();
+       // m_handIntakeSubsystem.stop();
     }
 
 
