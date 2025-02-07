@@ -11,6 +11,8 @@ public final class HandConstants {
 
     public final static double intakeVelocity = 5000/60;
     public final static double intakeHoldOutput = 0.1;
+    public final static double scoreAlgaeVelocity = 5000/60;
+    public final static double intakeStoppedThreshold = 5;
 
     // Motor Direction
     public final static InvertedValue clamperMotorDirection = InvertedValue.CounterClockwise_Positive;

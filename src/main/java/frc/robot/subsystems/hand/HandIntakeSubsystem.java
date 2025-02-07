@@ -1,19 +1,25 @@
 package frc.robot.subsystems.hand;
 
 import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import frc.robot.state.StateMachineCallback;
+import frc.robot.state.score.ScoreInput;
 import frc.robot.subsystems.ToggleableSubsystem;
 
 public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubsystem {
     
     private TalonFX motor;
     private final NeutralOut brake = new NeutralOut();
+    private StateMachineCallback scoreStateMachineCallback;
+    private boolean intaking = false;
     private boolean enabled;
     
     
@@ -35,6 +41,16 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
     public void intake(double velocity) {
         VelocityDutyCycle velocityDutyCycle = new VelocityDutyCycle(velocity * -1); // velocity, reverse motor direction
         motor.setControl(velocityDutyCycle);
+        intaking = true;
+    }
+
+    public void intake(double velocity, StateMachineCallback callback) {
+        scoreStateMachineCallback = callback;
+        intake(velocity);
+    }
+
+    public boolean hasStoppedIntaking() {
+        return motor.getVelocity().getValueAsDouble() < HandConstants.intakeStoppedThreshold;
     }
 
     public void release(double velocity) {
@@ -75,6 +91,13 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
 
         configs.MotorOutput.Inverted = HandConstants.intakeMotorDirection;
 
+        var HWSwitchConfigs = new HardwareLimitSwitchConfigs();
+
+        HWSwitchConfigs.ForwardLimitEnable = true;
+        HWSwitchConfigs.ForwardLimitSource = ForwardLimitSourceValue.LimitSwitchPin;
+        configs.HardwareLimitSwitch = HWSwitchConfigs;
+
+
         /* Retry config apply up to 5 times, report if failure */
         StatusCode status = StatusCode.StatusCodeNotInitialized;
         for (int i = 0; i < 5; ++i) {
@@ -95,7 +118,16 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
      */
 
     public void periodic() {
-        if (!enabled) return;
+        if(!enabled) return;
+
+        if(intaking && hasStoppedIntaking()) {
+            intaking = false;
+            if(scoreStateMachineCallback != null) {
+                System.out.println("HandIntakeSubsystem callback - intake stopped, should have game piece");
+                scoreStateMachineCallback.setInput(ScoreInput.DETECTED_PIECE);
+                scoreStateMachineCallback = null;
+            }
+        }
 
         log();
     }
