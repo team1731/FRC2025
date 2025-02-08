@@ -35,17 +35,17 @@ public final class PositionConstants {
     );
 
     public final static ScorePositions CORAL_L3_SCORE_POSITIONS = ScorePositions.getCoralScorePositions(
-        50, 
-        48, 
-        45, 
+        49, 
+        47, 
+        44, 
         9,
         15
     );
 
     public final static ScorePositions CORAL_L4_SCORE_POSITIONS = ScorePositions.getCoralScorePositions(
-        98, 
-        96, 
-        93, 
+        91, 
+        89, 
+        86, 
         9,
         15
     );
