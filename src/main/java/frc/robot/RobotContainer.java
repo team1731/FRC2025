@@ -121,7 +121,7 @@ public class RobotContainer {
     handIntakeSubsystem = s_HandIntakeSubsystem;
     climbSubsystem = s_ClimbSubsystem;
 
-    scoreStateMachine = new ScoreStateMachine(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem);
+    scoreStateMachine = SequenceFactory.getScoreStateMachine(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem);
 
     // Configure the button bindings
     configureBindings();

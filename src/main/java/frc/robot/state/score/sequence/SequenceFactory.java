@@ -2,12 +2,18 @@ package frc.robot.state.score.sequence;
 
 import frc.robot.state.score.GamePiece;
 import frc.robot.state.score.Level;
+import frc.robot.state.score.ScoreStateMachine;
 import frc.robot.state.score.Action;
 import frc.robot.state.score.constants.PositionConstants;
 import frc.robot.state.score.constants.ScorePositions;
 import frc.robot.state.score.constants.TransitionConstants;
+import frc.robot.subsystems.arm.ArmSubsystem;
+import frc.robot.subsystems.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.hand.HandClamperSubsystem;
+import frc.robot.subsystems.hand.HandIntakeSubsystem;
 
 public class SequenceFactory {
+    private static ScoreStateMachine scoreStateMachine;
     private static Level levelSelection = Level.L2; // L2 is default
     private static Action actionSelection;
     private static GamePiece pieceSelection = GamePiece.CORAL; // coral is default
@@ -27,7 +33,11 @@ public class SequenceFactory {
     public static void setDriverActionSelection(Action action) {
         actionSelection = action;
     }
-    
+
+    public static ScoreStateMachine getScoreStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem clamperSubsystem, HandIntakeSubsystem intakeSubsystem) {
+        scoreStateMachine = new ScoreStateMachine(elevatorSubsystem, armSubsystem, clamperSubsystem, intakeSubsystem);
+        return scoreStateMachine;
+    }
 
     public static Sequence getSequence() {
         /*
