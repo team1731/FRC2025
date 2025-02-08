@@ -19,10 +19,10 @@ public final class PositionConstants {
 
     public final static ScorePositions CORAL_L1_SCORE_POSITIONS = ScorePositions.getCoralScorePositions(
         // TODO needs real positions
-        0, 
-        0, 
-        0, 
-        9, 
+        24, 
+        22, 
+        19, 
+        9,
         15
     );
 
@@ -35,20 +35,18 @@ public final class PositionConstants {
     );
 
     public final static ScorePositions CORAL_L3_SCORE_POSITIONS = ScorePositions.getCoralScorePositions(
-        // TODO needs real positions
-        0, 
-        0, 
-        0, 
-        9, 
+        50, 
+        48, 
+        45, 
+        9,
         15
     );
 
     public final static ScorePositions CORAL_L4_SCORE_POSITIONS = ScorePositions.getCoralScorePositions(
-        // TODO needs real positions
-        0, 
-        0, 
-        0, 
-        9, 
+        98, 
+        96, 
+        93, 
+        9,
         15
     );
 
@@ -60,20 +58,18 @@ public final class PositionConstants {
      */
 
     public final static ScorePositions ALGAE_REEF_PICKUP_L2_POSITIONS = ScorePositions.getAlgaeReefPickupPositions(
-        // TODO needs real positions
-        0, 
-        0, 
-        0, 
-        0, 
+        24, 
+        22,  
+        19, 
+        11, 
         algaeIntakeWidth
     );
 
     public final static ScorePositions ALGAE_REEF_PICKUP_L3_POSITIONS = ScorePositions.getAlgaeReefPickupPositions(
-        // TODO needs real positions
-        0, 
-        0, 
-        0, 
-        0, 
+        50, 
+        48, 
+        45, 
+        11, 
         algaeIntakeWidth
     );
 
@@ -84,11 +80,10 @@ public final class PositionConstants {
     );
 
     public final static ScorePositions ALGAE_SCORE_POSITIONS = ScorePositions.getAlgaeScorePositions(
-        // TODO needs real positions
-        0, 
-        0, 
-        0, 
-        0
+        98, 
+        96, 
+        93, 
+        5
     );
 
     public final static ScorePositions ALGAE_HANDOFF_POSITIONS = null; // TODO define once the transitions are ready
