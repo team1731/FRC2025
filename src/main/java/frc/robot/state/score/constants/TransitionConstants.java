@@ -23,10 +23,13 @@ public final class TransitionConstants {
         // TODO needs to be defined
     };
 
-    // ERIC WORK ON THIS
+    
     public static final Object PICKUP_UPRIGHT_CORAL_FROM_FLOOR_TRANSITION_TABLE[][] = {
         // CURRENT                           INPUT                                  OPERATION                    NEXT
-        // TODO needs to be defined
+        {ScoreState.HOME,                    ScoreInput.BEGIN,                      "moveArmForward",             ScoreState.MOVING_ARM_FORWARD},
+        {ScoreState.MOVING_ARM_FORWARD,      ScoreInput.ARM_DONE,                   "prepareToIntake",            ScoreState.INTAKING},
+        {ScoreState.INTAKING,                ScoreInput.DETECTED_PIECE,             "moveArmHome",                ScoreState.FINISHING},
+        {ScoreState.FINISHING,               ScoreInput.ARM_DONE,                   "doSafetyCheck",              ScoreState.HOME},    
     };
 
     public static final Object SCORE_CORAL_TRANSITION_TABLE[][] = {
@@ -82,9 +85,13 @@ public final class TransitionConstants {
         {ScoreState.ABORTING,                ScoreInput.RESET_DONE,                 "doSafetyCheck",             ScoreState.HOME}
     };
 
-    // ERIC WORK ON THIS
+    
     public static final Object HANDOFF_ALGAE_TRANSITION_TABLE[][] = {
         // CURRENT                           INPUT                                  OPERATION                    NEXT
-        // TODO needs to be defined
+        {ScoreState.HOME,                    ScoreInput.BEGIN,                      "moveArmForward",            ScoreState.MOVING_ARM_FORWARD},
+        {ScoreState.MOVING_ARM_FORWARD,      ScoreInput.ARM_DONE,                   "shootToScore",              ScoreState.SCORING},
+        {ScoreState.SCORING,                 ScoreInput.RELEASED_PIECE,             "moveArmHome",               ScoreState.FINISHING},
+        {ScoreState.FINISHING,               ScoreInput.ARM_DONE,                   "doSafetyCheck",             ScoreState.HOME},
+        
     };
 }
