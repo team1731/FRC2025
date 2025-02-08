@@ -207,7 +207,7 @@ public class RobotContainer {
     
     
     opBack.whileTrue(new InstantCommand(() -> visionSubsystem.setConfidence(true)))
-    .onFalse(new InstantCommand(() -> visionSubsystem.setConfidence(false)));
+      .onFalse(new InstantCommand(() -> visionSubsystem.setConfidence(false)));
 
     driveSubsystem.registerTelemetry(logger::telemeterize);
   }
