@@ -1,9 +1,11 @@
 package frc.robot.state.score.constants;
 
+import frc.robot.subsystems.hand.HandConstants;
+
 public final class PositionConstants {
-    public final static double clamperClosedPosition = 0;
-    public final static double coralIntakeWidth = 4;
-    public final static double algaeIntakeWidth = 6;
+    public final static double clamperClosedPosition = HandConstants.clamperHomePosition;
+    public final static double coralIntakeWidth = HandConstants.clamperCoralPosition;
+    public final static double algaeIntakeWidth = HandConstants.clamperAlgaePosition;
 
     /*
      * !!!!!!!!!!!!!!!!!!!!!!!!
@@ -13,9 +15,13 @@ public final class PositionConstants {
 
     public final static ScorePositions CORAL_FEEDER_PICKUP_POSITIONS = ScorePositions.getCoralFeederPickupPositions(coralIntakeWidth);
 
-    public final static ScorePositions CORAL_FLOOR_PICKUP_POSITIONS = null; // TODO define once the transitions are ready
+    // TODO define once the transitions are ready, needs floor feeder intake to be implemented
+    public final static ScorePositions CORAL_FLOOR_PICKUP_POSITIONS = null; 
 
-    public final static ScorePositions CORAL_UPRIGHT_FLOOR_PICKUP_POSITIONS = null; // TODO define once the transitions are ready
+    public final static ScorePositions CORAL_UPRIGHT_FLOOR_PICKUP_POSITIONS = ScorePositions.getCoralUprightFloorPickupPositions(
+        35, 
+        coralIntakeWidth
+    );
 
     public final static ScorePositions CORAL_L1_SCORE_POSITIONS = ScorePositions.getCoralScorePositions(
         // TODO needs real positions
@@ -66,16 +72,15 @@ public final class PositionConstants {
     );
 
     public final static ScorePositions ALGAE_REEF_PICKUP_L3_POSITIONS = ScorePositions.getAlgaeReefPickupPositions(
-        59, 
-        54, 
-        58, 
+        69, 
+        64, 
+        68, 
         35, 
         algaeIntakeWidth
     );
 
     public final static ScorePositions ALGAE_FLOOR_PICKUP_POSITIONS = ScorePositions.getAlgaeFloorPickupPositions(
-        // TODO needs real positions
-        0, 
+        35, 
         algaeIntakeWidth
     );
 
@@ -86,5 +91,7 @@ public final class PositionConstants {
         5
     );
 
-    public final static ScorePositions ALGAE_HANDOFF_POSITIONS = null; // TODO define once the transitions are ready
+    public final static ScorePositions ALGAE_HANDOFF_POSITIONS = ScorePositions.getAlgaeHandoffPositions(
+        35
+    );
 }
