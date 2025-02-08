@@ -30,7 +30,7 @@ public final class TransitionConstants {
         {ScoreState.MOVING_ARM_FORWARD,      ScoreInput.ARM_DONE,                   "prepareToIntake",            ScoreState.INTAKING},
         {ScoreState.INTAKING,                ScoreInput.DETECTED_PIECE,             "moveArmHome",                ScoreState.FINISHING},
         {ScoreState.FINISHING,               ScoreInput.ARM_DONE,                   "doSafetyCheck",              ScoreState.HOME},
-        {ScoreState.ABORTING,                ScoreInput.ARM_DONE,                   "doSafetyCheck",             ScoreState.HOME}    
+        {ScoreState.ABORTING,                ScoreInput.ARM_DONE,                   "doSafetyCheck",              ScoreState.HOME}    
     };
 
     public static final Object SCORE_CORAL_TRANSITION_TABLE[][] = {
