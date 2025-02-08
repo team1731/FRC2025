@@ -11,6 +11,12 @@ public final class TransitionConstants {
      * !!!!!!!!!!!!!!!!!
      */
 
+    public static final Object PICKUP_CORAL_FROM_FEEDER_TRANSITION_TABLE[][] = {
+        // CURRENT                           INPUT                                  OPERATION                    NEXT
+        {ScoreState.HOME,                    ScoreInput.BEGIN,                      "prepareToIntake",           ScoreState.INTAKING},
+        {ScoreState.INTAKING,                ScoreInput.DETECTED_PIECE,             "doSafetyCheck",             ScoreState.HOME}
+    };
+
     public static final Object PICKUP_CORAL_FROM_FLOOR_TRANSITION_TABLE[][] = {
         // CURRENT                           INPUT                                  OPERATION                    NEXT
         // TODO needs to be defined

@@ -11,6 +11,8 @@ public final class PositionConstants {
      * !!!!!!!!!!!!!!!!!!!!!!!!
      */
 
+    public final static ScorePositions CORAL_FEEDER_PICKUP_POSITIONS = ScorePositions.getCoralFeederPickupPositions(coralIntakeWidth);
+
     public final static ScorePositions CORAL_FLOOR_PICKUP_POSITIONS = null; // TODO define once the transitions are ready
 
     public final static ScorePositions CORAL_UPRIGHT_FLOOR_PICKUP_POSITIONS = null; // TODO define once the transitions are ready

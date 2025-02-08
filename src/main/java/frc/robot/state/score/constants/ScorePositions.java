@@ -14,6 +14,12 @@ public class ScorePositions {
      * !!!!!!!!!!!!!!!!!!!!!!
      */
 
+    public static ScorePositions getCoralFeederPickupPositions(double clamperPosition) {
+        ScorePositions positions = new ScorePositions();
+        positions.handClamperPosition = clamperPosition;
+        return positions;
+    }
+
     public static ScorePositions getCoralScorePositions(double raisePosition, double raiseThreshold, double lowerThreshold, double armPosition, double scorePosition) {
         ScorePositions positions = new ScorePositions();
         positions.raiseElevatorPosition = raisePosition;
