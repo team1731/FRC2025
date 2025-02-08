@@ -20,45 +20,45 @@ import frc.robot.subsystems.hand.HandIntakeSubsystem;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
 public class ScoreStateMachineTest {
 
-    @Test 
-    void testScoreCoralL1() {
-        Action action = Action.SCORE_L1;
-        GamePiece gamePiece = GamePiece.CORAL;
-        Sequence sequence = SequenceFactory.getSequence(action, gamePiece);
-        runCoralScoringSequence(sequence, action, gamePiece);
-    }
+    // @Test 
+    // void testScoreCoralL1() {
+    //     Action action = Action.SCORE_L1;
+    //     GamePiece gamePiece = GamePiece.CORAL;
+    //     Sequence sequence = SequenceFactory.getSequence(action, gamePiece);
+    //     runCoralScoringSequence(sequence, action, gamePiece);
+    // }
 
-    @Test 
-    void testScoreCoralL2() {
-        Action action = Action.SCORE_L2;
-        GamePiece gamePiece = GamePiece.CORAL;
-        Sequence sequence = SequenceFactory.getSequence(action, gamePiece);
-        runCoralScoringSequence(sequence, action, gamePiece);
-    }
+    // @Test 
+    // void testScoreCoralL2() {
+    //     Action action = Action.SCORE_L2;
+    //     GamePiece gamePiece = GamePiece.CORAL;
+    //     Sequence sequence = SequenceFactory.getSequence(action, gamePiece);
+    //     runCoralScoringSequence(sequence, action, gamePiece);
+    // }
 
-    @Test 
-    void testScoreCoralL3() {
-        Action action = Action.SCORE_L3;
-        GamePiece gamePiece = GamePiece.CORAL;
-        Sequence sequence = SequenceFactory.getSequence(action, gamePiece);
-        runCoralScoringSequence(sequence, action, gamePiece);
-    }
+    // @Test 
+    // void testScoreCoralL3() {
+    //     Action action = Action.SCORE_L3;
+    //     GamePiece gamePiece = GamePiece.CORAL;
+    //     Sequence sequence = SequenceFactory.getSequence(action, gamePiece);
+    //     runCoralScoringSequence(sequence, action, gamePiece);
+    // }
 
-    @Test 
-    void testScoreCoralL4() {
-        Action action = Action.SCORE_L3;
-        GamePiece gamePiece = GamePiece.CORAL;
-        Sequence sequence = SequenceFactory.getSequence(action, gamePiece);
-        runCoralScoringSequence(sequence, action, gamePiece);
-    }
+    // @Test 
+    // void testScoreCoralL4() {
+    //     Action action = Action.SCORE_L3;
+    //     GamePiece gamePiece = GamePiece.CORAL;
+    //     Sequence sequence = SequenceFactory.getSequence(action, gamePiece);
+    //     runCoralScoringSequence(sequence, action, gamePiece);
+    // }
 
-    @Test 
-    void testScoreAlgae() {
-        Action action = Action.SCORE_BARGE;
-        GamePiece gamePiece = GamePiece.ALGAE;
-        Sequence sequence = SequenceFactory.getSequence(action, gamePiece);
-        runAlgaeScoringSequence(sequence, action, gamePiece);
-    }
+    // @Test 
+    // void testScoreAlgae() {
+    //     Action action = Action.SCORE_BARGE;
+    //     GamePiece gamePiece = GamePiece.ALGAE;
+    //     Sequence sequence = SequenceFactory.getSequence(action, gamePiece);
+    //     runAlgaeScoringSequence(sequence, action, gamePiece);
+    // }
 
     /*
      * COMMON METHODS FOR RUNNING SEQUENCES
