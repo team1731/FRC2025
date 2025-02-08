@@ -1,47 +1,54 @@
 package frc.robot.state.score.sequence;
 
 import frc.robot.state.score.GamePiece;
+import frc.robot.state.score.Level;
 import frc.robot.state.score.Action;
 import frc.robot.state.score.constants.PositionConstants;
 import frc.robot.state.score.constants.ScorePositions;
 import frc.robot.state.score.constants.TransitionConstants;
 
 public class SequenceFactory {
-    private static Action operatorActionSelection;
-    private static GamePiece operatorPieceSelection;
+    private static Level levelSelection;
+    private static Action actionSelection;
+    private static GamePiece pieceSelection = GamePiece.CORAL; // coral is default
 
-    public static void setOperatorActionSelection(Action action) {
-        operatorActionSelection = action;
+    public static void setOperatorLevelSelection(Level level) {
+        levelSelection = level;
     }
 
     public static void setOperatorPieceSelection(GamePiece piece) {
-        operatorPieceSelection = piece;
+        pieceSelection = piece;
     }
+
+    public static void setDriverActionSelection(Action action) {
+        actionSelection = action;
+    }
+    
 
     public static Sequence getSequence() {
-        return getSequence(operatorActionSelection, operatorPieceSelection);
-    }
-
-    public static Sequence getSequence(Action action, GamePiece gamePiece) {
         /*
          * CORAL SEQUENCES
          */
-        if(gamePiece == GamePiece.CORAL && action == Action.INTAKE_FEEDER) return Sequence.INTAKE_CORAL_FEEDER;
-        if(gamePiece == GamePiece.CORAL && action == Action.INTAKE_FLOOR) return Sequence.INTAKE_CORAL_FLOOR;
-        if(gamePiece == GamePiece.CORAL && action == Action.INTAKE_FLOOR_UPRIGHT) return Sequence.INTAKE_CORAL_FLOOR_UPRIGHT;
-        if(gamePiece == GamePiece.CORAL && action == Action.SCORE_L1) return Sequence.SCORE_CORAL_L1;
-        if(gamePiece == GamePiece.CORAL && action == Action.SCORE_L2) return Sequence.SCORE_CORAL_L2;
-        if(gamePiece == GamePiece.CORAL && action == Action.SCORE_L3) return Sequence.SCORE_CORAL_L3;
-        if(gamePiece == GamePiece.CORAL && action == Action.SCORE_L4) return Sequence.SCORE_CORAL_L4;
+        // Coral intake
+        if(pieceSelection == GamePiece.CORAL && levelSelection == Level.L1 && actionSelection == Action.INTAKE) return Sequence.INTAKE_CORAL_FLOOR;
+        if(pieceSelection == GamePiece.CORAL && levelSelection == Level.L2 && actionSelection == Action.INTAKE) return Sequence.INTAKE_CORAL_FLOOR_UPRIGHT;
+        if(pieceSelection == GamePiece.CORAL && levelSelection == Level.L3 && actionSelection == Action.INTAKE) return Sequence.INTAKE_CORAL_FEEDER;
+        // Coral score
+        if(pieceSelection == GamePiece.CORAL && levelSelection == Level.L1 && actionSelection == Action.SCORE) return Sequence.SCORE_CORAL_L1;
+        if(pieceSelection == GamePiece.CORAL && levelSelection == Level.L2 && actionSelection == Action.SCORE) return Sequence.SCORE_CORAL_L2;
+        if(pieceSelection == GamePiece.CORAL && levelSelection == Level.L3 && actionSelection == Action.SCORE) return Sequence.SCORE_CORAL_L3;
+        if(pieceSelection == GamePiece.CORAL && levelSelection == Level.L4 && actionSelection == Action.SCORE) return Sequence.SCORE_CORAL_L4;
 
         /*
          * ALGAE SEQUENCES
          */
-        if(gamePiece == GamePiece.ALGAE && action == Action.INTAKE_L2) return Sequence.INTAKE_ALGAE_L2;
-        if(gamePiece == GamePiece.ALGAE && action == Action.INTAKE_L3) return Sequence.INTAKE_ALGAE_L3;
-        if(gamePiece == GamePiece.ALGAE && action == Action.INTAKE_FLOOR) return Sequence.INTAKE_ALGAE_FLOOR;
-        if(gamePiece == GamePiece.ALGAE && action == Action.SCORE_BARGE) return Sequence.SHOOT_ALGAE;
-        if(gamePiece == GamePiece.ALGAE && action == Action.HANDOFF) return Sequence.HANDOFF_ALGAE;
+        // Algae intake
+        if(pieceSelection == GamePiece.ALGAE && levelSelection == Level.L1 && actionSelection == Action.INTAKE) return Sequence.INTAKE_ALGAE_FLOOR;
+        if(pieceSelection == GamePiece.ALGAE && levelSelection == Level.L2 && actionSelection == Action.INTAKE) return Sequence.INTAKE_ALGAE_L2;
+        if(pieceSelection == GamePiece.ALGAE && levelSelection == Level.L3 && actionSelection == Action.INTAKE) return Sequence.INTAKE_ALGAE_L3;
+        // Algae score
+        if(pieceSelection == GamePiece.ALGAE && levelSelection == Level.L1 && actionSelection == Action.SCORE) return Sequence.HANDOFF_ALGAE;
+        if(pieceSelection == GamePiece.ALGAE && levelSelection == Level.L4 && actionSelection == Action.SCORE) return Sequence.SHOOT_ALGAE;
 
         return null;
     }

@@ -20,10 +20,12 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.IntakeCommand;
-import frc.robot.commands.ScoreCommand;
+import frc.robot.commands.RunSequenceCommand;
 import frc.robot.generated.TunerConstants;
+import frc.robot.state.score.Action;
 import frc.robot.state.score.GamePiece;
 import frc.robot.state.score.ScoreStateMachine;
+import frc.robot.state.score.sequence.SequenceFactory;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
@@ -185,17 +187,36 @@ public class RobotContainer {
       driveSubsystem.setOperatorPerspectiveForward(operatorPerspective); // Just a Hack
     }));
 
-    
-    // Intake coral
-    ky.whileTrue(new IntakeCommand(handClamperSubsystem, handIntakeSubsystem, GamePiece.CORAL));
-    ka.whileTrue(new IntakeCommand(handClamperSubsystem, handIntakeSubsystem, GamePiece.ALGAE));
-    kx.onTrue(new SequentialCommandGroup(
-      new InstantCommand(() -> handClamperSubsystem.close()),
-      new InstantCommand(() -> handIntakeSubsystem.stop())
-    ));
 
-    // score coral
-    kb.whileTrue(new ScoreCommand(scoreStateMachine, elevatorSubsystem, armSubsystem));
+    // DRIVER
+    // intake --> left trigger
+    // Create sequential command 1) set action to intake, 2) create RunSequenceCommand command
+    // to set action --> SequenceFactory.setDriverActionSelection
+
+    // DRIVER
+    // score/place --> right trigger
+    // Turn into sequential command 1) set action to score, 2) create RunSequenceCommand command
+    // to set action --> SequenceFactory.setDriverActionSelection
+    kb.whileTrue(new RunSequenceCommand(scoreStateMachine, elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem));
+
+    // DRIVER
+    // climb up --> left bumper
+
+    // DRIVER
+    // climb down --> right bumper
+
+
+    // OPERATOR
+    // To set operator level --> SequenceFactory.setOperatorLevelSelection
+    // Map each operator level button to set different levels 1-4
+
+    // OPERATOR
+    // To set operator game piece --> SequenceFactory.setOperatorPieceSelection
+    // While trigger is true set piece to Algae, when it goes back to false set piece back to Coral
+
+    // OPERATOR
+    // Climb start position --> Start button
+    // Need more information on this, how this will work
 
 
     operatorkLeftBumper.onTrue(new InstantCommand(() -> {
