@@ -18,5 +18,6 @@ public class ClimbConstants {
     public final static double minClimbPosition = 0;
     public final static double maxClimbPosition = 0;
     public final static double climbHomePosition = 0;
+    public final static double climbReadyPosition = 0;
     
 }

@@ -29,6 +29,7 @@ import frc.robot.state.score.ScoreStateMachine;
 import frc.robot.state.score.sequence.SequenceFactory;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.arm.ArmSubsystem;
+import frc.robot.subsystems.climb.ClimbConstants;
 import frc.robot.subsystems.climb.ClimbSubsystem;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
@@ -201,30 +202,9 @@ public class RobotContainer {
     opLeftTrigger.whileTrue(new InstantCommand(() -> SequenceFactory.setOperatorPieceSelection(GamePiece.ALGAE)))
       .onFalse(new InstantCommand(() -> SequenceFactory.setOperatorPieceSelection(GamePiece.CORAL)));
 
-    // OPERATOR
-    // Climb start position --> Start button
-    // TODO: Need more information on this, how this will work
-
-    opLeftBumper.onTrue(new InstantCommand(() -> {
-
-    }));
-    opRightBumper.onTrue(new InstantCommand(() -> {
-
-    }));
-
-    opPOVDown.onTrue(new InstantCommand(() -> {
-
-    }));
-    opPOVUp.onTrue(new InstantCommand(() -> {
-
-    }));
-
-    opPOVLeft.onTrue(new InstantCommand(() -> {
-
-    }));
-    opPOVRight.onTrue(new InstantCommand(() -> {
-
-    }));
+    //bring up the climb in ready position
+    opStart.onTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.climbReadyPosition)));
+    
     
     opBack.whileTrue(new InstantCommand(() -> visionSubsystem.setConfidence(true)))
     .onFalse(new InstantCommand(() -> visionSubsystem.setConfidence(false)));
