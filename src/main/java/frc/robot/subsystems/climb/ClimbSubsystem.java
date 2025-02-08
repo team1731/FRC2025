@@ -13,7 +13,6 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.state.StateMachineCallback;
 import frc.robot.subsystems.ToggleableSubsystem;
 
 
@@ -27,8 +26,6 @@ public class ClimbSubsystem extends SubsystemBase implements ToggleableSubsystem
     private boolean enabled;
     private double arbitraryFeedForward = 0;
     
-    private StateMachineCallback scoreStateMachineCallback; //TODO remove or replace with a climb state machine callback
-
 
     @Override
     public boolean isEnabled() {
@@ -54,11 +51,6 @@ public class ClimbSubsystem extends SubsystemBase implements ToggleableSubsystem
         }
 
         climbMotor.setControl(mmReq.withPosition(desiredPosition).withFeedForward(arbitraryFeedForward));
-    }
-    
-    public void moveClimb(double position, StateMachineCallback callback){
-        scoreStateMachineCallback = callback; //TODO remove or replace with a climb state machine callback
-        moveClimb(position);
     }
 
     public void stopClimb(){

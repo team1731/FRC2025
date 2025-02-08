@@ -29,6 +29,7 @@ import frc.robot.state.score.ScoreStateMachine;
 import frc.robot.state.score.sequence.SequenceFactory;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.arm.ArmSubsystem;
+import frc.robot.subsystems.climb.ClimbSubsystem;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
@@ -97,6 +98,7 @@ public class RobotContainer {
   private ArmSubsystem armSubsystem;
   private HandClamperSubsystem handClamperSubsystem;
   private HandIntakeSubsystem handIntakeSubsystem;
+  private ClimbSubsystem climbSubsystem;
   private ScoreStateMachine scoreStateMachine;
 
   public RobotContainer(
@@ -106,7 +108,9 @@ public class RobotContainer {
       ElevatorSubsystem s_elevatorSubsystem,
       ArmSubsystem s_ArmSubsystem,
       HandClamperSubsystem s_HandClamperSubsystem,
-      HandIntakeSubsystem s_HandIntakeSubsystem) {
+      HandIntakeSubsystem s_HandIntakeSubsystem,
+      ClimbSubsystem s_ClimbSubsystem
+      ) {
 
     driveSubsystem = s_driveSubsystem;
     elevatorSubsystem = s_elevatorSubsystem;
@@ -115,6 +119,7 @@ public class RobotContainer {
     armSubsystem = s_ArmSubsystem;
     handClamperSubsystem = s_HandClamperSubsystem;
     handIntakeSubsystem = s_HandIntakeSubsystem;
+    climbSubsystem = s_ClimbSubsystem;
 
     scoreStateMachine = new ScoreStateMachine(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem);
 
@@ -132,7 +137,7 @@ public class RobotContainer {
             .withRotationalRate(-xboxController.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
         ));
 
-    // (SCH) NOTE: These sysId calls aren't strictly necessary,
+    // (SCH) TODO: These sysId calls aren't strictly necessary,
     // though they seem to be a different method of controlling the drivetrain.
     // I would say copy these and assign them to unused buttons in the new
     // RobotContainer to see what they do
@@ -172,11 +177,13 @@ public class RobotContainer {
       new InstantCommand(() -> SequenceFactory.setDriverActionSelection(Action.SCORE)),
       new RunSequenceCommand(scoreStateMachine, elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)));
 
-    // DRIVER
-    // climb up --> left bumper
+    // Climb up
+    dLeftBumper.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(0))) //TODO set climb interval UP
+      .whileFalse(new InstantCommand(() -> climbSubsystem.stopClimb()));
 
-    // DRIVER
-    // climb down --> right bumper
+    // Climb down
+    dRightBumper.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(0))) //TODO set climb interval DOWN
+    .whileFalse(new InstantCommand(() -> climbSubsystem.stopClimb()));
 
     // Controls level selection
     opY.whileTrue(new InstantCommand(() -> SequenceFactory.setOperatorLevelSelection(Level.L4))) //while pressed set to Level 4
@@ -196,7 +203,7 @@ public class RobotContainer {
 
     // OPERATOR
     // Climb start position --> Start button
-    // Need more information on this, how this will work
+    // TODO: Need more information on this, how this will work
 
     opLeftBumper.onTrue(new InstantCommand(() -> {
 
