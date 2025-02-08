@@ -20,6 +20,13 @@ public class ScorePositions {
         return positions;
     }
 
+    public static ScorePositions getCoralUprightFloorPickupPositions(double armPosition, double clamperPosition) {
+        ScorePositions positions = new ScorePositions();
+        positions.armForwardPosition = armPosition;
+        positions.handClamperPosition = clamperPosition;
+        return positions;
+    }
+
     public static ScorePositions getCoralScorePositions(double raisePosition, double raiseThreshold, double lowerThreshold, double armPosition, double scorePosition) {
         ScorePositions positions = new ScorePositions();
         positions.raiseElevatorPosition = raisePosition;
@@ -59,6 +66,12 @@ public class ScorePositions {
         positions.raiseElevatorPosition = raisePosition;
         positions.raiseElevatorThreshold = raiseThreshold;
         positions.lowerElevatorThreshold = lowerThreshold;
+        positions.armForwardPosition = armPosition;
+        return positions;
+    }
+
+    public static ScorePositions getAlgaeHandoffPositions(double armPosition) {
+        ScorePositions positions = new ScorePositions();
         positions.armForwardPosition = armPosition;
         return positions;
     }

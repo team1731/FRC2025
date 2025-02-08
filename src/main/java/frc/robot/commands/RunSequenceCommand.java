@@ -29,6 +29,7 @@ public class RunSequenceCommand extends Command {
     public void runStateMachine() {
         System.out.println("ScoreCommand: running score command state machine");
         m_sequenceStarted = true;
+        m_scoreStateMachine.setGamePiece(SequenceFactory.getOperatorPieceSelection());
         m_scoreStateMachine.setSequence(SequenceFactory.getSequence());
         m_scoreStateMachine.setInput(ScoreInput.BEGIN);
     }

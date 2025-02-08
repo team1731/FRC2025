@@ -18,4 +18,9 @@ public final class HandConstants {
     // Motor Direction
     public final static InvertedValue clamperMotorDirection = InvertedValue.CounterClockwise_Positive;
     public final static InvertedValue intakeMotorDirection = InvertedValue.CounterClockwise_Positive;
+
+    // Positions
+    public final static double clamperHomePosition = 0;
+    public final static double clamperCoralPosition = 4;
+    public final static double clamperAlgaePosition = 6;
 }

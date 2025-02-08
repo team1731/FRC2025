@@ -23,9 +23,11 @@ public class ScoreStateMachine extends StateMachine {
 
     // score tracking
     private Sequence currentSequence;
+    private GamePiece currentGamePiece;
     private ScorePositions scorePositions;
 
     // reset/abort tracking
+    private boolean passedAbortPoint = false;
     private boolean isResetting = false;
     private boolean elevatorResetDone = false;
     private boolean armResetDone = false;
@@ -40,7 +42,8 @@ public class ScoreStateMachine extends StateMachine {
                 setInput(ScoreInput.RESET_DONE);
             }
         } else {
-            if(input == ScoreInput.DETECTED_PIECE || input == ScoreInput.RELEASED_PIECE) closeHand();
+            if(input == ScoreInput.RELEASED_PIECE) closeHand();
+            if(input == ScoreInput.DETECTED_PIECE && currentGamePiece == GamePiece.CORAL) closeHand();
             if(currentSequence == Sequence.SCORE_CORAL_L2 && input == ScoreInput.ARM_DONE && currentState == ScoreState.SCORING) releasePiece();
             setInput(input);
         }
@@ -73,10 +76,14 @@ public class ScoreStateMachine extends StateMachine {
         scorePositions = SequenceFactory.getPositions(sequence); // position constants for subsystems
     }
 
+    public void setGamePiece(GamePiece piece) {
+        currentGamePiece = piece;
+    }
+
     public void endSequence() {
         if(currentState == ScoreState.WAITING) { // TODO add support to check if *close* to end of movement
             setInput(ScoreInput.SCORE);
-        } else {
+        } else if(!passedAbortPoint && !isResetting) {
             abort();
         }
     }
@@ -92,6 +99,7 @@ public class ScoreStateMachine extends StateMachine {
 
     public boolean moveElevatorHome() {
         isResetting = true;
+        passedAbortPoint = true;
         elevatorSubsystem.moveElevator(ElevatorConstants.elevatorHomePosition, subsystemCallback, scorePositions.lowerElevatorThreshold);
         return true;
     }
@@ -102,11 +110,13 @@ public class ScoreStateMachine extends StateMachine {
     }
 
     public boolean moveArmToScore() {
+        passedAbortPoint = true;
         armSubsystem.moveArm(scorePositions.armScoringPosition, subsystemCallback);
         return true;
     }
 
     public boolean moveArmHome() {
+        passedAbortPoint = true;
         armSubsystem.moveArm(ArmConstants.armHomePosition, subsystemCallback);
         return true;
     }
@@ -130,6 +140,7 @@ public class ScoreStateMachine extends StateMachine {
     }
 
     public boolean shootToScore() {
+        passedAbortPoint = true;
         handIntakeSubsystem.release(HandConstants.scoreAlgaeVelocity, HandConstants.defaultReleaseRuntime, subsystemCallback);
         return true;
     }
@@ -159,6 +170,7 @@ public class ScoreStateMachine extends StateMachine {
 
     public boolean resetInternalState() {
         scorePositions = null;
+        passedAbortPoint = false;
         isResetting = false;
         elevatorResetDone = false;
         armResetDone = false;

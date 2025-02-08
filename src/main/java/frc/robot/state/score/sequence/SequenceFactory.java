@@ -20,6 +20,10 @@ public class SequenceFactory {
         pieceSelection = piece;
     }
 
+    public static GamePiece getOperatorPieceSelection() {
+        return pieceSelection;
+    }
+
     public static void setDriverActionSelection(Action action) {
         actionSelection = action;
     }
