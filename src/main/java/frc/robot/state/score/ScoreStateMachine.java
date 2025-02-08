@@ -22,6 +22,7 @@ public class ScoreStateMachine extends StateMachine {
     private HandClamperSubsystem handClamperSubsystem;
 
     // score tracking
+    private Sequence currentSequence;
     private ScorePositions scorePositions;
 
     // reset/abort tracking
@@ -40,7 +41,7 @@ public class ScoreStateMachine extends StateMachine {
             }
         } else {
             if(input == ScoreInput.DETECTED_PIECE || input == ScoreInput.RELEASED_PIECE) closeHand();
-            if(input == ScoreInput.ARM_DONE && currentState == ScoreState.SCORING) releasePiece();
+            if(currentSequence == Sequence.SCORE_CORAL_L2 && input == ScoreInput.ARM_DONE && currentState == ScoreState.SCORING) releasePiece();
             setInput(input);
         }
     };
@@ -66,6 +67,7 @@ public class ScoreStateMachine extends StateMachine {
     }
 
     public void setSequence(Sequence sequence) {
+        currentSequence = sequence;
         // the sequence determines the choreographed movement of elevator/arm/hand
         setStateTransitionTable(SequenceFactory.getTransitionTable(sequence)); // state machine transitions
         scorePositions = SequenceFactory.getPositions(sequence); // position constants for subsystems
