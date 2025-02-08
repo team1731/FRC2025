@@ -40,6 +40,7 @@ public class ScoreStateMachine extends StateMachine {
             }
         } else {
             if(input == ScoreInput.DETECTED_PIECE || input == ScoreInput.RELEASED_PIECE) closeHand();
+            if(input == ScoreInput.ARM_DONE && currentState == ScoreState.SCORING) releasePiece();
             setInput(input);
         }
     };
@@ -83,7 +84,7 @@ public class ScoreStateMachine extends StateMachine {
      */
 
     public boolean raiseElevator() {
-        elevatorSubsystem.moveElevator(scorePositions.raiseElevatorPosition, subsystemCallback);
+        elevatorSubsystem.moveElevator(scorePositions.raiseElevatorPosition, subsystemCallback, scorePositions.raiseElevatorThreshold);
         return true;
     }
 
@@ -116,6 +117,13 @@ public class ScoreStateMachine extends StateMachine {
     public boolean prepareToIntake() {
         handClamperSubsystem.open(scorePositions.handClamperPosition, subsystemCallback);
         handIntakeSubsystem.intake(HandConstants.intakeVelocity);
+        return true;
+    }
+
+    public boolean releasePiece() {
+        handIntakeSubsystem.stop();
+        handIntakeSubsystem.release(HandConstants.intakeVelocity, HandConstants.defaultReleaseRuntime);
+        setInput(ScoreInput.SCORED);
         return true;
     }
 

@@ -22,8 +22,8 @@ public class ScoreCommand extends Command {
         addRequirements(m_elevatorSubsystem, m_armSubsystem);
 
         // TODO move to button bindings in RobotContainer to allow operator selection
-        SequenceFactory.setOperatorActionSelection(Action.SCORE_L2);
-        SequenceFactory.setOperatorPieceSelection(GamePiece.CORAL);
+        SequenceFactory.setOperatorActionSelection(Action.SCORE_BARGE);
+        SequenceFactory.setOperatorPieceSelection(GamePiece.ALGAE);
     }
 
     public void runStateMachine() {

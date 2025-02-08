@@ -58,11 +58,15 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
         motor.setControl(velocityDutyCycle);
     }
 
-    public void release(double velocity, double runningTime, StateMachineCallback callback) {
+    public void release(double velocity, double runningTime) {
         releaseStartedTime = Timer.getFPGATimestamp();
         releaseRunningTime = runningTime;
-        scoreStateMachineCallback = callback;
         release(velocity);
+    }
+
+    public void release(double velocity, double runningTime, StateMachineCallback callback) {
+        scoreStateMachineCallback = callback;
+        release(velocity, runningTime);
     }
 
     public void hold() {

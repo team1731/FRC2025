@@ -32,7 +32,7 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
     private StateMachineCallback stateMachineCallback;
     private boolean callbackOnThreshold = false;
     private double positionThreshold = 0;
-    private boolean thresholdAbove = false;
+    private boolean raisingThreshold = false;
 
     private boolean enabled;
     
@@ -78,7 +78,7 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
         stateMachineCallback = callback;
         callbackOnThreshold = true;
         positionThreshold = threshold;
-        thresholdAbove = threshold < position; // above = moving up, below = moving down
+        raisingThreshold = threshold < position;
         moveElevator(position);
     }
 
@@ -102,12 +102,13 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
 
         /* Configure current limits */
         MotionMagicConfigs mm = cfg.MotionMagic;
-        mm.MotionMagicCruiseVelocity = 70; // 5 rotations per second cruise
+        mm.MotionMagicCruiseVelocity = 85; // 5 rotations per second cruise
         mm.MotionMagicAcceleration = 250; // Ta200ke approximately 0.5 seconds to reach max vel
         // Take approximately 0.2 seconds to reach max accel
         mm.MotionMagicJerk = 0;
 
         Slot0Configs slot0 = cfg.Slot0;
+        slot0.kG = 0.3;
         slot0.kP = 4.9;
         slot0.kI = 0;
         slot0.kD = 0.0078125;
@@ -158,12 +159,13 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
          */
         if(isAtPosition(desiredPosition) && stateMachineCallback != null) {
             // final position reached, notify the state machine
+
             stateMachineCallback.setInput(ScoreInput.ELEVATOR_DONE);
             stateMachineCallback = null;
         } else if(callbackOnThreshold && stateMachineCallback != null) {
             // check to see if the threshold was met, if so notify the state machine
-            boolean thresholdMet = thresholdAbove && getElevatorPosition() >= positionThreshold ||
-                !thresholdAbove && getElevatorPosition() <= positionThreshold;
+            boolean thresholdMet = raisingThreshold && getElevatorPosition() >= positionThreshold ||
+                !raisingThreshold && getElevatorPosition() <= positionThreshold;
             if(thresholdMet) {
                 stateMachineCallback.setInput(ScoreInput.ELEVATOR_THRESHOLD_MET);
                 callbackOnThreshold = false;
@@ -181,7 +183,7 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
     }
 
     public boolean isAtPosition(double position) {
-        double tolerance = 2;
+        double tolerance = 1;
         return Math.abs(getElevatorPosition() - position) < tolerance;
     }
 

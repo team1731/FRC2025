@@ -6,6 +6,7 @@ public enum ScoreInput implements Input {
     BEGIN,
     GRABBED_PIECE,
     SCORE,
+    SCORED,
     RESET_DONE,
 
     // Subsystem feedback

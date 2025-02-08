@@ -28,24 +28,24 @@ public final class PositionConstants {
 
     public final static ScorePositions CORAL_L2_SCORE_POSITIONS = ScorePositions.getCoralScorePositions(
         24, 
-        22, 
         19, 
+        23, 
         9,
         15
     );
 
     public final static ScorePositions CORAL_L3_SCORE_POSITIONS = ScorePositions.getCoralScorePositions(
         49, 
-        47, 
         44, 
+        48, 
         9,
         15
     );
 
     public final static ScorePositions CORAL_L4_SCORE_POSITIONS = ScorePositions.getCoralScorePositions(
-        91, 
-        89, 
-        86, 
+        97, 
+        92, 
+        96, 
         9,
         15
     );
@@ -58,18 +58,18 @@ public final class PositionConstants {
      */
 
     public final static ScorePositions ALGAE_REEF_PICKUP_L2_POSITIONS = ScorePositions.getAlgaeReefPickupPositions(
-        24, 
-        22,  
-        19, 
-        11, 
+        44, 
+        39,  
+        43, 
+        35, 
         algaeIntakeWidth
     );
 
     public final static ScorePositions ALGAE_REEF_PICKUP_L3_POSITIONS = ScorePositions.getAlgaeReefPickupPositions(
-        50, 
-        48, 
-        45, 
-        11, 
+        59, 
+        54, 
+        58, 
+        35, 
         algaeIntakeWidth
     );
 
@@ -81,8 +81,8 @@ public final class PositionConstants {
 
     public final static ScorePositions ALGAE_SCORE_POSITIONS = ScorePositions.getAlgaeScorePositions(
         98, 
-        96, 
-        93, 
+        58, 
+        97, 
         5
     );
 

@@ -15,12 +15,14 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.CoralIntakeCommand;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ScoreCommand;
 import frc.robot.generated.TunerConstants;
+import frc.robot.state.score.GamePiece;
 import frc.robot.state.score.ScoreStateMachine;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.arm.ArmSubsystem;
@@ -185,7 +187,12 @@ public class RobotContainer {
 
     
     // Intake coral
-    ky.whileTrue(new CoralIntakeCommand(handClamperSubsystem, handIntakeSubsystem));
+    ky.whileTrue(new IntakeCommand(handClamperSubsystem, handIntakeSubsystem, GamePiece.CORAL));
+    ka.whileTrue(new IntakeCommand(handClamperSubsystem, handIntakeSubsystem, GamePiece.ALGAE));
+    kx.onTrue(new SequentialCommandGroup(
+      new InstantCommand(() -> handClamperSubsystem.close()),
+      new InstantCommand(() -> handIntakeSubsystem.stop())
+    ));
 
     // score coral
     kb.whileTrue(new ScoreCommand(scoreStateMachine, elevatorSubsystem, armSubsystem));
