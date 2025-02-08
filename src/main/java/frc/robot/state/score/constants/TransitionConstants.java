@@ -17,11 +17,13 @@ public final class TransitionConstants {
         {ScoreState.INTAKING,                ScoreInput.DETECTED_PIECE,             "doSafetyCheck",             ScoreState.HOME}
     };
 
+    // NOTE: REQUIRES FLOOR FEEDER TO BE IMPLEMENTED FIRST
     public static final Object PICKUP_CORAL_FROM_FLOOR_TRANSITION_TABLE[][] = {
         // CURRENT                           INPUT                                  OPERATION                    NEXT
         // TODO needs to be defined
     };
 
+    // ERIC WORK ON THIS
     public static final Object PICKUP_UPRIGHT_CORAL_FROM_FLOOR_TRANSITION_TABLE[][] = {
         // CURRENT                           INPUT                                  OPERATION                    NEXT
         // TODO needs to be defined
@@ -80,6 +82,7 @@ public final class TransitionConstants {
         {ScoreState.ABORTING,                ScoreInput.RESET_DONE,                 "doSafetyCheck",             ScoreState.HOME}
     };
 
+    // ERIC WORK ON THIS
     public static final Object HANDOFF_ALGAE_TRANSITION_TABLE[][] = {
         // CURRENT                           INPUT                                  OPERATION                    NEXT
         // TODO needs to be defined
