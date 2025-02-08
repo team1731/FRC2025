@@ -22,6 +22,7 @@ public class ScoreStateMachine extends StateMachine {
     private HandClamperSubsystem handClamperSubsystem;
 
     // score tracking
+    private Sequence currentSequence;
     private ScorePositions scorePositions;
 
     // reset/abort tracking
@@ -40,6 +41,7 @@ public class ScoreStateMachine extends StateMachine {
             }
         } else {
             if(input == ScoreInput.DETECTED_PIECE || input == ScoreInput.RELEASED_PIECE) closeHand();
+            if(currentSequence == Sequence.SCORE_CORAL_L2 && input == ScoreInput.ARM_DONE && currentState == ScoreState.SCORING) releasePiece();
             setInput(input);
         }
     };
@@ -65,6 +67,7 @@ public class ScoreStateMachine extends StateMachine {
     }
 
     public void setSequence(Sequence sequence) {
+        currentSequence = sequence;
         // the sequence determines the choreographed movement of elevator/arm/hand
         setStateTransitionTable(SequenceFactory.getTransitionTable(sequence)); // state machine transitions
         scorePositions = SequenceFactory.getPositions(sequence); // position constants for subsystems
@@ -83,7 +86,7 @@ public class ScoreStateMachine extends StateMachine {
      */
 
     public boolean raiseElevator() {
-        elevatorSubsystem.moveElevator(scorePositions.raiseElevatorPosition, subsystemCallback);
+        elevatorSubsystem.moveElevator(scorePositions.raiseElevatorPosition, subsystemCallback, scorePositions.raiseElevatorThreshold);
         return true;
     }
 
@@ -116,6 +119,13 @@ public class ScoreStateMachine extends StateMachine {
     public boolean prepareToIntake() {
         handClamperSubsystem.open(scorePositions.handClamperPosition, subsystemCallback);
         handIntakeSubsystem.intake(HandConstants.intakeVelocity);
+        return true;
+    }
+
+    public boolean releasePiece() {
+        handIntakeSubsystem.stop();
+        handIntakeSubsystem.release(HandConstants.intakeVelocity, HandConstants.defaultReleaseRuntime);
+        setInput(ScoreInput.SCORED);
         return true;
     }
 

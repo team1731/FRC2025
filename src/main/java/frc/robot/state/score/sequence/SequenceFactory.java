@@ -26,6 +26,7 @@ public class SequenceFactory {
         /*
          * CORAL SEQUENCES
          */
+        if(gamePiece == GamePiece.CORAL && action == Action.INTAKE_FEEDER) return Sequence.INTAKE_CORAL_FEEDER;
         if(gamePiece == GamePiece.CORAL && action == Action.INTAKE_FLOOR) return Sequence.INTAKE_CORAL_FLOOR;
         if(gamePiece == GamePiece.CORAL && action == Action.INTAKE_FLOOR_UPRIGHT) return Sequence.INTAKE_CORAL_FLOOR_UPRIGHT;
         if(gamePiece == GamePiece.CORAL && action == Action.SCORE_L1) return Sequence.SCORE_CORAL_L1;
@@ -51,6 +52,8 @@ public class SequenceFactory {
             /*
              * CORAL TRANSITIONS
              */
+            case INTAKE_CORAL_FEEDER:
+                return TransitionConstants.PICKUP_CORAL_FROM_FEEDER_TRANSITION_TABLE;
             case INTAKE_CORAL_FLOOR:
                 return TransitionConstants.PICKUP_CORAL_FROM_FLOOR_TRANSITION_TABLE;
             case INTAKE_CORAL_FLOOR_UPRIGHT:
@@ -85,6 +88,7 @@ public class SequenceFactory {
             /*
              * CORAL POSITIONS
              */
+            case INTAKE_CORAL_FEEDER: return PositionConstants.CORAL_FEEDER_PICKUP_POSITIONS;
             case INTAKE_CORAL_FLOOR: return PositionConstants.CORAL_FLOOR_PICKUP_POSITIONS;
             case INTAKE_CORAL_FLOOR_UPRIGHT: return PositionConstants.CORAL_UPRIGHT_FLOOR_PICKUP_POSITIONS;
             case SCORE_CORAL_L1: return PositionConstants.CORAL_L1_SCORE_POSITIONS;

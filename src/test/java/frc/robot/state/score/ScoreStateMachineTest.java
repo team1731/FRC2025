@@ -109,7 +109,7 @@ public class ScoreStateMachineTest {
         // transition to finishing
         callback.setInput(ScoreInput.ELEVATOR_THRESHOLD_MET);
         // TODO check this once releasing piece is defined, this seems wrong
-        verify(mockedArmSubsystem, times(2)).moveArm(ArmConstants.armHomePosition, callback);
+        verify(mockedArmSubsystem).moveArm(ArmConstants.armHomePosition, callback);
         assertEquals(ScoreState.FINISHING, stateMachine.getCurrentState());
 
         // transition back to home
