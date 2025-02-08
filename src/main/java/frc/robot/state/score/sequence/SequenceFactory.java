@@ -8,7 +8,7 @@ import frc.robot.state.score.constants.ScorePositions;
 import frc.robot.state.score.constants.TransitionConstants;
 
 public class SequenceFactory {
-    private static Level levelSelection;
+    private static Level levelSelection = Level.L2; // L2 is default
     private static Action actionSelection;
     private static GamePiece pieceSelection = GamePiece.CORAL; // coral is default
 
