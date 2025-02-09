@@ -8,9 +8,14 @@ import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.times;
 
 import frc.robot.state.StateMachineCallback;
-import frc.robot.state.score.constants.ScorePositions;
-import frc.robot.state.score.sequence.Sequence;
-import frc.robot.state.score.sequence.SequenceFactory;
+import frc.robot.state.sequencer.Action;
+import frc.robot.state.sequencer.GamePiece;
+import frc.robot.state.sequencer.ScoreInput;
+import frc.robot.state.sequencer.ScoreState;
+import frc.robot.state.sequencer.ScoreStateMachine;
+import frc.robot.state.sequencer.positions.Positions;
+import frc.robot.state.sequencer.sequence.Sequence;
+import frc.robot.state.sequencer.sequence.SequenceFactory;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorConstants;
@@ -73,7 +78,7 @@ public class ScoreStateMachineTest {
 
         // setup the state machine, sequence, and associated position values
         ScoreStateMachine stateMachine = new ScoreStateMachine(mockedElevatorSubsystem, mockedArmSubsystem, mockHandClamperSubsystem, mockHandIntakeSubsystem);
-        ScorePositions positions = SequenceFactory.getPositions(sequence);
+        Positions positions = SequenceFactory.getPositions(sequence);
         StateMachineCallback callback = stateMachine.getSubsystemCallback();
         stateMachine.setSequence(sequence);
 
@@ -128,7 +133,7 @@ public class ScoreStateMachineTest {
 
         // setup the state machine, sequence, and associated position values
         ScoreStateMachine stateMachine = new ScoreStateMachine(mockedElevatorSubsystem, mockedArmSubsystem, mockHandClamperSubsystem, mockHandIntakeSubsystem);
-        ScorePositions positions = SequenceFactory.getPositions(sequence);
+        Positions positions = SequenceFactory.getPositions(sequence);
         StateMachineCallback callback = stateMachine.getSubsystemCallback();
         stateMachine.setSequence(sequence);
 

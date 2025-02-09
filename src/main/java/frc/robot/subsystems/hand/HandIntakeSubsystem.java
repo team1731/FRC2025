@@ -15,7 +15,7 @@ import com.ctre.phoenix6.signals.ReverseLimitValue;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.state.StateMachineCallback;
-import frc.robot.state.score.ScoreInput;
+import frc.robot.state.sequencer.ScoreInput;
 import frc.robot.subsystems.ToggleableSubsystem;
 
 public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubsystem {

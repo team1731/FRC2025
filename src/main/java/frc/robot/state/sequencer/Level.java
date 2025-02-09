@@ -1,4 +1,4 @@
-package frc.robot.state.score;
+package frc.robot.state.sequencer;
 
 public enum Level {
     L1,

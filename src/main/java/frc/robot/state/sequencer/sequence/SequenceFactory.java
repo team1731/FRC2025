@@ -1,12 +1,12 @@
-package frc.robot.state.score.sequence;
+package frc.robot.state.sequencer.sequence;
 
-import frc.robot.state.score.GamePiece;
-import frc.robot.state.score.Level;
-import frc.robot.state.score.ScoreStateMachine;
-import frc.robot.state.score.Action;
-import frc.robot.state.score.constants.PositionConstants;
-import frc.robot.state.score.constants.ScorePositions;
-import frc.robot.state.score.constants.TransitionConstants;
+import frc.robot.state.sequencer.Action;
+import frc.robot.state.sequencer.GamePiece;
+import frc.robot.state.sequencer.Level;
+import frc.robot.state.sequencer.ScoreStateMachine;
+import frc.robot.state.sequencer.constants.TransitionConstants;
+import frc.robot.state.sequencer.positions.PositionConstants;
+import frc.robot.state.sequencer.positions.Positions;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
@@ -112,28 +112,28 @@ public class SequenceFactory {
         }
     }
 
-    public static ScorePositions getPositions(Sequence sequence) {
+    public static Positions getPositions(Sequence sequence) {
         switch(sequence) {
 
             /*
              * CORAL POSITIONS
              */
-            case INTAKE_CORAL_FEEDER: return PositionConstants.CORAL_FEEDER_PICKUP_POSITIONS;
-            case INTAKE_CORAL_FLOOR: return PositionConstants.CORAL_FLOOR_PICKUP_POSITIONS;
-            case INTAKE_CORAL_FLOOR_UPRIGHT: return PositionConstants.CORAL_UPRIGHT_FLOOR_PICKUP_POSITIONS;
-            case SCORE_CORAL_L1: return PositionConstants.CORAL_L1_SCORE_POSITIONS;
-            case SCORE_CORAL_L2: return PositionConstants.CORAL_L2_SCORE_POSITIONS;
-            case SCORE_CORAL_L3: return PositionConstants.CORAL_L3_SCORE_POSITIONS;
-            case SCORE_CORAL_L4: return PositionConstants.CORAL_L4_SCORE_POSITIONS;
+            case INTAKE_CORAL_FEEDER: return PositionConstants.CORAL_INTAKE.FEEDER_PICKUP_ACCESSOR;
+            case INTAKE_CORAL_FLOOR: return null; // TODO needs definition
+            case INTAKE_CORAL_FLOOR_UPRIGHT: return PositionConstants.CORAL_INTAKE.FLOOR_UPRIGHT_PICKUP_ACCESSOR;
+            case SCORE_CORAL_L1: return PositionConstants.CORAL_SCORE.L1_ACCESSOR;
+            case SCORE_CORAL_L2: return PositionConstants.CORAL_SCORE.L2_ACCESSOR;
+            case SCORE_CORAL_L3: return PositionConstants.CORAL_SCORE.L3_ACCESSOR;
+            case SCORE_CORAL_L4: return PositionConstants.CORAL_SCORE.L4_ACCESSOR;
 
             /*
              * ALGAE POSITIONS
              */
-            case INTAKE_ALGAE_L2: return PositionConstants.ALGAE_REEF_PICKUP_L2_POSITIONS;
-            case INTAKE_ALGAE_L3: return PositionConstants.ALGAE_REEF_PICKUP_L3_POSITIONS;
-            case INTAKE_ALGAE_FLOOR: return PositionConstants.ALGAE_FLOOR_PICKUP_POSITIONS;
-            case SHOOT_ALGAE: return PositionConstants.ALGAE_SCORE_POSITIONS;
-            case HANDOFF_ALGAE: return PositionConstants.ALGAE_HANDOFF_POSITIONS;
+            case INTAKE_ALGAE_L2: return PositionConstants.ALGAE_INTAKE.REEF_PICKUP_L2;
+            case INTAKE_ALGAE_L3: return PositionConstants.ALGAE_INTAKE.REEF_PICKUP_L3;
+            case INTAKE_ALGAE_FLOOR: return PositionConstants.ALGAE_INTAKE.FLOOR_PICKUP;
+            case SHOOT_ALGAE: return PositionConstants.ALGAE_SCORE.SCORE_BARGE;
+            case HANDOFF_ALGAE: return PositionConstants.ALGAE_SCORE.HANDOFF;
         
             default:
                 return null;

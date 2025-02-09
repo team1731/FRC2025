@@ -1,11 +1,11 @@
-package frc.robot.state.score;
+package frc.robot.state.sequencer;
 
 import frc.robot.state.Input;
 import frc.robot.state.StateMachine;
 import frc.robot.state.StateMachineCallback;
-import frc.robot.state.score.constants.ScorePositions;
-import frc.robot.state.score.sequence.Sequence;
-import frc.robot.state.score.sequence.SequenceFactory;
+import frc.robot.state.sequencer.positions.Positions;
+import frc.robot.state.sequencer.sequence.Sequence;
+import frc.robot.state.sequencer.sequence.SequenceFactory;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorConstants;
@@ -24,7 +24,7 @@ public class ScoreStateMachine extends StateMachine {
     // score tracking
     private Sequence currentSequence;
     private GamePiece currentGamePiece;
-    private ScorePositions scorePositions;
+    private Positions scorePositions;
 
     // reset/abort tracking
     private boolean passedAbortPoint = false;

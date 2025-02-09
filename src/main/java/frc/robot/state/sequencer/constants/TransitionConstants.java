@@ -1,7 +1,7 @@
-package frc.robot.state.score.constants;
+package frc.robot.state.sequencer.constants;
 
-import frc.robot.state.score.ScoreInput;
-import frc.robot.state.score.ScoreState;
+import frc.robot.state.sequencer.ScoreInput;
+import frc.robot.state.sequencer.ScoreState;
 
 public final class TransitionConstants {
 

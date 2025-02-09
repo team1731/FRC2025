@@ -2,7 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
-import frc.robot.state.score.constants.PositionConstants;
+import frc.robot.state.sequencer.positions.PositionConstants;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
 import frc.robot.subsystems.hand.HandConstants;
 

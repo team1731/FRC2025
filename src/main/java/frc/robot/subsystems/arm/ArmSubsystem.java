@@ -13,7 +13,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.state.StateMachineCallback;
-import frc.robot.state.score.ScoreInput;
+import frc.robot.state.sequencer.ScoreInput;
 import frc.robot.subsystems.ToggleableSubsystem;
 
 

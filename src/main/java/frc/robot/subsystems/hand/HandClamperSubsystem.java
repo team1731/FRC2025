@@ -12,8 +12,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.state.StateMachineCallback;
-import frc.robot.state.score.ScoreInput;
-import frc.robot.state.score.constants.PositionConstants;
+import frc.robot.state.sequencer.ScoreInput;
+import frc.robot.state.sequencer.positions.PositionConstants;
 import frc.robot.subsystems.ToggleableSubsystem;
 
 public class HandClamperSubsystem extends SubsystemBase implements ToggleableSubsystem {

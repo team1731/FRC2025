@@ -1,4 +1,4 @@
-package frc.robot.state.score;
+package frc.robot.state.sequencer;
 
 import frc.robot.state.Input;
 
