@@ -18,6 +18,11 @@ public class SequenceFactory {
     private static Action actionSelection;
     private static GamePiece pieceSelection = GamePiece.CORAL; // coral is default
 
+
+    public static Level getOperatorLevelSelection() {
+        return levelSelection;
+    }
+
     public static void setOperatorLevelSelection(Level level) {
         levelSelection = level;
     }
@@ -28,6 +33,10 @@ public class SequenceFactory {
 
     public static GamePiece getOperatorPieceSelection() {
         return pieceSelection;
+    }
+
+    public static Action getDriverActionSelection() {
+        return actionSelection;
     }
 
     public static void setDriverActionSelection(Action action) {
@@ -44,9 +53,9 @@ public class SequenceFactory {
          * CORAL SEQUENCES
          */
         // Coral intake
-        if(pieceSelection == GamePiece.CORAL && levelSelection == Level.L1 && actionSelection == Action.INTAKE) return Sequence.INTAKE_CORAL_FLOOR;
-        if(pieceSelection == GamePiece.CORAL && levelSelection == Level.L2 && actionSelection == Action.INTAKE) return Sequence.INTAKE_CORAL_FLOOR_UPRIGHT;
-        if(pieceSelection == GamePiece.CORAL && levelSelection == Level.L3 && actionSelection == Action.INTAKE) return Sequence.INTAKE_CORAL_FEEDER;
+        //if(pieceSelection == GamePiece.CORAL && levelSelection == Level.L1 && actionSelection == Action.INTAKE) return Sequence.INTAKE_CORAL_FLOOR;
+        if(pieceSelection == GamePiece.CORAL && levelSelection == Level.L1 && actionSelection == Action.INTAKE) return Sequence.INTAKE_CORAL_FLOOR_UPRIGHT;
+        if(pieceSelection == GamePiece.CORAL && levelSelection == Level.L2 && actionSelection == Action.INTAKE) return Sequence.INTAKE_CORAL_FEEDER;
         // Coral score
         if(pieceSelection == GamePiece.CORAL && levelSelection == Level.L1 && actionSelection == Action.SCORE) return Sequence.SCORE_CORAL_L1;
         if(pieceSelection == GamePiece.CORAL && levelSelection == Level.L2 && actionSelection == Action.SCORE) return Sequence.SCORE_CORAL_L2;

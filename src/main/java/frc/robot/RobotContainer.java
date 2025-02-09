@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.ResetHandCommand;
 import frc.robot.commands.RunSequenceCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.state.score.Action;
@@ -194,6 +195,7 @@ public class RobotContainer {
       .onFalse(new InstantCommand(() -> SequenceFactory.setOperatorLevelSelection(Level.L2))); //if not pressed set defualt to Level 2 
 
     //TODO:use opA to set L2
+    opA.whileTrue(new InstantCommand(() -> SequenceFactory.setOperatorLevelSelection(Level.L2))); //while pressed set to Level 3
 
     opX.whileTrue(new InstantCommand(() -> SequenceFactory.setOperatorLevelSelection(Level.L1))) //while pressed set to Level 1
       .onFalse(new InstantCommand(() -> SequenceFactory.setOperatorLevelSelection(Level.L2))); //if not pressed set defualt to Level 2 
@@ -203,11 +205,13 @@ public class RobotContainer {
       .onFalse(new InstantCommand(() -> SequenceFactory.setOperatorPieceSelection(GamePiece.CORAL)));
 
     //bring up the climb in ready position
-    opStart.onTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.climbReadyPosition)));
+    //opStart.onTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.climbReadyPosition)));
     
     
     opBack.whileTrue(new InstantCommand(() -> visionSubsystem.setConfidence(true)))
       .onFalse(new InstantCommand(() -> visionSubsystem.setConfidence(false)));
+
+    opStart.onTrue(new ResetHandCommand(handClamperSubsystem, handIntakeSubsystem));
 
     driveSubsystem.registerTelemetry(logger::telemeterize);
   }

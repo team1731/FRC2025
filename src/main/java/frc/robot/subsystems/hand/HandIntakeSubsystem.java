@@ -9,6 +9,8 @@ import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
 import com.ctre.phoenix6.signals.ForwardLimitValue;
+import com.ctre.phoenix6.signals.ReverseLimitSourceValue;
+import com.ctre.phoenix6.signals.ReverseLimitValue;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -82,7 +84,7 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
     }
 
     public boolean limitSwitchFlipped() {
-        return motor.getForwardLimit().getValue() == ForwardLimitValue.ClosedToGround;
+        return motor.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround;
     }
 
     
@@ -109,8 +111,8 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
 
         var HWSwitchConfigs = new HardwareLimitSwitchConfigs();
 
-        HWSwitchConfigs.ForwardLimitEnable = true;
-        HWSwitchConfigs.ForwardLimitSource = ForwardLimitSourceValue.LimitSwitchPin;
+        HWSwitchConfigs.ReverseLimitEnable = true;
+        HWSwitchConfigs.ReverseLimitSource = ReverseLimitSourceValue.LimitSwitchPin;
         configs.HardwareLimitSwitch = HWSwitchConfigs;
 
 

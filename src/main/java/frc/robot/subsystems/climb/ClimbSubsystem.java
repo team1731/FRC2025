@@ -63,7 +63,7 @@ public class ClimbSubsystem extends SubsystemBase implements ToggleableSubsystem
         
         System.out.println("ClimbSubsystem: Starting Up & Initializing Climb Motor !!!!");
 
-        climbMotor = new TalonFX(ClimbConstants.climbCanId, "rio");
+        climbMotor = new TalonFX(ClimbConstants.climbCanId, "canivore1");
         TalonFXConfiguration config = new TalonFXConfiguration();
         climbMotor.getConfigurator().apply(config);
         

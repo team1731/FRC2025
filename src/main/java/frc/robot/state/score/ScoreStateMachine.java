@@ -81,6 +81,10 @@ public class ScoreStateMachine extends StateMachine {
     }
 
     public void endSequence() {
+        System.out.println("ScoreStateMachine: asked to end sequence - " + 
+            "Current state: " + currentState + " " + 
+            "Passed abort point " + passedAbortPoint + " " + 
+            "Resetting " + isResetting);
         if(currentState == ScoreState.WAITING) { // TODO add support to check if *close* to end of movement
             setInput(ScoreInput.SCORE);
         } else if(!passedAbortPoint && !isResetting) {
@@ -127,8 +131,8 @@ public class ScoreStateMachine extends StateMachine {
      }
 
     public boolean prepareToIntake() {
-        handClamperSubsystem.open(scorePositions.handClamperPosition, subsystemCallback);
-        handIntakeSubsystem.intake(HandConstants.intakeVelocity);
+        handClamperSubsystem.open(scorePositions.handClamperPosition);
+        handIntakeSubsystem.intake(HandConstants.intakeVelocity, subsystemCallback);
         return true;
     }
 

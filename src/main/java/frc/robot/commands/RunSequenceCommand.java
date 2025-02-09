@@ -1,8 +1,13 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.state.Input;
+import frc.robot.state.StateMachineCallback;
+import frc.robot.state.score.GamePiece;
 import frc.robot.state.score.ScoreInput;
+import frc.robot.state.score.ScoreState;
 import frc.robot.state.score.ScoreStateMachine;
+import frc.robot.state.score.sequence.Sequence;
 import frc.robot.state.score.sequence.SequenceFactory;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
@@ -16,6 +21,12 @@ public class RunSequenceCommand extends Command {
     HandClamperSubsystem m_clamperSubsystem;
     HandIntakeSubsystem m_intakeSubsystem;
     boolean m_sequenceStarted = false;
+    boolean m_sequenceDone = false;
+
+    private CommandCallback stateMachineCallback = () -> {
+        System.out.println("RunSequenceCommand: Sequence notified that it is complete");
+        m_sequenceDone = true;
+    };
 
     public RunSequenceCommand(ScoreStateMachine stateMachine, ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem clamperSubsystem, HandIntakeSubsystem intakeSubsystem) {
         m_scoreStateMachine = stateMachine;
@@ -27,10 +38,16 @@ public class RunSequenceCommand extends Command {
     }
 
     public void runStateMachine() {
-        System.out.println("ScoreCommand: running score command state machine");
+        System.out.println("RunSequenceCommand: running score command state machine");
         m_sequenceStarted = true;
+        m_scoreStateMachine.setCallback(stateMachineCallback);
         m_scoreStateMachine.setGamePiece(SequenceFactory.getOperatorPieceSelection());
-        m_scoreStateMachine.setSequence(SequenceFactory.getSequence());
+        Sequence sequence = SequenceFactory.getSequence();
+        System.out.println("RunSequenceCommand: Sequence chosen " + sequence + " " + 
+            SequenceFactory.getOperatorPieceSelection() + " " + 
+            SequenceFactory.getOperatorLevelSelection() + " " + 
+            SequenceFactory.getDriverActionSelection());
+        m_scoreStateMachine.setSequence(sequence);
         m_scoreStateMachine.setInput(ScoreInput.BEGIN);
     }
 
@@ -50,7 +67,14 @@ public class RunSequenceCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        System.out.println("ScoreCommand: command interrupted");
-        m_scoreStateMachine.endSequence();
+        if(!m_sequenceDone) {
+            System.out.println("RunSequenceCommand: command interrupted");
+            m_scoreStateMachine.endSequence();
+        }
+    }
+
+    @Override
+    public boolean isFinished() {
+        return m_sequenceDone;
     }
 }
