@@ -2,7 +2,7 @@ package frc.robot.state.sequencer;
 
 import frc.robot.state.State;
 
-public enum SequencerState implements State {
+public enum SequenceState implements State {
     HOME,
     RAISING_ELEVATOR,
     MOVING_ARM_FORWARD,

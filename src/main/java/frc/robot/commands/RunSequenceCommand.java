@@ -1,11 +1,10 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.state.sequencer.SequencerInput;
+import frc.robot.state.sequencer.SequenceInput;
 import frc.robot.state.sequencer.SequenceStateMachine;
 import frc.robot.state.sequencer.Sequence;
 import frc.robot.state.sequencer.SequenceManager;
-import frc.robot.state.sequencer.SequenceFactory;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
@@ -38,13 +37,13 @@ public class RunSequenceCommand extends Command {
         System.out.println("RunSequenceCommand: running score command state machine");
         m_sequenceStarted = true;
         m_scoreStateMachine.setCallback(stateMachineCallback);
-        Sequence sequence = SequenceFactory.getSequence();
+        Sequence sequence = SequenceManager.getSequence();
         System.out.println("RunSequenceCommand: Sequence chosen " + sequence + " " + 
             SequenceManager.getGamePieceSelection() + " " + 
             SequenceManager.getLevelSelection() + " " + 
             SequenceManager.getActionSelection());
         m_scoreStateMachine.setSequence(sequence);
-        m_scoreStateMachine.setInput(SequencerInput.BEGIN);
+        m_scoreStateMachine.setInput(SequenceInput.BEGIN);
     }
 
     @Override
@@ -65,7 +64,7 @@ public class RunSequenceCommand extends Command {
     public void end(boolean interrupted) {
         if(!m_sequenceDone) {
             System.out.println("RunSequenceCommand: command interrupted");
-            m_scoreStateMachine.setInput(SequencerInput.BUTTON_RELEASED);
+            m_scoreStateMachine.setInput(SequenceInput.BUTTON_RELEASED);
             m_scoreStateMachine.setCallback(null); // command ending, nothing to callback to
             m_sequenceDone = true;
         }

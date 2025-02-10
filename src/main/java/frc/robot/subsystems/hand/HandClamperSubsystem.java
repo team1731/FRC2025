@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.state.StateMachineCallback;
-import frc.robot.state.sequencer.SequencerInput;
+import frc.robot.state.sequencer.SequenceInput;
 import frc.robot.state.sequencer.positions.PositionConstants;
 import frc.robot.subsystems.ToggleableSubsystem;
 
@@ -126,7 +126,7 @@ public class HandClamperSubsystem extends SubsystemBase implements ToggleableSub
         if (!enabled) return;
 
         if(isAtPosition(desiredPosition) && scoreStateMachineCallback != null){
-            scoreStateMachineCallback.setInput(SequencerInput.HAND_DONE);
+            scoreStateMachineCallback.setInput(SequenceInput.HAND_DONE);
             scoreStateMachineCallback = null;
         }
 

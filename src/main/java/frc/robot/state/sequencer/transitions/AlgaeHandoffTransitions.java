@@ -1,16 +1,16 @@
 package frc.robot.state.sequencer.transitions;
 
-import frc.robot.state.sequencer.SequencerInput;
-import frc.robot.state.sequencer.SequencerState;
+import frc.robot.state.sequencer.SequenceInput;
+import frc.robot.state.sequencer.SequenceState;
 
 public class AlgaeHandoffTransitions {
     private static final Object transitionTable[][] = {
         // CURRENT                           INPUT                                  OPERATION                    NEXT
-        {SequencerState.HOME,                    SequencerInput.BEGIN,                      "moveArmForward",            SequencerState.MOVING_ARM_FORWARD},
-        {SequencerState.MOVING_ARM_FORWARD,      SequencerInput.ARM_DONE,                   "shootToScore",              SequencerState.SCORING},
-        {SequencerState.SCORING,                 SequencerInput.RELEASED_PIECE,             "moveArmHome",               SequencerState.FINISHING},
-        {SequencerState.FINISHING,               SequencerInput.ARM_DONE,                   "doSafetyCheck",             SequencerState.HOME},
-        {SequencerState.ABORTING,                SequencerInput.ARM_DONE,                   "doSafetyCheck",             SequencerState.HOME}
+        {SequenceState.HOME,                    SequenceInput.BEGIN,                      "moveArmForward",            SequenceState.MOVING_ARM_FORWARD},
+        {SequenceState.MOVING_ARM_FORWARD,      SequenceInput.ARM_DONE,                   "shootToScore",              SequenceState.SCORING},
+        {SequenceState.SCORING,                 SequenceInput.RELEASED_PIECE,             "moveArmHome",               SequenceState.FINISHING},
+        {SequenceState.FINISHING,               SequenceInput.ARM_DONE,                   "doSafetyCheck",             SequenceState.HOME},
+        {SequenceState.ABORTING,                SequenceInput.ARM_DONE,                   "doSafetyCheck",             SequenceState.HOME}
     };
     
 

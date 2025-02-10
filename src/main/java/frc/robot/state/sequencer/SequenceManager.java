@@ -42,4 +42,8 @@ public class SequenceManager {
         }
         return stateMachine;
     }
+
+    public static Sequence getSequence() {
+        return SequenceFactory.getSequence(levelSelection, pieceSelection, actionSelection);
+    }
 }

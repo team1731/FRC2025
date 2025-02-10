@@ -1,18 +1,18 @@
 package frc.robot.state.sequencer.transitions;
 
-import frc.robot.state.sequencer.SequencerInput;
-import frc.robot.state.sequencer.SequencerState;
+import frc.robot.state.sequencer.SequenceInput;
+import frc.robot.state.sequencer.SequenceState;
 
 public class AlgaeReefPickupTransitions {
     private static final Object transitionTable[][] = {
         // CURRENT                           INPUT                                  OPERATION                    NEXT
-        {SequencerState.HOME,                    SequencerInput.BEGIN,                      "raiseElevator",             SequencerState.RAISING_ELEVATOR},
-        {SequencerState.RAISING_ELEVATOR,        SequencerInput.ELEVATOR_THRESHOLD_MET,     "moveArmForward",            SequencerState.MOVING_ARM_FORWARD},
-        {SequencerState.MOVING_ARM_FORWARD,      SequencerInput.ARM_DONE,                   "prepareToIntake",           SequencerState.INTAKING},
-        {SequencerState.INTAKING,                SequencerInput.DETECTED_PIECE,             "moveElevatorHome",          SequencerState.LOWERING},
-        {SequencerState.LOWERING,                SequencerInput.ELEVATOR_THRESHOLD_MET,     "moveArmHome",               SequencerState.FINISHING},
-        {SequencerState.FINISHING,               SequencerInput.RESET_DONE,                 "doSafetyCheck",             SequencerState.HOME},
-        {SequencerState.ABORTING,                SequencerInput.RESET_DONE,                 "doSafetyCheck",             SequencerState.HOME}
+        {SequenceState.HOME,                    SequenceInput.BEGIN,                      "raiseElevator",             SequenceState.RAISING_ELEVATOR},
+        {SequenceState.RAISING_ELEVATOR,        SequenceInput.ELEVATOR_THRESHOLD_MET,     "moveArmForward",            SequenceState.MOVING_ARM_FORWARD},
+        {SequenceState.MOVING_ARM_FORWARD,      SequenceInput.ARM_DONE,                   "prepareToIntake",           SequenceState.INTAKING},
+        {SequenceState.INTAKING,                SequenceInput.DETECTED_PIECE,             "moveElevatorHome",          SequenceState.LOWERING},
+        {SequenceState.LOWERING,                SequenceInput.ELEVATOR_THRESHOLD_MET,     "moveArmHome",               SequenceState.FINISHING},
+        {SequenceState.FINISHING,               SequenceInput.RESET_DONE,                 "doSafetyCheck",             SequenceState.HOME},
+        {SequenceState.ABORTING,                SequenceInput.RESET_DONE,                 "doSafetyCheck",             SequenceState.HOME}
     };
     
 

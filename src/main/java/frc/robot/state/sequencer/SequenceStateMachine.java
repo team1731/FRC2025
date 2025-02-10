@@ -35,7 +35,7 @@ public class SequenceStateMachine extends StateMachine {
         this.armSubsystem = armSubsystem;
         this.handClamperSubsystem = handClamperSubsystem;
         this.handIntakeSubsystem = handIntakeSubsystem;
-        setCurrentState(SequencerState.HOME);
+        setCurrentState(SequenceState.HOME);
     }
 
     /*
@@ -43,7 +43,7 @@ public class SequenceStateMachine extends StateMachine {
      */
 
     public boolean isReady() {
-        return currentState == SequencerState.HOME;
+        return currentState == SequenceState.HOME;
     }
 
     public void setSequence(Sequence sequence) {
@@ -61,17 +61,17 @@ public class SequenceStateMachine extends StateMachine {
 
     protected void handleSubsystemCallback(Input input) {
         if(isResetting) {
-            SequencerInput sequenceInput = (SequencerInput)input;
-            if(sequenceInput == SequencerInput.ELEVATOR_THRESHOLD_MET) setInput(input); // not home yet
-            if(sequenceInput == SequencerInput.ELEVATOR_DONE) elevatorResetDone = true;
-            if(sequenceInput == SequencerInput.ARM_DONE) armResetDone = true;
+            SequenceInput sequenceInput = (SequenceInput)input;
+            if(sequenceInput == SequenceInput.ELEVATOR_THRESHOLD_MET) setInput(input); // not home yet
+            if(sequenceInput == SequenceInput.ELEVATOR_DONE) elevatorResetDone = true;
+            if(sequenceInput == SequenceInput.ARM_DONE) armResetDone = true;
             if(elevatorResetDone && armResetDone) {
-                setInput(SequencerInput.RESET_DONE);
+                setInput(SequenceInput.RESET_DONE);
             }
         } else {
-            if(input == SequencerInput.RELEASED_PIECE) closeHand();
-            if(input == SequencerInput.DETECTED_PIECE && currentGamePiece == GamePiece.CORAL) closeHand();
-            if(currentSequence == Sequence.SCORE_CORAL_L2 && input == SequencerInput.ARM_DONE && currentState == SequencerState.SCORING) releasePiece();
+            if(input == SequenceInput.RELEASED_PIECE) closeHand();
+            if(input == SequenceInput.DETECTED_PIECE && currentGamePiece == GamePiece.CORAL) closeHand();
+            if(currentSequence == Sequence.SCORE_CORAL_L2 && input == SequenceInput.ARM_DONE && currentState == SequenceState.SCORING) releasePiece();
             setInput(input);
         }
     }
@@ -125,7 +125,7 @@ public class SequenceStateMachine extends StateMachine {
     public boolean releasePiece() {
         handIntakeSubsystem.stop();
         handIntakeSubsystem.release(HandConstants.intakeVelocity, HandConstants.defaultReleaseRuntime);
-        setInput(SequencerInput.SCORED);
+        setInput(SequenceInput.SCORED);
         return true;
     }
 

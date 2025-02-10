@@ -1,13 +1,13 @@
 package frc.robot.state.sequencer.transitions;
 
-import frc.robot.state.sequencer.SequencerInput;
-import frc.robot.state.sequencer.SequencerState;
+import frc.robot.state.sequencer.SequenceInput;
+import frc.robot.state.sequencer.SequenceState;
 
 public class CoralFeederPickupTransitions {
     private static final Object transitionTable[][] = {
         // CURRENT                           INPUT                                  OPERATION                    NEXT
-        {SequencerState.HOME,                    SequencerInput.BEGIN,                      "prepareToIntake",           SequencerState.INTAKING},
-        {SequencerState.INTAKING,                SequencerInput.DETECTED_PIECE,             "doSafetyCheck",             SequencerState.HOME}
+        {SequenceState.HOME,                    SequenceInput.BEGIN,                      "prepareToIntake",           SequenceState.INTAKING},
+        {SequenceState.INTAKING,                SequenceInput.DETECTED_PIECE,             "doSafetyCheck",             SequenceState.HOME}
     };
     
 

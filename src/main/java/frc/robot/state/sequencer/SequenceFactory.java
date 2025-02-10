@@ -11,11 +11,7 @@ import frc.robot.state.sequencer.transitions.CoralScoreTransitions;
 import frc.robot.state.sequencer.transitions.CoralUprightFloorPickupTransitions;
 
 public class SequenceFactory {
-    public static Sequence getSequence() {
-        Level levelSelection = SequenceManager.getLevelSelection();
-        GamePiece pieceSelection = SequenceManager.getGamePieceSelection();
-        Action actionSelection = SequenceManager.getActionSelection();
-        
+    public static Sequence getSequence(Level levelSelection, GamePiece pieceSelection, Action actionSelection) { 
         /*
          * CORAL SEQUENCES
          */
