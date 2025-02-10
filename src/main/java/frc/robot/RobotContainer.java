@@ -28,6 +28,7 @@ import frc.robot.state.sequencer.GamePiece;
 import frc.robot.state.sequencer.Level;
 import frc.robot.state.sequencer.SequenceStateMachine;
 import frc.robot.state.sequencer.SequenceFactory;
+import frc.robot.state.sequencer.SequenceManager;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.climb.ClimbConstants;
@@ -101,7 +102,6 @@ public class RobotContainer {
   private HandClamperSubsystem handClamperSubsystem;
   private HandIntakeSubsystem handIntakeSubsystem;
   private ClimbSubsystem climbSubsystem;
-  private SequenceStateMachine scoreStateMachine;
 
   public RobotContainer(
       CommandSwerveDrivetrain s_driveSubsystem,
@@ -122,8 +122,6 @@ public class RobotContainer {
     handClamperSubsystem = s_HandClamperSubsystem;
     handIntakeSubsystem = s_HandIntakeSubsystem;
     climbSubsystem = s_ClimbSubsystem;
-
-    scoreStateMachine = SequenceFactory.getScoreStateMachine(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem);
 
     // Configure the button bindings
     configureBindings();
@@ -171,13 +169,13 @@ public class RobotContainer {
 
     // Sets arm to intake
     dLeftTrigger.whileTrue(new SequentialCommandGroup(
-      new InstantCommand(() -> SequenceFactory.setDriverActionSelection(Action.INTAKE)),
-      new RunSequenceCommand(scoreStateMachine, elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)));
+      new InstantCommand(() -> SequenceManager.setActionSelection(Action.INTAKE)),
+      new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)));
 
     // Sets arm to score
     dRightTrigger.whileTrue(new SequentialCommandGroup(
-      new InstantCommand(() -> SequenceFactory.setDriverActionSelection(Action.SCORE)),
-      new RunSequenceCommand(scoreStateMachine, elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)));
+      new InstantCommand(() -> SequenceManager.setActionSelection(Action.SCORE)),
+      new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)));
 
     // Climb up
     dLeftBumper.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(0))) //TODO set climb interval UP
@@ -188,21 +186,21 @@ public class RobotContainer {
     .whileFalse(new InstantCommand(() -> climbSubsystem.stopClimb()));
 
     // Controls level selection
-    opY.whileTrue(new InstantCommand(() -> SequenceFactory.setOperatorLevelSelection(Level.L4))) //while pressed set to Level 4
-      .onFalse(new InstantCommand(() -> SequenceFactory.setOperatorLevelSelection(Level.L2))); //if not pressed set defualt to Level 2  
+    opY.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L4))) //while pressed set to Level 4
+      .onFalse(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L2))); //if not pressed set defualt to Level 2  
 
-    opB.whileTrue(new InstantCommand(() -> SequenceFactory.setOperatorLevelSelection(Level.L3))) //while pressed set to Level 3
-      .onFalse(new InstantCommand(() -> SequenceFactory.setOperatorLevelSelection(Level.L2))); //if not pressed set defualt to Level 2 
+    opB.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L3))) //while pressed set to Level 3
+      .onFalse(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L2))); //if not pressed set defualt to Level 2 
 
-    //TODO:use opA to set L2
-    opA.whileTrue(new InstantCommand(() -> SequenceFactory.setOperatorLevelSelection(Level.L2))); //while pressed set to Level 3
+    //TODO: is this necessary?
+    opA.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L2))); //while pressed set to Level 3
 
-    opX.whileTrue(new InstantCommand(() -> SequenceFactory.setOperatorLevelSelection(Level.L1))) //while pressed set to Level 1
-      .onFalse(new InstantCommand(() -> SequenceFactory.setOperatorLevelSelection(Level.L2))); //if not pressed set defualt to Level 2 
+    opX.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L1))) //while pressed set to Level 1
+      .onFalse(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L2))); //if not pressed set defualt to Level 2 
 
     // While trigger is true set piece to Algae, when it goes back to false set piece back to Coral
-    opLeftTrigger.whileTrue(new InstantCommand(() -> SequenceFactory.setOperatorPieceSelection(GamePiece.ALGAE)))
-      .onFalse(new InstantCommand(() -> SequenceFactory.setOperatorPieceSelection(GamePiece.CORAL)));
+    opLeftTrigger.whileTrue(new InstantCommand(() -> SequenceManager.setGamePieceSelection(GamePiece.ALGAE)))
+      .onFalse(new InstantCommand(() -> SequenceManager.setGamePieceSelection(GamePiece.CORAL)));
 
     //bring up the climb in ready position
     //opStart.onTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.climbReadyPosition)));

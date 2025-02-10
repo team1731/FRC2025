@@ -9,48 +9,13 @@ import frc.robot.state.sequencer.transitions.AlgaeScoreBargeTransitions;
 import frc.robot.state.sequencer.transitions.CoralFeederPickupTransitions;
 import frc.robot.state.sequencer.transitions.CoralScoreTransitions;
 import frc.robot.state.sequencer.transitions.CoralUprightFloorPickupTransitions;
-import frc.robot.subsystems.arm.ArmSubsystem;
-import frc.robot.subsystems.elevator.ElevatorSubsystem;
-import frc.robot.subsystems.hand.HandClamperSubsystem;
-import frc.robot.subsystems.hand.HandIntakeSubsystem;
 
 public class SequenceFactory {
-    private static SequenceStateMachine scoreStateMachine;
-    private static Level levelSelection = Level.L2; // L2 is default
-    private static Action actionSelection;
-    private static GamePiece pieceSelection = GamePiece.CORAL; // coral is default
-
-
-    public static Level getOperatorLevelSelection() {
-        return levelSelection;
-    }
-
-    public static void setOperatorLevelSelection(Level level) {
-        levelSelection = level;
-    }
-
-    public static void setOperatorPieceSelection(GamePiece piece) {
-        pieceSelection = piece;
-    }
-
-    public static GamePiece getOperatorPieceSelection() {
-        return pieceSelection;
-    }
-
-    public static Action getDriverActionSelection() {
-        return actionSelection;
-    }
-
-    public static void setDriverActionSelection(Action action) {
-        actionSelection = action;
-    }
-
-    public static SequenceStateMachine getScoreStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem clamperSubsystem, HandIntakeSubsystem intakeSubsystem) {
-        scoreStateMachine = new SequenceStateMachine(elevatorSubsystem, armSubsystem, clamperSubsystem, intakeSubsystem);
-        return scoreStateMachine;
-    }
-
     public static Sequence getSequence() {
+        Level levelSelection = SequenceManager.getLevelSelection();
+        GamePiece pieceSelection = SequenceManager.getGamePieceSelection();
+        Action actionSelection = SequenceManager.getActionSelection();
+        
         /*
          * CORAL SEQUENCES
          */
@@ -80,7 +45,6 @@ public class SequenceFactory {
 
     public static Object[][] getTransitionTable(Sequence sequence) {
         switch(sequence) {
-
             /*
              * CORAL TRANSITIONS
              */
@@ -116,7 +80,6 @@ public class SequenceFactory {
 
     public static Positions getPositions(Sequence sequence) {
         switch(sequence) {
-
             /*
              * CORAL POSITIONS
              */

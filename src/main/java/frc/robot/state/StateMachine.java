@@ -20,19 +20,22 @@ public abstract class StateMachine {
     commandCallback = callback;
   }
 
-  // handle command interruptions
-  public abstract void endSequence();
-
-  // will be passed to subsystems to receive feedback for state transitions
-  protected StateMachineCallback inputCallback = (Input input) -> {
-    run(input);
-  };
-
   protected void processComplete() {
     if(commandCallback != null) {
       commandCallback.processComplete();
     }
   }
+
+  /*
+   * SUBSYSTEM INTERFACE
+   */
+
+  // will be passed to subsystems to receive feedback for state transitions
+  protected StateMachineCallback subsystemCallback = (Input input) -> {
+    handleSubsystemCallback(input);
+  };
+
+  protected abstract void handleSubsystemCallback(Input input);
 
   
   /*

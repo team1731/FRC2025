@@ -19,33 +19,16 @@ public class SequenceStateMachine extends StateMachine {
     private HandIntakeSubsystem handIntakeSubsystem;
     private HandClamperSubsystem handClamperSubsystem;
 
-    // score tracking
+    // sequence tracking
     private Sequence currentSequence;
     private GamePiece currentGamePiece;
-    private Positions scorePositions;
+    private Positions positions;
 
     // reset/abort tracking
-    private boolean passedAbortPoint = false;
     private boolean isResetting = false;
     private boolean elevatorResetDone = false;
     private boolean armResetDone = false;
 
-    private StateMachineCallback subsystemCallback = (Input input) -> {
-        if(isResetting) {
-            SequencerInput scoreInput = (SequencerInput)input;
-            if(scoreInput == SequencerInput.ELEVATOR_THRESHOLD_MET) setInput(input); // not home yet
-            if(scoreInput == SequencerInput.ELEVATOR_DONE) elevatorResetDone = true;
-            if(scoreInput == SequencerInput.ARM_DONE) armResetDone = true;
-            if(elevatorResetDone && armResetDone) {
-                setInput(SequencerInput.RESET_DONE);
-            }
-        } else {
-            if(input == SequencerInput.RELEASED_PIECE) closeHand();
-            if(input == SequencerInput.DETECTED_PIECE && currentGamePiece == GamePiece.CORAL) closeHand();
-            if(currentSequence == Sequence.SCORE_CORAL_L2 && input == SequencerInput.ARM_DONE && currentState == SequencerState.SCORING) releasePiece();
-            setInput(input);
-        }
-    };
 
     public SequenceStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem handClamperSubsystem, HandIntakeSubsystem handIntakeSubsystem) { //add hand here
         this.elevatorSubsystem = elevatorSubsystem;
@@ -53,10 +36,6 @@ public class SequenceStateMachine extends StateMachine {
         this.handClamperSubsystem = handClamperSubsystem;
         this.handIntakeSubsystem = handIntakeSubsystem;
         setCurrentState(SequencerState.HOME);
-    }
-
-    public StateMachineCallback getSubsystemCallback() {
-        return subsystemCallback;
     }
 
     /*
@@ -69,56 +48,65 @@ public class SequenceStateMachine extends StateMachine {
 
     public void setSequence(Sequence sequence) {
         currentSequence = sequence;
+        currentGamePiece = SequenceManager.getGamePieceSelection();
         // the sequence determines the choreographed movement of elevator/arm/hand
         setStateTransitionTable(SequenceFactory.getTransitionTable(sequence)); // state machine transitions
-        scorePositions = SequenceFactory.getPositions(sequence); // position constants for subsystems
+        positions = SequenceFactory.getPositions(sequence); // position constants for subsystems
     }
 
-    public void setGamePiece(GamePiece piece) {
-        currentGamePiece = piece;
-    }
 
-    public void endSequence() {
-        System.out.println("ScoreStateMachine: asked to end sequence - " + 
-            "Current state: " + currentState + " " + 
-            "Passed abort point " + passedAbortPoint + " " + 
-            "Resetting " + isResetting);
-        if(currentState == SequencerState.WAITING) { // TODO add support to check if *close* to end of movement
-            setInput(SequencerInput.SCORE);
-        } else if(!passedAbortPoint && !isResetting) {
-            abort();
+    /*
+     * SUBSYSTEM INTERFACE
+     */
+
+    protected void handleSubsystemCallback(Input input) {
+        if(isResetting) {
+            SequencerInput sequenceInput = (SequencerInput)input;
+            if(sequenceInput == SequencerInput.ELEVATOR_THRESHOLD_MET) setInput(input); // not home yet
+            if(sequenceInput == SequencerInput.ELEVATOR_DONE) elevatorResetDone = true;
+            if(sequenceInput == SequencerInput.ARM_DONE) armResetDone = true;
+            if(elevatorResetDone && armResetDone) {
+                setInput(SequencerInput.RESET_DONE);
+            }
+        } else {
+            if(input == SequencerInput.RELEASED_PIECE) closeHand();
+            if(input == SequencerInput.DETECTED_PIECE && currentGamePiece == GamePiece.CORAL) closeHand();
+            if(currentSequence == Sequence.SCORE_CORAL_L2 && input == SequencerInput.ARM_DONE && currentState == SequencerState.SCORING) releasePiece();
+            setInput(input);
         }
     }
+
+    public StateMachineCallback getSubsystemCallback() {
+        return subsystemCallback;
+    }
+
 
     /*
      * STATE OPERATION METHODS
      */
 
     public boolean raiseElevator() {
-        elevatorSubsystem.moveElevator(scorePositions.raiseElevatorPosition, subsystemCallback, scorePositions.raiseElevatorThreshold);
+        elevatorSubsystem.moveElevator(positions.raiseElevatorPosition, subsystemCallback, positions.raiseElevatorThreshold);
         return true;
     }
 
     public boolean moveElevatorHome() {
         isResetting = true;
-        passedAbortPoint = true;
-        elevatorSubsystem.moveElevator(ElevatorConstants.elevatorHomePosition, subsystemCallback, scorePositions.lowerElevatorThreshold);
+        elevatorSubsystem.moveElevator(ElevatorConstants.elevatorHomePosition, subsystemCallback, positions.lowerElevatorThreshold);
         return true;
     }
 
     public boolean moveArmForward() {
-        armSubsystem.moveArm(scorePositions.armForwardPosition, subsystemCallback);
+        armSubsystem.moveArm(positions.armForwardPosition, subsystemCallback);
         return true;
     }
 
     public boolean moveArmToScore() {
-        passedAbortPoint = true;
-        armSubsystem.moveArm(scorePositions.armScoringPosition, subsystemCallback);
+        armSubsystem.moveArm(positions.armScoringPosition, subsystemCallback);
         return true;
     }
 
     public boolean moveArmHome() {
-        passedAbortPoint = true;
         armSubsystem.moveArm(ArmConstants.armHomePosition, subsystemCallback);
         return true;
     }
@@ -129,7 +117,7 @@ public class SequenceStateMachine extends StateMachine {
      }
 
     public boolean prepareToIntake() {
-        handClamperSubsystem.open(scorePositions.handClamperPosition);
+        handClamperSubsystem.open(positions.handClamperPosition);
         handIntakeSubsystem.intake(HandConstants.intakeVelocity, subsystemCallback);
         return true;
     }
@@ -142,57 +130,17 @@ public class SequenceStateMachine extends StateMachine {
     }
 
     public boolean shootToScore() {
-        passedAbortPoint = true;
         handIntakeSubsystem.release(HandConstants.scoreAlgaeVelocity, HandConstants.defaultReleaseRuntime, subsystemCallback);
         return true;
     }
 
-    /*
-     * RESET, SAFETY, AND RECOVERY METHODS
-     */
-
-    public boolean doSafetyCheck() {
-        if(isSafe()) {
-            resetInternalState();
-            processComplete();
-            return true;
-        } else {
-            recover();
-            return false;
-        }
-    }
-
-    public boolean isSafe() {
-        // TODO for now just printing out info, but at some point probably want reliable safety checks
-        System.out.println("ScoreStateMachine: checking safety -" + 
-            " elevator pos: " + elevatorSubsystem.getElevatorPosition() +
-            " arm pos: " + armSubsystem.getArmPosition());
-        return true;
-    }
-
-    public boolean resetInternalState() {
-        scorePositions = null;
-        passedAbortPoint = false;
+    public boolean reset() {
+        currentSequence = null;
+        currentGamePiece = null;
+        positions = null;
         isResetting = false;
         elevatorResetDone = false;
         armResetDone = false;
         return true;
-    }
-
-    private void abort() {
-        setCurrentState(SequencerState.ABORTING);
-        isResetting = true;
-        // stop current movements
-        armSubsystem.stopArm();
-        elevatorSubsystem.stopElevator();
-        // move back home
-        armSubsystem.moveArm(ArmConstants.armHomePosition, subsystemCallback);
-        elevatorSubsystem.moveElevator(ElevatorConstants.elevatorHomePosition, subsystemCallback);
-     }
-
-    public void recover() {
-        // TODO need to implement
-        // Move arm back into position using absolute encorder
-        // Move elevator and clamper back into position using resistence to indicated home, then reset motor encoders
     }
 }
