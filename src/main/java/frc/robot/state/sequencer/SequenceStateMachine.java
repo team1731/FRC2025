@@ -21,7 +21,9 @@ public class SequenceStateMachine extends StateMachine {
 
     // sequence tracking
     private Sequence currentSequence;
+    private Action currentAction;
     private GamePiece currentGamePiece;
+    private Level updatedLevel;
     private Positions positions;
 
     // reset/abort tracking
@@ -48,6 +50,7 @@ public class SequenceStateMachine extends StateMachine {
 
     public void setSequence(Sequence sequence) {
         currentSequence = sequence;
+        currentAction = SequenceManager.getActionSelection();
         currentGamePiece = SequenceManager.getGamePieceSelection();
         // the sequence determines the choreographed movement of elevator/arm/hand
         setStateTransitionTable(SequenceFactory.getTransitionTable(sequence)); // state machine transitions
@@ -138,6 +141,26 @@ public class SequenceStateMachine extends StateMachine {
         return true;
     }
 
+    // Drive the elevator to a new position when the operator overrides it midstream
+    public boolean updateElevator() {
+        // Find the new elevator position by using the new level with the current action and game piece
+        Sequence updatedLevelSequence = SequenceFactory.getSequence(updatedLevel, currentGamePiece, currentAction);
+        Positions updatedLevelPositions = SequenceFactory.getPositions(updatedLevelSequence);
+        // Drive to the updated position
+        elevatorSubsystem.moveElevator(updatedLevelPositions.raiseElevatorPosition, subsystemCallback);
+        return true;
+    }
+
+    // Used to return the arm home (and stop intake) before driving the elevator to a new position
+    public boolean returnArmForUpdate() {
+        if(currentAction == Action.INTAKE) {
+            handClamperSubsystem.close();
+            handIntakeSubsystem.stop();
+        }
+        armSubsystem.moveArm(ArmConstants.armHomePosition, subsystemCallback);
+        return true;
+    }
+
     public boolean startReset() {
         isResetting = true;
         // stop current movements
@@ -151,7 +174,9 @@ public class SequenceStateMachine extends StateMachine {
 
     public boolean resetState() {
         currentSequence = null;
+        currentAction = null;
         currentGamePiece = null;
+        updatedLevel = null;
         positions = null;
         isResetting = false;
         elevatorResetDone = false;
