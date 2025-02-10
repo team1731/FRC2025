@@ -7,11 +7,9 @@ public enum SequenceState implements State {
     RAISING_ELEVATOR,
     MOVING_ARM_FORWARD,
     WAITING, // for driver feedback or intake sensor feedback
-    MOVING_TO_SCORE,
     SCORING,
     INTAKING,
-    CLOSING_HAND,
+    STOPPING_INTAKE,
     LOWERING,
-    FINISHING, // typically moving arm back
-    ABORTING // if driver ends command early
+    FINISHING
 }

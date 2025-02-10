@@ -91,7 +91,6 @@ public class SequenceStateMachine extends StateMachine {
     }
 
     public boolean moveElevatorHome() {
-        isResetting = true;
         elevatorSubsystem.moveElevator(ElevatorConstants.elevatorHomePosition, subsystemCallback, positions.lowerElevatorThreshold);
         return true;
     }
@@ -122,10 +121,15 @@ public class SequenceStateMachine extends StateMachine {
         return true;
     }
 
+    public boolean stopIntaking() {
+        handClamperSubsystem.close();
+        handIntakeSubsystem.stop(subsystemCallback);
+        return true;
+    }
+
     public boolean releasePiece() {
         handIntakeSubsystem.stop();
         handIntakeSubsystem.release(HandConstants.intakeVelocity, HandConstants.defaultReleaseRuntime);
-        setInput(SequenceInput.SCORED);
         return true;
     }
 
@@ -134,13 +138,25 @@ public class SequenceStateMachine extends StateMachine {
         return true;
     }
 
-    public boolean reset() {
+    public boolean startReset() {
+        isResetting = true;
+        // stop current movements
+        armSubsystem.stopArm();
+        elevatorSubsystem.stopElevator();
+        // move back home
+        armSubsystem.moveArm(ArmConstants.armHomePosition, subsystemCallback);
+        elevatorSubsystem.moveElevator(ElevatorConstants.elevatorHomePosition, subsystemCallback);
+        return true;
+    }
+
+    public boolean resetState() {
         currentSequence = null;
         currentGamePiece = null;
         positions = null;
         isResetting = false;
         elevatorResetDone = false;
         armResetDone = false;
+        processComplete();
         return true;
     }
 }

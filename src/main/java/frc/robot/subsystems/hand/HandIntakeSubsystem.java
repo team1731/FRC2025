@@ -7,8 +7,6 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
-import com.ctre.phoenix6.signals.ForwardLimitValue;
 import com.ctre.phoenix6.signals.ReverseLimitSourceValue;
 import com.ctre.phoenix6.signals.ReverseLimitValue;
 
@@ -24,6 +22,7 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
     private final NeutralOut brake = new NeutralOut();
     private StateMachineCallback scoreStateMachineCallback;
     private boolean intaking = false;
+    private boolean stopping = false;
     private double releaseStartedTime = 0;
     private double releaseRunningTime = 0;
     private boolean enabled;
@@ -81,6 +80,12 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
         if(!enabled) return;
         intaking = false;
         motor.setControl(brake);
+    }
+
+    public void stop(StateMachineCallback callback) {
+        scoreStateMachineCallback = callback;
+        stopping = true;
+        stop();
     }
 
     public boolean limitSwitchFlipped() {
@@ -156,6 +161,13 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
                 scoreStateMachineCallback.setInput(SequenceInput.DETECTED_PIECE);
                 scoreStateMachineCallback = null;
             }
+        }
+
+        if(stopping && scoreStateMachineCallback != null) {
+            stopping = false;
+            System.out.println("HandIntakeSubsystem stopped intake");
+            scoreStateMachineCallback.setInput(SequenceInput.STOPPED_INTAKE);
+            scoreStateMachineCallback = null;
         }
 
         log();

@@ -5,12 +5,16 @@ import frc.robot.state.sequencer.SequenceState;
 
 public class CoralUprightFloorPickupTransitions {
     private static final Object transitionTable[][] = {
-        // CURRENT                           INPUT                                  OPERATION                    NEXT
-        {SequenceState.HOME,                    SequenceInput.BEGIN,                      "moveArmForward",             SequenceState.MOVING_ARM_FORWARD},
-        {SequenceState.MOVING_ARM_FORWARD,      SequenceInput.ARM_DONE,                   "prepareToIntake",            SequenceState.INTAKING},
-        {SequenceState.INTAKING,                SequenceInput.DETECTED_PIECE,             "moveArmHome",                SequenceState.FINISHING},
-        {SequenceState.FINISHING,               SequenceInput.ARM_DONE,                   "doSafetyCheck",              SequenceState.HOME},
-        {SequenceState.ABORTING,                SequenceInput.ARM_DONE,                   "doSafetyCheck",              SequenceState.HOME}    
+        // CURRENT                              INPUT                                     OPERATION                    NEXT
+        {SequenceState.HOME,                    SequenceInput.BEGIN,                      "moveArmForward",            SequenceState.MOVING_ARM_FORWARD},
+        {SequenceState.MOVING_ARM_FORWARD,      SequenceInput.ARM_DONE,                   "prepareToIntake",           SequenceState.INTAKING},
+        {SequenceState.INTAKING,                SequenceInput.DETECTED_PIECE,             "moveArmHome",               SequenceState.FINISHING},
+        {SequenceState.FINISHING,               SequenceInput.ARM_DONE,                   "resetState",                SequenceState.HOME},
+        
+        // Abort sequences
+        {SequenceState.MOVING_ARM_FORWARD,      SequenceInput.BUTTON_RELEASED,            "moveArmHome",               SequenceState.FINISHING},
+        {SequenceState.INTAKING,                SequenceInput.BUTTON_RELEASED,            "stopIntaking",              SequenceState.STOPPING_INTAKE},
+        {SequenceState.STOPPING_INTAKE,         SequenceInput.STOPPED_INTAKE,             "moveArmHome",               SequenceState.FINISHING}
     };
     
 
