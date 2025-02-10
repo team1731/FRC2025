@@ -16,7 +16,7 @@ public class AlgaeReefPickupTransitions {
         // Level change sequences
         {SequenceState.RAISING_ELEVATOR,        SequenceInput.LEVEL_CHANGED,              "updateElevator",            SequenceState.UPDATING_LEVEL},
         {SequenceState.MOVING_ARM_FORWARD,      SequenceInput.LEVEL_CHANGED,              "returnArmForUpdate",        SequenceState.MOVING_ARM_BACK},
-        {SequenceState.INTAKING,                SequenceInput.LEVEL_CHANGED,              "returnArmForUpdate",        SequenceState.LOWERING},
+        {SequenceState.INTAKING,                SequenceInput.LEVEL_CHANGED,              "returnArmForUpdate",        SequenceState.MOVING_ARM_BACK},
         {SequenceState.MOVING_ARM_BACK,         SequenceInput.ARM_DONE,                   "updateElevator",            SequenceState.UPDATING_LEVEL},
         {SequenceState.UPDATING_LEVEL,          SequenceInput.ELEVATOR_DONE,              "moveArmForward",            SequenceState.MOVING_ARM_FORWARD},
 
