@@ -21,5 +21,10 @@ public class ResetHandCommand extends Command {
         m_clamperSubsystem.close();
         m_intakeSubsystem.stop();
     }
+
+    @Override
+    public boolean isFinished() {
+        return true;
+    }
 }
 
