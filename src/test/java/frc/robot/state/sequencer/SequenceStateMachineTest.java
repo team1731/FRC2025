@@ -27,41 +27,35 @@ import frc.robot.subsystems.hand.HandConstants;
 
 public class SequenceStateMachineTest {
 
-    // @Test 
-    // void testScoreCoralL1() {
-    //     Sequence sequence = getSequence(Action.SCORE, Level.L1, GamePiece.CORAL);
-    //     runCoralScoringSequence(sequence);
-    // }
+    @Test 
+    void testScoreCoralL2() {
+        Sequence sequence = getSequence(Action.SCORE, Level.L2, GamePiece.CORAL);
+        runCoralScoringSequence(sequence);
+    }
 
-    // @Test 
-    // void testScoreCoralL2() {
-    //     Sequence sequence = getSequence(Action.SCORE, Level.L2, GamePiece.CORAL);
-    //     runCoralScoringSequence(sequence);
-    // }
+    @Test 
+    void testScoreCoralL3() {
+        Sequence sequence = getSequence(Action.SCORE, Level.L3, GamePiece.CORAL);
+        runCoralScoringSequence(sequence);
+    }
 
-    // @Test 
-    // void testScoreCoralL3() {
-    //     Sequence sequence = getSequence(Action.SCORE, Level.L3, GamePiece.CORAL);
-    //     runCoralScoringSequence(sequence);
-    // }
+    @Test 
+    void testScoreCoralL4() {
+        Sequence sequence = getSequence(Action.SCORE, Level.L4, GamePiece.CORAL);
+        runCoralScoringSequence(sequence);
+    }
 
-    // @Test 
-    // void testScoreCoralL4() {
-    //     Sequence sequence = getSequence(Action.SCORE, Level.L4, GamePiece.CORAL);
-    //     runCoralScoringSequence(sequence);
-    // }
+    @Test 
+    void testScoreAlgae() {
+        Sequence sequence = getSequence(Action.SCORE, Level.L4, GamePiece.ALGAE);
+        runAlgaeScoringSequence(sequence);
+    }
 
-    // @Test 
-    // void testScoreAlgae() {
-    //     Sequence sequence = getSequence(Action.SCORE, Level.L4, GamePiece.ALGAE);
-    //     runAlgaeScoringSequence(sequence);
-    // }
-
-    // @Test
-    // void testFloorPickupAlgae(){
-    //     Sequence sequence = getSequence(Action.INTAKE, Level.L1, GamePiece.ALGAE);
-    //     runPickupAlageFromFloor(sequence);
-    // }
+    @Test
+    void testFloorPickupAlgae(){
+        Sequence sequence = getSequence(Action.INTAKE, Level.L1, GamePiece.ALGAE);
+        runPickupAlageFromFloor(sequence);
+    }
 
     /*
      * COMMON METHODS FOR RUNNING SEQUENCES
@@ -155,7 +149,7 @@ public class SequenceStateMachineTest {
         assertEquals(SequenceState.WAITING, stateMachine.getCurrentState());
 
         // transition to scoring
-        callback.setInput(SequenceInput.SCORE);
+        callback.setInput(SequenceInput.BUTTON_RELEASED);
         verify(mockedArmSubsystem).moveArm(positions.armScoringPosition, callback);
         assertEquals(SequenceState.SCORING, stateMachine.getCurrentState());
 
@@ -191,25 +185,25 @@ public class SequenceStateMachineTest {
         assertTrue(stateMachine.isReady());
         assertEquals(SequenceState.HOME, stateMachine.getCurrentState());
 
-       // transition to moving arm
-       stateMachine.setInput(SequenceInput.BEGIN);
-       verify(mockedArmSubsystem).moveArm(positions.armForwardPosition, callback);
-       assertEquals(SequenceState.MOVING_ARM_FORWARD, stateMachine.getCurrentState());
+        // transition to moving arm
+        stateMachine.setInput(SequenceInput.BEGIN);
+        verify(mockedArmSubsystem).moveArm(positions.armForwardPosition, callback);
+        assertEquals(SequenceState.MOVING_ARM_FORWARD, stateMachine.getCurrentState());
 
-       // transition to intaking algae
-       callback.setInput(SequenceInput.ARM_DONE);
-       verify(mockHandClamperSubsystem).open(positions.handClamperPosition, callback);
-       verify(mockHandIntakeSubsystem).intake(HandConstants.intakeVelocity);
-       assertEquals(SequenceState.INTAKING, stateMachine.getCurrentState());
+        // transition to intaking algae
+        callback.setInput(SequenceInput.ARM_DONE);
+        verify(mockHandClamperSubsystem).open(positions.handClamperPosition);
+        verify(mockHandIntakeSubsystem).intake(HandConstants.intakeVelocity, callback);
+        assertEquals(SequenceState.INTAKING, stateMachine.getCurrentState());
 
-       // transition to moving arm home
-       callback.setInput(SequenceInput.DETECTED_PIECE);
-       //verify(mockedArmSubsystem).moveArm(ArmConstants.armHomePosition, callback);    // error here "org.mockito.exceptions.verification.TooManyActualInvocations at SequencerStateMachineTest.java:211"
-       assertEquals(SequenceState.FINISHING, stateMachine.getCurrentState());
+        // transition to moving arm home
+        callback.setInput(SequenceInput.DETECTED_PIECE);
+        //verify(mockedArmSubsystem).moveArm(ArmConstants.armHomePosition, callback);    // error here "org.mockito.exceptions.verification.TooManyActualInvocations at SequencerStateMachineTest.java:211"
+        assertEquals(SequenceState.FINISHING, stateMachine.getCurrentState());
 
-       // transition to home
-       callback.setInput(SequenceInput.ARM_DONE);
-       //Check that safty check ran and returned true?
-       assertEquals(SequenceState.HOME, stateMachine.getCurrentState());
+        // transition to home
+        callback.setInput(SequenceInput.ARM_DONE);
+        //Check that safty check ran and returned true?
+        assertEquals(SequenceState.HOME, stateMachine.getCurrentState());
     }
 }

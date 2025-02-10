@@ -94,6 +94,7 @@ public class SequenceStateMachine extends StateMachine {
     }
 
     public boolean moveElevatorHome() {
+        isResetting = true;
         elevatorSubsystem.moveElevator(ElevatorConstants.elevatorHomePosition, subsystemCallback, positions.lowerElevatorThreshold);
         return true;
     }
