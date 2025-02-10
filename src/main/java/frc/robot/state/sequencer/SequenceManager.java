@@ -18,6 +18,10 @@ public class SequenceManager {
 
     public static void setLevelSelection(Level level) {
         levelSelection = level;
+
+        // notify the state machine and it will handle it if applicable
+        // if not applicable to the sequence/state it will be ignored
+        stateMachine.setInput(SequenceInput.LEVEL_CHANGED);
     }
 
     public static void setGamePieceSelection(GamePiece piece) {

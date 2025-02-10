@@ -80,8 +80,9 @@ public abstract class StateMachine {
   private void run(Input input) {
     Object[] operationAndNextState = lookupOperationAndNextState(currentState, input);
     if(operationAndNextState == null) {
-      System.out.println(getStateMachineName() +  " no transition found for state: " + currentState + ", and input: " + input);
-      // TODO log an error, no match found
+      System.out.println(getStateMachineName() +  
+        " no transition found for state: " + currentState + ", and input: " + input + 
+        ". This may be normal, so this input is being ignored.");
       return;
     }
 
@@ -99,8 +100,10 @@ public abstract class StateMachine {
     if(method != null){
       try {
         // only transition to the next state if the operation succeeds
-        if((Boolean)method.invoke(this) && nextState != null){
-          setCurrentState(nextState);
+        if((Boolean)method.invoke(this)){
+          if(nextState != null) {
+            setCurrentState(nextState);
+          }
         } else{
           System.out.println(getStateMachineName() + " operation invocation failed: " + methodName);
         }
