@@ -15,7 +15,7 @@ import com.ctre.phoenix6.signals.ReverseLimitValue;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.state.StateMachineCallback;
-import frc.robot.state.sequencer.ScoreInput;
+import frc.robot.state.sequencer.SequencerInput;
 import frc.robot.subsystems.ToggleableSubsystem;
 
 public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubsystem {
@@ -144,7 +144,7 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
             releaseStartedTime = 0;
             if(scoreStateMachineCallback != null) {
                 System.out.println("HandIntakeSubsystem stopped release, should have finished shooting");
-                scoreStateMachineCallback.setInput(ScoreInput.RELEASED_PIECE);
+                scoreStateMachineCallback.setInput(SequencerInput.RELEASED_PIECE);
                 scoreStateMachineCallback = null;
             }
         }
@@ -153,7 +153,7 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
             intaking = false;
             if(scoreStateMachineCallback != null) {
                 System.out.println("HandIntakeSubsystem limit switch flipped, should have game piece");
-                scoreStateMachineCallback.setInput(ScoreInput.DETECTED_PIECE);
+                scoreStateMachineCallback.setInput(SequencerInput.DETECTED_PIECE);
                 scoreStateMachineCallback = null;
             }
         }

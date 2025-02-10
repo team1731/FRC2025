@@ -1,12 +1,12 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.state.sequencer.ScoreStateMachine;
+import frc.robot.state.sequencer.SequenceStateMachine;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
 
 public class ResetHandCommand extends Command {
-    ScoreStateMachine m_scoreStateMachine;
+    SequenceStateMachine m_scoreStateMachine;
     HandClamperSubsystem m_clamperSubsystem;
     HandIntakeSubsystem m_intakeSubsystem;
 

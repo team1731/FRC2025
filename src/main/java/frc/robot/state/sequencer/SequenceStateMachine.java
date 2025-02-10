@@ -4,8 +4,6 @@ import frc.robot.state.Input;
 import frc.robot.state.StateMachine;
 import frc.robot.state.StateMachineCallback;
 import frc.robot.state.sequencer.positions.Positions;
-import frc.robot.state.sequencer.sequence.Sequence;
-import frc.robot.state.sequencer.sequence.SequenceFactory;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorConstants;
@@ -14,7 +12,7 @@ import frc.robot.subsystems.hand.HandIntakeSubsystem;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
 import frc.robot.subsystems.hand.HandConstants;
 
-public class ScoreStateMachine extends StateMachine {
+public class SequenceStateMachine extends StateMachine {
     // subsystems
     private ElevatorSubsystem elevatorSubsystem;
     private ArmSubsystem armSubsystem;
@@ -34,27 +32,27 @@ public class ScoreStateMachine extends StateMachine {
 
     private StateMachineCallback subsystemCallback = (Input input) -> {
         if(isResetting) {
-            ScoreInput scoreInput = (ScoreInput)input;
-            if(scoreInput == ScoreInput.ELEVATOR_THRESHOLD_MET) setInput(input); // not home yet
-            if(scoreInput == ScoreInput.ELEVATOR_DONE) elevatorResetDone = true;
-            if(scoreInput == ScoreInput.ARM_DONE) armResetDone = true;
+            SequencerInput scoreInput = (SequencerInput)input;
+            if(scoreInput == SequencerInput.ELEVATOR_THRESHOLD_MET) setInput(input); // not home yet
+            if(scoreInput == SequencerInput.ELEVATOR_DONE) elevatorResetDone = true;
+            if(scoreInput == SequencerInput.ARM_DONE) armResetDone = true;
             if(elevatorResetDone && armResetDone) {
-                setInput(ScoreInput.RESET_DONE);
+                setInput(SequencerInput.RESET_DONE);
             }
         } else {
-            if(input == ScoreInput.RELEASED_PIECE) closeHand();
-            if(input == ScoreInput.DETECTED_PIECE && currentGamePiece == GamePiece.CORAL) closeHand();
-            if(currentSequence == Sequence.SCORE_CORAL_L2 && input == ScoreInput.ARM_DONE && currentState == ScoreState.SCORING) releasePiece();
+            if(input == SequencerInput.RELEASED_PIECE) closeHand();
+            if(input == SequencerInput.DETECTED_PIECE && currentGamePiece == GamePiece.CORAL) closeHand();
+            if(currentSequence == Sequence.SCORE_CORAL_L2 && input == SequencerInput.ARM_DONE && currentState == SequencerState.SCORING) releasePiece();
             setInput(input);
         }
     };
 
-    public ScoreStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem handClamperSubsystem, HandIntakeSubsystem handIntakeSubsystem) { //add hand here
+    public SequenceStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem handClamperSubsystem, HandIntakeSubsystem handIntakeSubsystem) { //add hand here
         this.elevatorSubsystem = elevatorSubsystem;
         this.armSubsystem = armSubsystem;
         this.handClamperSubsystem = handClamperSubsystem;
         this.handIntakeSubsystem = handIntakeSubsystem;
-        setCurrentState(ScoreState.HOME);
+        setCurrentState(SequencerState.HOME);
     }
 
     public StateMachineCallback getSubsystemCallback() {
@@ -66,7 +64,7 @@ public class ScoreStateMachine extends StateMachine {
      */
 
     public boolean isReady() {
-        return currentState == ScoreState.HOME;
+        return currentState == SequencerState.HOME;
     }
 
     public void setSequence(Sequence sequence) {
@@ -85,8 +83,8 @@ public class ScoreStateMachine extends StateMachine {
             "Current state: " + currentState + " " + 
             "Passed abort point " + passedAbortPoint + " " + 
             "Resetting " + isResetting);
-        if(currentState == ScoreState.WAITING) { // TODO add support to check if *close* to end of movement
-            setInput(ScoreInput.SCORE);
+        if(currentState == SequencerState.WAITING) { // TODO add support to check if *close* to end of movement
+            setInput(SequencerInput.SCORE);
         } else if(!passedAbortPoint && !isResetting) {
             abort();
         }
@@ -139,7 +137,7 @@ public class ScoreStateMachine extends StateMachine {
     public boolean releasePiece() {
         handIntakeSubsystem.stop();
         handIntakeSubsystem.release(HandConstants.intakeVelocity, HandConstants.defaultReleaseRuntime);
-        setInput(ScoreInput.SCORED);
+        setInput(SequencerInput.SCORED);
         return true;
     }
 
@@ -182,7 +180,7 @@ public class ScoreStateMachine extends StateMachine {
     }
 
     private void abort() {
-        setCurrentState(ScoreState.ABORTING);
+        setCurrentState(SequencerState.ABORTING);
         isResetting = true;
         // stop current movements
         armSubsystem.stopArm();

@@ -1,4 +1,4 @@
-package frc.robot.state.sequencer.sequence;
+package frc.robot.state.sequencer;
 
 public enum Sequence {
 

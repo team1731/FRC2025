@@ -2,7 +2,7 @@ package frc.robot.state.sequencer;
 
 import frc.robot.state.Input;
 
-public enum ScoreInput implements Input {
+public enum SequencerInput implements Input {
     BEGIN,
     GRABBED_PIECE,
     SCORE,

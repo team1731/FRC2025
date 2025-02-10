@@ -1,19 +1,21 @@
-package frc.robot.state.sequencer.sequence;
+package frc.robot.state.sequencer;
 
-import frc.robot.state.sequencer.Action;
-import frc.robot.state.sequencer.GamePiece;
-import frc.robot.state.sequencer.Level;
-import frc.robot.state.sequencer.ScoreStateMachine;
-import frc.robot.state.sequencer.constants.TransitionConstants;
-import frc.robot.state.sequencer.positions.PositionConstants;
 import frc.robot.state.sequencer.positions.Positions;
+import frc.robot.state.sequencer.positions.PositionsFactory;
+import frc.robot.state.sequencer.transitions.AlgaeFloorPickupTransitions;
+import frc.robot.state.sequencer.transitions.AlgaeHandoffTransitions;
+import frc.robot.state.sequencer.transitions.AlgaeReefPickupTransitions;
+import frc.robot.state.sequencer.transitions.AlgaeScoreBargeTransitions;
+import frc.robot.state.sequencer.transitions.CoralFeederPickupTransitions;
+import frc.robot.state.sequencer.transitions.CoralScoreTransitions;
+import frc.robot.state.sequencer.transitions.CoralUprightFloorPickupTransitions;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
 
 public class SequenceFactory {
-    private static ScoreStateMachine scoreStateMachine;
+    private static SequenceStateMachine scoreStateMachine;
     private static Level levelSelection = Level.L2; // L2 is default
     private static Action actionSelection;
     private static GamePiece pieceSelection = GamePiece.CORAL; // coral is default
@@ -43,8 +45,8 @@ public class SequenceFactory {
         actionSelection = action;
     }
 
-    public static ScoreStateMachine getScoreStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem clamperSubsystem, HandIntakeSubsystem intakeSubsystem) {
-        scoreStateMachine = new ScoreStateMachine(elevatorSubsystem, armSubsystem, clamperSubsystem, intakeSubsystem);
+    public static SequenceStateMachine getScoreStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem clamperSubsystem, HandIntakeSubsystem intakeSubsystem) {
+        scoreStateMachine = new SequenceStateMachine(elevatorSubsystem, armSubsystem, clamperSubsystem, intakeSubsystem);
         return scoreStateMachine;
     }
 
@@ -83,29 +85,29 @@ public class SequenceFactory {
              * CORAL TRANSITIONS
              */
             case INTAKE_CORAL_FEEDER:
-                return TransitionConstants.PICKUP_CORAL_FROM_FEEDER_TRANSITION_TABLE;
+                return CoralFeederPickupTransitions.getTransitionTable();
             case INTAKE_CORAL_FLOOR:
-                return TransitionConstants.PICKUP_CORAL_FROM_FLOOR_TRANSITION_TABLE;
+                return null; // TODO not defined yet
             case INTAKE_CORAL_FLOOR_UPRIGHT:
-                return TransitionConstants.PICKUP_UPRIGHT_CORAL_FROM_FLOOR_TRANSITION_TABLE;
+                return CoralUprightFloorPickupTransitions.getTransitionTable();
             case SCORE_CORAL_L1:
             case SCORE_CORAL_L2:
             case SCORE_CORAL_L3:
             case SCORE_CORAL_L4:
-                return TransitionConstants.SCORE_CORAL_TRANSITION_TABLE;
+                return CoralScoreTransitions.getTransitionTable();
 
             /*
              * ALGAE TRANSITIONS
              */
             case INTAKE_ALGAE_L2:
             case INTAKE_ALGAE_L3:
-                return TransitionConstants.PICKUP_ALGAE_FROM_REEF_TRANSITION_TABLE;
+                return AlgaeReefPickupTransitions.getTransitionTable();
             case INTAKE_ALGAE_FLOOR:
-                return TransitionConstants.PICKUP_ALGAE_FROM_FLOOR_TRANSITION_TABLE;
+                return AlgaeFloorPickupTransitions.getTransitionTable();
             case SHOOT_ALGAE:
-                return TransitionConstants.SCORE_ALGAE_TRANSITION_TABLE;
+                return AlgaeScoreBargeTransitions.getTransitionTable();
             case HANDOFF_ALGAE: 
-                return TransitionConstants.HANDOFF_ALGAE_TRANSITION_TABLE;
+                return AlgaeHandoffTransitions.getTransitionTable();
         
             default:
                 return null;
@@ -118,22 +120,22 @@ public class SequenceFactory {
             /*
              * CORAL POSITIONS
              */
-            case INTAKE_CORAL_FEEDER: return PositionConstants.CORAL_INTAKE.FEEDER_PICKUP_ACCESSOR;
+            case INTAKE_CORAL_FEEDER: return PositionsFactory.getCoralFeederPickupPositions();
             case INTAKE_CORAL_FLOOR: return null; // TODO needs definition
-            case INTAKE_CORAL_FLOOR_UPRIGHT: return PositionConstants.CORAL_INTAKE.FLOOR_UPRIGHT_PICKUP_ACCESSOR;
-            case SCORE_CORAL_L1: return PositionConstants.CORAL_SCORE.L1_ACCESSOR;
-            case SCORE_CORAL_L2: return PositionConstants.CORAL_SCORE.L2_ACCESSOR;
-            case SCORE_CORAL_L3: return PositionConstants.CORAL_SCORE.L3_ACCESSOR;
-            case SCORE_CORAL_L4: return PositionConstants.CORAL_SCORE.L4_ACCESSOR;
+            case INTAKE_CORAL_FLOOR_UPRIGHT: return PositionsFactory.getCoralUprightFloorPickupPositions();
+            case SCORE_CORAL_L1: return PositionsFactory.getCoralScoreL1Positions();
+            case SCORE_CORAL_L2: return PositionsFactory.getCoralScoreL2Positions();
+            case SCORE_CORAL_L3: return PositionsFactory.getCoralScoreL3Positions();
+            case SCORE_CORAL_L4: return PositionsFactory.getCoralScoreL4Positions();
 
             /*
              * ALGAE POSITIONS
              */
-            case INTAKE_ALGAE_L2: return PositionConstants.ALGAE_INTAKE.REEF_PICKUP_L2;
-            case INTAKE_ALGAE_L3: return PositionConstants.ALGAE_INTAKE.REEF_PICKUP_L3;
-            case INTAKE_ALGAE_FLOOR: return PositionConstants.ALGAE_INTAKE.FLOOR_PICKUP;
-            case SHOOT_ALGAE: return PositionConstants.ALGAE_SCORE.SCORE_BARGE;
-            case HANDOFF_ALGAE: return PositionConstants.ALGAE_SCORE.HANDOFF;
+            case INTAKE_ALGAE_L2: return PositionsFactory.getAlgaeReefL2PickupPositions();
+            case INTAKE_ALGAE_L3: return PositionsFactory.getAlgaeReefL3PickupPositions();
+            case INTAKE_ALGAE_FLOOR: return PositionsFactory.getAlgaeFloorPickupPositions();
+            case SHOOT_ALGAE: return PositionsFactory.getAlgaeScoreBargePositions();
+            case HANDOFF_ALGAE: return PositionsFactory.getAlgaeHandoffPositions();
         
             default:
                 return null;

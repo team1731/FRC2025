@@ -13,7 +13,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.state.StateMachineCallback;
-import frc.robot.state.sequencer.ScoreInput;
+import frc.robot.state.sequencer.SequencerInput;
 import frc.robot.subsystems.ToggleableSubsystem;
 
 public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsystem {
@@ -160,14 +160,14 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
         if(isAtPosition(desiredPosition) && stateMachineCallback != null) {
             // final position reached, notify the state machine
 
-            stateMachineCallback.setInput(ScoreInput.ELEVATOR_DONE);
+            stateMachineCallback.setInput(SequencerInput.ELEVATOR_DONE);
             stateMachineCallback = null;
         } else if(callbackOnThreshold && stateMachineCallback != null) {
             // check to see if the threshold was met, if so notify the state machine
             boolean thresholdMet = raisingThreshold && getElevatorPosition() >= positionThreshold ||
                 !raisingThreshold && getElevatorPosition() <= positionThreshold;
             if(thresholdMet) {
-                stateMachineCallback.setInput(ScoreInput.ELEVATOR_THRESHOLD_MET);
+                stateMachineCallback.setInput(SequencerInput.ELEVATOR_THRESHOLD_MET);
                 callbackOnThreshold = false;
                 positionThreshold = 0;
             }

@@ -26,8 +26,8 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.state.sequencer.Action;
 import frc.robot.state.sequencer.GamePiece;
 import frc.robot.state.sequencer.Level;
-import frc.robot.state.sequencer.ScoreStateMachine;
-import frc.robot.state.sequencer.sequence.SequenceFactory;
+import frc.robot.state.sequencer.SequenceStateMachine;
+import frc.robot.state.sequencer.SequenceFactory;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.climb.ClimbConstants;
@@ -101,7 +101,7 @@ public class RobotContainer {
   private HandClamperSubsystem handClamperSubsystem;
   private HandIntakeSubsystem handIntakeSubsystem;
   private ClimbSubsystem climbSubsystem;
-  private ScoreStateMachine scoreStateMachine;
+  private SequenceStateMachine scoreStateMachine;
 
   public RobotContainer(
       CommandSwerveDrivetrain s_driveSubsystem,

@@ -4,18 +4,18 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.state.Input;
 import frc.robot.state.StateMachineCallback;
 import frc.robot.state.sequencer.GamePiece;
-import frc.robot.state.sequencer.ScoreInput;
-import frc.robot.state.sequencer.ScoreState;
-import frc.robot.state.sequencer.ScoreStateMachine;
-import frc.robot.state.sequencer.sequence.Sequence;
-import frc.robot.state.sequencer.sequence.SequenceFactory;
+import frc.robot.state.sequencer.SequencerInput;
+import frc.robot.state.sequencer.SequencerState;
+import frc.robot.state.sequencer.SequenceStateMachine;
+import frc.robot.state.sequencer.Sequence;
+import frc.robot.state.sequencer.SequenceFactory;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
 
 public class RunSequenceCommand extends Command {
-    ScoreStateMachine m_scoreStateMachine;
+    SequenceStateMachine m_scoreStateMachine;
     ElevatorSubsystem m_elevatorSubsystem;
     ArmSubsystem m_armSubsystem;
     HandClamperSubsystem m_clamperSubsystem;
@@ -28,7 +28,7 @@ public class RunSequenceCommand extends Command {
         m_sequenceDone = true;
     };
 
-    public RunSequenceCommand(ScoreStateMachine stateMachine, ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem clamperSubsystem, HandIntakeSubsystem intakeSubsystem) {
+    public RunSequenceCommand(SequenceStateMachine stateMachine, ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem clamperSubsystem, HandIntakeSubsystem intakeSubsystem) {
         m_scoreStateMachine = stateMachine;
         m_elevatorSubsystem = elevatorSubsystem;
         m_armSubsystem = armSubsystem;
@@ -48,7 +48,7 @@ public class RunSequenceCommand extends Command {
             SequenceFactory.getOperatorLevelSelection() + " " + 
             SequenceFactory.getDriverActionSelection());
         m_scoreStateMachine.setSequence(sequence);
-        m_scoreStateMachine.setInput(ScoreInput.BEGIN);
+        m_scoreStateMachine.setInput(SequencerInput.BEGIN);
     }
 
     @Override

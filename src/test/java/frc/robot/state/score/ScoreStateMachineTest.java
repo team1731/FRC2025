@@ -10,12 +10,12 @@ import static org.mockito.Mockito.times;
 import frc.robot.state.StateMachineCallback;
 import frc.robot.state.sequencer.Action;
 import frc.robot.state.sequencer.GamePiece;
-import frc.robot.state.sequencer.ScoreInput;
-import frc.robot.state.sequencer.ScoreState;
-import frc.robot.state.sequencer.ScoreStateMachine;
+import frc.robot.state.sequencer.SequencerInput;
+import frc.robot.state.sequencer.SequencerState;
+import frc.robot.state.sequencer.SequenceStateMachine;
+import frc.robot.state.sequencer.Sequence;
+import frc.robot.state.sequencer.SequenceFactory;
 import frc.robot.state.sequencer.positions.Positions;
-import frc.robot.state.sequencer.sequence.Sequence;
-import frc.robot.state.sequencer.sequence.SequenceFactory;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorConstants;
@@ -77,50 +77,50 @@ public class ScoreStateMachineTest {
         HandClamperSubsystem mockHandClamperSubsystem = mock(HandClamperSubsystem.class);
 
         // setup the state machine, sequence, and associated position values
-        ScoreStateMachine stateMachine = new ScoreStateMachine(mockedElevatorSubsystem, mockedArmSubsystem, mockHandClamperSubsystem, mockHandIntakeSubsystem);
+        SequenceStateMachine stateMachine = new SequenceStateMachine(mockedElevatorSubsystem, mockedArmSubsystem, mockHandClamperSubsystem, mockHandIntakeSubsystem);
         Positions positions = SequenceFactory.getPositions(sequence);
         StateMachineCallback callback = stateMachine.getSubsystemCallback();
         stateMachine.setSequence(sequence);
 
         // verify initial state
         assertTrue(stateMachine.isReady());
-        assertEquals(ScoreState.HOME, stateMachine.getCurrentState());
+        assertEquals(SequencerState.HOME, stateMachine.getCurrentState());
 
         // transition to raise the elevator
-        stateMachine.setInput(ScoreInput.BEGIN);
+        stateMachine.setInput(SequencerInput.BEGIN);
         verify(mockedElevatorSubsystem).moveElevator(positions.raiseElevatorPosition, callback);
-        assertEquals(ScoreState.RAISING_ELEVATOR, stateMachine.getCurrentState());
+        assertEquals(SequencerState.RAISING_ELEVATOR, stateMachine.getCurrentState());
 
         // transition to move the arm
-        callback.setInput(ScoreInput.ELEVATOR_THRESHOLD_MET);
+        callback.setInput(SequencerInput.ELEVATOR_THRESHOLD_MET);
         verify(mockedArmSubsystem).moveArm(positions.armForwardPosition, callback);
-        assertEquals(ScoreState.MOVING_ARM_FORWARD, stateMachine.getCurrentState());
+        assertEquals(SequencerState.MOVING_ARM_FORWARD, stateMachine.getCurrentState());
 
         // transition to waiting
-        callback.setInput(ScoreInput.ARM_DONE);
-        assertEquals(ScoreState.WAITING, stateMachine.getCurrentState());
+        callback.setInput(SequencerInput.ARM_DONE);
+        assertEquals(SequencerState.WAITING, stateMachine.getCurrentState());
 
         // transition to scoring
-        callback.setInput(ScoreInput.SCORE);
+        callback.setInput(SequencerInput.SCORE);
         // TODO fix this once releasing piece is defined in state machine
         //verify(mockedArmSubsystem).moveArm(positions.armScoringPosition, callback);
-        assertEquals(ScoreState.SCORING, stateMachine.getCurrentState());
+        assertEquals(SequencerState.SCORING, stateMachine.getCurrentState());
 
         // transition to lowering
-        callback.setInput(ScoreInput.RELEASED_PIECE);
+        callback.setInput(SequencerInput.RELEASED_PIECE);
         verify(mockedElevatorSubsystem).moveElevator(ElevatorConstants.elevatorHomePosition, callback, positions.lowerElevatorThreshold);
-        assertEquals(ScoreState.LOWERING, stateMachine.getCurrentState());
+        assertEquals(SequencerState.LOWERING, stateMachine.getCurrentState());
 
         // transition to finishing
-        callback.setInput(ScoreInput.ELEVATOR_THRESHOLD_MET);
+        callback.setInput(SequencerInput.ELEVATOR_THRESHOLD_MET);
         // TODO check this once releasing piece is defined, this seems wrong
         verify(mockedArmSubsystem).moveArm(ArmConstants.armHomePosition, callback);
-        assertEquals(ScoreState.FINISHING, stateMachine.getCurrentState());
+        assertEquals(SequencerState.FINISHING, stateMachine.getCurrentState());
 
         // transition back to home
-        callback.setInput(ScoreInput.ELEVATOR_DONE);
-        callback.setInput(ScoreInput.ARM_DONE);
-        assertEquals(ScoreState.HOME, stateMachine.getCurrentState());
+        callback.setInput(SequencerInput.ELEVATOR_DONE);
+        callback.setInput(SequencerInput.ARM_DONE);
+        assertEquals(SequencerState.HOME, stateMachine.getCurrentState());
     }
 
     private void runCoralScoringSequence(Sequence sequence, Action action, GamePiece gamePiece) {
@@ -132,47 +132,47 @@ public class ScoreStateMachineTest {
         
 
         // setup the state machine, sequence, and associated position values
-        ScoreStateMachine stateMachine = new ScoreStateMachine(mockedElevatorSubsystem, mockedArmSubsystem, mockHandClamperSubsystem, mockHandIntakeSubsystem);
+        SequenceStateMachine stateMachine = new SequenceStateMachine(mockedElevatorSubsystem, mockedArmSubsystem, mockHandClamperSubsystem, mockHandIntakeSubsystem);
         Positions positions = SequenceFactory.getPositions(sequence);
         StateMachineCallback callback = stateMachine.getSubsystemCallback();
         stateMachine.setSequence(sequence);
 
         // verify initial state
         assertTrue(stateMachine.isReady());
-        assertEquals(ScoreState.HOME, stateMachine.getCurrentState());
+        assertEquals(SequencerState.HOME, stateMachine.getCurrentState());
 
         // transition to raise the elevator
-        stateMachine.setInput(ScoreInput.BEGIN);
+        stateMachine.setInput(SequencerInput.BEGIN);
         verify(mockedElevatorSubsystem).moveElevator(positions.raiseElevatorPosition, callback);
-        assertEquals(ScoreState.RAISING_ELEVATOR, stateMachine.getCurrentState());
+        assertEquals(SequencerState.RAISING_ELEVATOR, stateMachine.getCurrentState());
 
         // transition to move the arm
-        callback.setInput(ScoreInput.ELEVATOR_THRESHOLD_MET);
+        callback.setInput(SequencerInput.ELEVATOR_THRESHOLD_MET);
         verify(mockedArmSubsystem).moveArm(positions.armForwardPosition, callback);
-        assertEquals(ScoreState.MOVING_ARM_FORWARD, stateMachine.getCurrentState());
+        assertEquals(SequencerState.MOVING_ARM_FORWARD, stateMachine.getCurrentState());
 
         // transition to waiting
-        callback.setInput(ScoreInput.ARM_DONE);
-        assertEquals(ScoreState.WAITING, stateMachine.getCurrentState());
+        callback.setInput(SequencerInput.ARM_DONE);
+        assertEquals(SequencerState.WAITING, stateMachine.getCurrentState());
 
         // transition to scoring
-        callback.setInput(ScoreInput.SCORE);
+        callback.setInput(SequencerInput.SCORE);
         verify(mockedArmSubsystem).moveArm(positions.armScoringPosition, callback);
-        assertEquals(ScoreState.SCORING, stateMachine.getCurrentState());
+        assertEquals(SequencerState.SCORING, stateMachine.getCurrentState());
 
         // transition to lowering
-        callback.setInput(ScoreInput.ARM_DONE);
+        callback.setInput(SequencerInput.ARM_DONE);
         verify(mockedElevatorSubsystem).moveElevator(ElevatorConstants.elevatorHomePosition, callback, positions.lowerElevatorThreshold);
-        assertEquals(ScoreState.LOWERING, stateMachine.getCurrentState());
+        assertEquals(SequencerState.LOWERING, stateMachine.getCurrentState());
 
         // transition to finishing
-        callback.setInput(ScoreInput.ELEVATOR_THRESHOLD_MET);
+        callback.setInput(SequencerInput.ELEVATOR_THRESHOLD_MET);
         verify(mockedArmSubsystem).moveArm(ArmConstants.armHomePosition, callback);
-        assertEquals(ScoreState.FINISHING, stateMachine.getCurrentState());
+        assertEquals(SequencerState.FINISHING, stateMachine.getCurrentState());
 
         // transition back to home
-        callback.setInput(ScoreInput.ELEVATOR_DONE);
-        callback.setInput(ScoreInput.ARM_DONE);
-        assertEquals(ScoreState.HOME, stateMachine.getCurrentState());
+        callback.setInput(SequencerInput.ELEVATOR_DONE);
+        callback.setInput(SequencerInput.ARM_DONE);
+        assertEquals(SequencerState.HOME, stateMachine.getCurrentState());
     }
 }

@@ -1,5 +1,18 @@
 package frc.robot.state.sequencer.positions;
 
+import frc.robot.state.sequencer.positions.PositionConstants.ALGAE_INTAKE.ALGAE_FLOOR;
+import frc.robot.state.sequencer.positions.PositionConstants.ALGAE_INTAKE.ALGAE_REEF_L2;
+import frc.robot.state.sequencer.positions.PositionConstants.ALGAE_INTAKE.ALGAE_REEF_L3;
+import frc.robot.state.sequencer.positions.PositionConstants.ALGAE_SCORE.ALGAE_HANDOFF;
+import frc.robot.state.sequencer.positions.PositionConstants.ALGAE_SCORE.ALGAE_SCORE_BARGE;
+import frc.robot.state.sequencer.positions.PositionConstants.CORAL_INTAKE.CORAL_FEEDER;
+import frc.robot.state.sequencer.positions.PositionConstants.CORAL_INTAKE.CORAL_FLOOR_UPRIGHT;
+import frc.robot.state.sequencer.positions.PositionConstants.CORAL_SCORE.CORAL_L1;
+import frc.robot.state.sequencer.positions.PositionConstants.CORAL_SCORE.CORAL_L2;
+import frc.robot.state.sequencer.positions.PositionConstants.CORAL_SCORE.CORAL_L3;
+import frc.robot.state.sequencer.positions.PositionConstants.CORAL_SCORE.CORAL_L4;
+
+
 public class PositionsFactory {
     /*
      * !!!!!!!!!!!!!!!!!!!!!!
@@ -7,26 +20,56 @@ public class PositionsFactory {
      * !!!!!!!!!!!!!!!!!!!!!!
      */
 
-     public static Positions setCoralFeederPickupPositions(double clamperPosition) {
+     public static Positions getCoralFeederPickupPositions() {
         Positions positions = new Positions();
-        positions.handClamperPosition = clamperPosition;
+        positions.handClamperPosition = CORAL_FEEDER.handClamperPosition;
         return positions;
     }
 
-    public static Positions setCoralUprightFloorPickupPositions(double armPosition, double clamperPosition) {
+    public static Positions getCoralUprightFloorPickupPositions() {
         Positions positions = new Positions();
-        positions.armForwardPosition = armPosition;
-        positions.handClamperPosition = clamperPosition;
+        positions.armForwardPosition = CORAL_FLOOR_UPRIGHT.armForwardPosition;
+        positions.handClamperPosition = CORAL_FLOOR_UPRIGHT.handClamperPosition;
         return positions;
     }
 
-    public static Positions setCoralScorePositions(double raisePosition, double raiseThreshold, double lowerThreshold, double armPosition, double scorePosition) {
+    public static Positions getCoralScoreL1Positions() {
         Positions positions = new Positions();
-        positions.raiseElevatorPosition = raisePosition;
-        positions.raiseElevatorThreshold = raiseThreshold;
-        positions.lowerElevatorThreshold = lowerThreshold;
-        positions.armForwardPosition = armPosition;
-        positions.armScoringPosition = scorePosition;
+        positions.raiseElevatorPosition = CORAL_L1.raiseElevatorPosition;
+        positions.raiseElevatorThreshold = CORAL_L1.raiseElevatorThresholdPosition;
+        positions.lowerElevatorThreshold = CORAL_L1.lowerElevatorThresholdPosition;
+        positions.armForwardPosition = CORAL_L1.armForwardPosition;
+        positions.armScoringPosition = CORAL_L1.armScorePosition;
+        return positions;
+    }
+
+    public static Positions getCoralScoreL2Positions() {
+        Positions positions = new Positions();
+        positions.raiseElevatorPosition = CORAL_L2.raiseElevatorPosition;
+        positions.raiseElevatorThreshold = CORAL_L2.raiseElevatorThresholdPosition;
+        positions.lowerElevatorThreshold = CORAL_L2.lowerElevatorThresholdPosition;
+        positions.armForwardPosition = CORAL_L2.armForwardPosition;
+        positions.armScoringPosition = CORAL_L2.armScorePosition;
+        return positions;
+    }
+
+    public static Positions getCoralScoreL3Positions() {
+        Positions positions = new Positions();
+        positions.raiseElevatorPosition = CORAL_L3.raiseElevatorPosition;
+        positions.raiseElevatorThreshold = CORAL_L3.raiseElevatorThresholdPosition;
+        positions.lowerElevatorThreshold = CORAL_L3.lowerElevatorThresholdPosition;
+        positions.armForwardPosition = CORAL_L3.armForwardPosition;
+        positions.armScoringPosition = CORAL_L3.armScorePosition;
+        return positions;
+    }
+
+    public static Positions getCoralScoreL4Positions() {
+        Positions positions = new Positions();
+        positions.raiseElevatorPosition = CORAL_L4.raiseElevatorPosition;
+        positions.raiseElevatorThreshold = CORAL_L4.raiseElevatorThresholdPosition;
+        positions.lowerElevatorThreshold = CORAL_L4.lowerElevatorThresholdPosition;
+        positions.armForwardPosition = CORAL_L4.armForwardPosition;
+        positions.armScoringPosition = CORAL_L4.armScorePosition;
         return positions;
     }
 
@@ -37,35 +80,45 @@ public class PositionsFactory {
      * !!!!!!!!!!!!!!!!!!!!!!
      */
 
-    public static Positions setAlgaeReefPickupPositions(double raisePosition, double raiseThreshold, double lowerThreshold, double armPosition, double clamperPosition) {
+    public static Positions getAlgaeReefL2PickupPositions() {
         Positions positions = new Positions();
-        positions.raiseElevatorPosition = raisePosition;
-        positions.raiseElevatorThreshold = raiseThreshold;
-        positions.lowerElevatorThreshold = lowerThreshold;
-        positions.armForwardPosition = armPosition;
-        positions.handClamperPosition = clamperPosition;
+        positions.raiseElevatorPosition = ALGAE_REEF_L2.raiseElevatorPosition;
+        positions.raiseElevatorThreshold = ALGAE_REEF_L2.raiseElevatorThresholdPosition;
+        positions.lowerElevatorThreshold = ALGAE_REEF_L2.lowerElevatorThresholdPosition;
+        positions.armForwardPosition = ALGAE_REEF_L2.armForwardPosition;
+        positions.handClamperPosition = ALGAE_REEF_L2.handClamperPosition;
         return positions;
     }
 
-    public static Positions setAlgaeFloorPickupPositions(double armPosition, double clamperPosition) {
+    public static Positions getAlgaeReefL3PickupPositions() {
         Positions positions = new Positions();
-        positions.armForwardPosition = armPosition;
-        positions.handClamperPosition = clamperPosition;
+        positions.raiseElevatorPosition = ALGAE_REEF_L3.raiseElevatorPosition;
+        positions.raiseElevatorThreshold = ALGAE_REEF_L3.raiseElevatorThresholdPosition;
+        positions.lowerElevatorThreshold = ALGAE_REEF_L3.lowerElevatorThresholdPosition;
+        positions.armForwardPosition = ALGAE_REEF_L3.armForwardPosition;
+        positions.handClamperPosition = ALGAE_REEF_L3.handClamperPosition;
         return positions;
     }
 
-    public static Positions setAlgaeScorePositions(double raisePosition, double raiseThreshold, double lowerThreshold, double armPosition) {
+    public static Positions getAlgaeFloorPickupPositions() {
         Positions positions = new Positions();
-        positions.raiseElevatorPosition = raisePosition;
-        positions.raiseElevatorThreshold = raiseThreshold;
-        positions.lowerElevatorThreshold = lowerThreshold;
-        positions.armForwardPosition = armPosition;
+        positions.armForwardPosition = ALGAE_FLOOR.armForwardPosition;
+        positions.handClamperPosition = ALGAE_FLOOR.handClamperPosition;
         return positions;
     }
 
-    public static Positions setAlgaeHandoffPositions(double armPosition) {
+    public static Positions getAlgaeScoreBargePositions() {
         Positions positions = new Positions();
-        positions.armForwardPosition = armPosition;
+        positions.raiseElevatorPosition = ALGAE_SCORE_BARGE.raiseElevatorPosition;
+        positions.raiseElevatorThreshold = ALGAE_SCORE_BARGE.raiseElevatorThresholdPosition;
+        positions.lowerElevatorThreshold = ALGAE_SCORE_BARGE.lowerElevatorThresholdPosition;
+        positions.armForwardPosition = ALGAE_SCORE_BARGE.armForwardPosition;
+        return positions;
+    }
+
+    public static Positions getAlgaeHandoffPositions() {
+        Positions positions = new Positions();
+        positions.armForwardPosition = ALGAE_HANDOFF.armForwardPosition;
         return positions;
     }
 }
