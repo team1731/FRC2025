@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.vision;
 
 import static frc.robot.Constants.Vision.*;
 
@@ -50,8 +50,9 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.Robot;
+import frc.robot.subsystems.ToggleableSubsystem;
+import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.util.log.Logger;
 
 import java.util.EnumSet;
