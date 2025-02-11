@@ -16,6 +16,6 @@ public final class ElevatorConstants {
     // Positions
     public final static double elevatorHomePosition = 0;
     public final static double minElevatorPosition = 0;
-    public final static double maxElevatorPosition = 97;
+    public final static double maxElevatorPosition = 97.0 * (12.0/20) ;
 
 }
