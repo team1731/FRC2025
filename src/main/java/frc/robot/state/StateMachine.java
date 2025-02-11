@@ -11,6 +11,10 @@ public abstract class StateMachine {
   protected State currentState;
   protected CommandCallback commandCallback;
 
+  public boolean hasLoadedTransitions() {
+    return stateTransitionTable != null;
+  }
+
   /*
    * COMMAND INTERFACE
    */
@@ -20,19 +24,22 @@ public abstract class StateMachine {
     commandCallback = callback;
   }
 
-  // handle command interruptions
-  public abstract void endSequence();
-
-  // will be passed to subsystems to receive feedback for state transitions
-  protected StateMachineCallback inputCallback = (Input input) -> {
-    run(input);
-  };
-
   protected void processComplete() {
     if(commandCallback != null) {
       commandCallback.processComplete();
     }
   }
+
+  /*
+   * SUBSYSTEM INTERFACE
+   */
+
+  // will be passed to subsystems to receive feedback for state transitions
+  protected StateMachineCallback subsystemCallback = (Input input) -> {
+    handleSubsystemCallback(input);
+  };
+
+  protected abstract void handleSubsystemCallback(Input input);
 
   
   /*
@@ -77,8 +84,9 @@ public abstract class StateMachine {
   private void run(Input input) {
     Object[] operationAndNextState = lookupOperationAndNextState(currentState, input);
     if(operationAndNextState == null) {
-      System.out.println(getStateMachineName() +  " no transition found for state: " + currentState + ", and input: " + input);
-      // TODO log an error, no match found
+      System.out.println(getStateMachineName() +  
+        " no transition found for state: " + currentState + ", and input: " + input + 
+        ". This may be normal, so this input is being ignored.");
       return;
     }
 
@@ -96,8 +104,10 @@ public abstract class StateMachine {
     if(method != null){
       try {
         // only transition to the next state if the operation succeeds
-        if((Boolean)method.invoke(this) && nextState != null){
-          setCurrentState(nextState);
+        if((Boolean)method.invoke(this)){
+          if(nextState != null) {
+            setCurrentState(nextState);
+          }
         } else{
           System.out.println(getStateMachineName() + " operation invocation failed: " + methodName);
         }

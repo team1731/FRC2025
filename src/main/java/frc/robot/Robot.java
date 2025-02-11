@@ -10,8 +10,6 @@ import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Scanner;
 
-import com.ctre.phoenix6.hardware.Pigeon2;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -27,10 +25,10 @@ import frc.robot.Constants.OpConstants.LedOption;
 import frc.robot.autos.AutoFactory;
 import frc.robot.autos.AutoLoader;
 import frc.robot.generated.TunerConstants;
-import frc.robot.util.log.LogWriter;
 import frc.robot.util.log.MessageLog;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.arm.ArmSubsystem;
+import frc.robot.subsystems.climb.ClimbSubsystem;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
@@ -59,6 +57,7 @@ public class Robot extends TimedRobot {
 	private ArmSubsystem armSubsystem;
 	private HandClamperSubsystem handClamperSubsystem;
 	private HandIntakeSubsystem handIntakeSubsystem;
+	private ClimbSubsystem climbSubsystem;
 
 	public Robot() {
 	}
@@ -110,8 +109,10 @@ public class Robot extends TimedRobot {
 
 		handIntakeSubsystem = new HandIntakeSubsystem(true);
 
+		climbSubsystem = new ClimbSubsystem(true);
+
 		// Instantiate our robot container. This will perform all of our button bindings,
-		m_robotContainer = new RobotContainer(driveSubsystem, visionSubsystem, ledSubsystem, elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem);
+		m_robotContainer = new RobotContainer(driveSubsystem, visionSubsystem, ledSubsystem, elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem, climbSubsystem);
 		
 		/*
 		 * Complete initialization setup/configuration

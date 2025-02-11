@@ -19,17 +19,25 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.IntakeCommand;
-import frc.robot.commands.ScoreCommand;
+import frc.robot.commands.ResetHandCommand;
+import frc.robot.commands.ResetSequenceCommand;
+import frc.robot.commands.RunSequenceCommand;
 import frc.robot.generated.TunerConstants;
-import frc.robot.state.score.GamePiece;
-import frc.robot.state.score.ScoreStateMachine;
+import frc.robot.state.sequencer.Action;
+import frc.robot.state.sequencer.GamePiece;
+import frc.robot.state.sequencer.Level;
+import frc.robot.state.sequencer.SequenceStateMachine;
+import frc.robot.state.sequencer.SequenceFactory;
+import frc.robot.state.sequencer.SequenceManager;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.arm.ArmSubsystem;
+import frc.robot.subsystems.climb.ClimbConstants;
+import frc.robot.subsystems.climb.ClimbSubsystem;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
+import frc.robot.subsystems.hand.HandConstants;
 import frc.robot.subsystems.vision.VisionSubsystem;
 
 public class RobotContainer {
@@ -56,34 +64,34 @@ public class RobotContainer {
   // private final int rotationAxis = XboxController.Axis.kRightX.value;
 
   /* Driver Buttons */
-  private final Trigger kStart = xboxController.start();
-  private final Trigger kBack = xboxController.back();
-  private final Trigger ky = xboxController.y();
-  private final Trigger kb = xboxController.b();
-  private final Trigger ka = xboxController.a();
-  private final Trigger kx = xboxController.x();
-  private final Trigger kLeftBumper = xboxController.leftBumper();
-  private final Trigger kRightBumper = xboxController.rightBumper();
-  private final Trigger kLeftTrigger = xboxController.leftTrigger();
-  private final Trigger kRightTrigger = xboxController.rightTrigger();
-  private final Trigger kPOVUp = xboxController.povUp();
+  private final Trigger dStart = xboxController.start();
+  private final Trigger dBack = xboxController.back();
+  private final Trigger dY = xboxController.y();
+  private final Trigger dB = xboxController.b();
+  private final Trigger dA = xboxController.a();
+  private final Trigger dX = xboxController.x();
+  private final Trigger dLeftBumper = xboxController.leftBumper();
+  private final Trigger dRightBumper = xboxController.rightBumper();
+  private final Trigger dLeftTrigger = xboxController.leftTrigger();
+  private final Trigger dRightTrigger = xboxController.rightTrigger();
+  private final Trigger dPOVUp = xboxController.povUp();
 
   /* Operator Buttons */
 
-  private final Trigger operatorkStart = xboxOperatorController.start();
-  private final Trigger operatorBack = xboxOperatorController.back();
-  private final Trigger operatorky = xboxOperatorController.y();
-  private final Trigger operatorkb = xboxOperatorController.b();
-  private final Trigger operatorka = xboxOperatorController.a();
-  private final Trigger operatorkx = xboxOperatorController.x();
-  private final Trigger operatorkLeftBumper = xboxOperatorController.leftBumper();
-  private final Trigger operatorkRightBumper = xboxOperatorController.rightBumper();
-  private final Trigger operatorkLeftTrigger = xboxOperatorController.leftTrigger();
-  private final Trigger operatorkRightTrigger = xboxOperatorController.rightTrigger();
-  private final Trigger operatorkPOVDown = xboxOperatorController.povDown();
-  private final Trigger operatorkPOVUp = xboxOperatorController.povUp();
-  private final Trigger operatorkPOVLeft = xboxOperatorController.povLeft();
-  private final Trigger operatorkPOVRight = xboxOperatorController.povRight();
+  private final Trigger opStart = xboxOperatorController.start();
+  private final Trigger opBack = xboxOperatorController.back();
+  private final Trigger opY = xboxOperatorController.y();
+  private final Trigger opB = xboxOperatorController.b();
+  private final Trigger opA = xboxOperatorController.a();
+  private final Trigger opX = xboxOperatorController.x();
+  private final Trigger opLeftBumper = xboxOperatorController.leftBumper();
+  private final Trigger opRightBumper = xboxOperatorController.rightBumper();
+  private final Trigger opLeftTrigger = xboxOperatorController.leftTrigger();
+  private final Trigger opRightTrigger = xboxOperatorController.rightTrigger();
+  private final Trigger opPOVDown = xboxOperatorController.povDown();
+  private final Trigger opPOVUp = xboxOperatorController.povUp();
+  private final Trigger opPOVLeft = xboxOperatorController.povLeft();
+  private final Trigger opPOVRight = xboxOperatorController.povRight();
 
   /* Subsystems */
   private CommandSwerveDrivetrain driveSubsystem;
@@ -93,7 +101,7 @@ public class RobotContainer {
   private ArmSubsystem armSubsystem;
   private HandClamperSubsystem handClamperSubsystem;
   private HandIntakeSubsystem handIntakeSubsystem;
-  private ScoreStateMachine scoreStateMachine;
+  private ClimbSubsystem climbSubsystem;
 
   public RobotContainer(
       CommandSwerveDrivetrain s_driveSubsystem,
@@ -102,7 +110,9 @@ public class RobotContainer {
       ElevatorSubsystem s_elevatorSubsystem,
       ArmSubsystem s_ArmSubsystem,
       HandClamperSubsystem s_HandClamperSubsystem,
-      HandIntakeSubsystem s_HandIntakeSubsystem) {
+      HandIntakeSubsystem s_HandIntakeSubsystem,
+      ClimbSubsystem s_ClimbSubsystem
+      ) {
 
     driveSubsystem = s_driveSubsystem;
     elevatorSubsystem = s_elevatorSubsystem;
@@ -111,8 +121,7 @@ public class RobotContainer {
     armSubsystem = s_ArmSubsystem;
     handClamperSubsystem = s_HandClamperSubsystem;
     handIntakeSubsystem = s_HandIntakeSubsystem;
-
-    scoreStateMachine = new ScoreStateMachine(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem);
+    climbSubsystem = s_ClimbSubsystem;
 
     // Configure the button bindings
     configureBindings();
@@ -128,11 +137,7 @@ public class RobotContainer {
             .withRotationalRate(-xboxController.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
         ));
 
- //  xboxController.a().whileTrue(drivetrain.applyRequest(() -> brake));
-   // xboxController.b().whileTrue(drivetrain.applyRequest(
-     //   () -> point.withModuleDirection(new Rotation2d(-xboxController.getLeftY(), -xboxController.getLeftX()))));
-
-    // (SCH) NOTE: These sysId calls aren't strictly necessary,
+    // (SCH) TODO: These sysId calls aren't strictly necessary,
     // though they seem to be a different method of controlling the drivetrain.
     // I would say copy these and assign them to unused buttons in the new
     // RobotContainer to see what they do
@@ -149,33 +154,9 @@ public class RobotContainer {
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
-    // ky.whileTrue(driveSubsystem.applyRequest(
-    // () -> driveAtSpeaker.withVelocityX(-(Math.abs(xboxController.getLeftY()) *
-    // xboxController.getLeftY()) * MaxSpeed)
-    // .withVelocityY(-(Math.abs(xboxController.getLeftX()) *
-    // xboxController.getLeftX()) *
-    // MaxSpeed).withTargetDirection(visionSubsystem.getHeadingToSpeakerInRad())
-    //
-    // )
-    // );
+    dStart.onTrue(driveSubsystem.runOnce(() -> driveSubsystem.seedFieldCentric()));
 
-    // kRightBumper.whileTrue(new AmpScoringCommand(intakeSubsystem,
-    // elevatorSubsystem, wristSubsystem)));
-    // kx.whileTrue(new TrapScoringCommand(intakeSubsystem, elevatorSubsystem,
-    // wristSubsystem));
-
-    // Comment out the two lines above and uncomment this to tune shooting angles
-    // Also uncomment the call to get the distance to the speaker in the period of
-    // vision subsystem (that sends the data to smartdashbord among other things)
-    // ka.onTrue(new InstantCommand(() -> wristSubsystem.jogDown()))
-    // .onFalse(new InstantCommand(() -> wristSubsystem.stopJog()));
-
-    // kb.onTrue(new InstantCommand(() -> wristSubsystem.jogUp()))
-    // .onFalse(new InstantCommand(() -> wristSubsystem.stopJog()));
-
-    kStart.onTrue(driveSubsystem.runOnce(() -> driveSubsystem.seedFieldCentric()));
-
-    kStart.onTrue(new InstantCommand(() -> {
+    dStart.onTrue(new InstantCommand(() -> {
       driveSubsystem.resetPose(new Pose2d(1.47, 5.51, new Rotation2d(0)));
       Rotation2d operatorPerspective = Robot.isRedAlliance() ? new Rotation2d(Math.toRadians(180))
           : new Rotation2d(Math.toRadians(0));
@@ -185,59 +166,51 @@ public class RobotContainer {
       driveSubsystem.setOperatorPerspectiveForward(operatorPerspective); // Just a Hack
     }));
 
+
+    // Sets arm to intake
+    dLeftTrigger.whileTrue(new SequentialCommandGroup(
+      new InstantCommand(() -> SequenceManager.setActionSelection(Action.INTAKE)),
+      new ResetSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem),
+      new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)));
+
+    // Sets arm to score
+    dRightTrigger.whileTrue(new SequentialCommandGroup(
+      new InstantCommand(() -> SequenceManager.setActionSelection(Action.SCORE)),
+      new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)));
+
+    // Climb up
+    dLeftBumper.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(0))) //TODO set climb interval UP
+      .whileFalse(new InstantCommand(() -> climbSubsystem.stopClimb()));
+
+    // Climb down
+    dRightBumper.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(0))) //TODO set climb interval DOWN
+    .whileFalse(new InstantCommand(() -> climbSubsystem.stopClimb()));
+
+    // Controls level selection
+    opY.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L4))) //while pressed set to Level 4
+      .onFalse(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L2))); //if not pressed set defualt to Level 2  
+
+    opB.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L3))) //while pressed set to Level 3
+      .onFalse(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L2))); //if not pressed set defualt to Level 2 
+
+    //TODO: is this necessary?
+    opA.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L2))); //while pressed set to Level 3
+
+    opX.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L1))) //while pressed set to Level 1
+      .onFalse(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L2))); //if not pressed set defualt to Level 2 
+
+    // While trigger is true set piece to Algae, when it goes back to false set piece back to Coral
+    opLeftTrigger.whileTrue(new InstantCommand(() -> SequenceManager.setGamePieceSelection(GamePiece.ALGAE)))
+      .onFalse(new InstantCommand(() -> SequenceManager.setGamePieceSelection(GamePiece.CORAL)));
+
+    //bring up the climb in ready position
+    //opStart.onTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.climbReadyPosition)));
     
-    // Intake coral
-    ky.whileTrue(new IntakeCommand(handClamperSubsystem, handIntakeSubsystem, GamePiece.CORAL));
-    ka.whileTrue(new IntakeCommand(handClamperSubsystem, handIntakeSubsystem, GamePiece.ALGAE));
-    kx.onTrue(new SequentialCommandGroup(
-      new InstantCommand(() -> handClamperSubsystem.close()),
-      new InstantCommand(() -> handIntakeSubsystem.stop())
-    ));
+    
+    opBack.whileTrue(new InstantCommand(() -> visionSubsystem.setConfidence(true)))
+      .onFalse(new InstantCommand(() -> visionSubsystem.setConfidence(false)));
 
-    // score coral
-    kb.whileTrue(new ScoreCommand(scoreStateMachine, elevatorSubsystem, armSubsystem));
-
-
-    operatorkLeftBumper.onTrue(new InstantCommand(() -> {
-
-    }));
-    operatorkRightBumper.onTrue(new InstantCommand(() -> {
-
-    }));
-
-    operatorkPOVDown.onTrue(new InstantCommand(() -> {
-
-    }));
-    operatorkPOVUp.onTrue(new InstantCommand(() -> {
-
-    }));
-
-    operatorkPOVLeft.onTrue(new InstantCommand(() -> {
-
-    }));
-    operatorkPOVRight.onTrue(new InstantCommand(() -> {
-
-    }));
-    /*
-     * operatorkStart
-     * .onTrue(new InstantCommand(() -> intakeSubsystem.reverseIntake()))
-     * .onFalse(new InstantCommand(() -> intakeSubsystem.stopReverseIntake()));
-     */
-
-    // Far Shot
-    // operatorky.onTrue(new InstantCommand(() -> wristSubsystem.moveWrist(12))) //
-    // this is now over the stage
-    // .onFalse(new InstantCommand(() -> wristSubsystem.moveWrist(0)));
-
-    // Safe Shot
-    // Line Shot
-    // operatorka.onTrue(new InstantCommand(() -> wristSubsystem.moveWrist(15*0.6)))
-    // .onFalse(new InstantCommand(() -> wristSubsystem.moveWrist(0)));
-    // operatorkRightTrigger.onTrue(new JiggleCommand(intakeShootSubsystem,
-    // shooterSubsystem));
-
-    operatorBack.whileTrue(new InstantCommand(() -> visionSubsystem.setConfidence(true)));
-    operatorBack.whileFalse(new InstantCommand(() -> visionSubsystem.setConfidence(false)));
+    opStart.onTrue(new ResetHandCommand(handClamperSubsystem, handIntakeSubsystem));
 
     driveSubsystem.registerTelemetry(logger::telemeterize);
   }

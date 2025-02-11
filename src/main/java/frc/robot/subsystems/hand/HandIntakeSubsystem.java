@@ -9,11 +9,15 @@ import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
 import com.ctre.phoenix6.signals.ForwardLimitValue;
+import com.ctre.phoenix6.signals.ReverseLimitSourceValue;
+import com.ctre.phoenix6.signals.ReverseLimitValue;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.state.StateMachineCallback;
-import frc.robot.state.score.ScoreInput;
+import frc.robot.state.sequencer.SequenceInput;
+import frc.robot.state.sequencer.SequenceManager;
 import frc.robot.subsystems.ToggleableSubsystem;
 
 public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubsystem {
@@ -22,6 +26,8 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
     private final NeutralOut brake = new NeutralOut();
     private StateMachineCallback scoreStateMachineCallback;
     private boolean intaking = false;
+    private boolean stopping = false;
+    private boolean watchingForScoreDetection = false;
     private double releaseStartedTime = 0;
     private double releaseRunningTime = 0;
     private boolean enabled;
@@ -71,7 +77,7 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
 
     public void hold() {
         if(!enabled) return;
-        DutyCycleOut dutyCycleOut = new DutyCycleOut(HandConstants.intakeHoldOutput);
+        DutyCycleOut dutyCycleOut = new DutyCycleOut(HandConstants.intakeHoldOutput * -1);
         motor.setControl(dutyCycleOut);
     }
 
@@ -81,7 +87,22 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
         motor.setControl(brake);
     }
 
-    public boolean limitSwitchFlipped() {
+    public void stop(StateMachineCallback callback) {
+        scoreStateMachineCallback = callback;
+        stopping = true;
+        stop();
+    }
+
+    public void watchForScoreDetection(StateMachineCallback callback) {
+        scoreStateMachineCallback = callback;
+        watchingForScoreDetection = true;
+    }
+
+    private boolean pieceDetectionSwitchFlipped() {
+        return motor.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround;
+    }
+
+    private boolean scoreDetectionSwitchFlipped() {
         return motor.getForwardLimit().getValue() == ForwardLimitValue.ClosedToGround;
     }
 
@@ -109,9 +130,20 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
 
         var HWSwitchConfigs = new HardwareLimitSwitchConfigs();
 
-        HWSwitchConfigs.ForwardLimitEnable = true;
+        // Piece detection limit switch
+        HWSwitchConfigs.ReverseLimitEnable = false;
+        HWSwitchConfigs.ReverseLimitSource = ReverseLimitSourceValue.LimitSwitchPin;
+
+        // Score detection limit switch
+        // Not going to enable this limit switch, i.e., not going to affect motor stop/start
+        HWSwitchConfigs.ForwardLimitEnable = false;
         HWSwitchConfigs.ForwardLimitSource = ForwardLimitSourceValue.LimitSwitchPin;
+
+        // Add limit switch config
         configs.HardwareLimitSwitch = HWSwitchConfigs;
+
+        configs.CurrentLimits.StatorCurrentLimit = 15;
+        configs.CurrentLimits.StatorCurrentLimitEnable = true;
 
 
         /* Retry config apply up to 5 times, report if failure */
@@ -142,18 +174,35 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
             releaseStartedTime = 0;
             if(scoreStateMachineCallback != null) {
                 System.out.println("HandIntakeSubsystem stopped release, should have finished shooting");
-                scoreStateMachineCallback.setInput(ScoreInput.RELEASED_PIECE);
+                scoreStateMachineCallback.setInput(SequenceInput.RELEASED_PIECE);
                 scoreStateMachineCallback = null;
             }
         }
 
-        if(intaking && limitSwitchFlipped()) {
+        if(intaking && pieceDetectionSwitchFlipped()) {
             intaking = false;
             if(scoreStateMachineCallback != null) {
-                System.out.println("HandIntakeSubsystem limit switch flipped, should have game piece");
-                scoreStateMachineCallback.setInput(ScoreInput.DETECTED_PIECE);
+                System.out.println("HandIntakeSubsystem reverse limit switch flipped, should have game piece");
+                scoreStateMachineCallback.setInput(SequenceInput.DETECTED_PIECE);
                 scoreStateMachineCallback = null;
             }
+        }
+
+        SmartDashboard.putBoolean("Intake Forward Limit Switch", scoreDetectionSwitchFlipped());
+        if(watchingForScoreDetection && scoreDetectionSwitchFlipped()) {
+            watchingForScoreDetection = false;
+            if(scoreStateMachineCallback != null) {
+                System.out.println("HandIntakeSubsystem forward limit switch flipped, should have scored");
+                scoreStateMachineCallback.setInput(SequenceInput.SCORE);
+                scoreStateMachineCallback = null;
+            }
+        }
+
+        if(stopping && scoreStateMachineCallback != null) {
+            stopping = false;
+            System.out.println("HandIntakeSubsystem stopped intake");
+            scoreStateMachineCallback.setInput(SequenceInput.STOPPED_INTAKE);
+            scoreStateMachineCallback = null;
         }
 
         log();
