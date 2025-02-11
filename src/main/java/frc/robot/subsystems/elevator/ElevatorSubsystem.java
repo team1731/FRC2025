@@ -30,6 +30,7 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
 
     // state machine callback handling
     private StateMachineCallback stateMachineCallback;
+    private boolean callbackOnDone = false;
     private boolean callbackOnThreshold = false;
     private double positionThreshold = 0;
     private boolean raisingThreshold = false;
@@ -71,6 +72,7 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
 
     public void moveElevator(double position, StateMachineCallback callback) {
         stateMachineCallback = callback;
+        callbackOnDone = true;
         moveElevator(position);
     }
 
@@ -157,11 +159,10 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
         /*
          * Score State Machine callback handling
          */
-        if(isAtPosition(desiredPosition) && stateMachineCallback != null) {
+        if(callbackOnDone && isAtPosition(desiredPosition) && stateMachineCallback != null) {
             // final position reached, notify the state machine
-
+            callbackOnDone = false;
             stateMachineCallback.setInput(SequenceInput.ELEVATOR_DONE);
-            stateMachineCallback = null;
         } else if(callbackOnThreshold && stateMachineCallback != null) {
             // check to see if the threshold was met, if so notify the state machine
             boolean thresholdMet = raisingThreshold && getElevatorPosition() >= positionThreshold ||

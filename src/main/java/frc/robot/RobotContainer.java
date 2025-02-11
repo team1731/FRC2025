@@ -19,8 +19,8 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ResetHandCommand;
+import frc.robot.commands.ResetSequenceCommand;
 import frc.robot.commands.RunSequenceCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.state.sequencer.Action;
@@ -170,6 +170,7 @@ public class RobotContainer {
     // Sets arm to intake
     dLeftTrigger.whileTrue(new SequentialCommandGroup(
       new InstantCommand(() -> SequenceManager.setActionSelection(Action.INTAKE)),
+      new ResetSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem),
       new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)));
 
     // Sets arm to score

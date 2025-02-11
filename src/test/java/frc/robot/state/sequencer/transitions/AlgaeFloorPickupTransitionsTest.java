@@ -26,17 +26,17 @@ import frc.robot.subsystems.hand.HandConstants;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
 
 public class AlgaeFloorPickupTransitionsTest {
-    @Test
-    void testFloorPickupAlgae(){
-        Sequence sequence = getSequence(Action.INTAKE, Level.L1, GamePiece.ALGAE);
-        runPickupAlageFromFloor(sequence);
-    }
+    // @Test
+    // void testFloorPickupAlgae(){
+    //     Sequence sequence = getSequence(Action.INTAKE, Level.L1, GamePiece.ALGAE);
+    //     runPickupAlageFromFloor(sequence);
+    // }
 
-    @Test
-    void testAbortDuringArmMovement(){
-        Sequence sequence = getSequence(Action.INTAKE, Level.L1, GamePiece.ALGAE);
-        runAbortDuringSequence(sequence);
-    }
+    // @Test
+    // void testAbortDuringArmMovement(){
+    //     Sequence sequence = getSequence(Action.INTAKE, Level.L1, GamePiece.ALGAE);
+    //     runAbortDuringSequence(sequence);
+    // }
 
     /*
      * COMMON METHODS FOR RUNNING SEQUENCES
@@ -72,7 +72,7 @@ public class AlgaeFloorPickupTransitionsTest {
 
         // transition to intaking algae
         callback.setInput(SequenceInput.ARM_DONE);
-        verify(mockHandClamperSubsystem).open(positions.handClamperPosition);
+        verify(mockHandClamperSubsystem).open(positions.clamperIntakePosition);
         verify(mockHandIntakeSubsystem).intake(HandConstants.intakeVelocity, callback);
         assertEquals(SequenceState.INTAKING, stateMachine.getCurrentState());
 

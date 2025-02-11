@@ -11,7 +11,7 @@ public class AlgaeScoreBargeTransitions {
         {SequenceState.MOVING_ARM_FORWARD,      SequenceInput.ARM_DONE,                   "shootToScore",              SequenceState.SCORING},
         {SequenceState.SCORING,                 SequenceInput.RELEASED_PIECE,             "moveElevatorHome",          SequenceState.LOWERING},
         {SequenceState.LOWERING,                SequenceInput.ELEVATOR_THRESHOLD_MET,     "moveArmHome",               SequenceState.FINISHING},
-        {SequenceState.FINISHING,               SequenceInput.RESET_DONE,                 "resetState",                SequenceState.HOME},
+        {SequenceState.FINISHING,               SequenceInput.ARM_DONE,                   "resetState",                SequenceState.HOME},
 
         // Abort sequences
         {SequenceState.RAISING_ELEVATOR,        SequenceInput.BUTTON_RELEASED,            "startReset",                SequenceState.FINISHING},

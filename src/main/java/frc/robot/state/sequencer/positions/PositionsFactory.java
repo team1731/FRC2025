@@ -22,14 +22,14 @@ public class PositionsFactory {
 
      public static Positions getCoralFeederPickupPositions() {
         Positions positions = new Positions();
-        positions.handClamperPosition = CORAL_FEEDER.handClamperPosition;
+        positions.clamperIntakePosition = CORAL_FEEDER.clamperIntakePosition;
         return positions;
     }
 
     public static Positions getCoralUprightFloorPickupPositions() {
         Positions positions = new Positions();
         positions.armForwardPosition = CORAL_FLOOR_UPRIGHT.armForwardPosition;
-        positions.handClamperPosition = CORAL_FLOOR_UPRIGHT.handClamperPosition;
+        positions.clamperIntakePosition = CORAL_FLOOR_UPRIGHT.clamperIntakePosition;
         return positions;
     }
 
@@ -83,27 +83,25 @@ public class PositionsFactory {
     public static Positions getAlgaeReefL2PickupPositions() {
         Positions positions = new Positions();
         positions.raiseElevatorPosition = ALGAE_REEF_L2.raiseElevatorPosition;
-        positions.raiseElevatorThreshold = ALGAE_REEF_L2.raiseElevatorThresholdPosition;
-        positions.lowerElevatorThreshold = ALGAE_REEF_L2.lowerElevatorThresholdPosition;
-        positions.armForwardPosition = ALGAE_REEF_L2.armForwardPosition;
-        positions.handClamperPosition = ALGAE_REEF_L2.handClamperPosition;
+        positions.secondStageElevatorPosition = ALGAE_REEF_L2.secondStageElevatorPosition;
+        positions.clamperIntakePosition = ALGAE_REEF_L2.clamperIntakePosition;
+        positions.clamperHoldPosition = ALGAE_REEF_L2.clamperHoldPosition;
         return positions;
     }
 
     public static Positions getAlgaeReefL3PickupPositions() {
         Positions positions = new Positions();
         positions.raiseElevatorPosition = ALGAE_REEF_L3.raiseElevatorPosition;
-        positions.raiseElevatorThreshold = ALGAE_REEF_L3.raiseElevatorThresholdPosition;
-        positions.lowerElevatorThreshold = ALGAE_REEF_L3.lowerElevatorThresholdPosition;
-        positions.armForwardPosition = ALGAE_REEF_L3.armForwardPosition;
-        positions.handClamperPosition = ALGAE_REEF_L3.handClamperPosition;
+        positions.secondStageElevatorPosition = ALGAE_REEF_L3.secondStageElevatorPosition;
+        positions.clamperIntakePosition = ALGAE_REEF_L3.clamperIntakePosition;
+        positions.clamperHoldPosition = ALGAE_REEF_L3.clamperHoldPosition;
         return positions;
     }
 
     public static Positions getAlgaeFloorPickupPositions() {
         Positions positions = new Positions();
         positions.armForwardPosition = ALGAE_FLOOR.armForwardPosition;
-        positions.handClamperPosition = ALGAE_FLOOR.handClamperPosition;
+        positions.clamperIntakePosition = ALGAE_FLOOR.clamperIntakePosition;
         return positions;
     }
 

@@ -43,7 +43,7 @@ public class HandClamperSubsystem extends SubsystemBase implements ToggleableSub
      * GRIP MOTOR MOVEMENT
      */
 
-    private void moveHand(double position) {
+    public void moveHand(double position) {
         if(!enabled) return;
 
         // do not go outside boundary thresholds
@@ -85,7 +85,7 @@ public class HandClamperSubsystem extends SubsystemBase implements ToggleableSub
 
         clamperCancoder = new CANcoder(HandConstants.clamperCancoderDeviceId, "rio");
         CANcoderConfiguration cancoderConfigs = new CANcoderConfiguration();
-        cancoderConfigs.MagnetSensor.MagnetOffset =0.2841796875;
+        cancoderConfigs.MagnetSensor.MagnetOffset = 0.3173828125;
         clamperCancoder.getConfigurator().apply(cancoderConfigs);
 
         motor = new TalonFX(HandConstants.clamperCanId, "rio");

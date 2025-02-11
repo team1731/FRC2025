@@ -1,6 +1,7 @@
 package frc.robot.state.sequencer;
 
 public enum Sequence {
+    RESET,
 
     INTAKE_ALGAE_L2,
     INTAKE_ALGAE_L3,

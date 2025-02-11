@@ -5,6 +5,7 @@ import frc.robot.state.State;
 public enum SequenceState implements State {
     HOME,
     RAISING_ELEVATOR,
+    UPDATING_ELEVATOR,
     MOVING_ARM_FORWARD,
     MOVING_ARM_BACK,
     WAITING, // for driver feedback or intake sensor feedback
@@ -13,5 +14,7 @@ public enum SequenceState implements State {
     STOPPING_INTAKE,
     LOWERING,
     UPDATING_LEVEL,
+    INIT_RESET,
+    RESETTING,
     FINISHING
 }

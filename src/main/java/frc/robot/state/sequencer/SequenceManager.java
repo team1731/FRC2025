@@ -21,15 +21,21 @@ public class SequenceManager {
 
         // notify the state machine and it will handle it if applicable
         // if not applicable to the sequence/state it will be ignored
-        stateMachine.setInput(SequenceInput.LEVEL_CHANGED);
+        if(stateMachine != null && stateMachine.hasLoadedTransitions()) {
+            //stateMachine.setInput(SequenceInput.LEVEL_CHANGED);
+        }
+    }
+
+    public static GamePiece getGamePieceSelection() {
+        return pieceSelection;
     }
 
     public static void setGamePieceSelection(GamePiece piece) {
         pieceSelection = piece;
     }
 
-    public static GamePiece getGamePieceSelection() {
-        return pieceSelection;
+    public static boolean shouldDetectGamePiece() {
+        return pieceSelection == GamePiece.CORAL;
     }
 
     public static Action getActionSelection() {

@@ -22,8 +22,9 @@ public final class HandConstants {
 
     // Positions
     public final static double clamperHomePosition = 0;
-    public final static double clamperCoralPosition = 0.009277;
-    public final static double clamperAlgaePosition = 0.081055;
+    public final static double clamperCoralPosition = 0.018554;
+    public final static double clamperAlgaePosition = 0.05;
+    public final static double clamperReefIntakePosition = 0.15;
 
     // Position tolerance thresholds
     public final static double clamperPositionTolerance = 0.002;

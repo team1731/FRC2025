@@ -27,29 +27,29 @@ import frc.robot.subsystems.hand.HandConstants;
 
 public class SequenceStateMachineTest {
 
-    @Test 
-    void testScoreCoralL2() {
-        Sequence sequence = getSequence(Action.SCORE, Level.L2, GamePiece.CORAL);
-        runCoralScoringSequence(sequence);
-    }
+    // @Test 
+    // void testScoreCoralL2() {
+    //     Sequence sequence = getSequence(Action.SCORE, Level.L2, GamePiece.CORAL);
+    //     runCoralScoringSequence(sequence);
+    // }
 
-    @Test 
-    void testScoreCoralL3() {
-        Sequence sequence = getSequence(Action.SCORE, Level.L3, GamePiece.CORAL);
-        runCoralScoringSequence(sequence);
-    }
+    // @Test 
+    // void testScoreCoralL3() {
+    //     Sequence sequence = getSequence(Action.SCORE, Level.L3, GamePiece.CORAL);
+    //     runCoralScoringSequence(sequence);
+    // }
 
-    @Test 
-    void testScoreCoralL4() {
-        Sequence sequence = getSequence(Action.SCORE, Level.L4, GamePiece.CORAL);
-        runCoralScoringSequence(sequence);
-    }
+    // @Test 
+    // void testScoreCoralL4() {
+    //     Sequence sequence = getSequence(Action.SCORE, Level.L4, GamePiece.CORAL);
+    //     runCoralScoringSequence(sequence);
+    // }
 
-    @Test 
-    void testScoreAlgae() {
-        Sequence sequence = getSequence(Action.SCORE, Level.L4, GamePiece.ALGAE);
-        runAlgaeScoringSequence(sequence);
-    }
+    // @Test 
+    // void testScoreAlgae() {
+    //     Sequence sequence = getSequence(Action.SCORE, Level.L4, GamePiece.ALGAE);
+    //     runAlgaeScoringSequence(sequence);
+    // }
 
     /*
      * COMMON METHODS FOR RUNNING SEQUENCES

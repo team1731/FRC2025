@@ -11,6 +11,10 @@ public abstract class StateMachine {
   protected State currentState;
   protected CommandCallback commandCallback;
 
+  public boolean hasLoadedTransitions() {
+    return stateTransitionTable != null;
+  }
+
   /*
    * COMMAND INTERFACE
    */

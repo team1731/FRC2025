@@ -55,6 +55,10 @@ public class SequenceStateMachine extends StateMachine {
         // the sequence determines the choreographed movement of elevator/arm/hand
         setStateTransitionTable(SequenceFactory.getTransitionTable(sequence)); // state machine transitions
         positions = SequenceFactory.getPositions(sequence); // position constants for subsystems
+        
+        // on reset, put it into special state to kick off reset
+        // may be in an incomplete state from a previous sequence
+        if(sequence == Sequence.RESET) setCurrentState(SequenceState.INIT_RESET);
     }
 
 
@@ -69,11 +73,12 @@ public class SequenceStateMachine extends StateMachine {
             if(sequenceInput == SequenceInput.ELEVATOR_DONE) elevatorResetDone = true;
             if(sequenceInput == SequenceInput.ARM_DONE) armResetDone = true;
             if(elevatorResetDone && armResetDone) {
+                isResetting = false;
                 setInput(SequenceInput.RESET_DONE);
             }
         } else {
             if(input == SequenceInput.RELEASED_PIECE) closeHand();
-            if(input == SequenceInput.DETECTED_PIECE && currentGamePiece == GamePiece.CORAL) closeHand();
+            if(input == SequenceInput.DETECTED_PIECE && currentGamePiece == GamePiece.CORAL) returnHandToDefault();
             if(currentSequence == Sequence.SCORE_CORAL_L2 && input == SequenceInput.ARM_DONE && currentState == SequenceState.SCORING) releasePiece();
             setInput(input);
         }
@@ -93,6 +98,16 @@ public class SequenceStateMachine extends StateMachine {
         return true;
     }
 
+    public boolean raiseElevatorNoThreshold() {
+        elevatorSubsystem.moveElevator(positions.raiseElevatorPosition, subsystemCallback);
+        return true;
+    }
+
+    public boolean elevatorSecondStage() {
+        elevatorSubsystem.moveElevator(positions.secondStageElevatorPosition, subsystemCallback);
+        return true;
+    }
+
     public boolean moveElevatorHome() {
         isResetting = true;
         elevatorSubsystem.moveElevator(ElevatorConstants.elevatorHomePosition, subsystemCallback, positions.lowerElevatorThreshold);
@@ -101,6 +116,12 @@ public class SequenceStateMachine extends StateMachine {
 
     public boolean moveArmForward() {
         armSubsystem.moveArm(positions.armForwardPosition, subsystemCallback);
+        return true;
+    }
+
+    public boolean checkIfShouldScore() {
+        // TODO put autonomous handling in here when ready
+        handIntakeSubsystem.watchForScoreDetection(subsystemCallback);
         return true;
     }
 
@@ -117,10 +138,16 @@ public class SequenceStateMachine extends StateMachine {
     public boolean closeHand() {
         handClamperSubsystem.close();
         return true;
-     }
+    }
+
+    public boolean returnHandToDefault() {
+        handClamperSubsystem.close();
+        handIntakeSubsystem.stop();
+        return true;
+    }
 
     public boolean prepareToIntake() {
-        handClamperSubsystem.open(positions.handClamperPosition);
+        handClamperSubsystem.open(positions.clamperIntakePosition);
         handIntakeSubsystem.intake(HandConstants.intakeVelocity, subsystemCallback);
         return true;
     }
@@ -128,6 +155,12 @@ public class SequenceStateMachine extends StateMachine {
     public boolean stopIntaking() {
         handClamperSubsystem.close();
         handIntakeSubsystem.stop(subsystemCallback);
+        return true;
+    }
+
+    public boolean holdAndLower() {
+        handClamperSubsystem.moveHand(positions.clamperHoldPosition);
+        elevatorSubsystem.moveElevator(ElevatorConstants.elevatorHomePosition, subsystemCallback);
         return true;
     }
 
@@ -170,6 +203,13 @@ public class SequenceStateMachine extends StateMachine {
         // move back home
         armSubsystem.moveArm(ArmConstants.armHomePosition, subsystemCallback);
         elevatorSubsystem.moveElevator(ElevatorConstants.elevatorHomePosition, subsystemCallback);
+        return true;
+    }
+
+    public boolean startIntakeReset() {
+        handClamperSubsystem.close();
+        handIntakeSubsystem.stop();
+        startReset();
         return true;
     }
 

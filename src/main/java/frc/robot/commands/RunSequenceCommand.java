@@ -38,6 +38,16 @@ public class RunSequenceCommand extends Command {
         m_sequenceStarted = true;
         m_scoreStateMachine.setCallback(stateMachineCallback);
         Sequence sequence = SequenceManager.getSequence();
+        if(sequence == null) {
+            System.out.println("RunSequenceCommand: Sequence not found for the combination of " + 
+                SequenceManager.getGamePieceSelection() + " " + 
+                SequenceManager.getLevelSelection() + " " + 
+                SequenceManager.getActionSelection() + " " + 
+                "- Exiting command");
+            m_sequenceDone = true;
+            return;
+        }
+
         System.out.println("RunSequenceCommand: Sequence chosen " + sequence + " " + 
             SequenceManager.getGamePieceSelection() + " " + 
             SequenceManager.getLevelSelection() + " " + 
@@ -48,6 +58,8 @@ public class RunSequenceCommand extends Command {
 
     @Override
     public void initialize() {
+        m_sequenceStarted = false;
+        m_sequenceDone = false;
         if(m_scoreStateMachine.isReady()) {
             runStateMachine();
         }
