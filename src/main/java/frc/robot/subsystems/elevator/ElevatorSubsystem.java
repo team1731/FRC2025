@@ -62,7 +62,7 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
         } else if(position < ElevatorConstants.minElevatorPosition) {
             desiredPosition = ElevatorConstants.minElevatorPosition;
         } else {
-            desiredPosition = position;
+            desiredPosition = position * ElevatorConstants.gearRatioModifier;
         }
 
         elevatorMotor1.setControl(mmReq1.withPosition(desiredPosition).withFeedForward(arbitraryFeedForward));
