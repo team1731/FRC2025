@@ -4,10 +4,12 @@ import com.ctre.phoenix6.signals.InvertedValue;
 
 public class ClimbConstants {
     
-    //TODO apply proper constants for climb motor
+
     // climb can ID
     public final static int climbCanId = 31;
+    public final static int climbCancoderDeviceId = 0; //TODO get this value
 
+        //TODO apply proper constants for climb motor
     // motor direction
     public final static InvertedValue climbMotorDirection = InvertedValue.Clockwise_Positive;
 
