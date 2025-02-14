@@ -11,6 +11,7 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -213,5 +214,19 @@ public class RobotContainer {
     opStart.onTrue(new ResetHandCommand(handClamperSubsystem, handIntakeSubsystem));
 
     driveSubsystem.registerTelemetry(logger::telemeterize);
+
+      NamedCommands.registerCommand("SetLevel4", new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L4) ));
+      NamedCommands.registerCommand("StartScore", new SequentialCommandGroup(
+        new InstantCommand(() -> SequenceManager.setActionSelection(Action.INTAKE)),
+        new ResetSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem),
+        new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)));
+
+      NamedCommands.registerCommand("StartIntake", new SequentialCommandGroup(
+        new InstantCommand(() -> SequenceManager.setActionSelection(Action.INTAKE)),
+        new ResetSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem),
+        new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)));
+
+      NamedCommands.registerCommand("StopSequence", new SequentialCommandGroup(new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)));
+
   }
 }

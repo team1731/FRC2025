@@ -1,0 +1,85 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "SetLevel4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Blu_1_p1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StartScore"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StopSequence"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StartIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Blu_1_p2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Blu_1_p3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Blu_1_p4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Blu_1_p5"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Blu_1_p6"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Blu_1_p7"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
