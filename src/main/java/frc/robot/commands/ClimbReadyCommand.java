@@ -4,18 +4,18 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.climb.ClimbConstants;
 import frc.robot.subsystems.climb.ClimbSubsystem;
 
-public class ClimbCommand extends Command {
+public class ClimbReadyCommand extends Command {
     
     ClimbSubsystem m_climbSubsystem;
 
-    public ClimbCommand(ClimbSubsystem climbSubsystem) {
+    public ClimbReadyCommand(ClimbSubsystem climbSubsystem) {
         m_climbSubsystem = climbSubsystem;
-        addRequirements(m_climbSubsystem); //why is this needed
+        addRequirements(m_climbSubsystem);
     }
 
     @Override
     public void initialize() {
-        m_climbSubsystem.moveClimb(ClimbConstants.maxClimbPosition);
+        m_climbSubsystem.moveClimb(ClimbConstants.climbReadyPosition);
     }
 
     @Override
