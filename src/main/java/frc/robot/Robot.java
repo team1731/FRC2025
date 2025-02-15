@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.OpConstants;
 import frc.robot.Constants.OpConstants.LedOption;
+import frc.robot.autos.AutoCommandLoader;
 import frc.robot.autos.AutoFactory;
 import frc.robot.autos.AutoLoader;
 import frc.robot.generated.TunerConstants;
@@ -45,6 +46,7 @@ public class Robot extends TimedRobot {
 	private RobotContainer m_robotContainer;
 	private Command m_autonomousCommand;
 	private SendableChooser<String> autoChooser;
+	private AutoCommandLoader autoCommandLoader;
 	private String autoCode;
 	private String currentKeypadCommand = "";
 	private boolean redAlliance;
@@ -119,6 +121,8 @@ public class Robot extends TimedRobot {
 		 */
 		initSubsystems();
 		autoChooser = AutoLoader.loadAutoChooser();
+		autoCommandLoader = new AutoCommandLoader(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem);
+		autoCommandLoader.registerAutoEventCommands();
 		autoInitPreload();
 		setupSmartDashboard();
 	}
