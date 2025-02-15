@@ -212,7 +212,7 @@ public class RobotContainer {
     opBack.whileTrue(new InstantCommand(() -> visionSubsystem.setConfidence(true)))
       .onFalse(new InstantCommand(() -> visionSubsystem.setConfidence(false)));
 
-    opStart.onTrue(new ResetHandCommand(handClamperSubsystem, handIntakeSubsystem));
+    //opStart.onTrue(new ResetHandCommand(handClamperSubsystem, handIntakeSubsystem));
 
     driveSubsystem.registerTelemetry(logger::telemeterize);
 

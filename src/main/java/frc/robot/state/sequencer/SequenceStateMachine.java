@@ -68,6 +68,7 @@ public class SequenceStateMachine extends StateMachine {
 
     protected void handleSubsystemCallback(Input input) {
         if(isResetting) {
+            System.out.println("SequenceStateMachine: reset input " + input);
             SequenceInput sequenceInput = (SequenceInput)input;
             if(sequenceInput == SequenceInput.ELEVATOR_THRESHOLD_MET) setInput(input); // not home yet
             if(sequenceInput == SequenceInput.ELEVATOR_DONE) elevatorResetDone = true;
@@ -116,6 +117,7 @@ public class SequenceStateMachine extends StateMachine {
 
     public boolean moveArmForward() {
         armSubsystem.moveArm(positions.armForwardPosition, subsystemCallback);
+        handIntakeSubsystem.release(HandConstants.scoreAlgaeVelocity, HandConstants.defaultReleaseRuntime, subsystemCallback);
         return true;
     }
 
