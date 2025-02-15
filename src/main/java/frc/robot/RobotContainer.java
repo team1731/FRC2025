@@ -215,18 +215,6 @@ public class RobotContainer {
 
     driveSubsystem.registerTelemetry(logger::telemeterize);
 
-      NamedCommands.registerCommand("SetLevel4", new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L4) ));
-      NamedCommands.registerCommand("StartScore", new SequentialCommandGroup(
-        new InstantCommand(() -> SequenceManager.setActionSelection(Action.INTAKE)),
-        new ResetSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem),
-        new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)));
-
-      NamedCommands.registerCommand("StartIntake", new SequentialCommandGroup(
-        new InstantCommand(() -> SequenceManager.setActionSelection(Action.INTAKE)),
-        new ResetSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem),
-        new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)));
-
-      NamedCommands.registerCommand("StopSequence", new SequentialCommandGroup(new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)));
 
   }
 }

@@ -5,12 +5,6 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "SetLevel4"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Blu_1_p1"
@@ -19,7 +13,7 @@
         {
           "type": "named",
           "data": {
-            "name": "StartScore"
+            "name": "CoralL4Score"
           }
         },
         {
@@ -31,13 +25,13 @@
         {
           "type": "named",
           "data": {
-            "name": "StopSequence"
+            "name": "FinishCoralScore"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "StartIntake"
+            "name": "CoralFeederIntake"
           }
         },
         {
