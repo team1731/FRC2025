@@ -18,12 +18,7 @@ public class SequenceManager {
 
     public static void setLevelSelection(Level level) {
         levelSelection = level;
-
-        // notify the state machine and it will handle it if applicable
-        // if not applicable to the sequence/state it will be ignored
-        if(stateMachine != null && stateMachine.hasLoadedTransitions()) {
-            //stateMachine.setInput(SequenceInput.LEVEL_CHANGED);
-        }
+        evaluateForMidstreamUpdate(); // check to see if requires a midstream update to a running sequence
     }
 
     public static GamePiece getGamePieceSelection() {
@@ -55,5 +50,44 @@ public class SequenceManager {
 
     public static Sequence getSequence() {
         return SequenceFactory.getSequence(levelSelection, pieceSelection, actionSelection);
+    }
+
+    private static void evaluateForMidstreamUpdate() {
+        boolean updateLevel = false;
+        Sequence updatedSequence = getSequence();
+        
+        if(stateMachine != null && stateMachine.hasLoadedTransitions() && !stateMachine.isReady()) {
+            // state machine has loaded and is running a sequence
+            if(sequenceChangeAllowsMidstreamUpdate(stateMachine.getCurrentSequence(), updatedSequence)) {
+                // level change is permitted
+                updateLevel = true;
+            }
+        }
+
+        if(updateLevel) { // pass the level change request to the state machine and let it handle the update
+            System.out.println("SequenceManager: Level change initiated. Requesting a change from " + 
+                stateMachine.getCurrentSequence() + " to " +
+                updatedSequence);
+            stateMachine.overwritePositionsForLevelChange(updatedSequence);
+            stateMachine.setInput(SequenceInput.LEVEL_CHANGED);
+        }
+    }
+
+    private static boolean sequenceChangeAllowsMidstreamUpdate(Sequence currentSequence, Sequence newSequence) {
+        switch (currentSequence) {
+            case SCORE_CORAL_L2:
+                return (newSequence == Sequence.SCORE_CORAL_L3 || newSequence == Sequence.SCORE_CORAL_L4);
+            case SCORE_CORAL_L3:
+                return (newSequence == Sequence.SCORE_CORAL_L2 || newSequence == Sequence.SCORE_CORAL_L4);
+            case SCORE_CORAL_L4:
+                return (newSequence == Sequence.SCORE_CORAL_L2 || newSequence == Sequence.SCORE_CORAL_L3);
+            case INTAKE_ALGAE_L2:
+                return (newSequence == Sequence.INTAKE_ALGAE_L3);
+            case INTAKE_ALGAE_L3:
+                return (newSequence == Sequence.INTAKE_ALGAE_L2);
+            default:
+                break;
+        }
+        return false;
     }
 }

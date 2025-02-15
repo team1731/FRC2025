@@ -48,6 +48,10 @@ public class SequenceStateMachine extends StateMachine {
         return currentState == SequenceState.HOME;
     }
 
+    public Sequence getCurrentSequence() {
+        return currentSequence;
+    }
+
     public void setSequence(Sequence sequence) {
         currentSequence = sequence;
         currentAction = SequenceManager.getActionSelection();
@@ -59,6 +63,12 @@ public class SequenceStateMachine extends StateMachine {
         // on reset, put it into special state to kick off reset
         // may be in an incomplete state from a previous sequence
         if(sequence == Sequence.RESET) setCurrentState(SequenceState.INIT_RESET);
+    }
+
+    // Called by the SequenceManager if the operator changes the level mid-stream
+    // Note: Can only be used when the new sequence utilizes the same transition table
+    public void overwritePositionsForLevelChange(Sequence newSequence) {
+        positions = SequenceFactory.getPositions(newSequence); // overwrite w/positions for new level
     }
 
 
@@ -177,12 +187,7 @@ public class SequenceStateMachine extends StateMachine {
 
     // Drive the elevator to a new position when the operator overrides it midstream
     public boolean updateElevator() {
-        // Find the new elevator position by using the new level with the current action and game piece
-        Sequence updatedLevelSequence = SequenceFactory.getSequence(updatedLevel, currentGamePiece, currentAction);
-        Positions updatedLevelPositions = SequenceFactory.getPositions(updatedLevelSequence);
-        // Drive to the updated position
-        elevatorSubsystem.moveElevator(updatedLevelPositions.raiseElevatorPosition, subsystemCallback);
-        return true;
+        return raiseElevatorNoThreshold(); // no threshold b/c may have to move up or down, threshold potentially not valid
     }
 
     // Used to return the arm home (and stop intake) before driving the elevator to a new position
