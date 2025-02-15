@@ -79,7 +79,7 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
     public void moveElevator(double position, StateMachineCallback callback, double threshold) {
         stateMachineCallback = callback;
         callbackOnThreshold = true;
-        positionThreshold = threshold;
+        positionThreshold = threshold * ElevatorConstants.gearRatioModifier;
         raisingThreshold = threshold < position;
         moveElevator(position);
     }
