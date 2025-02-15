@@ -68,7 +68,7 @@ public class SequenceManager {
             System.out.println("SequenceManager: Level change initiated. Requesting a change from " + 
                 stateMachine.getCurrentSequence() + " to " +
                 updatedSequence);
-            stateMachine.overwritePositionsForLevelChange(updatedSequence);
+            stateMachine.overwriteSequenceForLevelChange(updatedSequence);
             stateMachine.setInput(SequenceInput.LEVEL_CHANGED);
         }
     }
