@@ -1,6 +1,7 @@
 package frc.robot.subsystems.climb;
 
 import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -8,7 +9,9 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,6 +22,7 @@ import frc.robot.subsystems.ToggleableSubsystem;
 public class ClimbSubsystem extends SubsystemBase implements ToggleableSubsystem{
         
     private TalonFX climbMotor;
+    private CANcoder climbCancoder;
     private MotionMagicVoltage mmReq = new MotionMagicVoltage(0);
     private final NeutralOut brake = new NeutralOut();
 
@@ -63,6 +67,12 @@ public class ClimbSubsystem extends SubsystemBase implements ToggleableSubsystem
         
         System.out.println("ClimbSubsystem: Starting Up & Initializing Climb Motor !!!!");
 
+        climbCancoder = new CANcoder(ClimbConstants.climbCancoderDeviceId, "canivore1");
+        CANcoderConfiguration cancoderConfig = new CANcoderConfiguration();
+        cancoderConfig.MagnetSensor.MagnetOffset = -0.154296875; //TODO get this value
+        cancoderConfig.MagnetSensor.SensorDirection = ClimbConstants.climbCanConderDirection;
+        climbCancoder.getConfigurator().apply(cancoderConfig);
+
         climbMotor = new TalonFX(ClimbConstants.climbCanId, "canivore1");
         TalonFXConfiguration config = new TalonFXConfiguration();
         climbMotor.getConfigurator().apply(config);
@@ -76,14 +86,20 @@ public class ClimbSubsystem extends SubsystemBase implements ToggleableSubsystem
         mm.MotionMagicJerk = 0;
 
         Slot0Configs slot0 = config.Slot0;
-        slot0.kP = 4.9;
+        slot0.kP = 240;
         slot0.kI = 0;
         slot0.kD = 0.0078125;
-        slot0.kV = 0.009375;
+        slot0.kV = 0.009375; 
         slot0.kS = 0.02; // Approximately 0.25V to get the mechanism moving
 
         FeedbackConfigs fdb = config.Feedback;
+        fdb.FeedbackRemoteSensorID = climbCancoder.getDeviceID();
+        fdb.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+        fdb.RotorToSensorRatio = 800/1; 
         fdb.SensorToMechanismRatio = 1;
+        //for testing
+        config.CurrentLimits.StatorCurrentLimit = 20;
+        config.CurrentLimits.StatorCurrentLimitEnable = true;
 
          // Apply the configs to Motor 
         config.MotorOutput.Inverted = ClimbConstants.climbMotorDirection;
