@@ -153,7 +153,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
 
     public void periodic() {
         if(useVSLAM) {
-            vslamSubsystem.setPose(this.getState().Pose);
+            
             vslamSubsystem.cleanUpSubroutineMessages(); 
         }
 
@@ -270,7 +270,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         System.out.println("Adjusting the position of the robot");
         super.resetPose(position);
         if(useVSLAM) {
-            vslamSubsystem.calculateNewOffset(position);
+            vslamSubsystem.resetToPose(position);
         }
     }
 }

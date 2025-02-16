@@ -3,7 +3,10 @@ package frc.robot.subsystems.vision;
 import java.util.EnumSet;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.DoubleArrayPublisher;
+import edu.wpi.first.networktables.DoubleArrayTopic;
 import edu.wpi.first.networktables.FloatArraySubscriber;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.IntegerSubscriber;
@@ -21,15 +24,16 @@ import static frc.robot.Constants.Vision.*;
 
 
 public class VSLAMSubsystem {
-    private final Field2d vslamField = new Field2d();
+   // private final Field2d vslamField = new Field2d();
     private float yaw_offset = 0.0f;
 
     private NetworkTableInstance networkTableInstance;
     private NetworkTable ntDatatable;
-    private Pose2d startingOffset;
+    
 
     private IntegerSubscriber questMiso;
     private IntegerPublisher questMosi;
+    private DoubleArrayPublisher   resetPosePub;
     //private IntegerSubscriber questFrameCount;
     //private DoubleSubscriber questTimestamp;
     private FloatArraySubscriber questPosition;
@@ -39,11 +43,22 @@ public class VSLAMSubsystem {
 
     private DrivetrainVisionCallback drivetrainCallback;
 
+    private final Field2d oculusPoseField = new Field2d();
+    private final Field2d oculusRawPoseField = new Field2d();
+// Do this in either robot or subsystem init
+
+// Do this in either robot periodic or subsystem periodic
+
+      /**
+   * Transform from the robot center to the headset. Coordinate system: - X: Positive is forwards -
+   * Y: Positive is left - Rotation: Positive is counter-clockwise
+   */
+     public static final Transform2d ROBOT_TO_OCULUS = new Transform2d(0.075, 0.0, new Rotation2d());
+
     
     public VSLAMSubsystem(DrivetrainVisionCallback callback) {
         drivetrainCallback = callback;
         networkTableInstance = NetworkTableInstance.getDefault();
-        startingOffset = new Pose2d();
         configure();
     }
 
@@ -66,6 +81,9 @@ public class VSLAMSubsystem {
         // add a listener to see when new topics are published within datatable
         // the string array is an array of topic name prefixes.
         addDatatableListener();
+
+        SmartDashboard.putData("oculus pose", oculusPoseField);
+        SmartDashboard.putData("oculus Raw pose", oculusRawPoseField);
     }
 
     // Get the yaw Euler angle of the headset
@@ -89,17 +107,8 @@ public class VSLAMSubsystem {
         return new Pose2d(oculousPositionCompensated, Rotation2d.fromDegrees(getYaw()));
     }  
 
-    public void setPose(Pose2d pose) {
-        vslamField.setRobotPose(pose);
-    }
 
-    public void calculateNewOffset(Pose2d position) {
-        Translation2d cameraoffset = position.getTranslation().minus(new Translation2d(.33333,0));
-        startingOffset = new Pose2d(cameraoffset,position.getRotation());
-        if (questMiso.get() != 99) {
-          questMosi.set(1);
-        }
-    }
+
 
     public void zeroHeading() {
         float[] eulerAngles = questEulerAngles.get();
@@ -142,23 +151,21 @@ public class VSLAMSubsystem {
                 double timestamp = timestampedPosition.timestamp;
                 timestamp = timestamp/1000000;
                 Translation2d oculousRawPosition = new Translation2d(-oculusPosition[2], oculusPosition[0]);
-                Translation2d  oculousPositionCompensated = oculousRawPosition.plus(new Translation2d(0.3333* Math.cos(Math.toRadians(getYaw())), 0.333*Math.sin(Math.toRadians(getYaw())))); // TODO GET Numbers since robot is not in the center of the robot
-                oculousPositionCompensated = oculousPositionCompensated.plus(startingOffset.getTranslation());  // translate by the starting position
+                Rotation2d oculousRawRotation = Rotation2d.fromDegrees(getYaw());
+                Pose2d oculusPose = new Pose2d(oculousRawPosition, oculousRawRotation);
+                oculusRawPoseField.setRobotPose(oculusPose);
+                Pose2d estPose = oculusPose.transformBy(ROBOT_TO_OCULUS.inverse());
+                
 
-                Rotation2d oculousRawRotation = Rotation2d.fromDegrees(getYaw()).plus(Rotation2d.fromDegrees(0));  // since camera is on back of robot
-                Rotation2d  oculousCompensatedRotation = oculousRawRotation.plus(startingOffset.getRotation());
-                
-                Pose2d estPose = new Pose2d(oculousPositionCompensated, oculousCompensatedRotation);
-                
                 //System.out.println("addind a vslam");
-                vslamField.getObject("MyRobotVSLAM").setPose(estPose);
+              //  vslamField.getObject("MyRobotVSLAM").setPose(estPose);
                 SmartDashboard.putString("VSLAM pose", String.format("(%.2f, %.2f) %.2f %.2f %.2f",
                         estPose.getTranslation().getX(),
                         estPose.getTranslation().getY(),
                         estPose.getRotation().getDegrees(),
                         timestamp,
                         Timer.getFPGATimestamp()));
-                
+                 oculusPoseField.setRobotPose(estPose);
                 drivetrainCallback.addVisionMeasurement(estPose, timestamp, kVSLAMStdDevs);
             });
     }
@@ -184,5 +191,37 @@ public class VSLAMSubsystem {
         //questQuaternion = ntDatatable.getFloatArrayTopic("quaternion").subscribe(new float[] { 0.0f, 0.0f, 0.0f, 0.0f });
         questEulerAngles = ntDatatable.getFloatArrayTopic("eulerAngles").subscribe(new float[] { 0.0f, 0.0f, 0.0f });
         //questBattery = ntDatatable.getDoubleTopic("batteryLevel").subscribe(0.0f);
+        resetPosePub = ntDatatable.getDoubleArrayTopic("resetpose").publish();
     }
+
+    public boolean resetToPose(Pose2d targetPose) {
+       /*  if (poseResetInProgress) {
+          Logger.recordOutput("Oculus/status", "Cannot reset pose - reset already in progress");
+          return false;
+        }
+    
+        if (inputs.misoValue != STATUS_READY) {
+          Logger.recordOutput(
+              "Oculus/status", "Cannot reset pose - Quest busy (MISO=" + inputs.misoValue + ")");
+          return false;
+        }
+    */
+        targetPose = targetPose.plus(ROBOT_TO_OCULUS);
+      //  pendingResetPose = targetPose;
+        System.out.println(
+            "Oculus/status" +
+            String.format(
+                "Initiating pose reset to X:%.2f Y:%.2f Rot:%.2f°",
+                targetPose.getX(), targetPose.getY(), targetPose.getRotation().getDegrees()));
+    
+        resetPosePub.set(new double[] {targetPose.getX(), targetPose.getY(), targetPose.getRotation().getDegrees()});
+
+
+      //  poseResetInProgress = true;
+      //  resetStartTime = Timer.getTimestamp();
+       // currentResetAttempt = 0;
+        questMosi.set(2); // Request pose reset
+    
+        return true;
+      }
 }

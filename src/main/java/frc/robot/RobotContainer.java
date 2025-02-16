@@ -158,11 +158,10 @@ public class RobotContainer {
     dStart.onTrue(driveSubsystem.runOnce(() -> driveSubsystem.seedFieldCentric()));
 
     dStart.onTrue(new InstantCommand(() -> {
-      driveSubsystem.resetPose(new Pose2d(1.47, 5.51, new Rotation2d(0)));
       Rotation2d operatorPerspective = Robot.isRedAlliance() ? new Rotation2d(Math.toRadians(180))
           : new Rotation2d(Math.toRadians(0));
       Pose2d resetPosition = Robot.isRedAlliance() ? new Pose2d(15.03, 5.51, operatorPerspective)
-          : new Pose2d(1.47, 5.51, operatorPerspective);
+          : new Pose2d(7.168, 5.006, operatorPerspective);
       driveSubsystem.resetPose(resetPosition);
       driveSubsystem.setOperatorPerspectiveForward(operatorPerspective); // Just a Hack
     }));
