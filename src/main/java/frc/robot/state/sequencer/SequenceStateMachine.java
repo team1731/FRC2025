@@ -23,7 +23,6 @@ public class SequenceStateMachine extends StateMachine {
     private Sequence currentSequence;
     private Action currentAction;
     private GamePiece currentGamePiece;
-    private Level updatedLevel;
     private Positions positions;
 
     // reset/abort tracking
@@ -48,6 +47,10 @@ public class SequenceStateMachine extends StateMachine {
         return currentState == SequenceState.HOME;
     }
 
+    public Sequence getCurrentSequence() {
+        return currentSequence;
+    }
+
     public void setSequence(Sequence sequence) {
         currentSequence = sequence;
         currentAction = SequenceManager.getActionSelection();
@@ -59,6 +62,13 @@ public class SequenceStateMachine extends StateMachine {
         // on reset, put it into special state to kick off reset
         // may be in an incomplete state from a previous sequence
         if(sequence == Sequence.RESET) setCurrentState(SequenceState.INIT_RESET);
+    }
+
+    // Called by the SequenceManager if the operator changes the level mid-stream
+    // Note: Can only be used when the new sequence utilizes the same transition table
+    public void overwriteSequenceForLevelChange(Sequence newSequence) {
+        currentSequence = newSequence;
+        positions = SequenceFactory.getPositions(newSequence); // overwrite w/positions for new level
     }
 
 
@@ -78,7 +88,7 @@ public class SequenceStateMachine extends StateMachine {
                 setInput(SequenceInput.RESET_DONE);
             }
         } else {
-            if(input == SequenceInput.RELEASED_PIECE) closeHand();
+            if(input == SequenceInput.RELEASED_PIECE) closeHandWithoutCallback();
             if(input == SequenceInput.DETECTED_PIECE && currentGamePiece == GamePiece.CORAL) returnHandToDefault();
             if(currentSequence == Sequence.SCORE_CORAL_L2 && input == SequenceInput.ARM_DONE && currentState == SequenceState.SCORING) releasePiece();
             setInput(input);
@@ -137,8 +147,13 @@ public class SequenceStateMachine extends StateMachine {
         return true;
     }
 
-    public boolean closeHand() {
+    public boolean closeHandWithoutCallback() {
         handClamperSubsystem.close();
+        return true;
+    }
+
+    public boolean closeHand() {
+        handClamperSubsystem.close(subsystemCallback);
         return true;
     }
 
@@ -179,20 +194,11 @@ public class SequenceStateMachine extends StateMachine {
 
     // Drive the elevator to a new position when the operator overrides it midstream
     public boolean updateElevator() {
-        // Find the new elevator position by using the new level with the current action and game piece
-        Sequence updatedLevelSequence = SequenceFactory.getSequence(updatedLevel, currentGamePiece, currentAction);
-        Positions updatedLevelPositions = SequenceFactory.getPositions(updatedLevelSequence);
-        // Drive to the updated position
-        elevatorSubsystem.moveElevator(updatedLevelPositions.raiseElevatorPosition, subsystemCallback);
-        return true;
+        return raiseElevatorNoThreshold(); // no threshold b/c may have to move up or down, threshold potentially not valid
     }
 
     // Used to return the arm home (and stop intake) before driving the elevator to a new position
     public boolean returnArmForUpdate() {
-        if(currentAction == Action.INTAKE) {
-            handClamperSubsystem.close();
-            handIntakeSubsystem.stop();
-        }
         armSubsystem.moveArm(ArmConstants.armHomePosition, subsystemCallback);
         return true;
     }
@@ -219,7 +225,6 @@ public class SequenceStateMachine extends StateMachine {
         currentSequence = null;
         currentAction = null;
         currentGamePiece = null;
-        updatedLevel = null;
         positions = null;
         isResetting = false;
         elevatorResetDone = false;
