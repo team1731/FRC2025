@@ -101,21 +101,13 @@ public class SequenceStateMachine extends StateMachine {
 
 
     /*
-     * STATE OPERATION METHODS
+     * ELEVATOR OPERATIONAL METHODS
+     * Note: these are general methods shared by multiple sequences, use care when updating and understand what the impact
+     * will be in other sequences. If you need something custom for a specific sequence, spin off a separate method.
      */
 
     public boolean raiseElevator() {
         elevatorSubsystem.moveElevator(positions.raiseElevatorPosition, subsystemCallback, positions.raiseElevatorThreshold);
-        return true;
-    }
-
-    public boolean raiseElevatorNoThreshold() {
-        elevatorSubsystem.moveElevator(positions.raiseElevatorPosition, subsystemCallback);
-        return true;
-    }
-
-    public boolean elevatorSecondStage() {
-        elevatorSubsystem.moveElevator(positions.secondStageElevatorPosition, subsystemCallback);
         return true;
     }
 
@@ -125,20 +117,25 @@ public class SequenceStateMachine extends StateMachine {
         return true;
     }
 
+    // Note: first and second stage elevator raises are used in movements (like reef pickup, which require multi-stage elevator raises)
+    public boolean elevatorFirstStage() {
+        elevatorSubsystem.moveElevator(positions.raiseElevatorPosition, subsystemCallback);
+        return true;
+    }
+
+    public boolean elevatorSecondStage() {
+        elevatorSubsystem.moveElevator(positions.secondStageElevatorPosition, subsystemCallback);
+        return true;
+    }
+
+    /*
+     * ARM OPERATIONAL METHODS
+     * Note: these are general methods shared by multiple sequences, use care when updating and understand what the impact
+     * will be in other sequences. If you need something custom for a specific sequence, spin off a separate method.
+     */
+
     public boolean moveArmForward() {
         armSubsystem.moveArm(positions.armForwardPosition, subsystemCallback);
-       // handIntakeSubsystem.release(HandConstants.scoreAlgaeVelocity, HandConstants.defaultReleaseRuntime, subsystemCallback);
-        return true;
-    }
-
-    public boolean checkIfShouldScore() {
-        // TODO put autonomous handling in here when ready
-        handIntakeSubsystem.watchForScoreDetection(subsystemCallback);
-        return true;
-    }
-
-    public boolean moveArmToScore() {
-        armSubsystem.moveArm(positions.armScoringPosition, subsystemCallback);
         return true;
     }
 
@@ -146,6 +143,12 @@ public class SequenceStateMachine extends StateMachine {
         armSubsystem.moveArm(ArmConstants.armHomePosition, subsystemCallback);
         return true;
     }
+
+    /*
+     * HAND/INTAKE OPERATIONAL METHODS
+     * Note: these are general methods shared by multiple sequences, use care when updating and understand what the impact
+     * will be in other sequences. If you need something custom for a specific sequence, spin off a separate method.
+     */
 
     public boolean closeHandWithoutCallback() {
         handClamperSubsystem.close();
@@ -162,7 +165,7 @@ public class SequenceStateMachine extends StateMachine {
         handIntakeSubsystem.stop();
         return true;
     }
-
+    
     public boolean prepareToIntake() {
         handClamperSubsystem.open(positions.clamperIntakePosition);
         handIntakeSubsystem.intake(HandConstants.intakeVelocity, subsystemCallback);
@@ -175,26 +178,62 @@ public class SequenceStateMachine extends StateMachine {
         return true;
     }
 
-    public boolean holdAndLower() {
-        handClamperSubsystem.moveHand(positions.clamperHoldPosition);
-        elevatorSubsystem.moveElevator(ElevatorConstants.elevatorHomePosition, subsystemCallback);
-        return true;
-    }
-
     public boolean releasePiece() {
         handIntakeSubsystem.stop();
         handIntakeSubsystem.release(HandConstants.intakeVelocity, HandConstants.defaultReleaseRuntime);
         return true;
     }
 
-    public boolean shootToScore() {
+    /*
+     * CORAL-SPECIFIC OPERATIONAL METHODS
+     * Note: these methods are specific to certain parts of sequences and should only be updated when updating 
+     * those specific sequences.
+     */
+
+    public boolean checkIfShouldScoreCoral() {
+        // watch for the reef detection sensor to flip
+        handIntakeSubsystem.watchForScoreDetection(subsystemCallback);
+        return true;
+    }
+
+    public boolean moveArmToScoreCoral() {
+        armSubsystem.moveArm(positions.armScoringPosition, subsystemCallback);
+        return true;
+    }
+
+    /*
+     * ALGAE-SPECIFIC OPERATIONAL METHODS
+     * Note: these methods are specific to certain parts of sequences and should only be updated when updating 
+     * those specific sequences.
+     */
+
+    public boolean shootAlgaeInBarge() {
+        // move arm forward
+        armSubsystem.moveArm(positions.armForwardPosition, subsystemCallback);
+        handIntakeSubsystem.release(HandConstants.scoreAlgaeVelocity, HandConstants.defaultReleaseRuntime);
+        return true;
+    }
+
+    public boolean grabAlgaeAndLower() {
+        handClamperSubsystem.moveHand(positions.clamperHoldPosition);
+        elevatorSubsystem.moveElevator(ElevatorConstants.elevatorHomePosition, subsystemCallback);
+        return true;
+    }
+
+    public boolean handoffAlgae() {
         handIntakeSubsystem.release(HandConstants.scoreAlgaeVelocity, HandConstants.defaultReleaseRuntime, subsystemCallback);
         return true;
     }
 
+    /*
+     * UPDATE LEVEL OPERATIONAL METHODS
+     */
+
     // Drive the elevator to a new position when the operator overrides it midstream
     public boolean updateElevator() {
-        return raiseElevatorNoThreshold(); // no threshold b/c may have to move up or down, threshold potentially not valid
+        // raise with no threshold b/c may have to move up or down, threshold potentially not valid
+        elevatorSubsystem.moveElevator(positions.raiseElevatorPosition, subsystemCallback);
+        return true;
     }
 
     // Used to return the arm home (and stop intake) before driving the elevator to a new position
@@ -202,6 +241,11 @@ public class SequenceStateMachine extends StateMachine {
         armSubsystem.moveArm(ArmConstants.armHomePosition, subsystemCallback);
         return true;
     }
+
+
+    /*
+     * RESET OPERATIONAL METHODS
+     */
 
     public boolean startReset() {
         isResetting = true;
