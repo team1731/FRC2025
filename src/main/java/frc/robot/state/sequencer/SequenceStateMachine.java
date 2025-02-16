@@ -117,7 +117,7 @@ public class SequenceStateMachine extends StateMachine {
 
     public boolean moveArmForward() {
         armSubsystem.moveArm(positions.armForwardPosition, subsystemCallback);
-        handIntakeSubsystem.release(HandConstants.scoreAlgaeVelocity, HandConstants.defaultReleaseRuntime, subsystemCallback);
+       // handIntakeSubsystem.release(HandConstants.scoreAlgaeVelocity, HandConstants.defaultReleaseRuntime, subsystemCallback);
         return true;
     }
 
