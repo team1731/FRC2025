@@ -4,6 +4,7 @@ import frc.robot.state.Input;
 
 public enum SequenceInput implements Input {
     BEGIN,
+    FINISH_INTAKE,
     SCORE,
     RESET_DONE,
     BUTTON_RELEASED,

@@ -78,6 +78,7 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
 
     public void moveElevator(double position, StateMachineCallback callback, double threshold) {
         stateMachineCallback = callback;
+        callbackOnDone = true;
         callbackOnThreshold = true;
         positionThreshold = threshold * ElevatorConstants.gearRatioModifier;
         raisingThreshold = threshold < position;
@@ -162,12 +163,14 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
         if(callbackOnDone && isAtPosition(desiredPosition) && stateMachineCallback != null) {
             // final position reached, notify the state machine
             callbackOnDone = false;
+            System.out.println("Elevator subsystem callback: " + getElevatorPosition());
             stateMachineCallback.setInput(SequenceInput.ELEVATOR_DONE);
         } else if(callbackOnThreshold && stateMachineCallback != null) {
             // check to see if the threshold was met, if so notify the state machine
             boolean thresholdMet = raisingThreshold && getElevatorPosition() >= positionThreshold ||
                 !raisingThreshold && getElevatorPosition() <= positionThreshold;
             if(thresholdMet) {
+                System.out.println("Elevator subsystem threshold callback: " + getElevatorPosition());
                 stateMachineCallback.setInput(SequenceInput.ELEVATOR_THRESHOLD_MET);
                 callbackOnThreshold = false;
                 positionThreshold = 0;
@@ -185,6 +188,7 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
 
     public boolean isAtPosition(double position) {
         double tolerance = 1;
+        System.out.println("Elevator is at position? Pos:" + getElevatorPosition() + " Diff: " +  Math.abs(getElevatorPosition() - position) + " Tol:" + tolerance);
         return Math.abs(getElevatorPosition() - position) < tolerance;
     }
 
