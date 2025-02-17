@@ -16,6 +16,7 @@ public enum SequenceInput implements Input {
     ARM_DONE,
     HAND_DONE,
     DETECTED_PIECE,
+    TIMER_DONE,
     RELEASED_PIECE,
     STOPPED_INTAKE
 }

@@ -6,12 +6,16 @@ import frc.robot.state.sequencer.SequenceState;
 public class CoralFeederPickupTransitions {
     private static final Object transitionTable[][] = {
         // CURRENT                              INPUT                                     OPERATION                    NEXT
-        {SequenceState.HOME,                    SequenceInput.BEGIN,                      "prepareToIntake",           SequenceState.INTAKING},
-        {SequenceState.INTAKING,                SequenceInput.DETECTED_PIECE,             "resetState",                SequenceState.HOME},
+        {SequenceState.HOME,                    SequenceInput.BEGIN,                      "armSecondStage",            SequenceState.MOVING_ARM_BACK},
+        {SequenceState.MOVING_ARM_BACK,         SequenceInput.ARM_DONE,                   "prepareToIntake",           SequenceState.INTAKING},
+        {SequenceState.INTAKING,                SequenceInput.BUTTON_RELEASED,            "coralTimedIntake",          SequenceState.WAITING},
+        {SequenceState.WAITING,                 SequenceInput.DETECTED_PIECE,             "startReset",                SequenceState.FINISHING},
+        {SequenceState.WAITING,                 SequenceInput.TIMER_DONE,                 "startReset",                SequenceState.FINISHING},
+        
+        {SequenceState.FINISHING,               SequenceInput.RESET_DONE,                 "resetState",                SequenceState.HOME},
 
         // Abort sequences
-        {SequenceState.INTAKING,                SequenceInput.BUTTON_RELEASED,            "stopIntaking",              SequenceState.STOPPING_INTAKE},
-        {SequenceState.STOPPING_INTAKE,         SequenceInput.STOPPED_INTAKE,             "resetState",                SequenceState.HOME}
+        {SequenceState.MOVING_ARM_BACK,         SequenceInput.BUTTON_RELEASED,            "startReset",                SequenceState.FINISHING}
     };
     
 

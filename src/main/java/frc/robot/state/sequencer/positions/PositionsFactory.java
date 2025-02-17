@@ -28,7 +28,7 @@ public class PositionsFactory {
 
     public static Positions getCoralUprightFloorPickupPositions() {
         Positions positions = new Positions();
-        positions.armForwardPosition = CORAL_FLOOR_UPRIGHT.armForwardPosition;
+        positions.firstStageArmPosition = CORAL_FLOOR_UPRIGHT.armForwardPosition;
         positions.clamperIntakePosition = CORAL_FLOOR_UPRIGHT.clamperIntakePosition;
         return positions;
     }
@@ -38,8 +38,8 @@ public class PositionsFactory {
         positions.raiseElevatorPosition = CORAL_L1.raiseElevatorPosition;
         positions.raiseElevatorThreshold = CORAL_L1.raiseElevatorThresholdPosition;
         positions.lowerElevatorThreshold = CORAL_L1.lowerElevatorThresholdPosition;
-        positions.armForwardPosition = CORAL_L1.armForwardPosition;
-        positions.armScoringPosition = CORAL_L1.armScorePosition;
+        positions.firstStageArmPosition = CORAL_L1.armForwardPosition;
+        positions.secondStageArmPosition = CORAL_L1.armScorePosition;
         return positions;
     }
 
@@ -48,8 +48,8 @@ public class PositionsFactory {
         positions.raiseElevatorPosition = CORAL_L2.raiseElevatorPosition;
         positions.raiseElevatorThreshold = CORAL_L2.raiseElevatorThresholdPosition;
         positions.lowerElevatorThreshold = CORAL_L2.lowerElevatorThresholdPosition;
-        positions.armForwardPosition = CORAL_L2.armForwardPosition;
-        positions.armScoringPosition = CORAL_L2.armScorePosition;
+        positions.firstStageArmPosition = CORAL_L2.armForwardPosition;
+        positions.secondStageArmPosition = CORAL_L2.armScorePosition;
         return positions;
     }
 
@@ -58,8 +58,8 @@ public class PositionsFactory {
         positions.raiseElevatorPosition = CORAL_L3.raiseElevatorPosition;
         positions.raiseElevatorThreshold = CORAL_L3.raiseElevatorThresholdPosition;
         positions.lowerElevatorThreshold = CORAL_L3.lowerElevatorThresholdPosition;
-        positions.armForwardPosition = CORAL_L3.armForwardPosition;
-        positions.armScoringPosition = CORAL_L3.armScorePosition;
+        positions.firstStageArmPosition = CORAL_L3.armForwardPosition;
+        positions.secondStageArmPosition = CORAL_L3.armScorePosition;
         return positions;
     }
 
@@ -68,8 +68,8 @@ public class PositionsFactory {
         positions.raiseElevatorPosition = CORAL_L4.raiseElevatorPosition;
         positions.raiseElevatorThreshold = CORAL_L4.raiseElevatorThresholdPosition;
         positions.lowerElevatorThreshold = CORAL_L4.lowerElevatorThresholdPosition;
-        positions.armForwardPosition = CORAL_L4.armForwardPosition;
-        positions.armScoringPosition = CORAL_L4.armScorePosition;
+        positions.firstStageArmPosition = CORAL_L4.armForwardPosition;
+        positions.secondStageArmPosition = CORAL_L4.armScorePosition;
         return positions;
     }
 
@@ -100,7 +100,7 @@ public class PositionsFactory {
 
     public static Positions getAlgaeFloorPickupPositions() {
         Positions positions = new Positions();
-        positions.armForwardPosition = ALGAE_FLOOR.armForwardPosition;
+        positions.firstStageArmPosition = ALGAE_FLOOR.armForwardPosition;
         positions.clamperIntakePosition = ALGAE_FLOOR.clamperIntakePosition;
         return positions;
     }
@@ -110,13 +110,13 @@ public class PositionsFactory {
         positions.raiseElevatorPosition = ALGAE_SCORE_BARGE.raiseElevatorPosition;
         positions.raiseElevatorThreshold = ALGAE_SCORE_BARGE.raiseElevatorThresholdPosition;
         positions.lowerElevatorThreshold = ALGAE_SCORE_BARGE.lowerElevatorThresholdPosition;
-        positions.armForwardPosition = ALGAE_SCORE_BARGE.armForwardPosition;
+        positions.firstStageArmPosition = ALGAE_SCORE_BARGE.armForwardPosition;
         return positions;
     }
 
     public static Positions getAlgaeHandoffPositions() {
         Positions positions = new Positions();
-        positions.armForwardPosition = ALGAE_HANDOFF.armForwardPosition;
+        positions.firstStageArmPosition = ALGAE_HANDOFF.armForwardPosition;
         return positions;
     }
 }

@@ -30,6 +30,8 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
     private boolean watchingForScoreDetection = false;
     private double releaseStartedTime = 0;
     private double releaseRunningTime = 0;
+    private double detectionStartedTime = 0;
+    private double detectionRunningTime = 0;
     private boolean enabled;
     
     
@@ -91,6 +93,12 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
         scoreStateMachineCallback = callback;
         stopping = true;
         stop();
+    }
+
+    public void timedPieceDetection(double runningTime, StateMachineCallback callback) {
+        scoreStateMachineCallback = callback;
+        detectionStartedTime = Timer.getFPGATimestamp();
+        detectionRunningTime = runningTime;
     }
 
     public void watchForScoreDetection(StateMachineCallback callback) {
@@ -181,6 +189,26 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
 
         if(intaking && pieceDetectionSwitchFlipped()) {
             intaking = false;
+            if(scoreStateMachineCallback != null) {
+                System.out.println("HandIntakeSubsystem reverse limit switch flipped, should have game piece");
+                scoreStateMachineCallback.setInput(SequenceInput.DETECTED_PIECE);
+                scoreStateMachineCallback = null;
+            }
+        }
+        
+        if(detectionRunningTime != 0 && Timer.getFPGATimestamp() - detectionStartedTime >= detectionRunningTime) {
+            detectionRunningTime = 0;
+            detectionStartedTime = 0;
+            if(scoreStateMachineCallback != null) {
+                System.out.println("Hand intake timer done, no piece detected");
+                scoreStateMachineCallback.setInput(SequenceInput.TIMER_DONE);
+                scoreStateMachineCallback = null;
+            }
+        }
+            
+        if(detectionRunningTime !=0 && pieceDetectionSwitchFlipped()){
+            detectionRunningTime = 0;
+            detectionStartedTime = 0;
             if(scoreStateMachineCallback != null) {
                 System.out.println("HandIntakeSubsystem reverse limit switch flipped, should have game piece");
                 scoreStateMachineCallback.setInput(SequenceInput.DETECTED_PIECE);

@@ -125,20 +125,23 @@ public class SequenceStateMachine extends StateMachine {
         return true;
     }
 
-    public boolean moveArmForward() {
-        armSubsystem.moveArm(positions.armForwardPosition, subsystemCallback);
-       // handIntakeSubsystem.release(HandConstants.scoreAlgaeVelocity, HandConstants.defaultReleaseRuntime, subsystemCallback);
+    public boolean moveArm() {
+        armSubsystem.moveArm(positions.firstStageArmPosition, subsystemCallback);
+        return true;
+    }
+
+    public boolean armSecondStage() {
+        armSubsystem.moveArm(positions.secondStageArmPosition, subsystemCallback);
         return true;
     }
 
     public boolean checkIfShouldScore() {
-        // TODO put autonomous handling in here when ready
         handIntakeSubsystem.watchForScoreDetection(subsystemCallback);
         return true;
     }
 
     public boolean moveArmToScore() {
-        armSubsystem.moveArm(positions.armScoringPosition, subsystemCallback);
+        armSubsystem.moveArm(positions.secondStageArmPosition, subsystemCallback);
         return true;
     }
 
@@ -163,7 +166,15 @@ public class SequenceStateMachine extends StateMachine {
         return true;
     }
 
+    public boolean coralTimedIntake() {
+        armSecondStage();
+        handIntakeSubsystem.timedPieceDetection(2, subsystemCallback);
+        return true;
+    }
+
+
     public boolean prepareToIntake() {
+        //armSubsystem.moveArm(ArmConstants.armHomePosition); //TODO: (SF) is this needed for the arm reset?
         handClamperSubsystem.open(positions.clamperIntakePosition);
         handIntakeSubsystem.intake(HandConstants.intakeVelocity, subsystemCallback);
         return true;

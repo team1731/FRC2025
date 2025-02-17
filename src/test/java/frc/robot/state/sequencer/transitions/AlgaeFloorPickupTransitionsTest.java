@@ -67,7 +67,7 @@ public class AlgaeFloorPickupTransitionsTest {
 
         // transition to moving arm
         stateMachine.setInput(SequenceInput.BEGIN);
-        verify(mockedArmSubsystem).moveArm(positions.armForwardPosition, callback);
+        verify(mockedArmSubsystem).moveArm(positions.firstStageArmPosition, callback);
         assertEquals(SequenceState.MOVING_ARM_FORWARD, stateMachine.getCurrentState());
 
         // transition to intaking algae
@@ -104,7 +104,7 @@ public class AlgaeFloorPickupTransitionsTest {
 
         // transition to moving arm
         stateMachine.setInput(SequenceInput.BEGIN);
-        verify(mockedArmSubsystem).moveArm(positions.armForwardPosition, callback);
+        verify(mockedArmSubsystem).moveArm(positions.firstStageArmPosition, callback);
         assertEquals(SequenceState.MOVING_ARM_FORWARD, stateMachine.getCurrentState());
         
         // kicking off abort by signaling that the button was released

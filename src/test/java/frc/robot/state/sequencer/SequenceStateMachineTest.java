@@ -86,7 +86,7 @@ public class SequenceStateMachineTest {
 
         // transition to move the arm
         callback.setInput(SequenceInput.ELEVATOR_THRESHOLD_MET);
-        verify(mockedArmSubsystem).moveArm(positions.armForwardPosition, callback);
+        verify(mockedArmSubsystem).moveArm(positions.firstStageArmPosition, callback);
         assertEquals(SequenceState.MOVING_ARM_FORWARD, stateMachine.getCurrentState());
 
         // transition to waiting
@@ -135,7 +135,7 @@ public class SequenceStateMachineTest {
 
         // transition to move the arm
         callback.setInput(SequenceInput.ELEVATOR_THRESHOLD_MET);
-        verify(mockedArmSubsystem).moveArm(positions.armForwardPosition, callback);
+        verify(mockedArmSubsystem).moveArm(positions.firstStageArmPosition, callback);
         assertEquals(SequenceState.MOVING_ARM_FORWARD, stateMachine.getCurrentState());
 
         // transition to waiting
@@ -144,7 +144,7 @@ public class SequenceStateMachineTest {
 
         // transition to scoring
         callback.setInput(SequenceInput.BUTTON_RELEASED);
-        verify(mockedArmSubsystem).moveArm(positions.armScoringPosition, callback);
+        verify(mockedArmSubsystem).moveArm(positions.secondStageArmPosition, callback);
         assertEquals(SequenceState.SCORING, stateMachine.getCurrentState());
 
         // transition to lowering

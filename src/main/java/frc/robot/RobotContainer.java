@@ -32,6 +32,7 @@ import frc.robot.state.sequencer.SequenceStateMachine;
 import frc.robot.state.sequencer.SequenceFactory;
 import frc.robot.state.sequencer.SequenceManager;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.climb.ClimbConstants;
 import frc.robot.subsystems.climb.ClimbSubsystem;
@@ -152,7 +153,7 @@ public class RobotContainer {
     xboxController.start().and(xboxController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
     // reset the field-centric heading on left bumper press
-    xboxController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+    xboxController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric())); //TODO (SF) we need to reassign this binding
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
