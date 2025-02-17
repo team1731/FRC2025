@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.state.StateMachineCallback;
 import frc.robot.state.sequencer.SequenceInput;
 import frc.robot.subsystems.ToggleableSubsystem;
+import frc.robot.subsystems.climb.ClimbSubsystem;
 
 
 public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
@@ -29,6 +30,7 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
     private double arbitraryFeedForward = 0;
 
     private StateMachineCallback scoreStateMachineCallback;
+    private ClimbSubsystem climbSubsystem;
 
 
     @Override
@@ -46,6 +48,8 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
     //movement control
     public void moveArm(double position){
         if(!enabled) return;
+
+        if(climbSubsystem.getClimbPosition() > 0.66) return; //TODO: find actual value
 
         // do not go outside boundary thresholds
         if(position > ArmConstants.maxArmPosition) {
