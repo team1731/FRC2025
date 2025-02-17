@@ -157,8 +157,8 @@ public class VSLAMSubsystem {
                 Pose2d estPose = oculusPose.transformBy(ROBOT_TO_OCULUS.inverse());
                 
 
-                //System.out.println("addind a vslam");
-              //  vslamField.getObject("MyRobotVSLAM").setPose(estPose);
+               // System.out.println("addind a vslam");
+               // vslamField.getObject("MyRobotVSLAM").setPose(estPose);
                 SmartDashboard.putString("VSLAM pose", String.format("(%.2f, %.2f) %.2f %.2f %.2f",
                         estPose.getTranslation().getX(),
                         estPose.getTranslation().getY(),
@@ -166,7 +166,7 @@ public class VSLAMSubsystem {
                         timestamp,
                         Timer.getFPGATimestamp()));
                  oculusPoseField.setRobotPose(estPose);
-                drivetrainCallback.addVisionMeasurement(estPose, timestamp, kVSLAMStdDevs);
+             //   drivetrainCallback.addVisionMeasurement(estPose, timestamp, kVSLAMStdDevs);
             });
     }
 

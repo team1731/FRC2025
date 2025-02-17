@@ -133,8 +133,8 @@ public class RobotContainer {
     // and Y is defined as to the left according to WPILib convention.
     drivetrain.setDefaultCommand(
         // Drivetrain will execute this command periodically
-        drivetrain.applyRequest(() -> drive.withVelocityX(-xboxController.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-            .withVelocityY(-xboxController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+        drivetrain.applyRequest(() -> drive.withVelocityX(-xboxController.getLeftY()*xboxController.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+            .withVelocityY(-xboxController.getLeftX()*xboxController.getLeftX()  * MaxSpeed) // Drive left with negative X (left)
             .withRotationalRate(-xboxController.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
         ));
 
@@ -145,22 +145,24 @@ public class RobotContainer {
 
     // Run SysId routines when holding back/start and X/Y.
     // Note that each routine should be run exactly once in a single log.
-    xboxController.back().and(xboxController.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-    xboxController.back().and(xboxController.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-    xboxController.start().and(xboxController.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-    xboxController.start().and(xboxController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+   // xboxController.back().and(xboxController.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+  //  xboxController.back().and(xboxController.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+  //  xboxController.start().and(xboxController.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+    //xboxController.start().and(xboxController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
     // reset the field-centric heading on left bumper press
-    xboxController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+  //  xboxController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-    drivetrain.registerTelemetry(logger::telemeterize);
+    //drivetrain.registerTelemetry(logger::telemeterize);
 
-    dStart.onTrue(driveSubsystem.runOnce(() -> driveSubsystem.seedFieldCentric()));
+  //  dStart.onTrue(driveSubsystem.runOnce(() -> driveSubsystem.seedFieldCentric()));
 
-    dStart.onTrue(new InstantCommand(() -> {
-      Rotation2d operatorPerspective = Robot.isRedAlliance() ? new Rotation2d(Math.toRadians(180))
-          : new Rotation2d(Math.toRadians(0));
-      Pose2d resetPosition = Robot.isRedAlliance() ? new Pose2d(15.03, 5.51, operatorPerspective)
+ 
+  dB.onTrue(new InstantCommand(() -> {
+      System.out.println("resetting position");
+      Rotation2d operatorPerspective = Robot.isRedAlliance() ? new Rotation2d(Math.toRadians(0))
+          : new Rotation2d(Math.toRadians(180));
+      Pose2d resetPosition = Robot.isRedAlliance() ? new Pose2d(7.168, 5.006, operatorPerspective)
           : new Pose2d(7.168, 5.006, operatorPerspective);
       driveSubsystem.resetPose(resetPosition);
       driveSubsystem.setOperatorPerspectiveForward(operatorPerspective); // Just a Hack
