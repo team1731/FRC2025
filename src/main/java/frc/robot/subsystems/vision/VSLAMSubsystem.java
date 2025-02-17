@@ -29,6 +29,7 @@ public class VSLAMSubsystem {
 
     private NetworkTableInstance networkTableInstance;
     private NetworkTable ntDatatable;
+    private Pose2d startingOffset;
     
 
     private IntegerSubscriber questMiso;
@@ -59,6 +60,7 @@ public class VSLAMSubsystem {
     public VSLAMSubsystem(DrivetrainVisionCallback callback) {
         drivetrainCallback = callback;
         networkTableInstance = NetworkTableInstance.getDefault();
+        startingOffset = new Pose2d();
         configure();
     }
 
@@ -107,7 +109,13 @@ public class VSLAMSubsystem {
         return new Pose2d(oculousPositionCompensated, Rotation2d.fromDegrees(getYaw()));
     }  
 
-
+    public void calculateNewOffset(Pose2d position) {
+        Translation2d cameraoffset = position.getTranslation().minus(new Translation2d(.33333,0));
+        startingOffset = new Pose2d(cameraoffset,position.getRotation());
+        if (questMiso.get() != 99) {
+          questMosi.set(1);
+        }
+    }
 
 
     public void zeroHeading() {
@@ -151,11 +159,16 @@ public class VSLAMSubsystem {
                 double timestamp = timestampedPosition.timestamp;
                 timestamp = timestamp/1000000;
                 Translation2d oculousRawPosition = new Translation2d(-oculusPosition[2], oculusPosition[0]);
+                Translation2d oculousPositionCompensated = oculousRawPosition.plus(startingOffset.getTranslation());  // translate by the starting position
+
+
                 Rotation2d oculousRawRotation = Rotation2d.fromDegrees(getYaw());
-                Pose2d oculusPose = new Pose2d(oculousRawPosition, oculousRawRotation);
+                Rotation2d  oculousCompensatedRotation = oculousRawRotation.plus(startingOffset.getRotation());
+                
+                Pose2d oculusPose = new Pose2d(oculousPositionCompensated, oculousCompensatedRotation);
                 oculusRawPoseField.setRobotPose(oculusPose);
                 Pose2d estPose = oculusPose.transformBy(ROBOT_TO_OCULUS.inverse());
-                
+
 
                // System.out.println("addind a vslam");
                // vslamField.getObject("MyRobotVSLAM").setPose(estPose);
@@ -194,7 +207,8 @@ public class VSLAMSubsystem {
         resetPosePub = ntDatatable.getDoubleArrayTopic("resetpose").publish();
     }
 
-    public boolean resetToPose(Pose2d targetPose) {
+
+    public boolean resetToPoseOnQuest(Pose2d targetPose) {
        /*  if (poseResetInProgress) {
           Logger.recordOutput("Oculus/status", "Cannot reset pose - reset already in progress");
           return false;

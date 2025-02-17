@@ -272,7 +272,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         System.out.println("Adjusting the position of the robot");
         super.resetPose(position);
         if(useVSLAM) {
-            vslamSubsystem.resetToPose(position);
+            vslamSubsystem.calculateNewOffset(position);
         }
     }
 }
