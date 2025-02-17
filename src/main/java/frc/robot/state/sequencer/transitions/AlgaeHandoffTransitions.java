@@ -7,7 +7,7 @@ public class AlgaeHandoffTransitions {
     private static final Object transitionTable[][] = {
         // CURRENT                              INPUT                                     OPERATION                    NEXT
         {SequenceState.HOME,                    SequenceInput.BEGIN,                      "moveArmForward",            SequenceState.MOVING_ARM_FORWARD},
-        {SequenceState.MOVING_ARM_FORWARD,      SequenceInput.ARM_DONE,                   "shootToScore",              SequenceState.SCORING},
+        {SequenceState.MOVING_ARM_FORWARD,      SequenceInput.ARM_DONE,                   "handoffAlgae",              SequenceState.SCORING},
         {SequenceState.SCORING,                 SequenceInput.RELEASED_PIECE,             "moveArmHome",               SequenceState.FINISHING},
         {SequenceState.FINISHING,               SequenceInput.ARM_DONE,                   "resetState",                SequenceState.HOME},
 
