@@ -78,8 +78,9 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
 
     public void moveElevator(double position, StateMachineCallback callback, double threshold) {
         stateMachineCallback = callback;
+        callbackOnDone = true;
         callbackOnThreshold = true;
-        positionThreshold = threshold;
+        positionThreshold = threshold * ElevatorConstants.gearRatioModifier;
         raisingThreshold = threshold < position;
         moveElevator(position);
     }
@@ -110,11 +111,11 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
         mm.MotionMagicJerk = 0;
 
         Slot0Configs slot0 = cfg.Slot0;
-        slot0.kG = 0.3;
+        slot0.kG = 0.6;
         slot0.kP = 4.9;
         slot0.kI = 0;
         slot0.kD = 0.0078125;
-        slot0.kV = 0.009375;
+        slot0.kV = .14;
         slot0.kS = 0.02; // Approximately 0.25V to get the mechanism moving
 
         FeedbackConfigs fdb = cfg.Feedback;
@@ -162,12 +163,14 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
         if(callbackOnDone && isAtPosition(desiredPosition) && stateMachineCallback != null) {
             // final position reached, notify the state machine
             callbackOnDone = false;
+            System.out.println("Elevator subsystem callback: " + getElevatorPosition());
             stateMachineCallback.setInput(SequenceInput.ELEVATOR_DONE);
         } else if(callbackOnThreshold && stateMachineCallback != null) {
             // check to see if the threshold was met, if so notify the state machine
             boolean thresholdMet = raisingThreshold && getElevatorPosition() >= positionThreshold ||
                 !raisingThreshold && getElevatorPosition() <= positionThreshold;
             if(thresholdMet) {
+                System.out.println("Elevator subsystem threshold callback: " + getElevatorPosition());
                 stateMachineCallback.setInput(SequenceInput.ELEVATOR_THRESHOLD_MET);
                 callbackOnThreshold = false;
                 positionThreshold = 0;
@@ -185,6 +188,7 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
 
     public boolean isAtPosition(double position) {
         double tolerance = 1;
+        System.out.println("Elevator is at position? Pos:" + getElevatorPosition() + " Diff: " +  Math.abs(getElevatorPosition() - position) + " Tol:" + tolerance);
         return Math.abs(getElevatorPosition() - position) < tolerance;
     }
 

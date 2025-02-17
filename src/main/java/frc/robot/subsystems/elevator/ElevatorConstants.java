@@ -5,7 +5,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 public final class ElevatorConstants {
     public final static int elevatorCanId1 = 21;
     public final static int elevatorCanId2 = 22;
-    public final static double gearRatioModifier = (12/20);
+    public final static double gearRatioModifier = (12.0/20);
 
     // Motor Direction
     public final static InvertedValue elevatorMotor1Direction = InvertedValue.CounterClockwise_Positive;

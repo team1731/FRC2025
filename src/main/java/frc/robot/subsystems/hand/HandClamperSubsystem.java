@@ -85,7 +85,7 @@ public class HandClamperSubsystem extends SubsystemBase implements ToggleableSub
 
         clamperCancoder = new CANcoder(HandConstants.clamperCancoderDeviceId, "rio");
         CANcoderConfiguration cancoderConfigs = new CANcoderConfiguration();
-        cancoderConfigs.MagnetSensor.MagnetOffset = 0.70361328125;
+        cancoderConfigs.MagnetSensor.MagnetOffset = 0.70068359375;
         cancoderConfigs.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.25;
         clamperCancoder.getConfigurator().apply(cancoderConfigs);
 
@@ -101,7 +101,7 @@ public class HandClamperSubsystem extends SubsystemBase implements ToggleableSub
         mm.MotionMagicJerk = 0;
 
         Slot0Configs slot0 = cfg.Slot0;
-        slot0.kP = 60;  
+        slot0.kP = 120;  
         slot0.kI = 0;
         slot0.kD = 0.0078125;
         slot0.kV = 0.009375;
