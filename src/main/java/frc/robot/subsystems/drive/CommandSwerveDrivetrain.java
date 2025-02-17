@@ -39,9 +39,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
     private final SwerveRequest.ApplyRobotSpeeds autoRequest = new SwerveRequest.ApplyRobotSpeeds();
 
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
-    private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
+    private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.k180deg;
     /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
-    private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
+    private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.kZero;
     /* Keep track if we've ever applied the operator perspective before or not */
     private boolean m_hasAppliedOperatorPerspective = false;
 
@@ -49,6 +49,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
     private boolean useVSLAM = true;
     private VSLAMSubsystem vslamSubsystem;
     private DrivetrainVisionCallback visionCallback = (Pose2d pose, double timestamp, Matrix<N3,N1> visionMeasurementStdDevs) -> {
+      //  System.out.println("someone is calling addvision meas");
         this.addVisionMeasurement(pose, timestamp, visionMeasurementStdDevs);
     };
 
@@ -153,7 +154,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
 
     public void periodic() {
         if(useVSLAM) {
-            vslamSubsystem.setPose(this.getState().Pose);
+            
             vslamSubsystem.cleanUpSubroutineMessages(); 
         }
 
@@ -229,10 +230,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
     }
     
     public void configureInitialPosition() {
+        System.out.println("configureing a new position");
         // line below is from questNav
 		Pose2d startingConfiguration = Robot.isRedAlliance()
-        ? new Pose2d(15.07, 5.57, new Rotation2d(Math.toRadians(180)))
-        : new Pose2d(1.47, 5.51, new Rotation2d(0));
+        ? new Pose2d(7.168, 5.006, new Rotation2d(0
+        ))
+        : new Pose2d(7.168, 5.006, new Rotation2d(Math.toRadians(180)));
         // Pose2d startingConfiguration = new Pose2d(1.47,5.51, new Rotation2d (0));
         resetPose(startingConfiguration);
         Rotation2d operatorPerspective = Robot.isRedAlliance() ? new Rotation2d(Math.toRadians(180))

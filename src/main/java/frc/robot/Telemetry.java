@@ -92,6 +92,8 @@ public class Telemetry {
      */
     public void telemeterize(SwerveDriveState state) {
         /* Telemeterize the swerve drive state */
+       // System.out.println("state.Pose"+ state.Pose);
+        
         drivePose.set(state.Pose);
         driveSpeeds.set(state.Speeds);
         driveModuleStates.set(state.ModuleStates);

@@ -261,6 +261,7 @@ public class VisionSubsystem extends SubsystemBase implements ToggleableSubsyste
                                     if (runningTrapPath || operatorOverrideConfidence) {
                                         estStdDevs = kTrapStdDevs;
                                     }
+                                    System.out.println("is it here");
                                     m_driveSubsystem.addVisionMeasurement(est.estimatedPose.toPose2d(),
                                             est.timestampSeconds, estStdDevs);
                                     lastEstTimestampFront = Timer.getFPGATimestamp();
@@ -287,6 +288,7 @@ public class VisionSubsystem extends SubsystemBase implements ToggleableSubsyste
                                         estPose.getTranslation().getY(),
                                         estPose.getRotation().getDegrees()));
                                 if (useVision) {
+                                    System.out.println("or is it here");
                                     m_driveSubsystem.addVisionMeasurement(est.estimatedPose.toPose2d(),
                                             est.timestampSeconds, estStdDevs);
                                     lastEstTimestampBack = Timer.getFPGATimestamp();
