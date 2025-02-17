@@ -13,6 +13,8 @@ import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.math.util.Units;
+//import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -54,9 +56,8 @@ public class VSLAMSubsystem {
    * Transform from the robot center to the headset. Coordinate system: - X: Positive is forwards -
    * Y: Positive is left - Rotation: Positive is counter-clockwise
    */
-     public static final Transform2d ROBOT_TO_OCULUS = new Transform2d(0.075, 0.0, new Rotation2d());
+     public static final Transform2d ROBOT_TO_OCULUS = new Transform2d(Units.inchesToMeters(6.0), Units.inchesToMeters(10), new Rotation2d());
 
-    
     public VSLAMSubsystem(DrivetrainVisionCallback callback) {
         drivetrainCallback = callback;
         networkTableInstance = NetworkTableInstance.getDefault();
@@ -104,14 +105,21 @@ public class VSLAMSubsystem {
         return new Translation2d(oculusPosition[2], -oculusPosition[0]);
     }
     
-    public Pose2d getPose() {
-        var oculousPositionCompensated = getPosition().minus(new Translation2d(0, 0.1651)); // 6.5
-        return new Pose2d(oculousPositionCompensated, Rotation2d.fromDegrees(getYaw()));
-    }  
+   // public Pose2d getPose() {
+   //     var oculousPositionCompensated = getPosition().minus(new Translation2d(0, 0.1651)); // 6.5
+    //    return new Pose2d(oculousPositionCompensated, Rotation2d.fromDegrees(getYaw()));
+   // }  
 
     public void calculateNewOffset(Pose2d position) {
-        Translation2d cameraoffset = position.getTranslation().minus(new Translation2d(.33333,0));
-        startingOffset = new Pose2d(cameraoffset,position.getRotation());
+        System.out.println("in calculateNewOffset");
+        startingOffset = position.transformBy(ROBOT_TO_OCULUS);
+      //  Translation2d cameraoffset = position.getTranslation().minus(new Translation2d(.33333,0));
+       // startingOffset = new Pose2d(cameraoffset,position.getRotation());
+        System.out.println(
+            "Calculate New Offset" +
+            String.format(
+                "Initiating pose reset to X:%.2f Y:%.2f Rot:%.2f°",
+                startingOffset.getX(), startingOffset.getY(), startingOffset.getRotation().getDegrees()));
         if (questMiso.get() != 99) {
           questMosi.set(1);
         }
@@ -166,7 +174,12 @@ public class VSLAMSubsystem {
                 Rotation2d  oculousCompensatedRotation = oculousRawRotation.plus(startingOffset.getRotation());
                 
                 Pose2d oculusPose = new Pose2d(oculousPositionCompensated, oculousCompensatedRotation);
-                oculusRawPoseField.setRobotPose(oculusPose);
+              //  oculusRawPoseField.setRobotPose(startingOffset);
+               // System.out.println(
+                //    "using Offset" +
+                //    String.format(
+                //        "Initiating pose reset to X:%.2f Y:%.2f Rot:%.2f°",
+                //        startingOffset.getX(), startingOffset.getY(), startingOffset.getRotation().getDegrees()));
                 Pose2d estPose = oculusPose.transformBy(ROBOT_TO_OCULUS.inverse());
 
 
@@ -179,7 +192,7 @@ public class VSLAMSubsystem {
                         timestamp,
                         Timer.getFPGATimestamp()));
                  oculusPoseField.setRobotPose(estPose);
-             //   drivetrainCallback.addVisionMeasurement(estPose, timestamp, kVSLAMStdDevs);
+                drivetrainCallback.addVisionMeasurement(estPose, timestamp, kVSLAMStdDevs);
             });
     }
 
@@ -207,7 +220,7 @@ public class VSLAMSubsystem {
         resetPosePub = ntDatatable.getDoubleArrayTopic("resetpose").publish();
     }
 
-
+// This method didn't really work - not sure why so we are storing the offset in the roborio for now
     public boolean resetToPoseOnQuest(Pose2d targetPose) {
        /*  if (poseResetInProgress) {
           Logger.recordOutput("Oculus/status", "Cannot reset pose - reset already in progress");

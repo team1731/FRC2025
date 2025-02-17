@@ -57,7 +57,6 @@ public class RobotContainer {
   private final CommandXboxController xboxController = new CommandXboxController(0);
   private final CommandXboxController xboxOperatorController = new CommandXboxController(1);
 
-  public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
   /* Drive Controls */
   // private final int translationAxis = XboxController.Axis.kLeftY.value;
@@ -165,12 +164,11 @@ public class RobotContainer {
  
   dB.onTrue(new InstantCommand(() -> {
       System.out.println("resetting position");
-      Rotation2d operatorPerspective = Robot.isRedAlliance() ? new Rotation2d(Math.toRadians(0))
-          : new Rotation2d(Math.toRadians(180));
-      Pose2d resetPosition = Robot.isRedAlliance() ? new Pose2d(7.168, 5.006, operatorPerspective)
-          : new Pose2d(7.168, 5.006, operatorPerspective);
+    
+      Pose2d resetPosition = Robot.isRedAlliance() ? new Pose2d(7.168, 5.006, new Rotation2d(Math.toRadians(0)))
+          : new Pose2d(7.168, 5.006, new Rotation2d(Math.toRadians(180)));
       driveSubsystem.resetPose(resetPosition);
-      driveSubsystem.setOperatorPerspectiveForward(operatorPerspective); // Just a Hack
+    //  driveSubsystem.setOperatorPerspectiveForward(operatorPerspective); // Just a Hack
     }));
 
 
