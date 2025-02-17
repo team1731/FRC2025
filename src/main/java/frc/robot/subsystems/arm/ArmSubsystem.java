@@ -49,7 +49,7 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
     public void moveArm(double position){
         if(!enabled) return;
 
-        if(climbSubsystem.getClimbPosition() > 0.66) return; //TODO: find actual value
+        if(climbSubsystem.getClimbPosition() > 0.4) return; //TODO: (SF) check if this is correct
 
         // do not go outside boundary thresholds
         if(position > ArmConstants.maxArmPosition) {

@@ -314,7 +314,6 @@ public class Robot extends TimedRobot {
 
 		(new InstantCommand(() -> climbSubsystem.stowClimb())).schedule();
 
-
 		if (m_autonomousCommand == null) {
 			System.out.println("SOMETHING WENT WRONG - UNABLE TO RUN AUTONOMOUS! CHECK SOFTWARE!");
 		} else {

@@ -181,11 +181,11 @@ public class RobotContainer {
       new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)));
 
     // Climb up
-    dLeftBumper.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.maxClimbPosition))) //TODO set climb interval UP
+    dLeftBumper.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.maxClimbPosition))) 
       .onFalse(new InstantCommand(() -> climbSubsystem.stopClimb()));
 
     // Climb down
-    dRightBumper.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.minClimbPosition))) //TODO set climb interval DOWN
+    dRightBumper.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.minClimbPosition))) 
     .onFalse(new InstantCommand(() -> climbSubsystem.stopClimb()));
 
     // Controls level selection
@@ -206,13 +206,15 @@ public class RobotContainer {
       .onFalse(new InstantCommand(() -> SequenceManager.setGamePieceSelection(GamePiece.CORAL)));
 
     //bring up the climb in ready position
-    opStart.onTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.climbReadyPosition)));
-    
+    opStart.onTrue(new SequentialCommandGroup(
+      new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.climbReadyPosition)),
+      new InstantCommand(() -> armSubsystem.moveArm(ArmConstants.stowArmPosition)) 
+    ));
+
+     //opStart.onTrue(new ResetHandCommand(handClamperSubsystem, handIntakeSubsystem)); //TODO: (SF) can we add this to the SequentialCommandGroup
     
     opBack.whileTrue(new InstantCommand(() -> visionSubsystem.setConfidence(true)))
       .onFalse(new InstantCommand(() -> visionSubsystem.setConfidence(false)));
-
-    //opStart.onTrue(new ResetHandCommand(handClamperSubsystem, handIntakeSubsystem));
 
     driveSubsystem.registerTelemetry(logger::telemeterize);
 

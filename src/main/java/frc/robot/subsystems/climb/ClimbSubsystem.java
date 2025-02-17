@@ -83,7 +83,6 @@ public class ClimbSubsystem extends SubsystemBase implements ToggleableSubsystem
         TalonFXConfiguration config = new TalonFXConfiguration();
         climbMotor.getConfigurator().apply(config);
         
-        //TODO: make climber faster via motion magic?
          /* Configure current limits */
         MotionMagicConfigs mm = config.MotionMagic;
         mm.MotionMagicCruiseVelocity = 70; // 5 rotations per second cruise
