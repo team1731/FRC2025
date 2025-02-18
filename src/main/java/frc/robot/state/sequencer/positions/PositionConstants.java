@@ -112,7 +112,7 @@ public final class PositionConstants {
         }
 
         public static final class ALGAE_HANDOFF {
-            public final static double armForwardPosition = 35;
+            public final static double armForwardPosition = 18;
         }
     }
 }

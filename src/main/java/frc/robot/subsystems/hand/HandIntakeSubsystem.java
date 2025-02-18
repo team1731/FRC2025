@@ -142,7 +142,7 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
         // Add limit switch config
         configs.HardwareLimitSwitch = HWSwitchConfigs;
 
-        configs.CurrentLimits.StatorCurrentLimit = 15;
+        configs.CurrentLimits.StatorCurrentLimit = 20;
         configs.CurrentLimits.StatorCurrentLimitEnable = true;
 
 

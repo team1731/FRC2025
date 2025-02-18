@@ -210,6 +210,7 @@ public class SequenceStateMachine extends StateMachine {
     public boolean shootAlgaeInBarge() {
         // move arm forward
         armSubsystem.moveArm(positions.armForwardPosition, subsystemCallback);
+        handClamperSubsystem.close();
         handIntakeSubsystem.release(HandConstants.scoreAlgaeVelocity, HandConstants.defaultReleaseRuntime);
         return true;
     }
@@ -221,6 +222,7 @@ public class SequenceStateMachine extends StateMachine {
     }
 
     public boolean handoffAlgae() {
+        handClamperSubsystem.close();
         handIntakeSubsystem.release(HandConstants.scoreAlgaeVelocity, HandConstants.defaultReleaseRuntime, subsystemCallback);
         return true;
     }
