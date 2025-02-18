@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 3.964144736842105,
-        "y": 5.218092105263159
+        "x": 4.002631578947368,
+        "y": 5.160361842105263
       },
       "prevControl": {
-        "x": 3.3772203947368418,
-        "y": 5.660690789473684
+        "x": 3.415707236842105,
+        "y": 5.602960526315789
       },
       "nextControl": null,
       "isLocked": false,
@@ -59,7 +59,7 @@
     "rotation": -58.671307132195814
   },
   "reversed": false,
-  "folder": "Blu_1_IJKLA",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
     "rotation": -53.13010235415599

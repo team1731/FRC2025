@@ -16,10 +16,13 @@ public class AutoFactory {
     public static Command getAutonomousCommand(String autoName, boolean redAlliance) {
         HashMap<String, String> autoPaths = AutoLoader.getAutoPaths();
 
+        System.out.println("got here 1");
+
         String alliancePathName = autoName;
         if (!autoName.startsWith("Red_") && !autoName.startsWith("Blu_")) {
         alliancePathName = (redAlliance ? "Red" : "Blu") + "_" + autoName;
         }
+        System.out.println("got here 2");
         // if the named auto (red or blue) exists, use it as-is and do NOT flip the
         // field (red/blue)
         if (autoPaths.keySet().contains(alliancePathName)) {
@@ -36,7 +39,7 @@ public class AutoFactory {
             .println("ERROR: no such auto path name found in src/main/deploy/pathplanner/autos: " + alliancePathName);
         }
         //System.out.println("About to get Auto Path: " + alliancePathName);
-
+System.out.println("got here 2");
         Command command = new PathPlannerAuto(alliancePathName);
         assert command != null : "ERROR: unable to get AUTO path for: " + alliancePathName + ".auto";
         System.out.println("\nAUTO CODE being used by the software --> " + alliancePathName + ", RED/BLUE flipping is "

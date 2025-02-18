@@ -191,7 +191,7 @@ public class Robot extends TimedRobot {
 //   █ ██ ██▄▀▀▄███ ████ ▀▀▀ ███▀ ▀██ ██▄ █▀ ▀███ ██████ █████ ██ ██ ▀▀▀██ ▀▀ ██ ▀▀▀ █ ██ ██ ▀▀ 
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	private void autoInitPreload() {
-		m_autonomousCommand = null;
+		//m_autonomousCommand = null;
 		if(autoChooser == null) return;
 
 		String selectedAutoCode = autoChooser.getSelected();
@@ -200,10 +200,13 @@ public class Robot extends TimedRobot {
 		}
 		
 		if(!selectedAutoCode.equals(autoCode)) {
+			m_autonomousCommand = null;
 			System.out.println("New Auto Code read from dashboard. OLD: " + autoCode + ", NEW: " + selectedAutoCode);
 			System.out.println("\nPreloading AUTO CODE --> " + selectedAutoCode);
 
 			m_autonomousCommand = AutoFactory.getAutonomousCommand(selectedAutoCode, redAlliance);
+
+			System.out.println("AUTONOMOUS COMMAND FDSFLKJDFLKJDSFLKDJFLKSDJFLDKFJLDKFJDLKFJ is"  + m_autonomousCommand);
 			if (m_autonomousCommand != null){
 				autoCode = selectedAutoCode;
 				System.out.println("\n=====>>> PRELOADED AUTONOMOUS COMMAND: " + m_autonomousCommand);

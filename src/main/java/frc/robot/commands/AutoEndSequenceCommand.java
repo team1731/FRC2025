@@ -33,7 +33,9 @@ public class AutoEndSequenceCommand extends Command {
     @Override
     public void initialize() {
         // Just the act of adding the requirements will kill other commands that
-        System.out.println("Ending Sequence Command ");
+        m_scoreStateMachine.setInput(SequenceInput.BUTTON_RELEASED);
+        System.out.println("Setting input to SCORE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1");
+
     }
 
     @Override
