@@ -32,6 +32,7 @@ import frc.robot.state.sequencer.SequenceStateMachine;
 import frc.robot.state.sequencer.SequenceFactory;
 import frc.robot.state.sequencer.SequenceManager;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.climb.ClimbConstants;
 import frc.robot.subsystems.climb.ClimbSubsystem;
@@ -194,9 +195,6 @@ public class RobotContainer {
 
     opB.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L3))) //while pressed set to Level 3
       .onFalse(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L2))); //if not pressed set defualt to Level 2 
-
-    //TODO: is this necessary?
-    opA.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L2))); //while pressed set to Level 2
 
     opX.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L1))) //while pressed set to Level 1
       .onFalse(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L2))); //if not pressed set defualt to Level 2 
