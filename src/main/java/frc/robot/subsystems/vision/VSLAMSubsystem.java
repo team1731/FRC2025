@@ -1,6 +1,9 @@
 package frc.robot.subsystems.vision;
 
 import java.util.EnumSet;
+
+import com.ctre.phoenix6.Utils;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -169,7 +172,7 @@ public class VSLAMSubsystem {
                 Translation2d oculousRawPosition = new Translation2d(-oculusPosition[2], oculusPosition[0]);
                 Translation2d oculousPositionCompensated = oculousRawPosition.plus(startingOffset.getTranslation());  // translate by the starting position
 
-
+                timestamp  = Utils.fpgaToCurrentTime(timestamp);
                 Rotation2d oculousRawRotation = Rotation2d.fromDegrees(getYaw());
                 Rotation2d  oculousCompensatedRotation = oculousRawRotation.plus(startingOffset.getRotation());
                 
