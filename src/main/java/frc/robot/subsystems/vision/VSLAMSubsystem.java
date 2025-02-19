@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoubleArrayTopic;
+import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.FloatArraySubscriber;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.IntegerSubscriber;
@@ -17,6 +18,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotController;
 //import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -35,17 +37,19 @@ public class VSLAMSubsystem {
     private NetworkTableInstance networkTableInstance;
     private NetworkTable ntDatatable;
     private Pose2d startingOffset;
+    private Pose2d resetPoseOculus = new Pose2d();
+    private Pose2d resetPoseRobot = new Pose2d();
     
 
     private IntegerSubscriber questMiso;
     private IntegerPublisher questMosi;
     private DoubleArrayPublisher   resetPosePub;
     //private IntegerSubscriber questFrameCount;
-    //private DoubleSubscriber questTimestamp;
+    private DoubleSubscriber questTimestamp;
     private FloatArraySubscriber questPosition;
     //private FloatArraySubscriber questQuaternion;
     private FloatArraySubscriber questEulerAngles;
-    //private DoubleSubscriber questBattery;
+    private DoubleSubscriber questBattery;
 
     private DrivetrainVisionCallback drivetrainCallback;
 
@@ -59,12 +63,13 @@ public class VSLAMSubsystem {
    * Transform from the robot center to the headset. Coordinate system: - X: Positive is forwards -
    * Y: Positive is left - Rotation: Positive is counter-clockwise
    */
-     public static final Transform2d ROBOT_TO_OCULUS = new Transform2d(Units.inchesToMeters(6.0), Units.inchesToMeters(10), new Rotation2d());
+     public static final Transform2d ROBOT_TO_OCULUS = new Transform2d(Units.inchesToMeters(6.0), Units.inchesToMeters(-10), new Rotation2d());
 
     public VSLAMSubsystem(DrivetrainVisionCallback callback) {
         drivetrainCallback = callback;
         networkTableInstance = NetworkTableInstance.getDefault();
         startingOffset = new Pose2d();
+
         configure();
     }
 
@@ -88,7 +93,7 @@ public class VSLAMSubsystem {
         // the string array is an array of topic name prefixes.
         addDatatableListener();
 
-        SmartDashboard.putData("oculus pose", oculusPoseField);
+        SmartDashboard.putData("oculus final answer pose", oculusPoseField);
         SmartDashboard.putData("oculus Raw pose", oculusRawPoseField);
     }
 
@@ -112,12 +117,13 @@ public class VSLAMSubsystem {
    //     var oculousPositionCompensated = getPosition().minus(new Translation2d(0, 0.1651)); // 6.5
     //    return new Pose2d(oculousPositionCompensated, Rotation2d.fromDegrees(getYaw()));
    // }  
-
+/* 
     public void calculateNewOffset(Pose2d position) {
         System.out.println("in calculateNewOffset");
-        startingOffset = position.transformBy(ROBOT_TO_OCULUS);
+       // startingOffset = position.transformBy(ROBOT_TO_OCULUS);
       //  Translation2d cameraoffset = position.getTranslation().minus(new Translation2d(.33333,0));
        // startingOffset = new Pose2d(cameraoffset,position.getRotation());
+       startingOffset = position;
         System.out.println(
             "Calculate New Offset" +
             String.format(
@@ -127,6 +133,15 @@ public class VSLAMSubsystem {
           questMosi.set(1);
         }
     }
+        */
+
+    public void calculateNewOffset(Pose2d newPose) {
+        resetPoseOculus = new Pose2d().transformBy(ROBOT_TO_OCULUS.inverse());
+        resetPoseRobot = newPose;
+        if (questMiso.get() != 99) {
+            questMosi.set(1);
+          }
+      }
 
 
     public void zeroHeading() {
@@ -169,21 +184,46 @@ public class VSLAMSubsystem {
                 float[] oculusPosition = timestampedPosition.value;
                 double timestamp = timestampedPosition.timestamp;
                 timestamp = timestamp/1000000;
-                Translation2d oculousRawPosition = new Translation2d(-oculusPosition[2], oculusPosition[0]);
-                Translation2d oculousPositionCompensated = oculousRawPosition.plus(startingOffset.getTranslation());  // translate by the starting position
-
-                timestamp  = Utils.fpgaToCurrentTime(timestamp);
                 Rotation2d oculousRawRotation = Rotation2d.fromDegrees(getYaw());
-                Rotation2d  oculousCompensatedRotation = oculousRawRotation.plus(startingOffset.getRotation());
+                Translation2d oculousRawPosition = new Translation2d(oculusPosition[2], -oculusPosition[0]);
+                Pose2d oculousRawPose = new Pose2d(oculousRawPosition,oculousRawRotation);
+
+              //  Pose2d oculusrobotmove = oculousRawPose.transformBy(ROBOT_TO_OCULUS.inverse());
+              //  oculusRawPoseField.setRobotPose(oculusrobotmove);
+
+              //  var positionrelativetoreset = oculousRawPose.minus(resetPoseOculus);
+               // var estPose = resetPoseRobot.plus(positionrelativetoreset);
+                //var estPose = resetPoseRobot.transformBy(oculousRawPose);
                 
-                Pose2d oculusPose = new Pose2d(oculousPositionCompensated, oculousCompensatedRotation);
+
+              //  Pose2d robotRawPose = oculousRawPose.plus(ROBOT_TO_OCULUS.getTranslation()).plus(ROBOT_TO_OCULUS.getTranslation().times(-1).rotateBy(oculousRawRotation ));
+
+
+
+                var poseRelativeToReset = oculousRawPose.minus(resetPoseOculus);
+                var estPose = resetPoseRobot.transformBy(poseRelativeToReset);
+
+                estPose = estPose.transformBy(ROBOT_TO_OCULUS.inverse());
+
+
+
+                SmartDashboard.putNumber("timestamp from nt",timestamp);
+                SmartDashboard.putNumber("timestamp current from FPGA)",Timer.getFPGATimestamp());
+                timestamp  = Utils.fpgaToCurrentTime(timestamp);
+                SmartDashboard.putNumber("converted timestamp from FPGA)",timestamp);
+                SmartDashboard.putNumber("timestamp from oculus",questTimestamp.getAsDouble());
+
+                
+              //  Rotation2d  oculousCompensatedRotation = oculousRawRotation.plus(startingOffset.getRotation());
+                
+              //  Pose2d oculusPose = new Pose2d(oculousPositionCompensated, oculousCompensatedRotation);
               //  oculusRawPoseField.setRobotPose(startingOffset);
                // System.out.println(
                 //    "using Offset" +
                 //    String.format(
                 //        "Initiating pose reset to X:%.2f Y:%.2f Rot:%.2f°",
                 //        startingOffset.getX(), startingOffset.getY(), startingOffset.getRotation().getDegrees()));
-                Pose2d estPose = oculusPose.transformBy(ROBOT_TO_OCULUS.inverse());
+               
 
 
                // System.out.println("addind a vslam");
@@ -195,7 +235,7 @@ public class VSLAMSubsystem {
                         timestamp,
                         Timer.getFPGATimestamp()));
                  oculusPoseField.setRobotPose(estPose);
-                drivetrainCallback.addVisionMeasurement(estPose, timestamp, kVSLAMStdDevs);
+              //  drivetrainCallback.addVisionMeasurement(estPose, timestamp, kVSLAMStdDevs);
             });
     }
 
@@ -215,11 +255,11 @@ public class VSLAMSubsystem {
         questMiso = ntDatatable.getIntegerTopic("miso").subscribe(0);
         questMosi = ntDatatable.getIntegerTopic("mosi").publish();
         //questFrameCount = ntDatatable.getIntegerTopic("frameCount").subscribe(0);
-        //questTimestamp = ntDatatable.getDoubleTopic("timestamp").subscribe(0.0f);
+        questTimestamp = ntDatatable.getDoubleTopic("timestamp").subscribe(0.0f);
         questPosition = ntDatatable.getFloatArrayTopic("position").subscribe(new float[] { 0.0f, 0.0f, 0.0f });
         //questQuaternion = ntDatatable.getFloatArrayTopic("quaternion").subscribe(new float[] { 0.0f, 0.0f, 0.0f, 0.0f });
         questEulerAngles = ntDatatable.getFloatArrayTopic("eulerAngles").subscribe(new float[] { 0.0f, 0.0f, 0.0f });
-        //questBattery = ntDatatable.getDoubleTopic("batteryLevel").subscribe(0.0f);
+        questBattery = ntDatatable.getDoubleTopic("batteryLevel").subscribe(0.0f);
         resetPosePub = ntDatatable.getDoubleArrayTopic("resetpose").publish();
     }
 
@@ -254,4 +294,12 @@ public class VSLAMSubsystem {
     
         return true;
       }
+        /**
+   * Returns if the Quest is connected
+   * 
+   * @return true if the Quest is connected
+   */
+  public boolean isConnected() {
+    return ((RobotController.getFPGATime() - questBattery.getLastChange()) / 1000) < 250;
+  }
 }
