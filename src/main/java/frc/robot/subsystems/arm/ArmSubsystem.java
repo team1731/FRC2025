@@ -5,7 +5,7 @@ import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -15,13 +15,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.state.StateMachineCallback;
 import frc.robot.state.sequencer.SequenceInput;
 import frc.robot.subsystems.ToggleableSubsystem;
+import frc.robot.subsystems.elevator.ElevatorConstants;
 
 
 public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
     
     
     private TalonFX armMotor;
-    private MotionMagicVoltage mmReq = new MotionMagicVoltage(0);
+    private DynamicMotionMagicVoltage mmReq = new DynamicMotionMagicVoltage(
+        0, ArmConstants.normalArmVelocity, ArmConstants.normalArmAcceleration, ArmConstants.armJerk);
     private final NeutralOut brake = new NeutralOut();
 
     private double desiredPosition;
@@ -44,7 +46,7 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
     }
 
     //movement control
-    public void moveArm(double position){
+    private void moveArm(double position){
         if(!enabled) return;
 
         // do not go outside boundary thresholds
@@ -59,9 +61,26 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
         armMotor.setControl(mmReq.withPosition(desiredPosition).withFeedForward(arbitraryFeedForward));
     }
 
-    public void moveArm(double position, StateMachineCallback callback){
-        scoreStateMachineCallback = callback;
+    public void moveArmNormalSpeed(double position) {
+        mmReq.Velocity = ElevatorConstants.normalElevatorVelocity;
+        mmReq.Acceleration = ElevatorConstants.normalElevatorAcceleration;
         moveArm(position);
+    }
+
+    public void moveArmSlowSpeed(double position) {
+        mmReq.Velocity = ElevatorConstants.slowedElevatorVelocity;
+        mmReq.Acceleration = ElevatorConstants.slowedElevatorAcceleration;
+        moveArm(position);
+    }
+
+    public void moveArmNormalSpeed(double position, StateMachineCallback callback){
+        scoreStateMachineCallback = callback;
+        moveArmNormalSpeed(position);
+    }
+
+    public void moveArmSlowSpeed(double position, StateMachineCallback callback){
+        scoreStateMachineCallback = callback;
+        moveArmSlowSpeed(position);
     }
 
     public void stopArm() {
@@ -82,10 +101,10 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
         //TODO: setup and apply current limits to config
         /* Configure current limits */
         MotionMagicConfigs mm = config.MotionMagic;
-        mm.MotionMagicCruiseVelocity = 70; // 5 rotations per second cruise
-        mm.MotionMagicAcceleration = 250; // Ta200ke approximately 0.5 seconds to reach max vel
+        mm.MotionMagicCruiseVelocity = ArmConstants.normalArmVelocity; // 5 rotations per second cruise
+        mm.MotionMagicAcceleration = ArmConstants.normalArmAcceleration; // Ta200ke approximately 0.5 seconds to reach max vel
         // Take approximately 0.2 seconds to reach max accel
-        mm.MotionMagicJerk = 0;
+        mm.MotionMagicJerk = ArmConstants.armJerk;
 
         Slot0Configs slot0 = config.Slot0;
         slot0.kP = 4.9;
