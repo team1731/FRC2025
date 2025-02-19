@@ -107,24 +107,24 @@ public class SequenceStateMachine extends StateMachine {
      */
 
     public boolean raiseElevator() {
-        elevatorSubsystem.moveElevator(positions.raiseElevatorPosition, subsystemCallback, positions.raiseElevatorThreshold);
+        elevatorSubsystem.moveElevatorNormalSpeed(positions.raiseElevatorPosition, subsystemCallback, positions.raiseElevatorThreshold);
         return true;
     }
 
     public boolean moveElevatorHome() {
         isResetting = true;
-        elevatorSubsystem.moveElevator(ElevatorConstants.elevatorHomePosition, subsystemCallback, positions.lowerElevatorThreshold);
+        elevatorSubsystem.moveElevatorNormalSpeed(ElevatorConstants.elevatorHomePosition, subsystemCallback, positions.lowerElevatorThreshold);
         return true;
     }
 
     // Note: first and second stage elevator raises are used in movements (like reef pickup, which require multi-stage elevator raises)
     public boolean elevatorFirstStage() {
-        elevatorSubsystem.moveElevator(positions.raiseElevatorPosition, subsystemCallback);
+        elevatorSubsystem.moveElevatorNormalSpeed(positions.raiseElevatorPosition, subsystemCallback);
         return true;
     }
 
     public boolean elevatorSecondStage() {
-        elevatorSubsystem.moveElevator(positions.secondStageElevatorPosition, subsystemCallback);
+        elevatorSubsystem.moveElevatorNormalSpeed(positions.secondStageElevatorPosition, subsystemCallback);
         return true;
     }
 
@@ -135,12 +135,17 @@ public class SequenceStateMachine extends StateMachine {
      */
 
     public boolean moveArmForward() {
-        armSubsystem.moveArm(positions.armForwardPosition, subsystemCallback);
+        armSubsystem.moveArmNormalSpeed(positions.armForwardPosition, subsystemCallback);
+        return true;
+    }
+
+    public boolean moveArmForwardSlowly() {
+        armSubsystem.moveArmSlowSpeed(positions.armForwardPosition, subsystemCallback);
         return true;
     }
 
     public boolean moveArmHome() {
-        armSubsystem.moveArm(ArmConstants.armHomePosition, subsystemCallback);
+        armSubsystem.moveArmNormalSpeed(ArmConstants.armHomePosition, subsystemCallback);
         return true;
     }
 
@@ -197,7 +202,7 @@ public class SequenceStateMachine extends StateMachine {
     }
 
     public boolean moveArmToScoreCoral() {
-        armSubsystem.moveArm(positions.armScoringPosition, subsystemCallback);
+        armSubsystem.moveArmNormalSpeed(positions.armScoringPosition, subsystemCallback);
         return true;
     }
 
@@ -209,7 +214,7 @@ public class SequenceStateMachine extends StateMachine {
 
     public boolean shootAlgaeInBarge() {
         // move arm forward
-        armSubsystem.moveArm(positions.armForwardPosition, subsystemCallback);
+        armSubsystem.moveArmNormalSpeed(positions.armForwardPosition, subsystemCallback);
         handClamperSubsystem.close();
         handIntakeSubsystem.release(HandConstants.scoreAlgaeVelocity, HandConstants.defaultReleaseRuntime);
         return true;
@@ -217,7 +222,7 @@ public class SequenceStateMachine extends StateMachine {
 
     public boolean grabAlgaeAndLower() {
         handClamperSubsystem.moveHand(positions.clamperHoldPosition);
-        elevatorSubsystem.moveElevator(ElevatorConstants.elevatorHomePosition, subsystemCallback);
+        elevatorSubsystem.moveElevatorSlowSpeed(ElevatorConstants.elevatorHomePosition, subsystemCallback);
         return true;
     }
 
@@ -234,13 +239,13 @@ public class SequenceStateMachine extends StateMachine {
     // Drive the elevator to a new position when the operator overrides it midstream
     public boolean updateElevator() {
         // raise with no threshold b/c may have to move up or down, threshold potentially not valid
-        elevatorSubsystem.moveElevator(positions.raiseElevatorPosition, subsystemCallback);
+        elevatorSubsystem.moveElevatorNormalSpeed(positions.raiseElevatorPosition, subsystemCallback);
         return true;
     }
 
     // Used to return the arm home (and stop intake) before driving the elevator to a new position
     public boolean returnArmForUpdate() {
-        armSubsystem.moveArm(ArmConstants.armHomePosition, subsystemCallback);
+        armSubsystem.moveArmNormalSpeed(ArmConstants.armHomePosition, subsystemCallback);
         return true;
     }
 
@@ -255,8 +260,8 @@ public class SequenceStateMachine extends StateMachine {
         armSubsystem.stopArm();
         elevatorSubsystem.stopElevator();
         // move back home
-        armSubsystem.moveArm(ArmConstants.armHomePosition, subsystemCallback);
-        elevatorSubsystem.moveElevator(ElevatorConstants.elevatorHomePosition, subsystemCallback);
+        armSubsystem.moveArmNormalSpeed(ArmConstants.armHomePosition, subsystemCallback);
+        elevatorSubsystem.moveElevatorNormalSpeed(ElevatorConstants.elevatorHomePosition, subsystemCallback);
         return true;
     }
 
