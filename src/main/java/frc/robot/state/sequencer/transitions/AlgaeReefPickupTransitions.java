@@ -6,7 +6,7 @@ import frc.robot.state.sequencer.SequenceState;
 public class AlgaeReefPickupTransitions {
     private static final Object transitionTable[][] = {
         // CURRENT                              INPUT                                     OPERATION                    NEXT
-        {SequenceState.HOME,                    SequenceInput.BEGIN,                      "elevatorFirstStage",        SequenceState.RAISING_ELEVATOR},
+        {SequenceState.HOME,                    SequenceInput.BEGIN,                      "pickupReefAlgae",           SequenceState.RAISING_ELEVATOR},
         {SequenceState.RAISING_ELEVATOR,        SequenceInput.ELEVATOR_DONE,              "prepareToIntake",           SequenceState.INTAKING},
         {SequenceState.INTAKING,                SequenceInput.BUTTON_RELEASED,            "elevatorSecondStage",       SequenceState.MOVING_TO_2ND_STAGE},
         {SequenceState.INTAKING,                SequenceInput.FINISH_INTAKE,              "elevatorSecondStage",       SequenceState.MOVING_TO_2ND_STAGE},

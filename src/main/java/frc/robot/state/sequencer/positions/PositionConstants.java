@@ -77,8 +77,8 @@ public final class PositionConstants {
     public static final class ALGAE_INTAKE {
         public static final class ALGAE_REEF_L2 {
             // position definitions
-            public final static double raiseElevatorPosition = 7;
-            public final static double secondStageElevatorPosition = 17;
+            public final static double raiseElevatorPosition = 14;
+            public final static double secondStageElevatorPosition = 21;
             public final static double clamperIntakePosition = reefIntakeWidth;
             public final static double clamperHoldPosition = algaeIntakeWidth;
         }
@@ -91,7 +91,7 @@ public final class PositionConstants {
         }
 
         public static final class ALGAE_FLOOR {
-            public final static double armForwardPosition = 35;
+            public final static double armForwardPosition = 22;
             public final static double clamperIntakePosition = algaeIntakeWidth;
         }
     }
@@ -112,7 +112,7 @@ public final class PositionConstants {
         }
 
         public static final class ALGAE_HANDOFF {
-            public final static double armForwardPosition = 18;
+            public final static double armForwardPosition = 15;
         }
     }
 }

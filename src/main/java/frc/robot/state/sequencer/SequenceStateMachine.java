@@ -173,7 +173,7 @@ public class SequenceStateMachine extends StateMachine {
     
     public boolean prepareToIntake() {
         handClamperSubsystem.open(positions.clamperIntakePosition);
-        handIntakeSubsystem.intake(HandConstants.intakeVelocity, subsystemCallback);
+        handIntakeSubsystem.intake((2000/60), subsystemCallback);
         return true;
     }
 
@@ -217,6 +217,11 @@ public class SequenceStateMachine extends StateMachine {
         armSubsystem.moveArmNormalSpeed(positions.armForwardPosition, subsystemCallback);
         handClamperSubsystem.close();
         handIntakeSubsystem.release(HandConstants.scoreAlgaeVelocity, HandConstants.defaultReleaseRuntime);
+        return true;
+    }
+
+    public boolean pickupReefAlgae() {
+        elevatorSubsystem.moveElevatorSlowSpeed(positions.raiseElevatorPosition, subsystemCallback);
         return true;
     }
 

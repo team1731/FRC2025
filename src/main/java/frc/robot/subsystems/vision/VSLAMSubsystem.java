@@ -192,7 +192,7 @@ public class VSLAMSubsystem {
                         timestamp,
                         Timer.getFPGATimestamp()));
                  oculusPoseField.setRobotPose(estPose);
-                drivetrainCallback.addVisionMeasurement(estPose, timestamp, kVSLAMStdDevs);
+                //drivetrainCallback.addVisionMeasurement(estPose, timestamp, kVSLAMStdDevs);
             });
     }
 

@@ -24,5 +24,5 @@ public final class ArmConstants {
     // Positions
     public final static double armHomePosition = 0;
     public final static double minArmPosition = 0;
-    public final static double maxArmPosition = 20;
+    public final static double maxArmPosition = 22;
 }
