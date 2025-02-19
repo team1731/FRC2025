@@ -62,6 +62,11 @@ public class ClimbSubsystem extends SubsystemBase implements ToggleableSubsystem
         climbMotor.setControl(brake);
     }
 
+    public void stowClimb(){
+        if(!enabled) return;
+        moveClimb(ClimbConstants.climbStowedPosition);
+    }
+
     public void initializeClimbMotor(){
         if (!enabled) return;
         
@@ -69,15 +74,15 @@ public class ClimbSubsystem extends SubsystemBase implements ToggleableSubsystem
 
         climbCancoder = new CANcoder(ClimbConstants.climbCancoderDeviceId, "canivore1");
         CANcoderConfiguration cancoderConfig = new CANcoderConfiguration();
-        cancoderConfig.MagnetSensor.MagnetOffset = -0.154296875; //TODO get this value
+        cancoderConfig.MagnetSensor.MagnetOffset = -0.179931640625; 
         cancoderConfig.MagnetSensor.SensorDirection = ClimbConstants.climbCanConderDirection;
+        cancoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.900146484375;
         climbCancoder.getConfigurator().apply(cancoderConfig);
 
         climbMotor = new TalonFX(ClimbConstants.climbCanId, "canivore1");
         TalonFXConfiguration config = new TalonFXConfiguration();
         climbMotor.getConfigurator().apply(config);
         
-        //TODO: apply correct current limits for climb motor
          /* Configure current limits */
         MotionMagicConfigs mm = config.MotionMagic;
         mm.MotionMagicCruiseVelocity = 70; // 5 rotations per second cruise
