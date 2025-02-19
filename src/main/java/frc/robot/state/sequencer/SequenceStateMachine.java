@@ -173,7 +173,10 @@ public class SequenceStateMachine extends StateMachine {
     
     public boolean prepareToIntake() {
         handClamperSubsystem.open(positions.clamperIntakePosition);
-        handIntakeSubsystem.intake(HandConstants.intakeVelocity, subsystemCallback);
+        handIntakeSubsystem.intake(
+            currentGamePiece == GamePiece.CORAL? HandConstants.intakeCoralVelocity : HandConstants.intakeAlgaeVelocity, 
+            subsystemCallback
+        );
         return true;
     }
 
@@ -185,7 +188,7 @@ public class SequenceStateMachine extends StateMachine {
 
     public boolean releasePiece() {
         handIntakeSubsystem.stop();
-        handIntakeSubsystem.release(HandConstants.intakeVelocity, HandConstants.defaultReleaseRuntime);
+        handIntakeSubsystem.release(HandConstants.releaseVelocity, HandConstants.defaultReleaseRuntime);
         return true;
     }
 
@@ -216,7 +219,12 @@ public class SequenceStateMachine extends StateMachine {
         // move arm forward
         armSubsystem.moveArmNormalSpeed(positions.armForwardPosition, subsystemCallback);
         handClamperSubsystem.close();
-        handIntakeSubsystem.release(HandConstants.scoreAlgaeVelocity, HandConstants.defaultReleaseRuntime);
+        handIntakeSubsystem.release(HandConstants.releaseVelocity, HandConstants.defaultReleaseRuntime);
+        return true;
+    }
+
+    public boolean pickupReefAlgae() {
+        elevatorSubsystem.moveElevatorSlowSpeed(positions.raiseElevatorPosition, subsystemCallback);
         return true;
     }
 
@@ -228,7 +236,7 @@ public class SequenceStateMachine extends StateMachine {
 
     public boolean handoffAlgae() {
         handClamperSubsystem.close();
-        handIntakeSubsystem.release(HandConstants.scoreAlgaeVelocity, HandConstants.defaultReleaseRuntime, subsystemCallback);
+        handIntakeSubsystem.release(HandConstants.releaseVelocity, HandConstants.defaultReleaseRuntime, subsystemCallback);
         return true;
     }
 
