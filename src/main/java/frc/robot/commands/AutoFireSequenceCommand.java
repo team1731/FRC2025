@@ -10,21 +10,21 @@ import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
 
-public class RunSequenceCommand extends Command {
+/*
+ * This command is a fire-and-foreget variant on the RunSequenceCommand intended for autonomous
+ * It fires off the state machine but doesn't wait for it to finish.
+ */
+
+public class AutoFireSequenceCommand extends Command {
     SequenceStateMachine m_scoreStateMachine;
     ElevatorSubsystem m_elevatorSubsystem;
     ArmSubsystem m_armSubsystem;
     HandClamperSubsystem m_clamperSubsystem;
     HandIntakeSubsystem m_intakeSubsystem;
     boolean m_sequenceStarted = false;
-    boolean m_sequenceDone = false;
+    boolean m_commandDone = false;
 
-    private CommandCallback stateMachineCallback = () -> {
-        System.out.println("RunSequenceCommand: Sequence notified that it is complete");
-        m_sequenceDone = true;
-    };
-
-    public RunSequenceCommand(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem clamperSubsystem, HandIntakeSubsystem intakeSubsystem) {
+    public AutoFireSequenceCommand(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem clamperSubsystem, HandIntakeSubsystem intakeSubsystem) {
         m_scoreStateMachine = SequenceManager.getStateMachine(elevatorSubsystem, armSubsystem, clamperSubsystem, intakeSubsystem);
         m_elevatorSubsystem = elevatorSubsystem;
         m_armSubsystem = armSubsystem;
@@ -34,32 +34,28 @@ public class RunSequenceCommand extends Command {
     }
 
     public void runStateMachine() {
-        System.out.println("RunSequenceCommand: running sequence state machine");
+        System.out.println("AutoFireSequenceCommand: running sequence state machine");
         m_sequenceStarted = true;
-        m_scoreStateMachine.setCallback(stateMachineCallback);
         Sequence sequence = SequenceManager.getSequence();
         if(sequence == null) {
-            System.out.println("RunSequenceCommand: Sequence not found for the combination of " + 
-                SequenceManager.getGamePieceSelection() + " " + 
-                SequenceManager.getLevelSelection() + " " + 
-                SequenceManager.getActionSelection() + " " + 
-                "- Exiting command");
-            m_sequenceDone = true;
+            System.out.println("FireSequenceCommand: ERROR - SEQUENCE NOT FOUND - check auto command configuration, exiting command");
+            m_commandDone = true;
             return;
         }
 
-        System.out.println("RunSequenceCommand: Sequence chosen " + sequence + " " + 
-            SequenceManager.getGamePieceSelection() + " " + 
-            SequenceManager.getLevelSelection() + " " + 
-            SequenceManager.getActionSelection());
+        System.out.println("AutoFireSequenceCommand: Sequence chosen " + sequence);
         m_scoreStateMachine.setSequence(sequence);
         m_scoreStateMachine.setInput(SequenceInput.BEGIN);
+
+        // This command is fire and forget, so we are done
+        System.out.println("AutoFireSequenceCommand: fired off state machine, telling command to exit");
+        m_commandDone = true;
     }
 
     @Override
     public void initialize() {
         m_sequenceStarted = false;
-        m_sequenceDone = false;
+        m_commandDone = false;
         if(m_scoreStateMachine.isReady()) {
             runStateMachine();
         }
@@ -74,16 +70,14 @@ public class RunSequenceCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        if(!m_sequenceDone) {
-            System.out.println("RunSequenceCommand: command interrupted");
-            m_scoreStateMachine.setInput(SequenceInput.BUTTON_RELEASED);
-            m_scoreStateMachine.setCallback(null); // command ending, nothing to callback to
-            m_sequenceDone = true;
+        if(!m_commandDone) {
+            System.out.println("AutoFireSequenceCommand: command interrupted");
+            m_commandDone = true;
         }
     }
 
     @Override
     public boolean isFinished() {
-        return m_sequenceDone;
+        return m_commandDone;
     }
 }

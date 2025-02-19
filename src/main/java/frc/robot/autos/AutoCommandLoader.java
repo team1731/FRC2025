@@ -2,10 +2,12 @@ package frc.robot.autos;
 
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.AutoFireResetSequenceCommand;
+import frc.robot.commands.AutoFireSequenceCommand;
 import frc.robot.commands.ResetSequenceCommand;
-import frc.robot.commands.RunSequenceCommand;
 import frc.robot.state.sequencer.Action;
 import frc.robot.state.sequencer.GamePiece;
 import frc.robot.state.sequencer.Level;
@@ -37,6 +39,7 @@ public class AutoCommandLoader {
 
     public void registerAutoEventCommands() {
         NamedCommands.registerCommand("CoralFeederIntake", getCoralFeederIntakeCommand());
+        NamedCommands.registerCommand("FinishCoralFeederIntake", getFinishCoralFeederIntakeCommand());
         NamedCommands.registerCommand("CoralL4Score", getCoralL4ScoreCommand());
         NamedCommands.registerCommand("FinishCoralScore", new InstantCommand(() -> sequenceStateMachine.setInput(SequenceInput.SCORE)));
         NamedCommands.registerCommand("AlgaeReefL2Intake", getAlgaeReefIntakeCommand(Level.L2));
@@ -51,8 +54,13 @@ public class AutoCommandLoader {
             new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L2)),
             new InstantCommand(() -> SequenceManager.setActionSelection(Action.INTAKE)),
             new ResetSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem),
-            new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)
+            new AutoFireSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)
         );
+    }
+
+    public Command getFinishCoralFeederIntakeCommand() {
+        // Here we will use auto reset, b/c we want it to fire and forget
+        return new AutoFireResetSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem);
     }
 
     public SequentialCommandGroup getCoralL4ScoreCommand() {
@@ -60,7 +68,7 @@ public class AutoCommandLoader {
             new InstantCommand(() -> SequenceManager.setGamePieceSelection(GamePiece.CORAL)),
             new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L4)),
             new InstantCommand(() -> SequenceManager.setActionSelection(Action.SCORE)),
-            new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)
+            new AutoFireSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)
         );
     }
 
@@ -70,7 +78,7 @@ public class AutoCommandLoader {
             new InstantCommand(() -> SequenceManager.setLevelSelection(level)),
             new InstantCommand(() -> SequenceManager.setActionSelection(Action.INTAKE)),
             new ResetSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem),
-            new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)
+            new AutoFireSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)
         );
     }
 
@@ -79,7 +87,7 @@ public class AutoCommandLoader {
             new InstantCommand(() -> SequenceManager.setGamePieceSelection(GamePiece.ALGAE)),
             new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L4)),
             new InstantCommand(() -> SequenceManager.setActionSelection(Action.SCORE)),
-            new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)
+            new AutoFireSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)
         );
     }
 }
