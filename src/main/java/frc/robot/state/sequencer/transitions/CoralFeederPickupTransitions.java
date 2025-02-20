@@ -6,12 +6,11 @@ import frc.robot.state.sequencer.SequenceState;
 public class CoralFeederPickupTransitions {
     private static final Object transitionTable[][] = {
         // CURRENT                              INPUT                                     OPERATION                    NEXT
-        {SequenceState.HOME,                    SequenceInput.BEGIN,                      "armSecondStage",            SequenceState.MOVING_ARM_BACK},
+        {SequenceState.HOME,                    SequenceInput.BEGIN,                      "moveArm",                   SequenceState.MOVING_ARM_BACK},
         {SequenceState.MOVING_ARM_BACK,         SequenceInput.ARM_DONE,                   "prepareToIntake",           SequenceState.INTAKING},
         {SequenceState.INTAKING,                SequenceInput.BUTTON_RELEASED,            "coralTimedIntake",          SequenceState.WAITING},
         {SequenceState.WAITING,                 SequenceInput.DETECTED_PIECE,             "startReset",                SequenceState.FINISHING},
         {SequenceState.WAITING,                 SequenceInput.TIMER_DONE,                 "startReset",                SequenceState.FINISHING},
-        
         {SequenceState.FINISHING,               SequenceInput.RESET_DONE,                 "resetState",                SequenceState.HOME},
 
         // Abort sequences

@@ -174,7 +174,6 @@ public class SequenceStateMachine extends StateMachine {
 
 
     public boolean prepareToIntake() {
-        //armSubsystem.moveArm(ArmConstants.armHomePosition); //TODO: (SF) is this needed for the arm reset?
         handClamperSubsystem.open(positions.clamperIntakePosition);
         handIntakeSubsystem.intake(HandConstants.intakeVelocity, subsystemCallback);
         return true;

@@ -22,6 +22,8 @@ public class PositionsFactory {
 
      public static Positions getCoralFeederPickupPositions() {
         Positions positions = new Positions();
+        positions.firstStageArmPosition = CORAL_FEEDER.armBackPosition;
+        positions.secondStageArmPosition = CORAL_FEEDER.armForwardPosition;
         positions.clamperIntakePosition = CORAL_FEEDER.clamperIntakePosition;
         return positions;
     }

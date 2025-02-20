@@ -215,8 +215,7 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
                 scoreStateMachineCallback = null;
             }
         }
-
-        SmartDashboard.putBoolean("Intake Forward Limit Switch", scoreDetectionSwitchFlipped());
+        
         if(watchingForScoreDetection && scoreDetectionSwitchFlipped()) {
             watchingForScoreDetection = false;
             if(scoreStateMachineCallback != null) {
