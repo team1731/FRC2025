@@ -160,6 +160,11 @@ public class SequenceStateMachine extends StateMachine {
         return true;
     }
 
+    public boolean openHand() {
+        handClamperSubsystem.open(positions.clamperOpenPosition, subsystemCallback);
+        return true;
+    }
+
     public boolean closeHand() {
         handClamperSubsystem.close(subsystemCallback);
         return true;

@@ -7,6 +7,7 @@ public final class PositionConstants {
     public final static double coralIntakeWidth = HandConstants.clamperCoralPosition;
     public final static double algaeIntakeWidth = HandConstants.clamperAlgaePosition;
     public final static double reefIntakeWidth = HandConstants.clamperReefIntakePosition;
+    public final static double dumpCoralWidth = HandConstants.clamperDumpCoralPosition;
 
     /*
      * !!!!!!!!!!!!!!!!!!!!!!!!
@@ -33,13 +34,10 @@ public final class PositionConstants {
      */
 
     public static final class CORAL_SCORE {
-        // TODO needs real positions, we haven't worked on this yets
         public static final class CORAL_L1 {
-            public final static double raiseElevatorPosition = 0;
-            public final static double raiseElevatorThresholdPosition = 0;
-            public final static double lowerElevatorThresholdPosition = 0;
-            public final static double armForwardPosition = 0;
-            public final static double armScorePosition = 0;
+            public final static double raiseElevatorPosition = 6;
+            public final static double raiseElevatorThresholdPosition = 2;
+            public final static double clamperOpenPosition = dumpCoralWidth;
         }
 
         public static final class CORAL_L2 {

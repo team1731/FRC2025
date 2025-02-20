@@ -37,9 +37,7 @@ public class PositionsFactory {
         Positions positions = new Positions();
         positions.raiseElevatorPosition = CORAL_L1.raiseElevatorPosition;
         positions.raiseElevatorThreshold = CORAL_L1.raiseElevatorThresholdPosition;
-        positions.lowerElevatorThreshold = CORAL_L1.lowerElevatorThresholdPosition;
-        positions.armForwardPosition = CORAL_L1.armForwardPosition;
-        positions.armScoringPosition = CORAL_L1.armScorePosition;
+        positions.clamperOpenPosition = CORAL_L1.clamperOpenPosition;
         return positions;
     }
 

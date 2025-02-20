@@ -9,4 +9,5 @@ public class Positions {
     public double armScoringPosition;
     public double clamperIntakePosition;
     public double clamperHoldPosition;
+    public double clamperOpenPosition;
 }

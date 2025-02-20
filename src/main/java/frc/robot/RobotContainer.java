@@ -189,13 +189,15 @@ public class RobotContainer {
 
     // Controls level selection
     opY.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L4))) //while pressed set to Level 4
-      .onFalse(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L2))); //if not pressed set defualt to Level 2  
+      .onFalse(new InstantCommand(() -> SequenceManager.resetLevelToL2())); //if not pressed set default to Level 2  
 
     opB.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L3))) //while pressed set to Level 3
-      .onFalse(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L2))); //if not pressed set defualt to Level 2 
+      .onFalse(new InstantCommand(() -> SequenceManager.resetLevelToL2())); //if not pressed set default to Level 2 
+    
+    opA.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L2))); //while pressed set to Level 2
 
     opX.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L1))) //while pressed set to Level 1
-      .onFalse(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L2))); //if not pressed set defualt to Level 2 
+      .onFalse(new InstantCommand(() -> SequenceManager.resetLevelToL2())); //if not pressed set defaullt to Level 2 
 
     // While trigger is true set piece to Algae, when it goes back to false set piece back to Coral
     opLeftTrigger.whileTrue(new InstantCommand(() -> SequenceManager.setGamePieceSelection(GamePiece.ALGAE)))

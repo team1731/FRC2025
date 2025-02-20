@@ -21,6 +21,10 @@ public class SequenceManager {
         evaluateForMidstreamUpdate(); // check to see if requires a midstream update to a running sequence
     }
 
+    public static void resetLevelToL2() {
+        levelSelection = Level.L2;
+    }
+
     public static GamePiece getGamePieceSelection() {
         return pieceSelection;
     }
