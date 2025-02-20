@@ -51,6 +51,7 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
     private void moveArm(double position){
         if(!enabled) return;
 
+        //check if climber will collide with regular arm movments
         if(climbSubsystem.getClimbPosition() > 0.4) return; //TODO: (SF) check if this is correct
 
         // do not go outside boundary thresholds
