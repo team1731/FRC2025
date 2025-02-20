@@ -123,17 +123,28 @@ public class SequenceStateMachine extends StateMachine {
         return true;
     }
 
-    public boolean moveArmForward() {
+    public boolean elevatorSecondStage() {
+        elevatorSubsystem.moveElevatorNormalSpeed(positions.secondStageElevatorPosition, subsystemCallback);
+        return true;
+    }
+
+    /*
+     * ARM OPERATIONAL METHODS
+     * Note: these are general methods shared by multiple sequences, use care when updating and understand what the impact
+     * will be in other sequences. If you need something custom for a specific sequence, spin off a separate method.
+     */
+
+    public boolean moveArm() {
         armSubsystem.moveArmNormalSpeed(positions.firstStageArmPosition, subsystemCallback);
         return true;
     }
 
-    public boolean checkIfShouldScore() {
-        handIntakeSubsystem.watchForScoreDetection(subsystemCallback);
+    public boolean moveArmSlowly() {
+        armSubsystem.moveArmSlowSpeed(positions.firstStageArmPosition, subsystemCallback);
         return true;
     }
 
-    public boolean moveArmToScore() {
+    public boolean armSecondStage() {
         armSubsystem.moveArmNormalSpeed(positions.secondStageArmPosition, subsystemCallback);
         return true;
     }
@@ -164,7 +175,7 @@ public class SequenceStateMachine extends StateMachine {
         handIntakeSubsystem.stop();
         return true;
     }
-
+    
     public boolean prepareToIntake() {
         handClamperSubsystem.open(positions.clamperIntakePosition);
         handIntakeSubsystem.intake(
@@ -191,6 +202,12 @@ public class SequenceStateMachine extends StateMachine {
      * Note: these methods are specific to certain parts of sequences and should only be updated when updating 
      * those specific sequences.
      */
+
+    public boolean coralTimedIntake() {
+        armSecondStage();
+        handIntakeSubsystem.timedPieceDetection(2, subsystemCallback);
+        return true;
+    }
 
     public boolean checkIfShouldScoreCoral() {
         // watch for the reef detection sensor to flip

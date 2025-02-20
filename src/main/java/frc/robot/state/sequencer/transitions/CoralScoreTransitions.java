@@ -20,7 +20,7 @@ public class CoralScoreTransitions {
         {SequenceState.MOVING_ARM_FORWARD,      SequenceInput.LEVEL_CHANGED,              "returnArmForUpdate",        SequenceState.MOVING_ARM_BACK},
         {SequenceState.WAITING,                 SequenceInput.LEVEL_CHANGED,              "returnArmForUpdate",        SequenceState.MOVING_ARM_BACK},
         {SequenceState.MOVING_ARM_BACK,         SequenceInput.ARM_DONE,                   "updateElevator",            SequenceState.UPDATING_LEVEL},
-        {SequenceState.UPDATING_LEVEL,          SequenceInput.ELEVATOR_DONE,              "moveArm",            SequenceState.MOVING_ARM_FORWARD},
+        {SequenceState.UPDATING_LEVEL,          SequenceInput.ELEVATOR_DONE,              "moveArm",                   SequenceState.MOVING_ARM_FORWARD},
         
         // Abort sequences
         {SequenceState.RAISING_ELEVATOR,        SequenceInput.BUTTON_RELEASED,            "startReset",                SequenceState.FINISHING},
