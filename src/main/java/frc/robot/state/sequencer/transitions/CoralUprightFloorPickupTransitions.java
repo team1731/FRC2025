@@ -6,7 +6,7 @@ import frc.robot.state.sequencer.SequenceState;
 public class CoralUprightFloorPickupTransitions {
     private static final Object transitionTable[][] = {
         // CURRENT                              INPUT                                     OPERATION                    NEXT
-        {SequenceState.HOME,                    SequenceInput.BEGIN,                      "moveArmForward",            SequenceState.MOVING_ARM_FORWARD},
+        {SequenceState.HOME,                    SequenceInput.BEGIN,                      "moveArm",                   SequenceState.MOVING_ARM_FORWARD},
         {SequenceState.MOVING_ARM_FORWARD,      SequenceInput.ARM_DONE,                   "prepareToIntake",           SequenceState.INTAKING},
         {SequenceState.INTAKING,                SequenceInput.DETECTED_PIECE,             "moveArmHome",               SequenceState.FINISHING},
         {SequenceState.FINISHING,               SequenceInput.ARM_DONE,                   "resetState",                SequenceState.HOME},

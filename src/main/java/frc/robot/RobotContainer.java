@@ -151,7 +151,7 @@ public class RobotContainer {
     //xboxController.start().and(xboxController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
     // reset the field-centric heading on left bumper press
-  //  xboxController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+  //  xboxController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric())); //TODO (SF) we need to reassign this binding
 
     //drivetrain.registerTelemetry(logger::telemeterize);
 

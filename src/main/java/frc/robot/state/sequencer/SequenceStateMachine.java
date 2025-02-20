@@ -123,24 +123,18 @@ public class SequenceStateMachine extends StateMachine {
         return true;
     }
 
-    public boolean elevatorSecondStage() {
-        elevatorSubsystem.moveElevatorNormalSpeed(positions.secondStageElevatorPosition, subsystemCallback);
-        return true;
-    }
-
-    /*
-     * ARM OPERATIONAL METHODS
-     * Note: these are general methods shared by multiple sequences, use care when updating and understand what the impact
-     * will be in other sequences. If you need something custom for a specific sequence, spin off a separate method.
-     */
-
     public boolean moveArmForward() {
-        armSubsystem.moveArmNormalSpeed(positions.armForwardPosition, subsystemCallback);
+        armSubsystem.moveArmNormalSpeed(positions.firstStageArmPosition, subsystemCallback);
         return true;
     }
 
-    public boolean moveArmForwardSlowly() {
-        armSubsystem.moveArmSlowSpeed(positions.armForwardPosition, subsystemCallback);
+    public boolean checkIfShouldScore() {
+        handIntakeSubsystem.watchForScoreDetection(subsystemCallback);
+        return true;
+    }
+
+    public boolean moveArmToScore() {
+        armSubsystem.moveArmNormalSpeed(positions.secondStageArmPosition, subsystemCallback);
         return true;
     }
 
@@ -170,7 +164,7 @@ public class SequenceStateMachine extends StateMachine {
         handIntakeSubsystem.stop();
         return true;
     }
-    
+
     public boolean prepareToIntake() {
         handClamperSubsystem.open(positions.clamperIntakePosition);
         handIntakeSubsystem.intake(
@@ -205,7 +199,7 @@ public class SequenceStateMachine extends StateMachine {
     }
 
     public boolean moveArmToScoreCoral() {
-        armSubsystem.moveArmNormalSpeed(positions.armScoringPosition, subsystemCallback);
+        armSubsystem.moveArmNormalSpeed(positions.secondStageArmPosition, subsystemCallback);
         return true;
     }
 
@@ -217,7 +211,7 @@ public class SequenceStateMachine extends StateMachine {
 
     public boolean shootAlgaeInBarge() {
         // move arm forward
-        armSubsystem.moveArmNormalSpeed(positions.armForwardPosition, subsystemCallback);
+        armSubsystem.moveArmNormalSpeed(positions.firstStageArmPosition, subsystemCallback);
         handClamperSubsystem.close();
         handIntakeSubsystem.release(HandConstants.releaseVelocity, HandConstants.defaultReleaseRuntime);
         return true;
