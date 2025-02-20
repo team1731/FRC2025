@@ -100,7 +100,6 @@ public class SequenceStateMachineTest {
 
     //     // transition to finishing
     //     callback.setInput(SequenceInput.ELEVATOR_THRESHOLD_MET);
-    //     // TODO check this once releasing piece is defined, this seems wrong
     //     verify(mockedArmSubsystem).moveArm(ArmConstants.armHomePosition, callback);
     //     assertEquals(SequenceState.FINISHING, stateMachine.getCurrentState());
 

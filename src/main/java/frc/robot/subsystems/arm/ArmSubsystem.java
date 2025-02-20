@@ -1,13 +1,16 @@
 package frc.robot.subsystems.arm;
 
 import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,6 +26,7 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
     
     
     private TalonFX armMotor;
+    private CANcoder armCANcoder;
     private DynamicMotionMagicVoltage mmReq = new DynamicMotionMagicVoltage(
         0, ArmConstants.normalArmVelocity, ArmConstants.normalArmAcceleration, ArmConstants.armJerk);
     private final NeutralOut brake = new NeutralOut();
@@ -97,17 +101,21 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
 
         System.out.println("armSubsystem: Starting UP & Initializing arm motor!");
 
+        armCANcoder = new CANcoder(ArmConstants.armCancoderDeviceId, "rio");
+        CANcoderConfiguration cancoderConfigs = new CANcoderConfiguration();
+        cancoderConfigs.MagnetSensor.MagnetOffset = 0.113525390625;
+        cancoderConfigs.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.25; // TODO what should this be?
+        armCANcoder.getConfigurator().apply(cancoderConfigs);
+
         armMotor = new TalonFX(ArmConstants.armCanId, "rio");
         TalonFXConfiguration config = new TalonFXConfiguration();
 
         armMotor.getConfigurator().apply(config);
-
-        //TODO: setup and apply current limits to config
+        
         /* Configure current limits */
         MotionMagicConfigs mm = config.MotionMagic;
-        mm.MotionMagicCruiseVelocity = ArmConstants.normalArmVelocity; // 5 rotations per second cruise
-        mm.MotionMagicAcceleration = ArmConstants.normalArmAcceleration; // Ta200ke approximately 0.5 seconds to reach max vel
-        // Take approximately 0.2 seconds to reach max accel
+        mm.MotionMagicCruiseVelocity = ArmConstants.normalArmVelocity; 
+        mm.MotionMagicAcceleration = ArmConstants.normalArmAcceleration; 
         mm.MotionMagicJerk = ArmConstants.armJerk;
 
         Slot0Configs slot0 = config.Slot0;
@@ -119,6 +127,11 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
 
         FeedbackConfigs fdb = config.Feedback;
         fdb.SensorToMechanismRatio = 1;
+        fdb.FeedbackRemoteSensorID = armCANcoder.getDeviceID();;
+        fdb.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+        fdb.RotorToSensorRatio = 1600.0/18.0;
+        config.CurrentLimits.StatorCurrentLimit = 5;
+        config.CurrentLimits.StatorCurrentLimitEnable = true;
 
 
         //applies config to ArmMotor
@@ -156,7 +169,7 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
     }
 
     public boolean isAtPosition(double position){
-        double tolerance = 2;
+        double tolerance = .002;
         return Math.abs(getArmPosition() - position) < tolerance;
     }
 

@@ -20,7 +20,7 @@ public final class PositionConstants {
         }
 
         public static final class CORAL_FLOOR_UPRIGHT {
-            public final static double armForwardPosition = 19;
+            public final static double armForwardPosition = 19; // TODO need to update all of these arm positions, what is the calc?
             public final static double clamperIntakePosition = coralIntakeWidth;
         }
     }
