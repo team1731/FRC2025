@@ -35,7 +35,6 @@ import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
-import frc.robot.subsystems.vision.VisionSubsystem;
 
 public class RobotContainer {
   private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -91,7 +90,6 @@ public class RobotContainer {
 
   /* Subsystems */
   private CommandSwerveDrivetrain driveSubsystem;
-  private VisionSubsystem visionSubsystem;
   private final LEDStringSubsystem m_ledstring;
   private ElevatorSubsystem elevatorSubsystem;
   private ArmSubsystem armSubsystem;
@@ -101,7 +99,6 @@ public class RobotContainer {
 
   public RobotContainer(
       CommandSwerveDrivetrain s_driveSubsystem,
-      VisionSubsystem s_visionSubsystem,
       LEDStringSubsystem s_ledstring,
       ElevatorSubsystem s_elevatorSubsystem,
       ArmSubsystem s_ArmSubsystem,
@@ -112,7 +109,6 @@ public class RobotContainer {
 
     driveSubsystem = s_driveSubsystem;
     elevatorSubsystem = s_elevatorSubsystem;
-    visionSubsystem = s_visionSubsystem;
     m_ledstring = s_ledstring;
     armSubsystem = s_ArmSubsystem;
     handClamperSubsystem = s_HandClamperSubsystem;
@@ -209,10 +205,7 @@ public class RobotContainer {
       new InstantCommand(() -> armSubsystem.moveArmNormalSpeed(ArmConstants.stowArmPosition)) 
     ));
 
-     //opStart.onTrue(new ResetHandCommand(handClamperSubsystem, handIntakeSubsystem)); //TODO: (SF) can we add this to the SequentialCommandGroup
-    
-    opBack.whileTrue(new InstantCommand(() -> visionSubsystem.setConfidence(true)))
-      .onFalse(new InstantCommand(() -> visionSubsystem.setConfidence(false)));
+    //opStart.onTrue(new ResetHandCommand(handClamperSubsystem, handIntakeSubsystem)); //TODO: (SF) can we add this to the SequentialCommandGroup
 
     driveSubsystem.registerTelemetry(logger::telemeterize);
 

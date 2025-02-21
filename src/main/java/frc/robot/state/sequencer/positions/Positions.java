@@ -1,6 +1,7 @@
 package frc.robot.state.sequencer.positions;
 
 public class Positions {
+    public double driveDistanceThreshold;
     public double raiseElevatorPosition;
     public double raiseElevatorThreshold;
     public double secondStageElevatorPosition; // used when sequence includes multiple elevator movements before going home
