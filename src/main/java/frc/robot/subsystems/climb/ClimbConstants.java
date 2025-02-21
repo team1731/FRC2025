@@ -5,12 +5,10 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 public class ClimbConstants {
     
-
     // climb can ID
     public final static int climbCanId = 31;
     public final static int climbCancoderDeviceId = 28; 
 
-        //TODO apply proper constants for climb motor
     // motor direction
     public final static InvertedValue climbMotorDirection = InvertedValue.Clockwise_Positive;
     public final static SensorDirectionValue climbCanConderDirection = SensorDirectionValue.Clockwise_Positive;
@@ -23,5 +21,6 @@ public class ClimbConstants {
     public final static double maxClimbPosition = 0.7;
     public final static double climbHomePosition = 0;
     public final static double climbReadyPosition = 0.365;
+    public final static double climbStowedPosition = .4; 
     
 }

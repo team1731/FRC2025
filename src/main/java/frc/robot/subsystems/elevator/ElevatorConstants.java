@@ -11,6 +11,15 @@ public final class ElevatorConstants {
     public final static InvertedValue elevatorMotor1Direction = InvertedValue.CounterClockwise_Positive;
     public final static InvertedValue elevatorMotor2Direction = InvertedValue.Clockwise_Positive;
 
+    // Motion Magic Config
+    // Fast/Normal
+    public final static double normalElevatorVelocity = 85;
+    public final static double normalElevatorAcceleration = 250;
+    public final static double elevatorJerk = 0;
+    // Slow
+    public final static double slowedElevatorVelocity = 42;
+    public final static double slowedElevatorAcceleration = 125;
+
     //Outputs
     public final static double idleOutput = 0;
 

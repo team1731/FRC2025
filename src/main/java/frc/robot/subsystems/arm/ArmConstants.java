@@ -9,11 +9,21 @@ public final class ArmConstants {
     // Motor Direction
     public final static InvertedValue armMotorDirection = InvertedValue.Clockwise_Positive;
 
+    // Motion Magic Config
+    // Fast/Normal
+    public final static double normalArmVelocity = 70;
+    public final static double normalArmAcceleration = 250;
+    public final static double armJerk = 0;
+    // Slow
+    public final static double slowedArmVelocity = 35;
+    public final static double slowedArmAcceleration = 125;
+
     //Outputs
     public final static double idleOutput = 0;
 
     // Positions
     public final static double armHomePosition = 0;
-    public final static double minArmPosition = 0;
-    public final static double maxArmPosition = 20;
+    public final static double minArmPosition = -2;
+    public final static double maxArmPosition = 19;
+    public final static double stowArmPosition = 19; 
 }

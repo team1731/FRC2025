@@ -7,7 +7,7 @@ public class CoralScoreTransitions {
     private static final Object transitionTable[][] = {
         // CURRENT                              INPUT                                     OPERATION                    NEXT
         {SequenceState.HOME,                    SequenceInput.BEGIN,                      "raiseElevator",             SequenceState.RAISING_ELEVATOR},
-        {SequenceState.RAISING_ELEVATOR,        SequenceInput.ELEVATOR_THRESHOLD_MET,     "moveArmForward",            SequenceState.MOVING_ARM_FORWARD},
+        {SequenceState.RAISING_ELEVATOR,        SequenceInput.ELEVATOR_THRESHOLD_MET,     "moveArm",                   SequenceState.MOVING_ARM_FORWARD},
         {SequenceState.MOVING_ARM_FORWARD,      SequenceInput.ARM_DONE,                   "checkIfShouldScoreCoral",   SequenceState.WAITING}, // operation determines next state
         {SequenceState.WAITING,                 SequenceInput.BUTTON_RELEASED,            "moveArmToScoreCoral",       SequenceState.SCORING},
         {SequenceState.WAITING,                 SequenceInput.SCORE,                      "moveArmToScoreCoral",       SequenceState.SCORING},
@@ -20,7 +20,7 @@ public class CoralScoreTransitions {
         {SequenceState.MOVING_ARM_FORWARD,      SequenceInput.LEVEL_CHANGED,              "returnArmForUpdate",        SequenceState.MOVING_ARM_BACK},
         {SequenceState.WAITING,                 SequenceInput.LEVEL_CHANGED,              "returnArmForUpdate",        SequenceState.MOVING_ARM_BACK},
         {SequenceState.MOVING_ARM_BACK,         SequenceInput.ARM_DONE,                   "updateElevator",            SequenceState.UPDATING_LEVEL},
-        {SequenceState.UPDATING_LEVEL,          SequenceInput.ELEVATOR_DONE,              "moveArmForward",            SequenceState.MOVING_ARM_FORWARD},
+        {SequenceState.UPDATING_LEVEL,          SequenceInput.ELEVATOR_DONE,              "moveArm",                   SequenceState.MOVING_ARM_FORWARD},
         
         // Abort sequences
         {SequenceState.RAISING_ELEVATOR,        SequenceInput.BUTTON_RELEASED,            "startReset",                SequenceState.FINISHING},
