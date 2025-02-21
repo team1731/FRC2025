@@ -16,11 +16,13 @@ public final class PositionConstants {
 
     public static final class CORAL_INTAKE {
         public static final class CORAL_FEEDER {
+            public final static double armBackPosition = -2;
+            public final static double armForwardPosition = 2;
             public final static double clamperIntakePosition = coralIntakeWidth;
         }
 
         public static final class CORAL_FLOOR_UPRIGHT {
-            public final static double armForwardPosition = 35;
+            public final static double armForwardPosition = 19;
             public final static double clamperIntakePosition = coralIntakeWidth;
         }
     }
@@ -91,7 +93,7 @@ public final class PositionConstants {
         }
 
         public static final class ALGAE_FLOOR {
-            public final static double armForwardPosition = 22;
+            public final static double armForwardPosition = 19;
             public final static double clamperIntakePosition = algaeIntakeWidth;
         }
     }

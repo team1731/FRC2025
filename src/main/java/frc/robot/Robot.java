@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.OpConstants;
 import frc.robot.Constants.OpConstants.LedOption;
@@ -112,6 +113,7 @@ public class Robot extends TimedRobot {
 		handIntakeSubsystem = new HandIntakeSubsystem(true);
 
 		climbSubsystem = new ClimbSubsystem(true);
+		armSubsystem.setClimbSubsystem(climbSubsystem);
 
 		// Instantiate our robot container. This will perform all of our button bindings,
 		m_robotContainer = new RobotContainer(driveSubsystem, visionSubsystem, ledSubsystem, elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem, climbSubsystem);
@@ -310,6 +312,8 @@ public class Robot extends TimedRobot {
 		visionSubsystem.useVision(false);
 		System.out.println("AUTO INIT");
 		CommandScheduler.getInstance().cancelAll();
+
+		(new InstantCommand(() -> climbSubsystem.stowClimb())).schedule();
 
 		if (m_autonomousCommand == null) {
 			System.out.println("SOMETHING WENT WRONG - UNABLE TO RUN AUTONOMOUS! CHECK SOFTWARE!");

@@ -27,6 +27,7 @@ import frc.robot.state.sequencer.GamePiece;
 import frc.robot.state.sequencer.Level;
 import frc.robot.state.sequencer.SequenceManager;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.climb.ClimbConstants;
 import frc.robot.subsystems.climb.ClimbSubsystem;
@@ -150,7 +151,7 @@ public class RobotContainer {
     //xboxController.start().and(xboxController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
     // reset the field-centric heading on left bumper press
-  //  xboxController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+  //  xboxController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric())); //TODO (SF) we need to reassign this binding
 
     //drivetrain.registerTelemetry(logger::telemeterize);
 
@@ -179,11 +180,11 @@ public class RobotContainer {
       new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)));
 
     // Climb up
-    dLeftBumper.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.maxClimbPosition))) //TODO set climb interval UP
+    dLeftBumper.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.maxClimbPosition))) 
       .onFalse(new InstantCommand(() -> climbSubsystem.stopClimb()));
 
     // Climb down
-    dRightBumper.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.minClimbPosition))) //TODO set climb interval DOWN
+    dRightBumper.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.minClimbPosition))) 
     .onFalse(new InstantCommand(() -> climbSubsystem.stopClimb()));
 
     // Controls level selection
@@ -193,9 +194,6 @@ public class RobotContainer {
     opB.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L3))) //while pressed set to Level 3
       .onFalse(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L2))); //if not pressed set defualt to Level 2 
 
-    //TODO: is this necessary?
-    opA.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L2))); //while pressed set to Level 2
-
     opX.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L1))) //while pressed set to Level 1
       .onFalse(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L2))); //if not pressed set defualt to Level 2 
 
@@ -204,13 +202,15 @@ public class RobotContainer {
       .onFalse(new InstantCommand(() -> SequenceManager.setGamePieceSelection(GamePiece.CORAL)));
 
     //bring up the climb in ready position
-    opStart.onTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.climbReadyPosition)));
-    
+    opStart.onTrue(new SequentialCommandGroup(
+      new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.climbReadyPosition)),
+      new InstantCommand(() -> armSubsystem.moveArmNormalSpeed(ArmConstants.stowArmPosition)) 
+    ));
+
+     //opStart.onTrue(new ResetHandCommand(handClamperSubsystem, handIntakeSubsystem)); //TODO: (SF) can we add this to the SequentialCommandGroup
     
     opBack.whileTrue(new InstantCommand(() -> visionSubsystem.setConfidence(true)))
       .onFalse(new InstantCommand(() -> visionSubsystem.setConfidence(false)));
-
-    //opStart.onTrue(new ResetHandCommand(handClamperSubsystem, handIntakeSubsystem));
 
     driveSubsystem.registerTelemetry(logger::telemeterize);
 
