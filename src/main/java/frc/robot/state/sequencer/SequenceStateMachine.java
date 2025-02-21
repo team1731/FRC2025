@@ -134,13 +134,18 @@ public class SequenceStateMachine extends StateMachine {
      * will be in other sequences. If you need something custom for a specific sequence, spin off a separate method.
      */
 
-    public boolean moveArmForward() {
-        armSubsystem.moveArmNormalSpeed(positions.armForwardPosition, subsystemCallback);
+    public boolean moveArm() {
+        armSubsystem.moveArmNormalSpeed(positions.firstStageArmPosition, subsystemCallback);
         return true;
     }
 
-    public boolean moveArmForwardSlowly() {
-        armSubsystem.moveArmSlowSpeed(positions.armForwardPosition, subsystemCallback);
+    public boolean moveArmSlowly() {
+        armSubsystem.moveArmSlowSpeed(positions.firstStageArmPosition, subsystemCallback);
+        return true;
+    }
+
+    public boolean armSecondStage() {
+        armSubsystem.moveArmNormalSpeed(positions.secondStageArmPosition, subsystemCallback);
         return true;
     }
 
@@ -203,6 +208,12 @@ public class SequenceStateMachine extends StateMachine {
      * those specific sequences.
      */
 
+    public boolean coralTimedIntake() {
+        armSecondStage();
+        handIntakeSubsystem.timedPieceDetection(2, subsystemCallback);
+        return true;
+    }
+
     public boolean checkIfShouldScoreCoral() {
         // watch for the reef detection sensor to flip
         handIntakeSubsystem.watchForScoreDetection(subsystemCallback);
@@ -210,7 +221,7 @@ public class SequenceStateMachine extends StateMachine {
     }
 
     public boolean moveArmToScoreCoral() {
-        armSubsystem.moveArmNormalSpeed(positions.armScoringPosition, subsystemCallback);
+        armSubsystem.moveArmNormalSpeed(positions.secondStageArmPosition, subsystemCallback);
         return true;
     }
 
@@ -222,7 +233,7 @@ public class SequenceStateMachine extends StateMachine {
 
     public boolean shootAlgaeInBarge() {
         // move arm forward
-        armSubsystem.moveArmNormalSpeed(positions.armForwardPosition, subsystemCallback);
+        armSubsystem.moveArmNormalSpeed(positions.firstStageArmPosition, subsystemCallback);
         handClamperSubsystem.close();
         handIntakeSubsystem.release(HandConstants.releaseVelocity, HandConstants.defaultReleaseRuntime);
         return true;
