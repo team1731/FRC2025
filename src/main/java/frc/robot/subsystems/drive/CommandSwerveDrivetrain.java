@@ -23,6 +23,7 @@ import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.state.StateMachineCallback;
 import frc.robot.state.sequencer.SequenceInput;
 import frc.robot.subsystems.ToggleableSubsystem;
+import frc.robot.subsystems.vision.AprilTagSubsystem;
 import frc.robot.subsystems.vision.VSLAMSubsystem;
 import frc.robot.subsystems.vision.helpers.AprilTagTargetTracker;
 import frc.robot.subsystems.vision.helpers.FieldPoseHelper;
@@ -55,6 +56,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
 
     /* AprilTag vision */
     private boolean useAprilTags = true;
+    private AprilTagSubsystem aprilTagSubsystem;
     private AprilTagTargetTracker aprilTagTargetTracker;
     private double driveToTargetThreshold;
     private boolean lockedOnToTarget = false;
@@ -145,6 +147,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         setEnabled(enabled);
         if(!enabled) return;
         if(useVSLAM) vslamSubsystem = new VSLAMSubsystem(visionCallback);
+        if(useAprilTags) aprilTagSubsystem = new AprilTagSubsystem(true);
     }
 
     public CommandSwerveDrivetrain(boolean enabled, SwerveDrivetrainConstants driveTrainConstants,
@@ -153,6 +156,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         setEnabled(enabled);
         if(!enabled) return;
         if(useVSLAM) vslamSubsystem = new VSLAMSubsystem(visionCallback);
+        if(useAprilTags) aprilTagSubsystem = new AprilTagSubsystem(true);
     }
 
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
@@ -205,7 +209,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
     }
 
     public void driveToAprilTagTarget(StateMachineCallback callback) {
-        aprilTagTargetTracker = new AprilTagTargetTracker();
+        aprilTagTargetTracker = new AprilTagTargetTracker(aprilTagSubsystem.getCamera());
         targetDriveRequest = new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
         stateMachineCallback = callback;
         lockedOnToTarget = false;

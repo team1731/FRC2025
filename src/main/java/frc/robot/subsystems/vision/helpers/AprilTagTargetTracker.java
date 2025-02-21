@@ -12,7 +12,6 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.vision.VisionConstants;
-import frc.robot.subsystems.vision.camera.BasicCamera;
 import frc.robot.subsystems.vision.camera.Camera;
 
 public class AprilTagTargetTracker {
@@ -25,8 +24,8 @@ public class AprilTagTargetTracker {
     private double calcuatedForward;
     private double calcuatedTurn;
 
-    public AprilTagTargetTracker() {
-        camera = new BasicCamera(VisionConstants.macDyverCamera);
+    public AprilTagTargetTracker(Camera camera) {
+        camera = this.camera;
     }
 
     public void lockOnTarget(Pose2d currentPose) {

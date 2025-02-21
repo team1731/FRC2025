@@ -31,6 +31,10 @@ import frc.robot.subsystems.vision.camera.PNPCamera;
         return enabled;
     }
 
+    public Camera getCamera() {
+        return camera;
+    }
+
     public void setCameraType(CameraType type) {
         cameraType = type;
     }
