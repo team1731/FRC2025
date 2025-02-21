@@ -47,6 +47,10 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
         initializeArmMotor();
     }
 
+    public void setClimbSubsystem(ClimbSubsystem climbSubsystem) {
+        this.climbSubsystem = climbSubsystem;
+    }
+
     //movement control
     private void moveArm(double position){
         if(!enabled) return;

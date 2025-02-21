@@ -102,6 +102,7 @@ public class ClimbSubsystem extends SubsystemBase implements ToggleableSubsystem
         fdb.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
         fdb.RotorToSensorRatio = 800/1; 
         fdb.SensorToMechanismRatio = 1;
+        
         //for testing
         config.CurrentLimits.StatorCurrentLimit = 20;
         config.CurrentLimits.StatorCurrentLimitEnable = true;

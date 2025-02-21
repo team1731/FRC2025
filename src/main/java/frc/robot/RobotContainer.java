@@ -194,8 +194,6 @@ public class RobotContainer {
     opB.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L3))) //while pressed set to Level 3
       .onFalse(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L2))); //if not pressed set defualt to Level 2 
 
-    opA.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L2))); //while pressed set to Level 2
-
     opX.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L1))) //while pressed set to Level 1
       .onFalse(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L2))); //if not pressed set defualt to Level 2 
 
