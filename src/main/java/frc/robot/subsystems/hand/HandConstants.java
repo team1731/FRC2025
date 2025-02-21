@@ -26,6 +26,7 @@ public final class HandConstants {
     public final static double clamperCoralPosition = 0.018554;
     public final static double clamperAlgaePosition = 0.05;
     public final static double clamperReefIntakePosition = 0.22; // note: this should be wide for intaking algae from the reef
+    public final static double clamperDumpCoralPosition = 0.2; // note: this should be wide for dumping coral onto the reef
 
     // Position tolerance thresholds
     public final static double clamperPositionTolerance = 0.002;

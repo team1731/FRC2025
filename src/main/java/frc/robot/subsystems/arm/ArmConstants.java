@@ -23,7 +23,7 @@ public final class ArmConstants {
 
     // Positions
     public final static double armHomePosition = 0;
-    public final static double minArmPosition = 0;
+    public final static double minArmPosition = -2;
     public final static double maxArmPosition = 19;
     public final static double stowArmPosition = 19; 
 }

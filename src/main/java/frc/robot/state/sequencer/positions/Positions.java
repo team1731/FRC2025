@@ -9,4 +9,5 @@ public class Positions {
     public double secondStageArmPosition; // used when sequence includes multiple arm movements before going home
     public double clamperIntakePosition;
     public double clamperHoldPosition;
+    public double clamperOpenPosition;
 }
