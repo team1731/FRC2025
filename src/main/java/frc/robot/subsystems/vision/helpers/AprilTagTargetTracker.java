@@ -39,20 +39,19 @@ public class AprilTagTargetTracker {
 
 
         var currentRobotRotation = currentPose.getRotation().getDegrees();
-        double desiredHeading = currentRobotRotation + target.getYaw();
-
+        double desiredHeading = currentRobotRotation + 2*target.getYaw();
 
         // calculate speed
    
-        double speedContributionFromX = fieldCentricX * Math.cos(desiredHeading);
-        double speedContributionFromY = fieldCentricY * Math.sin(desiredHeading);
+        double speedContributionFromX = fieldCentricX * Math.cos(Units.degreesToRadians(desiredHeading));
+        double speedContributionFromY = fieldCentricY * Math.sin(Units.degreesToRadians(desiredHeading));
         double speed = speedContributionFromX + speedContributionFromY;
 
 
         // calculate updated drive values
 
         calcuatedForward = speed * Math.cos(Units.degreesToRadians(desiredHeading));
-        calcuatedStrafe = speed * Math.sin(Units.degreesToRadians(desiredHeading));
+        calcuatedStrafe = -speed * Math.sin(Units.degreesToRadians(desiredHeading));
         calculatedDesiredRotation = FieldPoseHelper.getDriveToTagRotation(target.getFiducialId());
         
 
@@ -64,6 +63,10 @@ public class AprilTagTargetTracker {
         SmartDashboard.putNumber("ATTracker_forward", calcuatedForward);
         SmartDashboard.putNumber("ATTracker_strafe", calcuatedStrafe);
         SmartDashboard.putNumber("ATTracker_rotation", calculatedDesiredRotation.getDegrees());
+        SmartDashboard.putNumber("ATTracker_currentRobotRotation", currentRobotRotation);
+        SmartDashboard.putNumber("ATTracker_targetYaw", target.getYaw());
+        SmartDashboard.putNumber("ATTracker_desiredHeading", desiredHeading);
+        
     }
 
     public double getCalculatedStrafe() {

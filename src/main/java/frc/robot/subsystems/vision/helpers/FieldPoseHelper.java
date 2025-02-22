@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class FieldPoseHelper {
     // Reef post relative to the April Tag
@@ -87,7 +88,7 @@ public class FieldPoseHelper {
     }
 
     private static Rotation2d getRotation180(Rotation3d initialRotation) {
-        Rotation3d rotation180 = new Rotation3d(new Rotation2d(180));
+        Rotation3d rotation180 = new Rotation3d(new Rotation2d(Units.degreesToRadians(180)));
         return initialRotation.plus(rotation180).toRotation2d();
     }
 
@@ -100,7 +101,8 @@ public class FieldPoseHelper {
             return new Rotation2d();  // Not sure best way to handle the tagpose not being there???????????????????????????
         }
 
-        
+       SmartDashboard.putNumber("tag rotation from db", tagpose.toPose2d().getRotation().getDegrees());
+       SmartDashboard.putNumber("tagRotation after 180", getRotation180(tagpose.getRotation()).getDegrees());
        return getRotation180(tagpose.getRotation());
 
     }

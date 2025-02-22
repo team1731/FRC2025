@@ -64,19 +64,25 @@ public class DriveToTargetCommand extends Command {
 
     
         if(aprilTagTargetTracker.hasVisibleTarget()) {
+            System.out.println("++++++++++++++++++++");
             m_driveSubsystem.setControl(
+
                 driveAtLocation.withVelocityX(fieldCentricX)                                                                                                                     
                     .withVelocityY(aprilTagTargetTracker.getCalculatedStrafe()) 
                     .withTargetDirection(aprilTagTargetTracker.getRotationTarget())
             );
-        } else {
+        } /* 
+        else {
+            System.out.println("--------------------");
             m_driveSubsystem.setControl(
                 drive.withVelocityX(-(Math.abs(m_xboxController.getLeftY()) * m_xboxController.getLeftY()) * MaxSpeed)                                                                                                                     
                     .withVelocityY(-(Math.abs(m_xboxController.getLeftX()) * m_xboxController.getLeftX()) * MaxSpeed) 
                     .withRotationalRate(-m_xboxController.getRightX() * MaxAngularRate)
+                    
         
-            );
-        }
+            );*/
+           
+      //  }
 
         SmartDashboard.putNumber("PID Setpoint", driveAtLocation.HeadingController.getSetpoint());
 		SmartDashboard.putNumber("PID Output", driveAtLocation.HeadingController.getLastAppliedOutput());
