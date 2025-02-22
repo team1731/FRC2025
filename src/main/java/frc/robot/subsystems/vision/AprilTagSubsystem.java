@@ -3,27 +3,23 @@
 
 
 import edu.wpi.first.net.PortForwarder;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.ToggleableSubsystem;
 import frc.robot.subsystems.vision.camera.BasicCamera;
 import frc.robot.subsystems.vision.camera.Camera;
-import frc.robot.subsystems.vision.camera.CameraType;
-import frc.robot.subsystems.vision.camera.PNPCamera;
 
  
  public class AprilTagSubsystem extends SubsystemBase implements ToggleableSubsystem {
-    private Camera camera;
-    private CameraType cameraType = CameraType.BASIC; //default
+    private Camera camera1;
+    private Camera camera2;
     private int visionInitCount;
     private boolean enabled;
-    private boolean initialized;
+    private boolean initialized = false;
 
     public AprilTagSubsystem(boolean enabled) {
         this.enabled = enabled;
         visionInitCount = 0;
-        initializeCamera(); // default camera
+        initializeCameras(); // using default processing type
     }
  
     @Override
@@ -31,12 +27,12 @@ import frc.robot.subsystems.vision.camera.PNPCamera;
         return enabled;
     }
 
-    public Camera getCamera() {
-        return camera;
+    public Camera getCamera1() {
+        return camera1;
     }
 
-    public void setCameraType(CameraType type) {
-        cameraType = type;
+    public Camera getCamera2() {
+        return camera2;
     }
  
     public static void setupPortForwarding() {
@@ -50,32 +46,29 @@ import frc.robot.subsystems.vision.camera.PNPCamera;
         PortForwarder.add(1187, "photonvision.local", 1187);
     }
  
-    public void initializeCamera() {
-        initialized = false; 
-        camera = null;
-        String cameraName = VisionConstants.macDyverCamera;
-        
-        NetworkTableInstance inst = NetworkTableInstance.getDefault();
-        // get the subtable called "photonvision"
-        NetworkTable photonVisionTable = inst.getTable("photonvision/" + cameraName);
-        if (photonVisionTable.containsKey("hasTarget")) {
-            camera = cameraType == CameraType.BASIC? new BasicCamera(cameraName) : new PNPCamera(cameraName, VisionConstants.robotToCamera3d);
-            camera.initialize();
-            initialized = true;
-            System.out.println("VisionSubsystem: Adding camera " + cameraName + "!!!!!!! ");
+    private void initializeCameras() {
+        if(camera1 == null) {
+            camera1 = new BasicCamera(VisionConstants.camera1Name);
         }
 
-        if (!initialized) {
-            System.out.println("VisionSubsystem: Init FAILED: " + " Keys: " + photonVisionTable.getKeys().toString());
+        if(camera2 == null) {
+            camera2 = new BasicCamera(VisionConstants.camera2Name);
+        }
+
+        if(!camera1.isInitialized()) camera1.initialize();
+        if(!camera2.isInitialized()) camera2.initialize();
+
+        if(camera1.isInitialized() && camera2.isInitialized()) {
+            initialized = true;
+            visionInitCount = 0;
         }
     }
     
     @Override
     public void periodic() {
-        if (!initialized) {
-            // System.out.println("Checking vision, currently not initialized");
+        if(!initialized) {
             if (visionInitCount++ >= 100) { // 20ms @ 50
-                initializeCamera();
+                initializeCameras();
                 visionInitCount = 0;
             }
         }

@@ -9,5 +9,6 @@ public interface Camera {
     public String getName();
     public PhotonCamera getCamera();
     public void initialize();
+    public boolean isInitialized();
     public List<PhotonPipelineResult> getAllUnreadResults();
 }

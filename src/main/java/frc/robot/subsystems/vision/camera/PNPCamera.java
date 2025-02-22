@@ -11,6 +11,8 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystems.vision.VisionConstants;
 
@@ -22,6 +24,7 @@ public class PNPCamera implements Camera {
     private PhotonPoseEstimator poseEstimator;
     private Pose2d estimatedPose;
     private double lastUpdateTS;
+    private boolean initialized;
 
     public PNPCamera(String cameraName, Transform3d cameraLocation) {
         name = cameraName;
@@ -29,11 +32,24 @@ public class PNPCamera implements Camera {
     }
 
     public void initialize() {
-        photonCamera = new PhotonCamera(name);
-        AprilTagFieldLayout fieldLayout = AprilTagFields.kDefaultField.loadAprilTagLayoutField();
-        poseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, location);
-        poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
-        System.out.println("Camera: Adding camera " + name + "!!!!!!! ");
+        if(initialized) return;
+        
+        NetworkTableInstance inst = NetworkTableInstance.getDefault();
+        NetworkTable photonVisionTable = inst.getTable("photonvision/" + name);
+        if(photonVisionTable.containsKey("hasTarget")) {
+            photonCamera = new PhotonCamera(name);
+            AprilTagFieldLayout fieldLayout = AprilTagFields.kDefaultField.loadAprilTagLayoutField();
+            poseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, location);
+            poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+            System.out.println("Camera: Adding PNP camera " + name + "!!!!!!! ");
+            initialized = true;
+        } else {
+            System.out.println("VisionSubsystem: Init FAILED: " + " Keys: " + photonVisionTable.getKeys().toString());
+        }
+    }
+
+    public boolean isInitialized() {
+        return initialized;
     }
 
     public String getName() {

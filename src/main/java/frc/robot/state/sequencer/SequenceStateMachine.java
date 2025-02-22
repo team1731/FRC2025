@@ -19,7 +19,6 @@ public class SequenceStateMachine extends StateMachine {
     private ArmSubsystem armSubsystem;
     private HandIntakeSubsystem handIntakeSubsystem;
     private HandClamperSubsystem handClamperSubsystem;
-    private CommandSwerveDrivetrain driveSubsystem;
 
     // sequence tracking
     private Sequence currentSequence;
@@ -33,13 +32,11 @@ public class SequenceStateMachine extends StateMachine {
     private boolean armResetDone = false;
 
 
-    public SequenceStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem handClamperSubsystem, 
-            HandIntakeSubsystem handIntakeSubsystem, CommandSwerveDrivetrain driveSubsystem) {
+    public SequenceStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem handClamperSubsystem, HandIntakeSubsystem handIntakeSubsystem) {
         this.elevatorSubsystem = elevatorSubsystem;
         this.armSubsystem = armSubsystem;
         this.handClamperSubsystem = handClamperSubsystem;
         this.handIntakeSubsystem = handIntakeSubsystem;
-        this.driveSubsystem = driveSubsystem;
         setCurrentState(SequenceState.HOME);
     }
 
@@ -207,21 +204,6 @@ public class SequenceStateMachine extends StateMachine {
     }
 
     /*
-     * DRIVE OPERATIONAL METHODS
-     */
-    public boolean driveToTarget() {
-        driveSubsystem.driveToAprilTagTarget(positions.driveDistanceThreshold, subsystemCallback);
-        return true;
-    }
-
-    public boolean cancelDriveToTarget() {
-        if(driveSubsystem.isDrivingToAprilTagTarget()) {
-            driveSubsystem.cancelDriveToAprilTagTarget();
-        }
-        return true;
-    }
-
-    /*
      * CORAL-SPECIFIC OPERATIONAL METHODS
      * Note: these methods are specific to certain parts of sequences and should only be updated when updating 
      * those specific sequences.
@@ -299,8 +281,6 @@ public class SequenceStateMachine extends StateMachine {
 
     public boolean startReset() {
         isResetting = true;
-        // stop drive control
-        cancelDriveToTarget();
         // stop current movements
         armSubsystem.stopArm();
         elevatorSubsystem.stopElevator();
@@ -318,7 +298,6 @@ public class SequenceStateMachine extends StateMachine {
     }
 
     public boolean resetState() {
-        cancelDriveToTarget();
         currentSequence = null;
         currentAction = null;
         currentGamePiece = null;

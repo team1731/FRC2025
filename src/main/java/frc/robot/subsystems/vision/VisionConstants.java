@@ -4,10 +4,7 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
@@ -20,7 +17,8 @@ public class VisionConstants {
      */
     public static final double targetConfidenceDelta = 0.5;
 
-    public static final String macDyverCamera = "Global_Shutter_Camera";
+    public static final String camera1Name = "REPLACE";
+    public static final String camera2Name = "REPLACE";
     public static final double maxDistanceBetweenPoseEstimations = 1.0;
     public static final double cameraHeight = 7.25; // inches
     public static final double cameraPitch = 5.0; // degrees, measured with a protractor, or in CAD
@@ -35,11 +33,6 @@ public class VisionConstants {
     public static final double VISION_ROTATE_kP = 1;
     public static final double MAX_ANGULAR_SPEED = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
     public static final double MAX_LINEAR_SPEED = 0.5;
-
-    // Cam mounted facing forward, half a meter forward of center, half a meter up from center.
-    // TODO if we use PNP we will need to update these values, they are from last year's camera
-    public static final Transform3d robotToCamera3d = new Transform3d(new Translation3d(-0.336555, -0.054, 0.4572),
-            new Rotation3d(0, -Units.degreesToRadians(12), Units.degreesToRadians(180)));
 
     // The standard deviations of our vision estimated poses, which affect correction rate
     // (Fake values. Experiment and determine estimation noise on an actual robot.)

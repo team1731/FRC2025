@@ -46,9 +46,8 @@ public class SequenceManager {
         actionSelection = action;
     }
 
-    public static SequenceStateMachine createStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem clamperSubsystem, 
-            HandIntakeSubsystem intakeSubsystem, CommandSwerveDrivetrain driveSubsystem) {
-        stateMachine = new SequenceStateMachine(elevatorSubsystem, armSubsystem, clamperSubsystem, intakeSubsystem, driveSubsystem);
+    public static SequenceStateMachine createStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem clamperSubsystem, HandIntakeSubsystem intakeSubsystem) {
+        stateMachine = new SequenceStateMachine(elevatorSubsystem, armSubsystem, clamperSubsystem, intakeSubsystem);
         return stateMachine;
     }
 

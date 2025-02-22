@@ -3,7 +3,6 @@ package frc.robot.subsystems.drive;
 import java.util.function.Supplier;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
-import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.Matrix;
@@ -21,11 +20,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.state.StateMachineCallback;
-import frc.robot.state.sequencer.SequenceInput;
 import frc.robot.subsystems.ToggleableSubsystem;
 import frc.robot.subsystems.vision.AprilTagSubsystem;
 import frc.robot.subsystems.vision.VSLAMSubsystem;
-import frc.robot.subsystems.vision.helpers.AprilTagTargetTracker;
 import frc.robot.subsystems.vision.helpers.FieldPoseHelper;
 
 import static edu.wpi.first.units.Units.*;
@@ -57,11 +54,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
     /* AprilTag vision */
     private boolean useAprilTags = true;
     private AprilTagSubsystem aprilTagSubsystem;
-    private AprilTagTargetTracker aprilTagTargetTracker;
-    private double driveToTargetThreshold;
-    private boolean lockedOnToTarget = false;
-    private double startingDistanceFromTarget;
-    SwerveRequest.RobotCentric targetDriveRequest;
 
     /* VSLAM Updates */
     private boolean useVSLAM = true;
@@ -171,6 +163,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
             return new ChassisSpeeds();
         return getKinematics().toChassisSpeeds(getState().ModuleStates);
     }
+    
+    public AprilTagSubsystem getAprilTagSubsystem() {
+        return useAprilTags? aprilTagSubsystem : null;
+    }
 
 
     /*
@@ -199,48 +195,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         return driveToPose(targetPose);
     }
 
-
-    /*
-     * APRIL TAG DRIVE TO TARGET
-     */
-
-    public boolean isDrivingToAprilTagTarget() {
-        return (aprilTagTargetTracker != null);
-    }
-
-    public void driveToAprilTagTarget(StateMachineCallback callback) {
-        aprilTagTargetTracker = new AprilTagTargetTracker(aprilTagSubsystem.getCamera());
-        targetDriveRequest = new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-        stateMachineCallback = callback;
-        lockedOnToTarget = false;
-    }
-
-    public void driveToAprilTagTarget(double driveThreshold, StateMachineCallback callback) {
-        driveToTargetThreshold = driveThreshold;
-        driveToAprilTagTarget(callback);
-    }
-
-    private void updateDriveWithTargetCalculations() {
-        aprilTagTargetTracker.recalculateDriveFeedback(getCurrentPose());
-        this.applyRequest(
-            () -> targetDriveRequest.withVelocityX(aprilTagTargetTracker.getCalcuatedForward())                                                                                                                     
-                .withVelocityY(aprilTagTargetTracker.getCalculatedStrafe()) 
-                .withRotationalRate(aprilTagTargetTracker.getCalcuatedTurn())
-        );
-    }
-
-    public void cancelDriveToAprilTagTarget() {
-        resetStateForAprilTagTargeting();
-    }
-
-    private void resetStateForAprilTagTargeting() {
-        aprilTagTargetTracker = null;
-        lockedOnToTarget = false;
-        startingDistanceFromTarget = 0;
-        driveToTargetThreshold = 0;
-        targetDriveRequest = null;
-    }
-
     /*
      * PERIODIC HANDLING
      */
@@ -248,52 +202,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
     public void periodic() {
         if(useVSLAM) {
             vslamSubsystem.cleanUpSubroutineMessages(); 
-        }
-
-        /*
-         * Driving to AprilTag target, e.g., lining up for a coral score
-         */
-
-        // cancel drive request if April Tags are disabled
-        if(!useAprilTags && aprilTagTargetTracker != null) {
-            resetStateForAprilTagTargeting();
-            if(stateMachineCallback != null) {
-                stateMachineCallback.setInput(SequenceInput.DRIVE_DISABLED);
-                stateMachineCallback = null;
-            }
-        }
-
-        // handle target locking and driving to April Tag target
-        if(useAprilTags && aprilTagTargetTracker != null) {
-            // if not yet locked on to a target try to so
-            if(!lockedOnToTarget) {
-                aprilTagTargetTracker.lockOnTarget(getCurrentPose()); // lock on to the closest target
-                lockedOnToTarget = aprilTagTargetTracker.isLockedOnTarget();
-                if(lockedOnToTarget) {
-                    startingDistanceFromTarget = aprilTagTargetTracker.getDistanceToTarget();
-                }
-            }
-            
-            if(lockedOnToTarget) {
-                // if we are still able to see the target, recalculate drive adjustments and apply them
-                if(aprilTagTargetTracker.isTargetVisible()) {
-                    updateDriveWithTargetCalculations();
-                }
-
-                // callback to state machine when done or threshold has been met
-                if(aprilTagTargetTracker.isAtTarget()) {
-                    resetStateForAprilTagTargeting();
-                    if(stateMachineCallback != null) {
-                        stateMachineCallback.setInput(SequenceInput.DRIVE_DONE);
-                        stateMachineCallback = null;
-                    }
-                } else if(driveToTargetThreshold != 0 && (aprilTagTargetTracker.getDistanceToTarget()/startingDistanceFromTarget) >= driveToTargetThreshold) {
-                    driveToTargetThreshold = 0;
-                    if(stateMachineCallback != null) {
-                        stateMachineCallback.setInput(SequenceInput.DRIVE_THRESHOLD_MET);
-                    }
-                }
-            }
         }
 
         /*
