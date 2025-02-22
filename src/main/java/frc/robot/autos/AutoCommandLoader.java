@@ -34,7 +34,7 @@ public class AutoCommandLoader {
         this.armSubsystem = armSubsystem;
         this.handClamperSubsystem = handClamperSubsystem;
         this.handIntakeSubsystem = handIntakeSubsystem;
-        sequenceStateMachine = SequenceManager.getStateMachine(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem);
+        sequenceStateMachine = SequenceManager.getStateMachine();
     }
 
     public void registerAutoEventCommands() {

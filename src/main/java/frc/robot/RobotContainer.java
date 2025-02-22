@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ClimbReadyCommand;
+import frc.robot.commands.DriveToTargetCommand;
 import frc.robot.commands.ResetSequenceCommand;
 import frc.robot.commands.RunSequenceCommand;
 import frc.robot.generated.TunerConstants;
@@ -35,7 +36,6 @@ import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
-import frc.robot.subsystems.vision.VisionSubsystem;
 
 public class RobotContainer {
   private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -91,7 +91,6 @@ public class RobotContainer {
 
   /* Subsystems */
   private CommandSwerveDrivetrain driveSubsystem;
-  private VisionSubsystem visionSubsystem;
   private final LEDStringSubsystem m_ledstring;
   private ElevatorSubsystem elevatorSubsystem;
   private ArmSubsystem armSubsystem;
@@ -101,7 +100,6 @@ public class RobotContainer {
 
   public RobotContainer(
       CommandSwerveDrivetrain s_driveSubsystem,
-      VisionSubsystem s_visionSubsystem,
       LEDStringSubsystem s_ledstring,
       ElevatorSubsystem s_elevatorSubsystem,
       ArmSubsystem s_ArmSubsystem,
@@ -112,7 +110,6 @@ public class RobotContainer {
 
     driveSubsystem = s_driveSubsystem;
     elevatorSubsystem = s_elevatorSubsystem;
-    visionSubsystem = s_visionSubsystem;
     m_ledstring = s_ledstring;
     armSubsystem = s_ArmSubsystem;
     handClamperSubsystem = s_HandClamperSubsystem;
@@ -127,38 +124,16 @@ public class RobotContainer {
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
 
-        driveSubsystem.setDefaultCommand( // Drivetrain will execute this command periodically
-        driveSubsystem.applyRequest(
-            () -> drive.withVelocityX(-(Math.abs(xboxController.getLeftY()) * xboxController.getLeftY()) * MaxSpeed)                                                                                                                     
-                .withVelocityY(-(Math.abs(xboxController.getLeftX()) * xboxController.getLeftX()) * MaxSpeed) 
-                .withRotationalRate(-xboxController.getRightX() * MaxAngularRate)
-        )
+    driveSubsystem.setDefaultCommand( // Drivetrain will execute this command periodically
+      driveSubsystem.applyRequest(
+          () -> drive.withVelocityX(-(Math.abs(xboxController.getLeftY()) * xboxController.getLeftY()) * MaxSpeed)                                                                                                                     
+              .withVelocityY(-(Math.abs(xboxController.getLeftX()) * xboxController.getLeftX()) * MaxSpeed) 
+              .withRotationalRate(-xboxController.getRightX() * MaxAngularRate)
+      )
     );
 
-
-
-
-    // (SCH) TODO: These sysId calls aren't strictly necessary,
-    // though they seem to be a different method of controlling the drivetrain.
-    // I would say copy these and assign them to unused buttons in the new
-    // RobotContainer to see what they do
-
-    // Run SysId routines when holding back/start and X/Y.
-    // Note that each routine should be run exactly once in a single log.
-   // xboxController.back().and(xboxController.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-  //  xboxController.back().and(xboxController.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-  //  xboxController.start().and(xboxController.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-    //xboxController.start().and(xboxController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-
-    // reset the field-centric heading on left bumper press
-  //  xboxController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric())); //TODO (SF) we need to reassign this binding
-
-    //drivetrain.registerTelemetry(logger::telemeterize);
-
-  //  dStart.onTrue(driveSubsystem.runOnce(() -> driveSubsystem.seedFieldCentric()));
-
  
-  dB.onTrue(new InstantCommand(() -> {
+    dB.onTrue(new InstantCommand(() -> {
       System.out.println("resetting position");
     
       Pose2d resetPosition = Robot.isRedAlliance() ? new Pose2d(7.168, 5.006, new Rotation2d(Math.toRadians(0)))
@@ -187,6 +162,8 @@ public class RobotContainer {
     dRightBumper.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.minClimbPosition))) 
     .onFalse(new InstantCommand(() -> climbSubsystem.stopClimb()));
 
+    dY.whileTrue(new DriveToTargetCommand(driveSubsystem, xboxController));
+
     // Controls level selection
     opY.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L4))) //while pressed set to Level 4
       .onFalse(new InstantCommand(() -> SequenceManager.resetLevelToL2())); //if not pressed set default to Level 2  
@@ -209,10 +186,7 @@ public class RobotContainer {
       new InstantCommand(() -> armSubsystem.moveArmNormalSpeed(ArmConstants.stowArmPosition)) 
     ));
 
-     //opStart.onTrue(new ResetHandCommand(handClamperSubsystem, handIntakeSubsystem)); //TODO: (SF) can we add this to the SequentialCommandGroup
-    
-    opBack.whileTrue(new InstantCommand(() -> visionSubsystem.setConfidence(true)))
-      .onFalse(new InstantCommand(() -> visionSubsystem.setConfidence(false)));
+    //opStart.onTrue(new ResetHandCommand(handClamperSubsystem, handIntakeSubsystem)); //TODO: (SF) can we add this to the SequentialCommandGroup
 
     driveSubsystem.registerTelemetry(logger::telemeterize);
 

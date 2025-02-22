@@ -15,11 +15,15 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.state.StateMachineCallback;
 import frc.robot.subsystems.ToggleableSubsystem;
+import frc.robot.subsystems.vision.AprilTagSubsystem;
 import frc.robot.subsystems.vision.VSLAMSubsystem;
+import frc.robot.subsystems.vision.helpers.FieldPoseHelper;
 
 import static edu.wpi.first.units.Units.*;
 import frc.robot.autos.AutoFactory;
@@ -27,6 +31,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
 
 
 /**
@@ -36,6 +41,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
  */
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements ToggleableSubsystem {
     private boolean enabled;
+    private StateMachineCallback stateMachineCallback;
     private final SwerveRequest.ApplyRobotSpeeds autoRequest = new SwerveRequest.ApplyRobotSpeeds();
 
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
@@ -44,6 +50,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
     private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.kZero;
     /* Keep track if we've ever applied the operator perspective before or not */
     private boolean m_hasAppliedOperatorPerspective = false;
+
+    /* AprilTag vision */
+    private boolean useAprilTags = true;
+    private AprilTagSubsystem aprilTagSubsystem;
 
     /* VSLAM Updates */
     private boolean useVSLAM = true;
@@ -129,6 +139,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         setEnabled(enabled);
         if(!enabled) return;
         if(useVSLAM) vslamSubsystem = new VSLAMSubsystem(visionCallback);
+        if(useAprilTags) aprilTagSubsystem = new AprilTagSubsystem(true);
     }
 
     public CommandSwerveDrivetrain(boolean enabled, SwerveDrivetrainConstants driveTrainConstants,
@@ -137,12 +148,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         setEnabled(enabled);
         if(!enabled) return;
         if(useVSLAM) vslamSubsystem = new VSLAMSubsystem(visionCallback);
+        if(useAprilTags) aprilTagSubsystem = new AprilTagSubsystem(true);
     }
 
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
-        if (!enabled)
-            return new Command() {
-            };
+        if(!enabled) return new Command() {};
         return run(() -> this.setControl(requestSupplier.get()));
     }
 
@@ -151,10 +161,44 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
             return new ChassisSpeeds();
         return getKinematics().toChassisSpeeds(getState().ModuleStates);
     }
+    
+    public AprilTagSubsystem getAprilTagSubsystem() {
+        return useAprilTags? aprilTagSubsystem : null;
+    }
+
+
+    /*
+     * VSLAM DRIVE TO POSE
+     */
+
+    public Command driveToPose(Pose2d targetPose) {
+        return AutoBuilder.pathfindToPose(
+            targetPose, 
+            new PathConstraints(
+                2.0, 2.0, 
+                Units.degreesToRadians(360), Units.degreesToRadians(540)
+            ), 
+            0
+        );
+    }
+
+    public Command driveToPose(Pose2d targetPose, StateMachineCallback callback) {
+        stateMachineCallback = callback;
+        return driveToPose(targetPose);
+    }
+
+    public Command driveToNearestCoralTarget() {
+        Pose2d currentPose = getCurrentPose();
+        Pose2d targetPose = FieldPoseHelper.getClosestReefLineupPose(currentPose);
+        return driveToPose(targetPose);
+    }
+
+    /*
+     * PERIODIC HANDLING
+     */
 
     public void periodic() {
         if(useVSLAM) {
-            
             vslamSubsystem.cleanUpSubroutineMessages(); 
         }
 
@@ -265,6 +309,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
 
     public void zeroHeading() {
         vslamSubsystem.zeroHeading();
+    }
+
+    public Pose2d getCurrentPose() {
+        return this.getState().Pose;
     }
 
     // Zero the absolute 3D position of the robot

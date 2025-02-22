@@ -45,6 +45,7 @@ public class PositionsFactory {
 
     public static Positions getCoralScoreL2Positions() {
         Positions positions = new Positions();
+        positions.driveDistanceThreshold = CORAL_L2.driveDistanceThreshold;
         positions.raiseElevatorPosition = CORAL_L2.raiseElevatorPosition;
         positions.raiseElevatorThreshold = CORAL_L2.raiseElevatorThresholdPosition;
         positions.lowerElevatorThreshold = CORAL_L2.lowerElevatorThresholdPosition;
@@ -55,6 +56,7 @@ public class PositionsFactory {
 
     public static Positions getCoralScoreL3Positions() {
         Positions positions = new Positions();
+        positions.driveDistanceThreshold = CORAL_L3.driveDistanceThreshold;
         positions.raiseElevatorPosition = CORAL_L3.raiseElevatorPosition;
         positions.raiseElevatorThreshold = CORAL_L3.raiseElevatorThresholdPosition;
         positions.lowerElevatorThreshold = CORAL_L3.lowerElevatorThresholdPosition;
@@ -65,6 +67,7 @@ public class PositionsFactory {
 
     public static Positions getCoralScoreL4Positions() {
         Positions positions = new Positions();
+        positions.driveDistanceThreshold = CORAL_L4.driveDistanceThreshold;
         positions.raiseElevatorPosition = CORAL_L4.raiseElevatorPosition;
         positions.raiseElevatorThreshold = CORAL_L4.raiseElevatorThresholdPosition;
         positions.lowerElevatorThreshold = CORAL_L4.lowerElevatorThresholdPosition;

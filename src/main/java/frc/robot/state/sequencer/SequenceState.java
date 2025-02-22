@@ -4,6 +4,7 @@ import frc.robot.state.State;
 
 public enum SequenceState implements State {
     HOME,
+    DRIVING_TO_TARGET,
     RAISING_ELEVATOR,
     MOVING_TO_2ND_STAGE,
     LOWERING,

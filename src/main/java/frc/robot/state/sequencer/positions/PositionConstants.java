@@ -43,6 +43,7 @@ public final class PositionConstants {
         }
 
         public static final class CORAL_L2 {
+            public final static double driveDistanceThreshold = 0.3; // 30%
             public final static double raiseElevatorPosition = 21;
             public final static double raiseElevatorThresholdPosition = 16;
             public final static double lowerElevatorThresholdPosition = 20;
@@ -51,6 +52,7 @@ public final class PositionConstants {
         }
 
         public static final class CORAL_L3 {
+            public final static double driveDistanceThreshold = 0.3; // 30%
             public final static double raiseElevatorPosition = 46;
             public final static double raiseElevatorThresholdPosition = 41;
             public final static double lowerElevatorThresholdPosition = 45;
@@ -59,6 +61,7 @@ public final class PositionConstants {
         }
 
         public static final class CORAL_L4 {
+            public final static double driveDistanceThreshold = 0.3; // 30%
             public final static double raiseElevatorPosition = 95;
             public final static double raiseElevatorThresholdPosition = 90;
             public final static double lowerElevatorThresholdPosition = 95;

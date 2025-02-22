@@ -28,6 +28,7 @@ import frc.robot.autos.AutoCommandLoader;
 import frc.robot.autos.AutoFactory;
 import frc.robot.autos.AutoLoader;
 import frc.robot.generated.TunerConstants;
+import frc.robot.state.sequencer.SequenceManager;
 import frc.robot.util.log.MessageLog;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.arm.ArmSubsystem;
@@ -36,7 +37,7 @@ import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
-import frc.robot.subsystems.vision.VisionSubsystem;
+import frc.robot.subsystems.vision.AprilTagSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -45,7 +46,6 @@ import frc.robot.subsystems.vision.VisionSubsystem;
  * project.
  */
 public class Robot extends TimedRobot {
-	private RobotContainer m_robotContainer;
 	private Command m_autonomousCommand;
 	private SendableChooser<String> autoChooser;
 	private AutoCommandLoader autoCommandLoader;
@@ -56,7 +56,6 @@ public class Robot extends TimedRobot {
 	public static long millis = System.currentTimeMillis();
 
 	private CommandSwerveDrivetrain driveSubsystem;
-	private VisionSubsystem visionSubsystem;
 	private ElevatorSubsystem elevatorSubsystem;
 	private ArmSubsystem armSubsystem;
 	private HandClamperSubsystem handClamperSubsystem;
@@ -92,7 +91,7 @@ public class Robot extends TimedRobot {
 		MessageLog.start();
 		System.out.println("\n\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  EVENT: " + DriverStation.getEventName()
 				+ " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n");
-		VisionSubsystem.setupPortForwarding();
+		AprilTagSubsystem.setupPortForwarding();
 		LiveWindow.disableAllTelemetry();
 
 		/*
@@ -102,8 +101,6 @@ public class Robot extends TimedRobot {
 				TunerConstants.FrontRight, TunerConstants.BackLeft, TunerConstants.BackRight);
 
 		ledSubsystem = new LEDStringSubsystem(true);
-
-		visionSubsystem = new VisionSubsystem(true, driveSubsystem);
 
 		elevatorSubsystem = new ElevatorSubsystem(true);
 
@@ -117,12 +114,13 @@ public class Robot extends TimedRobot {
 		armSubsystem.setClimbSubsystem(climbSubsystem);
 
 		// Instantiate our robot container. This will perform all of our button bindings,
-		m_robotContainer = new RobotContainer(driveSubsystem, visionSubsystem, ledSubsystem, elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem, climbSubsystem);
+		new RobotContainer(driveSubsystem, ledSubsystem, elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem, climbSubsystem);
 		
 		/*
 		 * Complete initialization setup/configuration
 		 */
 		initSubsystems();
+		SequenceManager.createStateMachine(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem);
 		autoChooser = AutoLoader.loadAutoChooser();
 		autoCommandLoader = new AutoCommandLoader(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem);
 		autoCommandLoader.registerAutoEventCommands();
@@ -230,7 +228,6 @@ public class Robot extends TimedRobot {
 		driveSubsystem.configureAutoBindings();
 		ledSubsystem.init();
 		ledSubsystem.setColor(LedOption.INIT);
-		visionSubsystem.useVision(false);
 	}
 
 	/**
@@ -313,7 +310,6 @@ public class Robot extends TimedRobot {
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	@Override
 	public void autonomousInit() {
-		visionSubsystem.useVision(false);
 		System.out.println("AUTO INIT");
 		CommandScheduler.getInstance().cancelAll();
 
@@ -348,8 +344,6 @@ public class Robot extends TimedRobot {
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	@Override
 	public void teleopInit() {
-
-		visionSubsystem.useVision(false);
 		ledSubsystem.setColor(LedOption.GREEN);
 		//driveSubsystem.seedFieldRelative(new Pose2d(new Translation2d(0,0), new Rotation2d(120)));
 

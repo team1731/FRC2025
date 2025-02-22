@@ -11,6 +11,9 @@ public enum SequenceInput implements Input {
     LEVEL_CHANGED,
 
     // Subsystem feedback
+    DRIVE_THRESHOLD_MET,
+    DRIVE_DISABLED,
+    DRIVE_DONE,
     ELEVATOR_THRESHOLD_MET,
     ELEVATOR_DONE,
     ARM_DONE,
