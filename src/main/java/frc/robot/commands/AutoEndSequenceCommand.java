@@ -3,7 +3,6 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.state.sequencer.SequenceInput;
 import frc.robot.state.sequencer.SequenceStateMachine;
-import frc.robot.state.sequencer.Sequence;
 import frc.robot.state.sequencer.SequenceManager;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
@@ -21,7 +20,7 @@ public class AutoEndSequenceCommand extends Command {
 
     public AutoEndSequenceCommand(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem,
             HandClamperSubsystem clamperSubsystem, HandIntakeSubsystem intakeSubsystem) {
-        m_scoreStateMachine = SequenceManager.getStateMachine();
+        m_scoreStateMachine = SequenceManager.getStateMachine(elevatorSubsystem, armSubsystem, clamperSubsystem, intakeSubsystem);
         m_elevatorSubsystem = elevatorSubsystem;
         m_armSubsystem = armSubsystem;
         m_clamperSubsystem = clamperSubsystem;

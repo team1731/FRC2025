@@ -121,7 +121,6 @@ public class Robot extends TimedRobot {
 		 */
 		initSubsystems();
 		System.out.println("creating state machine in robot");
-		SequenceManager.createStateMachine(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem);
 		autoChooser = AutoLoader.loadAutoChooser();
 		autoCommandLoader = new AutoCommandLoader(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem);
 		autoCommandLoader.registerAutoEventCommands();
