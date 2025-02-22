@@ -18,7 +18,7 @@ public class VisionConstants {
     public static final double VISION_FORWARD_kP = 1;
     public static final double VISION_STRAFE_kP = 0.1;
     public static final double VISION_ROTATE_kP = 1;
-    public static final double MAX_ANGULAR_SPEED = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
+    public static final double MAX_ANGULAR_SPEED = RotationsPerSecond.of(0.1).in(RadiansPerSecond);
     public static final double MAX_LINEAR_SPEED = 0.5;
 
     public static final double targetConfidenceDelta = 0.5;

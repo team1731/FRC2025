@@ -27,7 +27,7 @@ public class AprilTagTargetTracker {
         return hasVisibleTarget;
     }
 
-    public void recalculateDriveFeedback(Pose2d currentPose) {
+    public void recalculateDriveFeedback(Pose2d currentPose, double fieldCentricX, double fieldCentricY) {
         PhotonTrackedTarget target = chooseTarget();
         if(target == null) {
             hasVisibleTarget = false;
@@ -39,8 +39,8 @@ public class AprilTagTargetTracker {
 
         // calculate speed
         var tagRotation = 180.0;
-        var speedContributionFromX = Math.sin(Units.degreesToRadians(tagRotation));
-        var speedContributionFromY = Math.cos(Units.degreesToRadians(tagRotation));
+        var speedContributionFromX = fieldCentricX * Math.sin(Units.degreesToRadians(tagRotation));
+        var speedContributionFromY = fieldCentricY * Math.cos(Units.degreesToRadians(tagRotation));
         var speed = speedContributionFromX + speedContributionFromY;
         SmartDashboard.putNumber("ATTracker_speedContributionFromX", speedContributionFromX);
         SmartDashboard.putNumber("ATTracker_speedContributionFromY", speedContributionFromY);

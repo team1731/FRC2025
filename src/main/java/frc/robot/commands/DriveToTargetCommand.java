@@ -7,11 +7,13 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.vision.AprilTagSubsystem;
+import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.helpers.AprilTagTargetTracker;
 
 public class DriveToTargetCommand extends Command {
@@ -22,7 +24,6 @@ public class DriveToTargetCommand extends Command {
     private double fieldCentricX;
     private double fieldCentricY;
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
     private final SwerveRequest.RobotCentric drive = new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     public DriveToTargetCommand(CommandSwerveDrivetrain driveSubsystem, CommandXboxController xboxController) {
@@ -46,8 +47,11 @@ public class DriveToTargetCommand extends Command {
     public void execute() {
         fieldCentricX = -(Math.abs(m_xboxController.getLeftY()) * m_xboxController.getLeftY()) * MaxSpeed;
         fieldCentricY = -(Math.abs(m_xboxController.getLeftX()) * m_xboxController.getLeftX()) * MaxSpeed;
+        SmartDashboard.putNumber ("fieldCentricX", fieldCentricX);
+        SmartDashboard.putNumber ("fieldCentricY",fieldCentricY);
 
-        aprilTagTargetTracker.recalculateDriveFeedback(m_driveSubsystem.getCurrentPose());
+        aprilTagTargetTracker.recalculateDriveFeedback(m_driveSubsystem.getCurrentPose(), fieldCentricX, fieldCentricY);
+        SmartDashboard.putNumber ("current heading",m_driveSubsystem.getState().Pose.getRotation().getDegrees());
         if(aprilTagTargetTracker.hasVisibleTarget()) {
             m_driveSubsystem.setControl(
                 drive.withVelocityX(fieldCentricX)                                                                                                                     
@@ -58,7 +62,7 @@ public class DriveToTargetCommand extends Command {
             m_driveSubsystem.setControl(
                 drive.withVelocityX(-(Math.abs(m_xboxController.getLeftY()) * m_xboxController.getLeftY()) * MaxSpeed)                                                                                                                     
                     .withVelocityY(-(Math.abs(m_xboxController.getLeftX()) * m_xboxController.getLeftX()) * MaxSpeed) 
-                    .withRotationalRate(-m_xboxController.getRightX() * MaxAngularRate)
+                    .withRotationalRate(-m_xboxController.getRightX() * VisionConstants.MAX_ANGULAR_SPEED)
         
             );
         }
