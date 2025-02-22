@@ -44,25 +44,23 @@ public class DriveToTargetCommand extends Command {
 
     @Override
     public void execute() {
-        if(aprilTagTargetTracker != null) {
-            fieldCentricX = -(Math.abs(m_xboxController.getLeftY()) * m_xboxController.getLeftY()) * MaxSpeed;
-            fieldCentricY = -(Math.abs(m_xboxController.getLeftX()) * m_xboxController.getLeftX()) * MaxSpeed;
+        fieldCentricX = -(Math.abs(m_xboxController.getLeftY()) * m_xboxController.getLeftY()) * MaxSpeed;
+        fieldCentricY = -(Math.abs(m_xboxController.getLeftX()) * m_xboxController.getLeftX()) * MaxSpeed;
 
-            aprilTagTargetTracker.recalculateDriveFeedback(m_driveSubsystem.getCurrentPose());
-            if(aprilTagTargetTracker.hasVisibleTarget()) {
-                m_driveSubsystem.setControl(
-                    drive.withVelocityX(fieldCentricX)                                                                                                                     
-                        .withVelocityY(aprilTagTargetTracker.getCalculatedStrafe()) 
-                        .withRotationalRate(aprilTagTargetTracker.getCalcuatedTurn())
-                );
-            } else {
-                m_driveSubsystem.setControl(
-                    drive.withVelocityX(-(Math.abs(m_xboxController.getLeftY()) * m_xboxController.getLeftY()) * MaxSpeed)                                                                                                                     
-                        .withVelocityY(-(Math.abs(m_xboxController.getLeftX()) * m_xboxController.getLeftX()) * MaxSpeed) 
-                        .withRotationalRate(-m_xboxController.getRightX() * MaxAngularRate)
-            
-                );
-            }
+        aprilTagTargetTracker.recalculateDriveFeedback(m_driveSubsystem.getCurrentPose());
+        if(aprilTagTargetTracker.hasVisibleTarget()) {
+            m_driveSubsystem.setControl(
+                drive.withVelocityX(fieldCentricX)                                                                                                                     
+                    .withVelocityY(aprilTagTargetTracker.getCalculatedStrafe()) 
+                    .withRotationalRate(aprilTagTargetTracker.getCalcuatedTurn())
+            );
+        } else {
+            m_driveSubsystem.setControl(
+                drive.withVelocityX(-(Math.abs(m_xboxController.getLeftY()) * m_xboxController.getLeftY()) * MaxSpeed)                                                                                                                     
+                    .withVelocityY(-(Math.abs(m_xboxController.getLeftX()) * m_xboxController.getLeftX()) * MaxSpeed) 
+                    .withRotationalRate(-m_xboxController.getRightX() * MaxAngularRate)
+        
+            );
         }
     }
 
