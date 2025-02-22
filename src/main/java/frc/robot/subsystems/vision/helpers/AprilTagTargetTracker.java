@@ -5,6 +5,7 @@ import java.util.List;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.vision.VisionConstants;
@@ -15,7 +16,7 @@ public class AprilTagTargetTracker {
     private Camera camera2;
     private double calcuatedStrafe;
     private double calcuatedForward;
-    private double calcuatedTurn;
+    private Rotation2d calculatedDesiredRotation;
     private boolean hasVisibleTarget = false;
 
     public AprilTagTargetTracker(Camera camera1, Camera camera2) {
@@ -32,26 +33,37 @@ public class AprilTagTargetTracker {
         if(target == null) {
             hasVisibleTarget = false;
             return;
-        }
-
+        }  
+        
         hasVisibleTarget = true;
-        SmartDashboard.putNumber("ATTracker_targetedAprilTagId", target.getFiducialId());
+
+
+        var currentRobotRotation = currentPose.getRotation().getDegrees();
+        double desiredHeading = currentRobotRotation + target.getYaw();
+
 
         // calculate speed
-        var tagRotation = 180.0;
-        var speedContributionFromX = fieldCentricX * Math.sin(Units.degreesToRadians(tagRotation));
-        var speedContributionFromY = fieldCentricY * Math.cos(Units.degreesToRadians(tagRotation));
-        var speed = speedContributionFromX + speedContributionFromY;
-        SmartDashboard.putNumber("ATTracker_speedContributionFromX", speedContributionFromX);
-        SmartDashboard.putNumber("ATTracker_speedContributionFromY", speedContributionFromY);
+   
+        double speedContributionFromX = fieldCentricX * Math.cos(desiredHeading);
+        double speedContributionFromY = fieldCentricY * Math.sin(desiredHeading);
+        double speed = speedContributionFromX + speedContributionFromY;
+
 
         // calculate updated drive values
-        calcuatedForward = speed * Math.cos(Units.degreesToRadians(target.getYaw()));
-        calcuatedStrafe = speed * Math.sin(Units.degreesToRadians(target.getYaw()));
-        calcuatedTurn = limitNegToPosOne((currentPose.getRotation().getDegrees() - tagRotation) * VisionConstants.VISION_ROTATE_kP) * VisionConstants.MAX_ANGULAR_SPEED;
+
+        calcuatedForward = speed * Math.cos(Units.degreesToRadians(desiredHeading));
+        calcuatedStrafe = speed * Math.sin(Units.degreesToRadians(desiredHeading));
+        calculatedDesiredRotation = FieldPoseHelper.getDriveToTagRotation(target.getFiducialId());
+        
+
+        
+        SmartDashboard.putNumber("ATTracker_speedContributionFromX", speedContributionFromX);
+        SmartDashboard.putNumber("ATTracker_speedContributionFromY", speedContributionFromY);
+        SmartDashboard.putNumber("ATTracker_totalSpeed", speed);
+        SmartDashboard.putNumber("ATTracker_targetedAprilTagId", target.getFiducialId());
         SmartDashboard.putNumber("ATTracker_forward", calcuatedForward);
         SmartDashboard.putNumber("ATTracker_strafe", calcuatedStrafe);
-        SmartDashboard.putNumber("ATTracker_turn", calcuatedTurn);
+        SmartDashboard.putNumber("ATTracker_rotation", calculatedDesiredRotation.getDegrees());
     }
 
     public double getCalculatedStrafe() {
@@ -62,8 +74,8 @@ public class AprilTagTargetTracker {
         return calcuatedForward;
     }
 
-    public double getCalcuatedTurn() {
-        return calcuatedTurn;
+    public Rotation2d getRotationTarget() {
+        return calculatedDesiredRotation;
     }
     
     private PhotonTrackedTarget chooseTarget() {
@@ -116,4 +128,6 @@ public class AprilTagTargetTracker {
         var result = Math.min(value, 1.0);
         return Math.max(result,-1);
     }
+
+
 }

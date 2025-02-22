@@ -3,6 +3,7 @@ package frc.robot.subsystems.vision.helpers;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -89,4 +90,20 @@ public class FieldPoseHelper {
         Rotation3d rotation180 = new Rotation3d(new Rotation2d(180));
         return initialRotation.plus(rotation180).toRotation2d();
     }
+
+    public static Rotation2d getDriveToTagRotation(int tagid) {
+        Pose3d tagpose;
+        if (kTagLayout.getTagPose(tagid).isPresent()) {
+        tagpose = (kTagLayout.getTagPose(tagid)).get();
+        }
+        else {
+            return new Rotation2d();  // Not sure best way to handle the tagpose not being there???????????????????????????
+        }
+
+        
+       return getRotation180(tagpose.getRotation());
+
+    }
+
+
 }

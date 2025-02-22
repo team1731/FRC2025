@@ -24,7 +24,15 @@ public class DriveToTargetCommand extends Command {
     private double fieldCentricX;
     private double fieldCentricY;
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
-    private final SwerveRequest.RobotCentric drive = new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+
+    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
+
+    private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+      .withDeadband(MaxSpeed * 0.05).withRotationalDeadband(MaxAngularRate * 0.05) // Add a 10% deadband
+      .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+
+    private final SwerveRequest.FieldCentricFacingAngle driveAtLocation =  new SwerveRequest.FieldCentricFacingAngle().withRotationalDeadband( VisionConstants.MAX_ANGULAR_SPEED * 0.01) // Add a 10% deadband
+		.withDriveRequestType(DriveRequestType.OpenLoopVoltage).withDeadband((MaxSpeed * 0.05));
 
     public DriveToTargetCommand(CommandSwerveDrivetrain driveSubsystem, CommandXboxController xboxController) {
         m_driveSubsystem = driveSubsystem;
@@ -34,6 +42,8 @@ public class DriveToTargetCommand extends Command {
 
     @Override
     public void initialize() {
+        driveAtLocation.HeadingController.setPID(10,0,0);
+	    driveAtLocation.HeadingController.enableContinuousInput(-Math.PI/2, Math.PI/2);
         m_commandDone = false;
         AprilTagSubsystem aprilTagSubsystem = m_driveSubsystem.getAprilTagSubsystem();
         if(aprilTagSubsystem != null) {
@@ -51,21 +61,27 @@ public class DriveToTargetCommand extends Command {
         SmartDashboard.putNumber ("fieldCentricY",fieldCentricY);
 
         aprilTagTargetTracker.recalculateDriveFeedback(m_driveSubsystem.getCurrentPose(), fieldCentricX, fieldCentricY);
-        SmartDashboard.putNumber ("current heading",m_driveSubsystem.getState().Pose.getRotation().getDegrees());
+
+    
         if(aprilTagTargetTracker.hasVisibleTarget()) {
             m_driveSubsystem.setControl(
-                drive.withVelocityX(fieldCentricX)                                                                                                                     
+                driveAtLocation.withVelocityX(fieldCentricX)                                                                                                                     
                     .withVelocityY(aprilTagTargetTracker.getCalculatedStrafe()) 
-                    .withRotationalRate(aprilTagTargetTracker.getCalcuatedTurn())
+                    .withTargetDirection(aprilTagTargetTracker.getRotationTarget())
             );
         } else {
             m_driveSubsystem.setControl(
                 drive.withVelocityX(-(Math.abs(m_xboxController.getLeftY()) * m_xboxController.getLeftY()) * MaxSpeed)                                                                                                                     
                     .withVelocityY(-(Math.abs(m_xboxController.getLeftX()) * m_xboxController.getLeftX()) * MaxSpeed) 
-                    .withRotationalRate(-m_xboxController.getRightX() * VisionConstants.MAX_ANGULAR_SPEED)
+                    .withRotationalRate(-m_xboxController.getRightX() * MaxAngularRate)
         
             );
         }
+
+        SmartDashboard.putNumber("PID Setpoint", driveAtLocation.HeadingController.getSetpoint());
+		SmartDashboard.putNumber("PID Output", driveAtLocation.HeadingController.getLastAppliedOutput());
+		SmartDashboard.putNumber("PID Error", driveAtLocation.HeadingController.getPositionError());
+        SmartDashboard.putNumber ("current heading",m_driveSubsystem.getState().Pose.getRotation().getDegrees());
     }
 
     @Override
