@@ -37,35 +37,42 @@ public final class PositionConstants {
 
     public static final class CORAL_SCORE {
         public static final class CORAL_L1 {
+            public final static double raiseElevatorPosition = 21;
+            public final static double raiseElevatorThresholdPosition = 10;
+            public final static double armForwardPosition = 15;
+            public final static double armForwardThreshold = 11;
+        }
+
+        public static final class CORAL_L1_ALT {
             public final static double raiseElevatorPosition = 6;
             public final static double raiseElevatorThresholdPosition = 2;
             public final static double clamperOpenPosition = dumpCoralWidth;
         }
 
         public static final class CORAL_L2 {
-            public final static double driveDistanceThreshold = 0.3; // 30%
             public final static double raiseElevatorPosition = 21;
             public final static double raiseElevatorThresholdPosition = 16;
             public final static double lowerElevatorThresholdPosition = 20;
             public final static double armForwardPosition = 8.5;
+            public final static double armForwardThreshold = 6;
             public final static double armScorePosition = 11;
         }
 
         public static final class CORAL_L3 {
-            public final static double driveDistanceThreshold = 0.3; // 30%
             public final static double raiseElevatorPosition = 46;
             public final static double raiseElevatorThresholdPosition = 41;
             public final static double lowerElevatorThresholdPosition = 45;
             public final static double armForwardPosition = 8.5;
+            public final static double armForwardThreshold = 6;
             public final static double armScorePosition = 13;
         }
 
         public static final class CORAL_L4 {
-            public final static double driveDistanceThreshold = 0.3; // 30%
             public final static double raiseElevatorPosition = 95;
             public final static double raiseElevatorThresholdPosition = 90;
             public final static double lowerElevatorThresholdPosition = 95;
             public final static double armForwardPosition = 9;
+            public final static double armForwardThreshold = 6;
             public final static double armScorePosition = 15;
         }
     }

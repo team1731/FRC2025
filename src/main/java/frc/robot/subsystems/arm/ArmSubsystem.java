@@ -31,7 +31,13 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
     private boolean enabled;
     private double arbitraryFeedForward = 0;
 
-    private StateMachineCallback scoreStateMachineCallback;
+    // state machine callback handling
+    private StateMachineCallback stateMachineCallback;
+    private boolean callbackOnDone = false;
+    private boolean callbackOnThreshold = false;
+    private double positionThreshold = 0;
+    private boolean forwardThreshold = false;
+
     private ClimbSubsystem climbSubsystem;
 
 
@@ -73,22 +79,33 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
     public void moveArmNormalSpeed(double position) {
         mmReq.Velocity = ElevatorConstants.normalElevatorVelocity;
         mmReq.Acceleration = ElevatorConstants.normalElevatorAcceleration;
+        callbackOnDone = true;
         moveArm(position);
+    }
+
+    public void moveArmNormalSpeed(double position, StateMachineCallback callback){
+        stateMachineCallback = callback;
+        moveArmNormalSpeed(position);
+    }
+
+    public void moveArmNormalSpeed(double position, StateMachineCallback callback, double threshold){
+        stateMachineCallback = callback;
+        callbackOnDone = true;
+        callbackOnThreshold = true;
+        positionThreshold = threshold;
+        forwardThreshold = threshold < position;
+        moveArmNormalSpeed(position);
     }
 
     public void moveArmSlowSpeed(double position) {
         mmReq.Velocity = ElevatorConstants.slowedElevatorVelocity;
         mmReq.Acceleration = ElevatorConstants.slowedElevatorAcceleration;
+        callbackOnDone = true;
         moveArm(position);
     }
 
-    public void moveArmNormalSpeed(double position, StateMachineCallback callback){
-        scoreStateMachineCallback = callback;
-        moveArmNormalSpeed(position);
-    }
-
     public void moveArmSlowSpeed(double position, StateMachineCallback callback){
-        scoreStateMachineCallback = callback;
+        stateMachineCallback = callback;
         moveArmSlowSpeed(position);
     }
 
@@ -146,10 +163,24 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
     public void periodic(){
         if (!enabled) return;
 
-        if (isAtPosition(desiredPosition) && scoreStateMachineCallback != null){
-            System.out.println("Armsystem callback " + desiredPosition);
-            scoreStateMachineCallback.setInput(SequenceInput.ARM_DONE);
-            scoreStateMachineCallback = null;
+        /*
+         * Score State Machine callback handling
+         */
+        if(callbackOnDone && isAtPosition(desiredPosition) && stateMachineCallback != null) {
+            // final position reached, notify the state machine
+            callbackOnDone = false;
+            System.out.println("Arm subsystem callback: " + getArmPosition());
+            stateMachineCallback.setInput(SequenceInput.ARM_DONE);
+        } else if(callbackOnThreshold && stateMachineCallback != null) {
+            // check to see if the threshold was met, if so notify the state machine
+            boolean thresholdMet = forwardThreshold && getArmPosition() >= positionThreshold ||
+                !forwardThreshold && getArmPosition() <= positionThreshold;
+            if(thresholdMet) {
+                System.out.println("Arm subsystem threshold callback: " + getArmPosition());
+                stateMachineCallback.setInput(SequenceInput.ARM_THRESHOLD_MET);
+                callbackOnThreshold = false;
+                positionThreshold = 0;
+            }
         }
 
         log();

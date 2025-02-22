@@ -17,6 +17,7 @@ public enum SequenceInput implements Input {
     ELEVATOR_THRESHOLD_MET,
     ELEVATOR_DONE,
     ARM_DONE,
+    ARM_THRESHOLD_MET,
     HAND_DONE,
     DETECTED_PIECE,
     TIMER_DONE,
