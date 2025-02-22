@@ -5,54 +5,53 @@ import java.util.List;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.camera.Camera;
 
 public class AprilTagTargetTracker {
     private Camera camera1;
     private Camera camera2;
-    private Camera lockedCamera;
-    private PhotonTrackedTarget lockedTarget;
-    private boolean targetIsVisible;
-    private Pose2d goalPose;
     private double calcuatedStrafe;
     private double calcuatedForward;
     private double calcuatedTurn;
+    private boolean hasVisibleTarget = false;
 
     public AprilTagTargetTracker(Camera camera1, Camera camera2) {
         camera1 = this.camera1;
         camera2 = this.camera2;
     }
 
-    public void lockOnTarget(Pose2d currentPose) {
-        //List<PhotonTrackedTarget> camera1Targets = getTargets(null);
-        //determineClosestTarget(null, currentPose);
+    public boolean hasVisibleTarget() {
+        return hasVisibleTarget;
     }
 
-    public boolean isLockedOnTarget() {
-        return (lockedTarget != null);
-    }
-
-    public boolean isTargetVisible() {
-        return targetIsVisible;
-    }
-
-    /*
-     * TODO REFACTOR
-     */
     public void recalculateDriveFeedback(Pose2d currentPose) {
-        if(lockedTarget == null) return; // no target locked yet
+        PhotonTrackedTarget target = chooseTarget();
+        if(target == null) {
+            hasVisibleTarget = false;
+            return;
+        }
 
-        // See if locked target is visible
-        if(!locateLockedTarget()) return; // not currently visible
+        hasVisibleTarget = true;
+        SmartDashboard.putNumber("ATTracker_targetedAprilTagId", target.getFiducialId());
 
-        /*
-         * TODO NEW LOGIC
-         */
+        // calculate speed
+        var tagRotation = 180.0;
+        var speedContributionFromX = Math.sin(Units.degreesToRadians(tagRotation));
+        var speedContributionFromY = Math.cos(Units.degreesToRadians(tagRotation));
+        var speed = speedContributionFromX + speedContributionFromY;
+        SmartDashboard.putNumber("ATTracker_speedContributionFromX", speedContributionFromX);
+        SmartDashboard.putNumber("ATTracker_speedContributionFromY", speedContributionFromY);
 
-        // Calculate updated drive values
-        calcuatedStrafe = 0; // TODO REPLACE
-        calcuatedForward = 0; // TODO REPLACE
-        calcuatedTurn = 0; // TODO REPLACE
+        // calculate updated drive values
+        calcuatedForward = speed * Math.cos(Units.degreesToRadians(target.getYaw()));
+        calcuatedStrafe = speed * Math.sin(Units.degreesToRadians(target.getYaw()));
+        calcuatedTurn = limitNegToPosOne((currentPose.getRotation().getDegrees() - tagRotation) * VisionConstants.VISION_ROTATE_kP) * VisionConstants.MAX_ANGULAR_SPEED;
+        SmartDashboard.putNumber("ATTracker_forward", calcuatedForward);
+        SmartDashboard.putNumber("ATTracker_strafe", calcuatedStrafe);
+        SmartDashboard.putNumber("ATTracker_turn", calcuatedTurn);
     }
 
     public double getCalculatedStrafe() {
@@ -66,39 +65,36 @@ public class AprilTagTargetTracker {
     public double getCalcuatedTurn() {
         return calcuatedTurn;
     }
+    
+    private PhotonTrackedTarget chooseTarget() {
+        PhotonTrackedTarget winningTarget = null;
+        double winningTargetYaw = 0;
 
-    private boolean locateLockedTarget() {
-        List<PhotonTrackedTarget> targets = getTargets(lockedCamera);
-        for(var target : targets) {
-            if(target.getFiducialId() == lockedTarget.getFiducialId()) {
-                targetIsVisible = true;
-                lockedTarget = target;
-                return true;
-            }
-        }
-        targetIsVisible = false;
-        return false;
-    }
-
-    /*
-     * TODO REFACTOR
-     */
-    private void determineClosestTarget(List<PhotonTrackedTarget> targets, Pose2d currentPose) {
-        PhotonTrackedTarget closestTarget = null;
-        double currentTargetDistance = 0;
-
+        List<PhotonTrackedTarget> targets = getCombinedTargets();
         for(var target : targets) {
             int targetId = target.getFiducialId();
             if(!FieldPoseHelper.isReefTarget(targetId)) continue;
-            /*
-             * TODO NEW LOGIC
-             */
+            double targetYaw = Math.abs(target.getYaw());
+            if(winningTarget == null || targetYaw < winningTargetYaw) {
+                winningTarget = target;
+                winningTargetYaw = targetYaw;
+            }
         }
 
-        if(closestTarget != null) {
-            targetIsVisible = true;
-            lockedTarget = closestTarget;
+        return winningTarget;
+    }
+
+    private List<PhotonTrackedTarget> getCombinedTargets() {
+        List<PhotonTrackedTarget> combinedTargets;
+        List<PhotonTrackedTarget> camera1Targets = getTargets(camera1);
+        if(camera1Targets != null) {
+            combinedTargets = camera1Targets;
+            List<PhotonTrackedTarget> camera2Targets = getTargets(camera2);
+            if(camera2Targets != null) combinedTargets.addAll(camera2Targets);
+        } else {
+            combinedTargets = getTargets(camera2);
         }
+        return combinedTargets;
     }
     
     private List<PhotonTrackedTarget> getTargets(Camera camera) {
