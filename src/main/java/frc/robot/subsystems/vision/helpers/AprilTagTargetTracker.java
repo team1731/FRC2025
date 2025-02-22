@@ -19,8 +19,8 @@ public class AprilTagTargetTracker {
     private boolean hasVisibleTarget = false;
 
     public AprilTagTargetTracker(Camera camera1, Camera camera2) {
-        camera1 = this.camera1;
-        camera2 = this.camera2;
+        this.camera1 = camera1;
+        this.camera2 = camera2;
     }
 
     public boolean hasVisibleTarget() {
@@ -71,6 +71,8 @@ public class AprilTagTargetTracker {
         double winningTargetYaw = 0;
 
         List<PhotonTrackedTarget> targets = getCombinedTargets();
+        if(targets == null) return null;
+
         for(var target : targets) {
             int targetId = target.getFiducialId();
             if(!FieldPoseHelper.isReefTarget(targetId)) continue;
@@ -98,10 +100,14 @@ public class AprilTagTargetTracker {
     }
     
     private List<PhotonTrackedTarget> getTargets(Camera camera) {
+        if(camera == null || !camera.isInitialized()) return null;
+
         List<PhotonPipelineResult> results = camera.getAllUnreadResults();
-        var result = results.get(results.size() - 1); // Camera processed a new frame since last, get the last one in the list
-        if(result.hasTargets()) {
-            return result.getTargets();
+        if(results.size() > 0) {
+            var result = results.get(results.size() - 1); // Camera processed a new frame since last, get the last one in the list
+            if(result.hasTargets()) {
+                return result.getTargets();
+            }
         }
         return null;
     }

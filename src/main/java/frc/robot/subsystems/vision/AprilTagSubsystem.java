@@ -58,7 +58,7 @@ import frc.robot.subsystems.vision.camera.Camera;
         if(!camera1.isInitialized()) camera1.initialize();
         if(!camera2.isInitialized()) camera2.initialize();
 
-        if(camera1.isInitialized() && camera2.isInitialized()) {
+        if(camera1.isInitialized() || camera2.isInitialized()) {
             initialized = true;
             visionInitCount = 0;
         }
