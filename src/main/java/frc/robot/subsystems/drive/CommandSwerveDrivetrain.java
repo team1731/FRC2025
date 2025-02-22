@@ -152,9 +152,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
     }
 
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
-        if (!enabled)
-            return new Command() {
-            };
+        if(!enabled) return new Command() {};
         return run(() -> this.setControl(requestSupplier.get()));
     }
 

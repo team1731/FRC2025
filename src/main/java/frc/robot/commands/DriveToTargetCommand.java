@@ -28,6 +28,7 @@ public class DriveToTargetCommand extends Command {
     public DriveToTargetCommand(CommandSwerveDrivetrain driveSubsystem, CommandXboxController xboxController) {
         m_driveSubsystem = driveSubsystem;
         m_xboxController = xboxController;
+        addRequirements(m_driveSubsystem);
     }
 
     @Override
@@ -49,14 +50,14 @@ public class DriveToTargetCommand extends Command {
 
             aprilTagTargetTracker.recalculateDriveFeedback(m_driveSubsystem.getCurrentPose());
             if(aprilTagTargetTracker.hasVisibleTarget()) {
-                m_driveSubsystem.applyRequest(
-                    () -> drive.withVelocityX(fieldCentricX)                                                                                                                     
+                m_driveSubsystem.setControl(
+                    drive.withVelocityX(fieldCentricX)                                                                                                                     
                         .withVelocityY(aprilTagTargetTracker.getCalculatedStrafe()) 
                         .withRotationalRate(aprilTagTargetTracker.getCalcuatedTurn())
                 );
             } else {
-                m_driveSubsystem.applyRequest(
-                    () -> drive.withVelocityX(-(Math.abs(m_xboxController.getLeftY()) * m_xboxController.getLeftY()) * MaxSpeed)                                                                                                                     
+                m_driveSubsystem.setControl(
+                    drive.withVelocityX(-(Math.abs(m_xboxController.getLeftY()) * m_xboxController.getLeftY()) * MaxSpeed)                                                                                                                     
                         .withVelocityY(-(Math.abs(m_xboxController.getLeftX()) * m_xboxController.getLeftX()) * MaxSpeed) 
                         .withRotationalRate(-m_xboxController.getRightX() * MaxAngularRate)
             
