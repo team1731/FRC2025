@@ -63,15 +63,16 @@ public class DriveToTargetCommand extends Command {
         aprilTagTargetTracker.recalculateDriveFeedback(m_driveSubsystem.getCurrentPose(), fieldCentricX, fieldCentricY);
 
     
-        if(aprilTagTargetTracker.hasVisibleTarget()) {
-            System.out.println("++++++++++++++++++++");
+      //  if(aprilTagTargetTracker.hasVisibleTarget()) {
+          //  System.out.println("++++++++++++++++++++");
             m_driveSubsystem.setControl(
 
-                driveAtLocation.withVelocityX(fieldCentricX)                                                                                                                     
+                driveAtLocation.withVelocityX(aprilTagTargetTracker.getCalcuatedForward())                                                                                                                     
                     .withVelocityY(aprilTagTargetTracker.getCalculatedStrafe()) 
                     .withTargetDirection(aprilTagTargetTracker.getRotationTarget())
             );
-        } /* 
+     //  } 
+     /* 
         else {
             System.out.println("--------------------");
             m_driveSubsystem.setControl(

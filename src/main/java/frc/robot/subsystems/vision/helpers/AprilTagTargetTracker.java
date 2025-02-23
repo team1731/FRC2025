@@ -29,6 +29,9 @@ public class AprilTagTargetTracker {
     }
 
     public void recalculateDriveFeedback(Pose2d currentPose, double fieldCentricX, double fieldCentricY) {
+
+        SmartDashboard.putNumber("fcx", fieldCentricX);
+        SmartDashboard.putNumber("fcy",fieldCentricY);
         PhotonTrackedTarget target = chooseTarget();
         if(target == null) {
             hasVisibleTarget = false;
@@ -39,7 +42,7 @@ public class AprilTagTargetTracker {
 
 
         var currentRobotRotation = currentPose.getRotation().getDegrees();
-        double desiredHeading = currentRobotRotation + 2*target.getYaw();
+        double desiredHeading = currentRobotRotation - target.getYaw();
 
         // calculate speed
    
@@ -51,7 +54,7 @@ public class AprilTagTargetTracker {
         // calculate updated drive values
 
         calcuatedForward = speed * Math.cos(Units.degreesToRadians(desiredHeading));
-        calcuatedStrafe = -speed * Math.sin(Units.degreesToRadians(desiredHeading));
+        calcuatedStrafe = speed * Math.sin(Units.degreesToRadians(desiredHeading));
         calculatedDesiredRotation = FieldPoseHelper.getDriveToTagRotation(target.getFiducialId());
         
 
@@ -83,7 +86,7 @@ public class AprilTagTargetTracker {
     
     private PhotonTrackedTarget chooseTarget() {
         PhotonTrackedTarget winningTarget = null;
-        double winningTargetYaw = 0;
+        double winningTargetSize = 0;
 
         List<PhotonTrackedTarget> targets = getCombinedTargets();
         if(targets == null) return null;
@@ -91,10 +94,10 @@ public class AprilTagTargetTracker {
         for(var target : targets) {
             int targetId = target.getFiducialId();
             if(!FieldPoseHelper.isReefTarget(targetId)) continue;
-            double targetYaw = Math.abs(target.getYaw());
-            if(winningTarget == null || targetYaw < winningTargetYaw) {
+            double targetSize = Math.abs(target.getArea());
+            if(winningTarget == null || targetSize < winningTargetSize) {
                 winningTarget = target;
-                winningTargetYaw = targetYaw;
+                winningTargetSize = targetSize;
             }
         }
 
