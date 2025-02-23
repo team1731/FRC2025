@@ -10,7 +10,6 @@ public class CoralScoreL1Transitions {
         {SequenceState.RAISING_ELEVATOR,        SequenceInput.ELEVATOR_THRESHOLD_MET,     "moveArmWithThreshold",      SequenceState.MOVING_ARM_FORWARD},
         {SequenceState.MOVING_ARM_FORWARD,      SequenceInput.ARM_THRESHOLD_MET,          null,                        SequenceState.WAITING},
         {SequenceState.WAITING,                 SequenceInput.BUTTON_RELEASED,            "releasePiece",              SequenceState.SCORING},
-        {SequenceState.WAITING,                 SequenceInput.SCORE,                      "releasePiece",              SequenceState.SCORING},
         {SequenceState.SCORING,                 SequenceInput.RELEASED_PIECE,             "stopIntaking",              SequenceState.STOPPING_INTAKE},
         {SequenceState.STOPPING_INTAKE,         SequenceInput.STOPPED_INTAKE,             "startReset",                SequenceState.FINISHING},
         {SequenceState.FINISHING,               SequenceInput.RESET_DONE,                 "resetState",                SequenceState.HOME},

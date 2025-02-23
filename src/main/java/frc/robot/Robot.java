@@ -28,7 +28,6 @@ import frc.robot.autos.AutoCommandLoader;
 import frc.robot.autos.AutoFactory;
 import frc.robot.autos.AutoLoader;
 import frc.robot.generated.TunerConstants;
-import frc.robot.state.sequencer.SequenceManager;
 import frc.robot.util.log.MessageLog;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.arm.ArmSubsystem;
@@ -351,7 +350,6 @@ public class Robot extends TimedRobot {
 		MessageLog.getLogger();
 		System.out.println("TELEOP INIT");
 		CommandScheduler.getInstance().cancelAll();
-		initSubsystems();
 
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.cancel();

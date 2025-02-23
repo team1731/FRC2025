@@ -41,7 +41,7 @@ public class AutoCommandLoader {
         NamedCommands.registerCommand("CoralFeederIntake", getCoralFeederIntakeCommand());
         NamedCommands.registerCommand("FinishCoralFeederIntake", getFinishCoralFeederIntakeCommand());
         NamedCommands.registerCommand("CoralL4Score", getCoralL4ScoreCommand());
-        NamedCommands.registerCommand("FinishCoralScore", new InstantCommand(() -> sequenceStateMachine.setInput(SequenceInput.SCORE)));
+        NamedCommands.registerCommand("FinishCoralScore", new InstantCommand(() -> sequenceStateMachine.setInput(SequenceInput.AUTO_SCORE)));
         NamedCommands.registerCommand("AlgaeReefL2Intake", getAlgaeReefIntakeCommand(Level.L2));
         NamedCommands.registerCommand("AlgaeReefL3Intake", getAlgaeReefIntakeCommand(Level.L3));
         NamedCommands.registerCommand("FinishAlgaeIntake", new InstantCommand(() -> sequenceStateMachine.setInput(SequenceInput.FINISH_INTAKE)));

@@ -10,7 +10,6 @@ public class CoralScoreL1AltTransitions {
         {SequenceState.RAISING_ELEVATOR,        SequenceInput.ELEVATOR_THRESHOLD_MET,     "openHand",                  SequenceState.OPENING_HAND},
         {SequenceState.OPENING_HAND,            SequenceInput.HAND_DONE,                  null,                        SequenceState.WAITING},
         {SequenceState.WAITING,                 SequenceInput.BUTTON_RELEASED,            "releasePiece",              SequenceState.SCORING},
-        {SequenceState.WAITING,                 SequenceInput.SCORE,                      "releasePiece",              SequenceState.SCORING},
         {SequenceState.SCORING,                 SequenceInput.RELEASED_PIECE,             "closeHand",                 SequenceState.CLOSING_HAND},
         {SequenceState.CLOSING_HAND,            SequenceInput.HAND_DONE,                  "startReset",                SequenceState.FINISHING},
         {SequenceState.FINISHING,               SequenceInput.RESET_DONE,                 "resetState",                SequenceState.HOME},
