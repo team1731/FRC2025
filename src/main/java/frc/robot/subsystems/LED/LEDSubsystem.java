@@ -15,6 +15,13 @@ public class LEDSubsystem extends SubsystemBase implements ToggleableSubsystem {
     private CANdle candle; 
     private CANdleConfiguration candleConfig;
 
+    //set using RGB
+    private static final int[] OFF = { 0, 0, 0, 0 };
+    private static final int[] RED = { 255, 0, 0, 0 };
+    private static final int[] BLUE = { 0, 255, 0, 0 };
+    private static final int[] GREEN = { 0, 0, 255, 0 };
+    private static final int[] WHITE = { 0, 0, 0, 1 }; //need to check this is how we get white LEDs
+
     @Override
     public boolean isEnabled() {
         return enabled;
@@ -26,12 +33,24 @@ public class LEDSubsystem extends SubsystemBase implements ToggleableSubsystem {
         initializeLED();
     }
 
-    public void setColor(int red, int green, int blue, int startLED, int numberOfLEDs){
-        candle.setLEDs(red, green, blue, 0, startLED, numberOfLEDs);
+    public void setColor(int red, int green, int blue, int white,int startLED, int numberOfLEDs){
+        candle.setLEDs(red, green, blue, white, startLED, numberOfLEDs);
     }
 
-    public void setBlink(){
-    }
+    private void setColor(LEDConstants.LedColor color, int startLED, int numberOfLEDs) {
+        int r = 0;
+        int g = 0;
+        int b = 0;
+        int w = 0;
+        switch (color) {
+          case OFF:   r = OFF[0]; g = OFF[1]; b = OFF[2]; w = OFF[3];break;
+          case WHITE:   r = WHITE[0]; g = WHITE[1]; b = WHITE[2]; w = WHITE[3]; break;
+          case BLUE:    r = BLUE[0]; g = BLUE[1]; b = BLUE[2]; w = BLUE[3]; break;
+          case RED:     r = RED[0]; g = RED[1]; b = RED[2]; w = RED[3];break;
+          case GREEN:   r = GREEN[0]; g = GREEN[1]; b = GREEN[2]; w = GREEN[3];break;
+        }
+            candle.setLEDs(r, g, b, w, startLED, numberOfLEDs);
+        }
     
     private void initializeLED(){
         System.out.println("LEDSubsystem: Starting UP & Initializing LEDs !!!!!!!");
@@ -47,27 +66,31 @@ public class LEDSubsystem extends SubsystemBase implements ToggleableSubsystem {
         candle.configAllSettings(candleConfig);
     }
 
+    public void setBlink(){
+    }
+    
     public void intTelop(){
-        setColor(0, 255, 0, 0, LEDConstants.maxStringLength);
+        setColor(LEDConstants.LedColor.GREEN, 0, LEDConstants.maxStringLength);
     }
 
     public void toFarLeft(){
-        setColor(255, 0, 0, 0, 1);
-        setColor(0, 0, 0, 1, 6);
-        setColor(255, 0, 0, 7, 1);
+        setColor(LEDConstants.LedColor.RED, 0, 1);
+        setColor(LEDConstants.LedColor.OFF, 1, 6);
+        setColor(LEDConstants.LedColor.RED, 7, 1);
     }
     
     public void toFarRight(){
-        setColor(0, 0, 0, 0, 3);
-        setColor(255, 0, 0, 3, 2);
-        setColor(0, 0, 0, 5, 3);
+        setColor(LEDConstants.LedColor.OFF, 0, 3);
+        setColor(LEDConstants.LedColor.RED, 3, 2);
+        setColor(LEDConstants.LedColor.OFF, 5, 3);
     }
 
     public void centerted(){
-        setColor(0, 0, 0, 0, 1);
-        setColor(0, 255, 0, 1, 2);
-        setColor(0, 0, 0, 3, 2);
-        setColor(0, 255, 0, 5, 2);
-        setColor(0, 0, 0, 7, 1);
+        setColor(LEDConstants.LedColor.OFF, 0, 1);
+        setColor(LEDConstants.LedColor.GREEN, 1, 2);
+        setColor(LEDConstants.LedColor.OFF, 3, 2);
+        setColor(LEDConstants.LedColor.GREEN, 5, 2);
+        setColor(LEDConstants.LedColor.OFF, 7, 1);
     }
+
 }
