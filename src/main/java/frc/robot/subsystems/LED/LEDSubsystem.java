@@ -26,8 +26,8 @@ public class LEDSubsystem extends SubsystemBase implements ToggleableSubsystem {
         initializeLED();
     }
 
-    public void setColor(int r, int g, int b, int startLED, int numberLED){
-        candle.setLEDs(r, g, b, 0, startLED, numberLED);
+    public void setColor(int red, int green, int blue, int startLED, int numberOfLEDs){
+        candle.setLEDs(red, green, blue, 0, startLED, numberOfLEDs);
     }
 
     public void setBlink(){
@@ -39,7 +39,7 @@ public class LEDSubsystem extends SubsystemBase implements ToggleableSubsystem {
         candle = new CANdle(LEDConstants.CANdleCanId, "rio");
         candleConfig = new CANdleConfiguration();
         candleConfig.stripType = LEDStripType.GRB; //TODO: what type of LED string do we have?
-        candleConfig.brightnessScalar = 0.3;
+        candleConfig.brightnessScalar = 0.2;
         candleConfig.disableWhenLOS = false;
         candleConfig.statusLedOffWhenActive = true;
         candleConfig.vBatOutputMode = VBatOutputMode.On;
