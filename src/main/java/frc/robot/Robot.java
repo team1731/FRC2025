@@ -31,12 +31,12 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.state.sequencer.SequenceManager;
 import frc.robot.util.log.MessageLog;
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.LED.LEDSubsystem;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.climb.ClimbSubsystem;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
+import frc.robot.subsystems.led.LEDSubsystem;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
 import frc.robot.subsystems.vision.AprilTagSubsystem;
 
@@ -352,7 +352,6 @@ public class Robot extends TimedRobot {
 		MessageLog.getLogger();
 		System.out.println("TELEOP INIT");
 		CommandScheduler.getInstance().cancelAll();
-		//initSubsystems();
 
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.cancel();

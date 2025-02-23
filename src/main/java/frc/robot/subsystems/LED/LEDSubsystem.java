@@ -1,8 +1,8 @@
-package frc.robot.subsystems.LED;
+package frc.robot.subsystems.led;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.ToggleableSubsystem;
-import frc.robot.subsystems.LED.LEDConstants;
+
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
@@ -73,19 +73,19 @@ public class LEDSubsystem extends SubsystemBase implements ToggleableSubsystem {
         setColor(LEDConstants.LedColor.GREEN, 0, LEDConstants.maxStringLength);
     }
 
-    public void toFarLeft(){
+    public void setLineupMoveLeftScheme(){
         setColor(LEDConstants.LedColor.RED, 0, 1);
         setColor(LEDConstants.LedColor.OFF, 1, 6);
         setColor(LEDConstants.LedColor.RED, 7, 1);
     }
     
-    public void toFarRight(){
+    public void setLineupMoveRightScheme(){
         setColor(LEDConstants.LedColor.OFF, 0, 3);
         setColor(LEDConstants.LedColor.RED, 3, 2);
         setColor(LEDConstants.LedColor.OFF, 5, 3);
     }
 
-    public void centerted(){
+    public void setLineupCenteredScheme(){
         setColor(LEDConstants.LedColor.OFF, 0, 1);
         setColor(LEDConstants.LedColor.GREEN, 1, 2);
         setColor(LEDConstants.LedColor.OFF, 3, 2);
