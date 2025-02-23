@@ -11,12 +11,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "CoralL4Score"
-          }
-        },
-        {
           "type": "wait",
           "data": {
             "waitTime": 1.5
@@ -32,6 +26,12 @@
           "type": "path",
           "data": {
             "pathName": "Blu_1_p2"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
           }
         },
         {
@@ -65,6 +65,12 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Blu_1_p5"
@@ -92,6 +98,12 @@
           "type": "path",
           "data": {
             "pathName": "Blu_1_p6"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
           }
         },
         {

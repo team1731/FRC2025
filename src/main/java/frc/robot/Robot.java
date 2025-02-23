@@ -351,7 +351,7 @@ public class Robot extends TimedRobot {
 		MessageLog.getLogger();
 		System.out.println("TELEOP INIT");
 		CommandScheduler.getInstance().cancelAll();
-		initSubsystems();
+		//initSubsystems();
 
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.cancel();

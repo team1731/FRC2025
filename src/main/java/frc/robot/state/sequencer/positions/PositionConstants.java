@@ -17,8 +17,8 @@ public final class PositionConstants {
 
     public static final class CORAL_INTAKE {
         public static final class CORAL_FEEDER {
-            public final static double armBackPosition = -2;
-            public final static double armForwardPosition = 2;
+            public final static double armBackPosition = -.5;
+            public final static double armForwardPosition = .5;
             public final static double clamperIntakePosition = coralIntakeWidth;
         }
 
