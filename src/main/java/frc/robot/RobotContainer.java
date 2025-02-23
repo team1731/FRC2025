@@ -36,6 +36,7 @@ import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
+import frc.robot.subsystems.LED.LEDSubsystem;
 
 public class RobotContainer {
   private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -91,7 +92,7 @@ public class RobotContainer {
 
   /* Subsystems */
   private CommandSwerveDrivetrain driveSubsystem;
-  private final LEDStringSubsystem m_ledstring;
+  private LEDSubsystem ledSubsystem;
   private ElevatorSubsystem elevatorSubsystem;
   private ArmSubsystem armSubsystem;
   private HandClamperSubsystem handClamperSubsystem;
@@ -100,7 +101,7 @@ public class RobotContainer {
 
   public RobotContainer(
       CommandSwerveDrivetrain s_driveSubsystem,
-      LEDStringSubsystem s_ledstring,
+      LEDSubsystem s_ledstring,
       ElevatorSubsystem s_elevatorSubsystem,
       ArmSubsystem s_ArmSubsystem,
       HandClamperSubsystem s_HandClamperSubsystem,
@@ -110,7 +111,7 @@ public class RobotContainer {
 
     driveSubsystem = s_driveSubsystem;
     elevatorSubsystem = s_elevatorSubsystem;
-    m_ledstring = s_ledstring;
+    ledSubsystem = s_ledstring;
     armSubsystem = s_ArmSubsystem;
     handClamperSubsystem = s_HandClamperSubsystem;
     handIntakeSubsystem = s_HandIntakeSubsystem;
