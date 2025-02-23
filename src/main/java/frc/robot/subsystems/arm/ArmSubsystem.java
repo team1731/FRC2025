@@ -1,14 +1,18 @@
 package frc.robot.subsystems.arm;
 
 import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -23,6 +27,7 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
     
     
     private TalonFX armMotor;
+    private CANcoder armCANcoder;
     private DynamicMotionMagicVoltage mmReq = new DynamicMotionMagicVoltage(
         0, ArmConstants.normalArmVelocity, ArmConstants.normalArmAcceleration, ArmConstants.armJerk);
     private final NeutralOut brake = new NeutralOut();
@@ -57,7 +62,7 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
 
         //check if climber will collide with regular arm movments
         if(climbSubsystem.getClimbPosition() > 0.4) return; //TODO: (SF) check if this is correct
-
+        position = position * 9.0 /800.0;
         // do not go outside boundary thresholds
         if(position > ArmConstants.maxArmPosition) {
             desiredPosition = ArmConstants.maxArmPosition;
@@ -102,28 +107,38 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
 
         System.out.println("armSubsystem: Starting UP & Initializing arm motor!");
 
+        armCANcoder = new CANcoder(ArmConstants.armCancoderDeviceId, "rio");
+        CANcoderConfiguration cancoderConfigs = new CANcoderConfiguration();
+        cancoderConfigs.MagnetSensor.MagnetOffset = -0.383544921875;
+        cancoderConfigs.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5; // TODO what should this be?
+        cancoderConfigs.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+        armCANcoder.getConfigurator().apply(cancoderConfigs);
+
         armMotor = new TalonFX(ArmConstants.armCanId, "rio");
         TalonFXConfiguration config = new TalonFXConfiguration();
 
         armMotor.getConfigurator().apply(config);
-
-        //TODO: setup and apply current limits to config
+        
         /* Configure current limits */
         MotionMagicConfigs mm = config.MotionMagic;
-        mm.MotionMagicCruiseVelocity = ArmConstants.normalArmVelocity; // 5 rotations per second cruise
-        mm.MotionMagicAcceleration = ArmConstants.normalArmAcceleration; // Ta200ke approximately 0.5 seconds to reach max vel
-        // Take approximately 0.2 seconds to reach max accel
+        mm.MotionMagicCruiseVelocity = ArmConstants.normalArmVelocity; 
+        mm.MotionMagicAcceleration = ArmConstants.normalArmAcceleration; 
         mm.MotionMagicJerk = ArmConstants.armJerk;
 
         Slot0Configs slot0 = config.Slot0;
-        slot0.kP = 4.9;
+        slot0.kP = 90;
         slot0.kI = 0;
-        slot0.kD = 0.0078125;
-        slot0.kV = 0.009375;
+        slot0.kD = 0.0099;
+        slot0.kV = 0.9;
         slot0.kS = 0.02; // Approximately 0.25V to get the mechanism moving
 
         FeedbackConfigs fdb = config.Feedback;
         fdb.SensorToMechanismRatio = 1;
+        fdb.FeedbackRemoteSensorID = armCANcoder.getDeviceID();;
+        fdb.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+        fdb.RotorToSensorRatio = 1600.0/18.0;
+        config.CurrentLimits.StatorCurrentLimit = 40;
+        config.CurrentLimits.StatorCurrentLimitEnable = true;
 
 
         //applies config to ArmMotor
@@ -161,7 +176,7 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
     }
 
     public boolean isAtPosition(double position){
-        double tolerance = 2;
+        double tolerance = .002;
         return Math.abs(getArmPosition() - position) < tolerance;
     }
 
