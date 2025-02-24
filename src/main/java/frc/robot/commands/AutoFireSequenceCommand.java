@@ -25,7 +25,7 @@ public class AutoFireSequenceCommand extends Command {
     boolean m_commandDone = false;
 
     public AutoFireSequenceCommand(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem clamperSubsystem, HandIntakeSubsystem intakeSubsystem) {
-        m_scoreStateMachine = SequenceManager.getStateMachine();
+        m_scoreStateMachine = SequenceManager.getStateMachine(elevatorSubsystem, armSubsystem, clamperSubsystem, intakeSubsystem);
         m_elevatorSubsystem = elevatorSubsystem;
         m_armSubsystem = armSubsystem;
         m_clamperSubsystem = clamperSubsystem;

@@ -64,7 +64,7 @@ public class ClimbSubsystem extends SubsystemBase implements ToggleableSubsystem
 
     public void stowClimb(){
         if(!enabled) return;
-        moveClimb(ClimbConstants.climbStowedPosition);
+        moveClimb(ClimbConstants.climbHomePosition);
     }
 
     public void initializeClimbMotor(){

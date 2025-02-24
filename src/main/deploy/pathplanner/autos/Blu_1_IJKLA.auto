@@ -11,54 +11,27 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "wait",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "CoralL4Score"
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 1.5
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "FinishCoralScore"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
+            "waitTime": 1.5
           }
         },
         {
-          "type": "race",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "CoralFeederIntake"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Blu_1_p2"
-                }
-              }
-            ]
+            "name": "FinishCoralScore"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Blu_1_p2"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
           }
         },
         {
@@ -68,54 +41,33 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "CoralL4Score"
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 1.5
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "FinishCoralScore"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
+            "name": "CoralL4Score"
           }
         },
         {
-          "type": "race",
+          "type": "wait",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "CoralFeederIntake"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Blu_1_p4"
-                }
-              }
-            ]
+            "waitTime": 1.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FinishCoralScore"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Blu_1_p4"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
           }
         },
         {
@@ -125,54 +77,33 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "CoralL4Score"
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 1.5
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "FinishCoralScore"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
+            "name": "CoralL4Score"
           }
         },
         {
-          "type": "race",
+          "type": "wait",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "CoralFeederIntake"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Blu_1_p6"
-                }
-              }
-            ]
+            "waitTime": 1.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FinishCoralScore"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Blu_1_p6"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
           }
         },
         {
@@ -182,35 +113,21 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "CoralL4Score"
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 1.5
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "FinishCoralScore"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
+            "name": "CoralL4Score"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FinishCoralScore"
           }
         }
       ]

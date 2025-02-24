@@ -36,6 +36,7 @@ import frc.robot.subsystems.climb.ClimbSubsystem;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
+import frc.robot.subsystems.led.LEDSubsystem;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
 import frc.robot.subsystems.vision.AprilTagSubsystem;
 
@@ -66,7 +67,7 @@ public class Robot extends TimedRobot {
 	}
 
 	// SUBSYSTEM DECLARATION
-	private LEDStringSubsystem ledSubsystem;
+	private LEDSubsystem ledSubsystem;
 
 	// NOTE: FOR TESTING PURPOSES ONLY!
 	// private final Joystick driver = new Joystick(0);
@@ -100,7 +101,7 @@ public class Robot extends TimedRobot {
 		driveSubsystem = new CommandSwerveDrivetrain(true, TunerConstants.DrivetrainConstants, TunerConstants.FrontLeft,
 				TunerConstants.FrontRight, TunerConstants.BackLeft, TunerConstants.BackRight);
 
-		ledSubsystem = new LEDStringSubsystem(true);
+		ledSubsystem = new LEDSubsystem(true);
 
 		elevatorSubsystem = new ElevatorSubsystem(true);
 
@@ -120,7 +121,7 @@ public class Robot extends TimedRobot {
 		 * Complete initialization setup/configuration
 		 */
 		initSubsystems();
-		SequenceManager.createStateMachine(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem);
+		System.out.println("creating state machine in robot");
 		autoChooser = AutoLoader.loadAutoChooser();
 		autoCommandLoader = new AutoCommandLoader(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem);
 		autoCommandLoader.registerAutoEventCommands();
@@ -226,8 +227,8 @@ public class Robot extends TimedRobot {
 	private void initSubsystems() {
 		driveSubsystem.configureInitialPosition();
 		driveSubsystem.configureAutoBindings();
-		ledSubsystem.init();
-		ledSubsystem.setColor(LedOption.INIT);
+		//ledSubsystem.init();
+		//ledSubsystem.setColor(LedOption.INIT);
 	}
 
 	/**
@@ -260,8 +261,8 @@ public class Robot extends TimedRobot {
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	@Override
 	public void disabledInit() {
-		ledSubsystem.setBlink(false);
-		ledSubsystem.setColor(OpConstants.LedOption.INIT);
+		//ledSubsystem.setBlink(false);
+		//ledSubsystem.setColor(OpConstants.LedOption.INIT);
 	}
 
 
@@ -344,14 +345,13 @@ public class Robot extends TimedRobot {
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	@Override
 	public void teleopInit() {
-		ledSubsystem.setColor(LedOption.GREEN);
+		//ledSubsystem.setColor(LedOption.GREEN);
 		//driveSubsystem.seedFieldRelative(new Pose2d(new Translation2d(0,0), new Rotation2d(120)));
 
 		// Record both DS control and joystick data in TELEOP
 		MessageLog.getLogger();
 		System.out.println("TELEOP INIT");
 		CommandScheduler.getInstance().cancelAll();
-		initSubsystems();
 
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.cancel();

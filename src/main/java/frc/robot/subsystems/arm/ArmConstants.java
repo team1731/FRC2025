@@ -5,6 +5,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 public final class ArmConstants {
     //Arm Can ID
     public final static int armCanId = 33;
+    public final static int armCancoderDeviceId = 15; // TODO is this correct?
 
     // Motor Direction
     public final static InvertedValue armMotorDirection = InvertedValue.Clockwise_Positive;
@@ -23,7 +24,7 @@ public final class ArmConstants {
 
     // Positions
     public final static double armHomePosition = 0;
-    public final static double minArmPosition = -2;
-    public final static double maxArmPosition = 19;
-    public final static double stowArmPosition = 19; 
+    public final static double minArmPosition = 0;
+    public final static double maxArmPosition = 0.25; // TODO are these correct? Seems like arm can't actually go fully 90 degrees
+    public final static double stowArmPosition = 0.25; // TODO are these correct?
 }

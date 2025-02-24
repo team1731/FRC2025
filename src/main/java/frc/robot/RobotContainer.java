@@ -35,6 +35,7 @@ import frc.robot.subsystems.climb.ClimbSubsystem;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
+import frc.robot.subsystems.led.LEDSubsystem;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
 
 public class RobotContainer {
@@ -91,7 +92,7 @@ public class RobotContainer {
 
   /* Subsystems */
   private CommandSwerveDrivetrain driveSubsystem;
-  private final LEDStringSubsystem m_ledstring;
+  private LEDSubsystem ledSubsystem;
   private ElevatorSubsystem elevatorSubsystem;
   private ArmSubsystem armSubsystem;
   private HandClamperSubsystem handClamperSubsystem;
@@ -100,7 +101,7 @@ public class RobotContainer {
 
   public RobotContainer(
       CommandSwerveDrivetrain s_driveSubsystem,
-      LEDStringSubsystem s_ledstring,
+      LEDSubsystem s_ledstring,
       ElevatorSubsystem s_elevatorSubsystem,
       ArmSubsystem s_ArmSubsystem,
       HandClamperSubsystem s_HandClamperSubsystem,
@@ -110,7 +111,7 @@ public class RobotContainer {
 
     driveSubsystem = s_driveSubsystem;
     elevatorSubsystem = s_elevatorSubsystem;
-    m_ledstring = s_ledstring;
+    ledSubsystem = s_ledstring;
     armSubsystem = s_ArmSubsystem;
     handClamperSubsystem = s_HandClamperSubsystem;
     handIntakeSubsystem = s_HandIntakeSubsystem;

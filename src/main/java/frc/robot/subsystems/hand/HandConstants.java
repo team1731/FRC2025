@@ -22,7 +22,7 @@ public final class HandConstants {
     public final static InvertedValue intakeMotorDirection = InvertedValue.CounterClockwise_Positive;
 
     // Positions
-    public final static double clamperHomePosition = 0;
+    public final static double clamperHomePosition = 0.0;
     public final static double clamperCoralPosition = 0.018554;
     public final static double clamperAlgaePosition = 0.05;
     public final static double clamperReefIntakePosition = 0.22; // note: this should be wide for intaking algae from the reef

@@ -17,13 +17,13 @@ public final class PositionConstants {
 
     public static final class CORAL_INTAKE {
         public static final class CORAL_FEEDER {
-            public final static double armBackPosition = -2;
-            public final static double armForwardPosition = 2;
+            public final static double armBackPosition = -.5;
+            public final static double armForwardPosition = .5;
             public final static double clamperIntakePosition = coralIntakeWidth;
         }
 
         public static final class CORAL_FLOOR_UPRIGHT {
-            public final static double armForwardPosition = 19;
+            public final static double armForwardPosition = 19; // TODO need to update all of these arm positions, what is the calc? it is 9/800
             public final static double clamperIntakePosition = coralIntakeWidth;
         }
     }

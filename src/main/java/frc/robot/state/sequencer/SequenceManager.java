@@ -1,7 +1,6 @@
 package frc.robot.state.sequencer;
 
 import frc.robot.subsystems.arm.ArmSubsystem;
-import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
@@ -46,12 +45,10 @@ public class SequenceManager {
         actionSelection = action;
     }
 
-    public static SequenceStateMachine createStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem clamperSubsystem, HandIntakeSubsystem intakeSubsystem) {
-        stateMachine = new SequenceStateMachine(elevatorSubsystem, armSubsystem, clamperSubsystem, intakeSubsystem);
-        return stateMachine;
-    }
-
-    public static SequenceStateMachine getStateMachine() {
+    public static SequenceStateMachine getStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem clamperSubsystem, HandIntakeSubsystem intakeSubsystem) {
+        if(stateMachine ==  null) {
+            stateMachine = new SequenceStateMachine(elevatorSubsystem, armSubsystem, clamperSubsystem, intakeSubsystem);
+        }
         return stateMachine;
     }
 
