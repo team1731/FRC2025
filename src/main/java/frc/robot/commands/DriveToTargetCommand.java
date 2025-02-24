@@ -42,6 +42,7 @@ public class DriveToTargetCommand extends Command {
 
     @Override
     public void initialize() {
+        System.out.println("DriveToTargetCommand: initializing...");
         driveAtLocation.HeadingController.setPID(10,0,0);
 	    driveAtLocation.HeadingController.enableContinuousInput(-Math.PI/2, Math.PI/2);
         m_commandDone = false;
@@ -61,29 +62,12 @@ public class DriveToTargetCommand extends Command {
         SmartDashboard.putNumber ("fieldCentricY",fieldCentricY);
 
         aprilTagTargetTracker.recalculateDriveFeedback(m_driveSubsystem.getCurrentPose(), fieldCentricX, fieldCentricY);
+        m_driveSubsystem.setControl(
 
-    
-      //  if(aprilTagTargetTracker.hasVisibleTarget()) {
-          //  System.out.println("++++++++++++++++++++");
-            m_driveSubsystem.setControl(
-
-                driveAtLocation.withVelocityX(aprilTagTargetTracker.getCalcuatedForward())                                                                                                                     
-                    .withVelocityY(aprilTagTargetTracker.getCalculatedStrafe()) 
-                    .withTargetDirection(aprilTagTargetTracker.getRotationTarget())
-            );
-     //  } 
-     /* 
-        else {
-            System.out.println("--------------------");
-            m_driveSubsystem.setControl(
-                drive.withVelocityX(-(Math.abs(m_xboxController.getLeftY()) * m_xboxController.getLeftY()) * MaxSpeed)                                                                                                                     
-                    .withVelocityY(-(Math.abs(m_xboxController.getLeftX()) * m_xboxController.getLeftX()) * MaxSpeed) 
-                    .withRotationalRate(-m_xboxController.getRightX() * MaxAngularRate)
-                    
-        
-            );*/
-           
-      //  }
+            driveAtLocation.withVelocityX(aprilTagTargetTracker.getCalcuatedForward())                                                                                                                     
+                .withVelocityY(aprilTagTargetTracker.getCalculatedStrafe()) 
+                .withTargetDirection(aprilTagTargetTracker.getRotationTarget())
+        );
 
         SmartDashboard.putNumber("PID Setpoint", driveAtLocation.HeadingController.getSetpoint());
 		SmartDashboard.putNumber("PID Output", driveAtLocation.HeadingController.getLastAppliedOutput());
