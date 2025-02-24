@@ -187,12 +187,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         return driveToPose(targetPose);
     }
 
-    public Command driveToNearestCoralTarget() {
-        Pose2d currentPose = getCurrentPose();
-        Pose2d targetPose = FieldPoseHelper.getClosestReefLineupPose(currentPose);
-        return driveToPose(targetPose);
-    }
-
     /*
      * PERIODIC HANDLING
      */
