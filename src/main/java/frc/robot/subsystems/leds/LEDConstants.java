@@ -1,4 +1,4 @@
-package frc.robot.subsystems.led;
+package frc.robot.subsystems.leds;
 
 public class LEDConstants {
     public final static int CANdleCanId = 0;

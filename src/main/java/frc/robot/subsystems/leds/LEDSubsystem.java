@@ -1,4 +1,4 @@
-package frc.robot.subsystems.led;
+package frc.robot.subsystems.leds;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.ToggleableSubsystem;
