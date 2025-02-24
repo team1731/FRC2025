@@ -5,7 +5,8 @@ import com.ctre.phoenix6.signals.InvertedValue;
 public final class ArmConstants {
     //Arm Can ID
     public final static int armCanId = 33;
-    public final static int armCancoderDeviceId = 15; // TODO is this correct?
+    public final static int armCancoderDeviceId = 15; 
+    public final static double armPositionModifier = (9.0/800.0); // modifies arm ticks into values for absolute encoder
 
     // Motor Direction
     public final static InvertedValue armMotorDirection = InvertedValue.Clockwise_Positive;

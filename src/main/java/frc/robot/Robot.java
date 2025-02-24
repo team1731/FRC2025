@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Scanner;
 
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -226,6 +227,7 @@ public class Robot extends TimedRobot {
 	private void initSubsystems() {
 		driveSubsystem.configureInitialPosition();
 		driveSubsystem.configureAutoBindings();
+		AprilTagFields.kDefaultField.loadAprilTagLayoutField(); 
 		//ledSubsystem.init();
 		//ledSubsystem.setColor(LedOption.INIT);
 	}
