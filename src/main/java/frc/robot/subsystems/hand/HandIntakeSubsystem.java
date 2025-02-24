@@ -220,7 +220,7 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
             watchingForScoreDetection = false;
             if(scoreStateMachineCallback != null) {
                 System.out.println("HandIntakeSubsystem forward limit switch flipped, should have scored");
-                scoreStateMachineCallback.setInput(SequenceInput.SCORE);
+                scoreStateMachineCallback.setInput(SequenceInput.SENSOR_SCORE);
                 scoreStateMachineCallback = null;
             }
         }

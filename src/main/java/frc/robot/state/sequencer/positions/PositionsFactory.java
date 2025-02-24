@@ -8,6 +8,7 @@ import frc.robot.state.sequencer.positions.PositionConstants.ALGAE_SCORE.ALGAE_S
 import frc.robot.state.sequencer.positions.PositionConstants.CORAL_INTAKE.CORAL_FEEDER;
 import frc.robot.state.sequencer.positions.PositionConstants.CORAL_INTAKE.CORAL_FLOOR_UPRIGHT;
 import frc.robot.state.sequencer.positions.PositionConstants.CORAL_SCORE.CORAL_L1;
+import frc.robot.state.sequencer.positions.PositionConstants.CORAL_SCORE.CORAL_L1_ALT;
 import frc.robot.state.sequencer.positions.PositionConstants.CORAL_SCORE.CORAL_L2;
 import frc.robot.state.sequencer.positions.PositionConstants.CORAL_SCORE.CORAL_L3;
 import frc.robot.state.sequencer.positions.PositionConstants.CORAL_SCORE.CORAL_L4;
@@ -39,39 +40,48 @@ public class PositionsFactory {
         Positions positions = new Positions();
         positions.raiseElevatorPosition = CORAL_L1.raiseElevatorPosition;
         positions.raiseElevatorThreshold = CORAL_L1.raiseElevatorThresholdPosition;
-        positions.clamperOpenPosition = CORAL_L1.clamperOpenPosition;
+        positions.firstStageArmPosition = CORAL_L1.armForwardPosition;
+        positions.firstStageArmThreshold = CORAL_L1.armForwardThreshold;
+        return positions;
+    }
+
+    public static Positions getCoralScoreL1AltPositions() {
+        Positions positions = new Positions();
+        positions.raiseElevatorPosition = CORAL_L1_ALT.raiseElevatorPosition;
+        positions.raiseElevatorThreshold = CORAL_L1_ALT.raiseElevatorThresholdPosition;
+        positions.clamperOpenPosition = CORAL_L1_ALT.clamperOpenPosition;
         return positions;
     }
 
     public static Positions getCoralScoreL2Positions() {
         Positions positions = new Positions();
-        positions.driveDistanceThreshold = CORAL_L2.driveDistanceThreshold;
         positions.raiseElevatorPosition = CORAL_L2.raiseElevatorPosition;
         positions.raiseElevatorThreshold = CORAL_L2.raiseElevatorThresholdPosition;
         positions.lowerElevatorThreshold = CORAL_L2.lowerElevatorThresholdPosition;
         positions.firstStageArmPosition = CORAL_L2.armForwardPosition;
+        positions.firstStageArmThreshold = CORAL_L2.armForwardThreshold;
         positions.secondStageArmPosition = CORAL_L2.armScorePosition;
         return positions;
     }
 
     public static Positions getCoralScoreL3Positions() {
         Positions positions = new Positions();
-        positions.driveDistanceThreshold = CORAL_L3.driveDistanceThreshold;
         positions.raiseElevatorPosition = CORAL_L3.raiseElevatorPosition;
         positions.raiseElevatorThreshold = CORAL_L3.raiseElevatorThresholdPosition;
         positions.lowerElevatorThreshold = CORAL_L3.lowerElevatorThresholdPosition;
         positions.firstStageArmPosition = CORAL_L3.armForwardPosition;
+        positions.firstStageArmThreshold = CORAL_L3.armForwardThreshold;
         positions.secondStageArmPosition = CORAL_L3.armScorePosition;
         return positions;
     }
 
     public static Positions getCoralScoreL4Positions() {
         Positions positions = new Positions();
-        positions.driveDistanceThreshold = CORAL_L4.driveDistanceThreshold;
         positions.raiseElevatorPosition = CORAL_L4.raiseElevatorPosition;
         positions.raiseElevatorThreshold = CORAL_L4.raiseElevatorThresholdPosition;
         positions.lowerElevatorThreshold = CORAL_L4.lowerElevatorThresholdPosition;
         positions.firstStageArmPosition = CORAL_L4.armForwardPosition;
+        positions.firstStageArmThreshold = CORAL_L4.armForwardThreshold;
         positions.secondStageArmPosition = CORAL_L4.armScorePosition;
         return positions;
     }

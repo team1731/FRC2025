@@ -140,6 +140,11 @@ public class SequenceStateMachine extends StateMachine {
         return true;
     }
 
+    public boolean moveArmWithThreshold() {
+        armSubsystem.moveArmNormalSpeed(positions.firstStageArmPosition, subsystemCallback, positions.firstStageArmThreshold);
+        return true;
+    }
+
     public boolean moveArmSlowly() {
         armSubsystem.moveArmSlowSpeed(positions.firstStageArmPosition, subsystemCallback);
         return true;
