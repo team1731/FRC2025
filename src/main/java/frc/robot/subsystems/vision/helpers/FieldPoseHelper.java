@@ -28,10 +28,12 @@ public class FieldPoseHelper {
     public static final double inchesToCenterOfRobot = 12.5 + (3/4) + 2.5 + (1/8);
     public static final double reefAprilTagHeight = 11.75;
     
-    // The layout of the AprilTags on the field
-    public static final AprilTagFieldLayout kTagLayout = AprilTagFields.kDefaultField.loadAprilTagLayoutField(); 
+    // The layout of the AprilTags on the field 
+    // - NOTE: DISABLED for the time being, was taking ~4 seconds to load!!!
+    // - If we re-enable this it needs to be loaded when subsystems are initialized at robot startup
+    //public static final AprilTagFieldLayout kTagLayout = AprilTagFields.kDefaultField.loadAprilTagLayoutField(); 
     // List of April Tag poses on the reef
-    public static final int[] reefAprilTagIds = { 6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22 };
+    /*
     public static Pose3d[] reefAprilTagPoses = {
         // Red Alliance Coral Reef
         kTagLayout.getTagPose(6).get(),
@@ -48,6 +50,23 @@ public class FieldPoseHelper {
         kTagLayout.getTagPose(21).get(),
         kTagLayout.getTagPose(22).get(),
     };
+    */
+    public static final int[] reefAprilTagIds = { 6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22 };
+    public static final int[][] reefAprilTagRotations = { 
+        // Tag ID, Tag Rotation
+        { 6, 300 },
+        { 7, 0 },
+        { 8, 60 },
+        { 9, 120 }, 
+        { 10, 180 },
+        { 11, 240 },
+        { 17, 240 },
+        { 18, 180 }, 
+        { 19, 120 }, 
+        { 20, 60 },
+        { 21, 0 }, 
+        { 22, 300 }
+    };
     
 
     /*
@@ -57,10 +76,27 @@ public class FieldPoseHelper {
     public static List<Pose2d> coralReefLineupPoses;
 
     public static boolean isReefTarget(int targetId) {
-        
         return Arrays.stream(reefAprilTagIds).anyMatch(i -> i == targetId);
     }
 
+    public static Rotation2d getReefTargetLineupRotation(int targetId) {
+        Rotation2d targetRotation = null;
+        Rotation2d lineupRotation = null;
+        for(int[] rotation : reefAprilTagRotations) {
+            if(targetId == rotation[0]) {
+                targetRotation = new Rotation2d(Units.degreesToRadians((double)rotation[1]));
+                lineupRotation = getRotation180(targetRotation);
+                break;
+            }
+        }
+
+        if(targetRotation != null) SmartDashboard.putNumber("tag rotation from list", targetRotation.getDegrees());
+        if(lineupRotation != null) SmartDashboard.putNumber("tag rotation after 180", lineupRotation.getDegrees());
+
+        return lineupRotation;
+    }
+
+    /* Currently disabled b/c field layout loading is disables (see above)
     public static Pose2d getClosestReefLineupPose(Pose2d currentPose) {
         return currentPose.nearest(getCoralReefLineupPoses());
     }
@@ -76,6 +112,7 @@ public class FieldPoseHelper {
         }
         return coralReefLineupPoses;
     }
+    */
 
     public static Pose2d getLineupPose(Pose3d aprilTagPose, ReefPost post) {
         // the distance laterally to the left or right post
@@ -93,20 +130,8 @@ public class FieldPoseHelper {
         return initialRotation.plus(rotation180).toRotation2d();
     }
 
-    public static Rotation2d getDriveToTagRotation(int tagid) {
-        Pose3d tagpose;
-        if (kTagLayout.getTagPose(tagid).isPresent()) {
-        tagpose = (kTagLayout.getTagPose(tagid)).get();
-        }
-        else {
-            return new Rotation2d();  // Not sure best way to handle the tagpose not being there???????????????????????????
-        }
-
-       SmartDashboard.putNumber("tag rotation from db", tagpose.toPose2d().getRotation().getDegrees());
-       SmartDashboard.putNumber("tagRotation after 180", getRotation180(tagpose.getRotation()).getDegrees());
-       return getRotation180(tagpose.getRotation());
-
+    private static Rotation2d getRotation180(Rotation2d initialRotation) {
+        Rotation2d rotation180 = new Rotation2d(Units.degreesToRadians(180));
+        return initialRotation.plus(rotation180);
     }
-
-
 }

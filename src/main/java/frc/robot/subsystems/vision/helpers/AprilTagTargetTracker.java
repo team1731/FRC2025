@@ -55,25 +55,23 @@ public class AprilTagTargetTracker {
         }
 
         if(!hasVisibleTarget && lastHeading == 0) {
-            return; // haven't captured a heading yet
+            return; // haven't captured a heading yet, nothing to re-use
         }
 
         var currentRobotRotation = currentPose.getRotation().getDegrees();
         double desiredHeading = hasVisibleTarget? currentRobotRotation - target.getYaw() : lastHeading;
-        lastHeading = desiredHeading;
+        lastHeading = desiredHeading; // store this value for re-use in case don't see target the next time around
 
         // calculate speed
-   
         double speedContributionFromX = fieldCentricX * Math.cos(Units.degreesToRadians(desiredHeading));
         double speedContributionFromY = fieldCentricY * Math.sin(Units.degreesToRadians(desiredHeading));
         double speed = speedContributionFromX + speedContributionFromY;
 
 
         // calculate updated drive values
-
         calcuatedForward = speed * Math.cos(Units.degreesToRadians(desiredHeading));
         calcuatedStrafe = speed * Math.sin(Units.degreesToRadians(desiredHeading));
-        calculatedDesiredRotation = FieldPoseHelper.getDriveToTagRotation(lockedTargetId);
+        calculatedDesiredRotation = FieldPoseHelper.getReefTargetLineupRotation(lockedTargetId);
         
 
         

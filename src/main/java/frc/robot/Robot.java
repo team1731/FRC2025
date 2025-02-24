@@ -227,7 +227,6 @@ public class Robot extends TimedRobot {
 	private void initSubsystems() {
 		driveSubsystem.configureInitialPosition();
 		driveSubsystem.configureAutoBindings();
-		AprilTagFields.kDefaultField.loadAprilTagLayoutField(); 
 		//ledSubsystem.init();
 		//ledSubsystem.setColor(LedOption.INIT);
 	}
