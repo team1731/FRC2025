@@ -228,6 +228,9 @@ public class Robot extends TimedRobot {
 		driveSubsystem.configureInitialPosition();
 		driveSubsystem.configureAutoBindings();
 		AprilTagFields.kDefaultField.loadAprilTagLayoutField(); 
+		AprilTagSubsystem aprilTagSubsystem = driveSubsystem.getAprilTagSubsystem();
+		aprilTagSubsystem.setLEDSubsystem(ledSubsystem);
+		aprilTagSubsystem.startAutoLineup();
 		//ledSubsystem.init();
 		//ledSubsystem.setColor(LedOption.INIT);
 	}
@@ -313,9 +316,11 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		System.out.println("AUTO INIT");
-		CommandScheduler.getInstance().cancelAll();
+		driveSubsystem.getAprilTagSubsystem().stopAutoLineup();
 
-		(new InstantCommand(() -> climbSubsystem.stowClimb())).schedule();
+		CommandScheduler.getInstance().cancelAll();
+		
+		climbSubsystem.stowClimb();
 
 		if (m_autonomousCommand == null) {
 			System.out.println("SOMETHING WENT WRONG - UNABLE TO RUN AUTONOMOUS! CHECK SOFTWARE!");

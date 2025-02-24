@@ -30,6 +30,15 @@ public class FieldPoseHelper {
     
     // The layout of the AprilTags on the field
     public static final AprilTagFieldLayout kTagLayout = AprilTagFields.kDefaultField.loadAprilTagLayoutField(); 
+    // Auto lineup targets
+    public static int redAllianceAutoLineupTargetId = 10;
+    public static int blueAllianceAutoLineupTargetId = 21;
+    public static double autoLineupLeftPositionThreshold = -15;
+    public static double autoLineupRightPositionThreshold = 15;
+    public static double autoLineupTolerance = 0.5;
+    public static double autoLineupLeftTargetYaw = -26.7654;
+    public static double autoLineupCenterTargetYaw = 3.76546;
+    public static double autoLineupRightTargetYaw = 29.8778;
     // List of April Tag poses on the reef
     public static final int[] reefAprilTagIds = { 6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22 };
     public static Pose3d[] reefAprilTagPoses = {

@@ -73,13 +73,13 @@ public class LEDSubsystem extends SubsystemBase implements ToggleableSubsystem {
         setColor(LEDConstants.LedColor.GREEN, 0, LEDConstants.maxStringLength);
     }
 
-    public void setLineupMoveLeftScheme(){
+    public void setLineupTooFarLeftScheme(){
         setColor(LEDConstants.LedColor.RED, 0, 1);
         setColor(LEDConstants.LedColor.OFF, 1, 6);
         setColor(LEDConstants.LedColor.RED, 7, 1);
     }
     
-    public void setLineupMoveRightScheme(){
+    public void setLineupTooFarRightScheme(){
         setColor(LEDConstants.LedColor.OFF, 0, 3);
         setColor(LEDConstants.LedColor.RED, 3, 2);
         setColor(LEDConstants.LedColor.OFF, 5, 3);
@@ -90,6 +90,14 @@ public class LEDSubsystem extends SubsystemBase implements ToggleableSubsystem {
         setColor(LEDConstants.LedColor.GREEN, 1, 2);
         setColor(LEDConstants.LedColor.OFF, 3, 2);
         setColor(LEDConstants.LedColor.GREEN, 5, 2);
+        setColor(LEDConstants.LedColor.OFF, 7, 1);
+    }
+
+    public void turnLineupColorsOff(){
+        setColor(LEDConstants.LedColor.OFF, 0, 1);
+        setColor(LEDConstants.LedColor.OFF, 1, 2);
+        setColor(LEDConstants.LedColor.OFF, 3, 2);
+        setColor(LEDConstants.LedColor.OFF, 5, 2);
         setColor(LEDConstants.LedColor.OFF, 7, 1);
     }
 

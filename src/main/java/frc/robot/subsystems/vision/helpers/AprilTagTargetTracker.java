@@ -1,22 +1,16 @@
 package frc.robot.subsystems.vision.helpers;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.subsystems.vision.AprilTagSubsystem;
+import frc.robot.subsystems.vision.AprilTagSubsystem.AprilTagTarget;
 import frc.robot.subsystems.vision.camera.Camera;
 
 public class AprilTagTargetTracker {
-    public class AprilTagTarget {
-        Camera camera;
-        PhotonTrackedTarget target;
-    }
-
     private Camera camera1;
     private Camera camera2;
     private Camera lockedCamera;
@@ -107,7 +101,7 @@ public class AprilTagTargetTracker {
         PhotonTrackedTarget winningTarget = null;
         double winningTargetSize = 0;
 
-        List<AprilTagTarget> targetMap = getCombinedTargets();
+        List<AprilTagTarget> targetMap = AprilTagSubsystem.getCombinedTargets(camera1, camera2);
         if(targetMap == null) return null;
 
         for(var mapping : targetMap) {
@@ -131,50 +125,11 @@ public class AprilTagTargetTracker {
         return winningTarget;
     }
 
-    private List<AprilTagTarget> getCombinedTargets() {
-        List<AprilTagTarget> combinedTargets = new ArrayList<AprilTagTarget>();
-
-        List<PhotonTrackedTarget> camera1Targets = getTargets(camera1);
-        if(camera1Targets != null) {
-            mapTargets(combinedTargets, camera1, camera1Targets);
-        }
-
-        List<PhotonTrackedTarget> camera2Targets = getTargets(camera2);
-        if(camera2Targets != null) {
-            mapTargets(combinedTargets, camera2, camera2Targets);
-        }
-
-        return (combinedTargets.size() > 0)? combinedTargets : null;
-    }
-
-    private List<AprilTagTarget> mapTargets(List<AprilTagTarget> map, Camera camera, List<PhotonTrackedTarget> targets) {
-        for(var target : targets) {
-            AprilTagTarget mapping = new AprilTagTarget();
-            mapping.camera = camera;
-            mapping.target = target;
-            map.add(mapping);
-        }
-        return map;
-    }
-
     private PhotonTrackedTarget lookForLockedTarget() {
-        List<PhotonTrackedTarget> targets = getTargets(lockedCamera);
+        List<PhotonTrackedTarget> targets = AprilTagSubsystem.getTargets(lockedCamera);
         if(targets != null) {
             for(var target : targets) {
                 if(target.getFiducialId() == lockedTargetId) return target;
-            }
-        }
-        return null;
-    }
-    
-    private List<PhotonTrackedTarget> getTargets(Camera camera) {
-        if(camera == null || !camera.isInitialized()) return null;
-
-        List<PhotonPipelineResult> results = camera.getAllUnreadResults();
-        if(results.size() > 0) {
-            var result = results.get(results.size() - 1); // Camera processed a new frame since last, get the last one in the list
-            if(result.hasTargets()) {
-                return result.getTargets();
             }
         }
         return null;
