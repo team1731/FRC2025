@@ -1,23 +1,26 @@
 package frc.robot.subsystems.climb;
 
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 public class ClimbConstants {
     
-    //TODO apply proper constants for climb motor
     // climb can ID
     public final static int climbCanId = 31;
+    public final static int climbCancoderDeviceId = 28; 
 
     // motor direction
     public final static InvertedValue climbMotorDirection = InvertedValue.Clockwise_Positive;
+    public final static SensorDirectionValue climbCanConderDirection = SensorDirectionValue.Clockwise_Positive;
 
     // output
-    public final static double idleOutput = 0;
+    //public final static double idleOutput = 0;
 
     // positions
     public final static double minClimbPosition = 0;
-    public final static double maxClimbPosition = 0;
+    public final static double maxClimbPosition = 0.7;
     public final static double climbHomePosition = 0;
-    public final static double climbReadyPosition = 0;
+    public final static double climbReadyPosition = 0.365;
+    public final static double climbStowedPosition = .4; 
     
 }

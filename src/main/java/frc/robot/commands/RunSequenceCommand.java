@@ -34,7 +34,7 @@ public class RunSequenceCommand extends Command {
     }
 
     public void runStateMachine() {
-        System.out.println("RunSequenceCommand: running score command state machine");
+        System.out.println("RunSequenceCommand: running sequence state machine");
         m_sequenceStarted = true;
         m_scoreStateMachine.setCallback(stateMachineCallback);
         Sequence sequence = SequenceManager.getSequence();

@@ -10,6 +10,8 @@ import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Scanner;
 
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -19,9 +21,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.OpConstants;
 import frc.robot.Constants.OpConstants.LedOption;
+import frc.robot.autos.AutoCommandLoader;
 import frc.robot.autos.AutoFactory;
 import frc.robot.autos.AutoLoader;
 import frc.robot.generated.TunerConstants;
@@ -32,8 +36,9 @@ import frc.robot.subsystems.climb.ClimbSubsystem;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
+import frc.robot.subsystems.leds.LEDSubsystem;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
-import frc.robot.subsystems.vision.VisionSubsystem;
+import frc.robot.subsystems.vision.AprilTagSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -42,9 +47,9 @@ import frc.robot.subsystems.vision.VisionSubsystem;
  * project.
  */
 public class Robot extends TimedRobot {
-	private RobotContainer m_robotContainer;
 	private Command m_autonomousCommand;
 	private SendableChooser<String> autoChooser;
+	private AutoCommandLoader autoCommandLoader;
 	private String autoCode;
 	private String currentKeypadCommand = "";
 	private boolean redAlliance;
@@ -52,7 +57,6 @@ public class Robot extends TimedRobot {
 	public static long millis = System.currentTimeMillis();
 
 	private CommandSwerveDrivetrain driveSubsystem;
-	private VisionSubsystem visionSubsystem;
 	private ElevatorSubsystem elevatorSubsystem;
 	private ArmSubsystem armSubsystem;
 	private HandClamperSubsystem handClamperSubsystem;
@@ -63,7 +67,7 @@ public class Robot extends TimedRobot {
 	}
 
 	// SUBSYSTEM DECLARATION
-	private LEDStringSubsystem ledSubsystem;
+	private LEDSubsystem ledSubsystem;
 
 	// NOTE: FOR TESTING PURPOSES ONLY!
 	// private final Joystick driver = new Joystick(0);
@@ -83,12 +87,12 @@ public class Robot extends TimedRobot {
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	@Override
 	public void robotInit() {
-		//DataLogManager.start();
+		DataLogManager.start();
 		//LogWriter.setupLogging();
 		MessageLog.start();
 		System.out.println("\n\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  EVENT: " + DriverStation.getEventName()
 				+ " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n");
-		VisionSubsystem.setupPortForwarding();
+		AprilTagSubsystem.setupPortForwarding();
 		LiveWindow.disableAllTelemetry();
 
 		/*
@@ -97,9 +101,7 @@ public class Robot extends TimedRobot {
 		driveSubsystem = new CommandSwerveDrivetrain(true, TunerConstants.DrivetrainConstants, TunerConstants.FrontLeft,
 				TunerConstants.FrontRight, TunerConstants.BackLeft, TunerConstants.BackRight);
 
-		ledSubsystem = new LEDStringSubsystem(true);
-
-		visionSubsystem = new VisionSubsystem(true, driveSubsystem);
+		ledSubsystem = new LEDSubsystem(true);
 
 		elevatorSubsystem = new ElevatorSubsystem(true);
 
@@ -110,15 +112,19 @@ public class Robot extends TimedRobot {
 		handIntakeSubsystem = new HandIntakeSubsystem(true);
 
 		climbSubsystem = new ClimbSubsystem(true);
+		armSubsystem.setClimbSubsystem(climbSubsystem);
 
 		// Instantiate our robot container. This will perform all of our button bindings,
-		m_robotContainer = new RobotContainer(driveSubsystem, visionSubsystem, ledSubsystem, elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem, climbSubsystem);
+		new RobotContainer(driveSubsystem, ledSubsystem, elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem, climbSubsystem);
 		
 		/*
 		 * Complete initialization setup/configuration
 		 */
 		initSubsystems();
+		System.out.println("creating state machine in robot");
 		autoChooser = AutoLoader.loadAutoChooser();
+		autoCommandLoader = new AutoCommandLoader(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem);
+		autoCommandLoader.registerAutoEventCommands();
 		autoInitPreload();
 		setupSmartDashboard();
 	}
@@ -187,7 +193,7 @@ public class Robot extends TimedRobot {
 //   █ ██ ██▄▀▀▄███ ████ ▀▀▀ ███▀ ▀██ ██▄ █▀ ▀███ ██████ █████ ██ ██ ▀▀▀██ ▀▀ ██ ▀▀▀ █ ██ ██ ▀▀ 
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	private void autoInitPreload() {
-		m_autonomousCommand = null;
+		//m_autonomousCommand = null;
 		if(autoChooser == null) return;
 
 		String selectedAutoCode = autoChooser.getSelected();
@@ -196,10 +202,13 @@ public class Robot extends TimedRobot {
 		}
 		
 		if(!selectedAutoCode.equals(autoCode)) {
+			m_autonomousCommand = null;
 			System.out.println("New Auto Code read from dashboard. OLD: " + autoCode + ", NEW: " + selectedAutoCode);
 			System.out.println("\nPreloading AUTO CODE --> " + selectedAutoCode);
 
 			m_autonomousCommand = AutoFactory.getAutonomousCommand(selectedAutoCode, redAlliance);
+
+			System.out.println("AUTONOMOUS COMMAND FDSFLKJDFLKJDSFLKDJFLKSDJFLDKFJLDKFJDLKFJ is"  + m_autonomousCommand);
 			if (m_autonomousCommand != null){
 				autoCode = selectedAutoCode;
 				System.out.println("\n=====>>> PRELOADED AUTONOMOUS COMMAND: " + m_autonomousCommand);
@@ -218,9 +227,9 @@ public class Robot extends TimedRobot {
 	private void initSubsystems() {
 		driveSubsystem.configureInitialPosition();
 		driveSubsystem.configureAutoBindings();
-		ledSubsystem.init();
-		ledSubsystem.setColor(LedOption.INIT);
-		visionSubsystem.useVision(false);
+		AprilTagFields.kDefaultField.loadAprilTagLayoutField(); 
+		//ledSubsystem.init();
+		//ledSubsystem.setColor(LedOption.INIT);
 	}
 
 	/**
@@ -253,8 +262,8 @@ public class Robot extends TimedRobot {
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	@Override
 	public void disabledInit() {
-		ledSubsystem.setBlink(false);
-		ledSubsystem.setColor(OpConstants.LedOption.INIT);
+		//ledSubsystem.setBlink(false);
+		//ledSubsystem.setColor(OpConstants.LedOption.INIT);
 	}
 
 
@@ -303,9 +312,10 @@ public class Robot extends TimedRobot {
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	@Override
 	public void autonomousInit() {
-		visionSubsystem.useVision(false);
 		System.out.println("AUTO INIT");
 		CommandScheduler.getInstance().cancelAll();
+
+		(new InstantCommand(() -> climbSubsystem.stowClimb())).schedule();
 
 		if (m_autonomousCommand == null) {
 			System.out.println("SOMETHING WENT WRONG - UNABLE TO RUN AUTONOMOUS! CHECK SOFTWARE!");
@@ -336,16 +346,13 @@ public class Robot extends TimedRobot {
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	@Override
 	public void teleopInit() {
-
-		visionSubsystem.useVision(false);
-		ledSubsystem.setColor(LedOption.GREEN);
+		//ledSubsystem.setColor(LedOption.GREEN);
 		//driveSubsystem.seedFieldRelative(new Pose2d(new Translation2d(0,0), new Rotation2d(120)));
 
 		// Record both DS control and joystick data in TELEOP
 		MessageLog.getLogger();
 		System.out.println("TELEOP INIT");
 		CommandScheduler.getInstance().cancelAll();
-		initSubsystems();
 
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.cancel();

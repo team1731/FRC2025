@@ -1,34 +1,49 @@
 package frc.robot.subsystems.arm;
 
 import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.state.StateMachineCallback;
 import frc.robot.state.sequencer.SequenceInput;
 import frc.robot.subsystems.ToggleableSubsystem;
+import frc.robot.subsystems.climb.ClimbSubsystem;
+import frc.robot.subsystems.elevator.ElevatorConstants;
 
 
 public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
     
     
     private TalonFX armMotor;
-    private MotionMagicVoltage mmReq = new MotionMagicVoltage(0);
+    private CANcoder armCANcoder;
+    private DynamicMotionMagicVoltage mmReq = new DynamicMotionMagicVoltage(
+        0, ArmConstants.normalArmVelocity, ArmConstants.normalArmAcceleration, ArmConstants.armJerk);
     private final NeutralOut brake = new NeutralOut();
 
     private double desiredPosition;
     private boolean enabled;
     private double arbitraryFeedForward = 0;
 
-    private StateMachineCallback scoreStateMachineCallback;
+    // state machine callback handling
+    private StateMachineCallback stateMachineCallback;
+    private boolean callbackOnDone = false;
+    private boolean callbackOnThreshold = false;
+    private double positionThreshold = 0;
+    private boolean forwardThreshold = false;
+
+    private ClimbSubsystem climbSubsystem;
 
 
     @Override
@@ -43,10 +58,17 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
         initializeArmMotor();
     }
 
+    public void setClimbSubsystem(ClimbSubsystem climbSubsystem) {
+        this.climbSubsystem = climbSubsystem;
+    }
+
     //movement control
-    public void moveArm(double position){
+    private void moveArm(double position){
         if(!enabled) return;
 
+        //check if climber will collide with regular arm movments
+        if(climbSubsystem.getClimbPosition() > 0.4) return; //TODO: (SF) check if this is correct
+        position = position * ArmConstants.armPositionModifier;
         // do not go outside boundary thresholds
         if(position > ArmConstants.maxArmPosition) {
             desiredPosition = ArmConstants.maxArmPosition;
@@ -59,9 +81,37 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
         armMotor.setControl(mmReq.withPosition(desiredPosition).withFeedForward(arbitraryFeedForward));
     }
 
-    public void moveArm(double position, StateMachineCallback callback){
-        scoreStateMachineCallback = callback;
+    public void moveArmNormalSpeed(double position) {
+        mmReq.Velocity = ElevatorConstants.normalElevatorVelocity;
+        mmReq.Acceleration = ElevatorConstants.normalElevatorAcceleration;
+        callbackOnDone = true;
         moveArm(position);
+    }
+
+    public void moveArmNormalSpeed(double position, StateMachineCallback callback){
+        stateMachineCallback = callback;
+        moveArmNormalSpeed(position);
+    }
+
+    public void moveArmNormalSpeed(double position, StateMachineCallback callback, double threshold){
+        stateMachineCallback = callback;
+        callbackOnDone = true;
+        callbackOnThreshold = true;
+        positionThreshold = threshold;
+        forwardThreshold = threshold < position;
+        moveArmNormalSpeed(position);
+    }
+
+    public void moveArmSlowSpeed(double position) {
+        mmReq.Velocity = ElevatorConstants.slowedElevatorVelocity;
+        mmReq.Acceleration = ElevatorConstants.slowedElevatorAcceleration;
+        callbackOnDone = true;
+        moveArm(position);
+    }
+
+    public void moveArmSlowSpeed(double position, StateMachineCallback callback){
+        stateMachineCallback = callback;
+        moveArmSlowSpeed(position);
     }
 
     public void stopArm() {
@@ -74,28 +124,38 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
 
         System.out.println("armSubsystem: Starting UP & Initializing arm motor!");
 
+        armCANcoder = new CANcoder(ArmConstants.armCancoderDeviceId, "rio");
+        CANcoderConfiguration cancoderConfigs = new CANcoderConfiguration();
+        cancoderConfigs.MagnetSensor.MagnetOffset = -0.383544921875;
+        cancoderConfigs.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5; // TODO what should this be?
+        cancoderConfigs.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+        armCANcoder.getConfigurator().apply(cancoderConfigs);
+
         armMotor = new TalonFX(ArmConstants.armCanId, "rio");
         TalonFXConfiguration config = new TalonFXConfiguration();
 
         armMotor.getConfigurator().apply(config);
-
-        //TODO: setup and apply current limits to config
+        
         /* Configure current limits */
         MotionMagicConfigs mm = config.MotionMagic;
-        mm.MotionMagicCruiseVelocity = 70; // 5 rotations per second cruise
-        mm.MotionMagicAcceleration = 250; // Ta200ke approximately 0.5 seconds to reach max vel
-        // Take approximately 0.2 seconds to reach max accel
-        mm.MotionMagicJerk = 0;
+        mm.MotionMagicCruiseVelocity = ArmConstants.normalArmVelocity; 
+        mm.MotionMagicAcceleration = ArmConstants.normalArmAcceleration; 
+        mm.MotionMagicJerk = ArmConstants.armJerk;
 
         Slot0Configs slot0 = config.Slot0;
-        slot0.kP = 4.9;
+        slot0.kP = 90;
         slot0.kI = 0;
-        slot0.kD = 0.0078125;
-        slot0.kV = 0.009375;
+        slot0.kD = 0.0099;
+        slot0.kV = 0.9;
         slot0.kS = 0.02; // Approximately 0.25V to get the mechanism moving
 
         FeedbackConfigs fdb = config.Feedback;
         fdb.SensorToMechanismRatio = 1;
+        fdb.FeedbackRemoteSensorID = armCANcoder.getDeviceID();;
+        fdb.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+        fdb.RotorToSensorRatio = 1600.0/18.0;
+        config.CurrentLimits.StatorCurrentLimit = 40;
+        config.CurrentLimits.StatorCurrentLimitEnable = true;
 
 
         //applies config to ArmMotor
@@ -118,10 +178,24 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
     public void periodic(){
         if (!enabled) return;
 
-        if (isAtPosition(desiredPosition) && scoreStateMachineCallback != null){
-            System.out.println("Armsystem callback " + desiredPosition);
-            scoreStateMachineCallback.setInput(SequenceInput.ARM_DONE);
-            scoreStateMachineCallback = null;
+        /*
+         * Score State Machine callback handling
+         */
+        if(callbackOnDone && isAtPosition(desiredPosition) && stateMachineCallback != null) {
+            // final position reached, notify the state machine
+            callbackOnDone = false;
+            System.out.println("Arm subsystem callback: " + getArmPosition());
+            stateMachineCallback.setInput(SequenceInput.ARM_DONE);
+        } else if(callbackOnThreshold && stateMachineCallback != null) {
+            // check to see if the threshold was met, if so notify the state machine
+            boolean thresholdMet = forwardThreshold && getArmPosition() >= positionThreshold ||
+                !forwardThreshold && getArmPosition() <= positionThreshold;
+            if(thresholdMet) {
+                System.out.println("Arm subsystem threshold callback: " + getArmPosition());
+                stateMachineCallback.setInput(SequenceInput.ARM_THRESHOLD_MET);
+                callbackOnThreshold = false;
+                positionThreshold = 0;
+            }
         }
 
         log();
@@ -133,7 +207,7 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
     }
 
     public boolean isAtPosition(double position){
-        double tolerance = 2;
+        double tolerance = .002;
         return Math.abs(getArmPosition() - position) < tolerance;
     }
 

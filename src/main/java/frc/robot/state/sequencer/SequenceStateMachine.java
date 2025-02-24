@@ -6,6 +6,7 @@ import frc.robot.state.StateMachineCallback;
 import frc.robot.state.sequencer.positions.Positions;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmSubsystem;
+import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
@@ -23,7 +24,6 @@ public class SequenceStateMachine extends StateMachine {
     private Sequence currentSequence;
     private Action currentAction;
     private GamePiece currentGamePiece;
-    private Level updatedLevel;
     private Positions positions;
 
     // reset/abort tracking
@@ -32,7 +32,7 @@ public class SequenceStateMachine extends StateMachine {
     private boolean armResetDone = false;
 
 
-    public SequenceStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem handClamperSubsystem, HandIntakeSubsystem handIntakeSubsystem) { //add hand here
+    public SequenceStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem handClamperSubsystem, HandIntakeSubsystem handIntakeSubsystem) {
         this.elevatorSubsystem = elevatorSubsystem;
         this.armSubsystem = armSubsystem;
         this.handClamperSubsystem = handClamperSubsystem;
@@ -48,6 +48,10 @@ public class SequenceStateMachine extends StateMachine {
         return currentState == SequenceState.HOME;
     }
 
+    public Sequence getCurrentSequence() {
+        return currentSequence;
+    }
+
     public void setSequence(Sequence sequence) {
         currentSequence = sequence;
         currentAction = SequenceManager.getActionSelection();
@@ -61,6 +65,13 @@ public class SequenceStateMachine extends StateMachine {
         if(sequence == Sequence.RESET) setCurrentState(SequenceState.INIT_RESET);
     }
 
+    // Called by the SequenceManager if the operator changes the level mid-stream
+    // Note: Can only be used when the new sequence utilizes the same transition table
+    public void overwriteSequenceForLevelChange(Sequence newSequence) {
+        currentSequence = newSequence;
+        positions = SequenceFactory.getPositions(newSequence); // overwrite w/positions for new level
+    }
+
 
     /*
      * SUBSYSTEM INTERFACE
@@ -68,6 +79,7 @@ public class SequenceStateMachine extends StateMachine {
 
     protected void handleSubsystemCallback(Input input) {
         if(isResetting) {
+            System.out.println("SequenceStateMachine: reset input " + input);
             SequenceInput sequenceInput = (SequenceInput)input;
             if(sequenceInput == SequenceInput.ELEVATOR_THRESHOLD_MET) setInput(input); // not home yet
             if(sequenceInput == SequenceInput.ELEVATOR_DONE) elevatorResetDone = true;
@@ -77,7 +89,7 @@ public class SequenceStateMachine extends StateMachine {
                 setInput(SequenceInput.RESET_DONE);
             }
         } else {
-            if(input == SequenceInput.RELEASED_PIECE) closeHand();
+            if(input == SequenceInput.RELEASED_PIECE) closeHandWithoutCallback();
             if(input == SequenceInput.DETECTED_PIECE && currentGamePiece == GamePiece.CORAL) returnHandToDefault();
             if(currentSequence == Sequence.SCORE_CORAL_L2 && input == SequenceInput.ARM_DONE && currentState == SequenceState.SCORING) releasePiece();
             setInput(input);
@@ -90,53 +102,82 @@ public class SequenceStateMachine extends StateMachine {
 
 
     /*
-     * STATE OPERATION METHODS
+     * ELEVATOR OPERATIONAL METHODS
+     * Note: these are general methods shared by multiple sequences, use care when updating and understand what the impact
+     * will be in other sequences. If you need something custom for a specific sequence, spin off a separate method.
      */
 
     public boolean raiseElevator() {
-        elevatorSubsystem.moveElevator(positions.raiseElevatorPosition, subsystemCallback, positions.raiseElevatorThreshold);
-        return true;
-    }
-
-    public boolean raiseElevatorNoThreshold() {
-        elevatorSubsystem.moveElevator(positions.raiseElevatorPosition, subsystemCallback);
-        return true;
-    }
-
-    public boolean elevatorSecondStage() {
-        elevatorSubsystem.moveElevator(positions.secondStageElevatorPosition, subsystemCallback);
+        elevatorSubsystem.moveElevatorNormalSpeed(positions.raiseElevatorPosition, subsystemCallback, positions.raiseElevatorThreshold);
         return true;
     }
 
     public boolean moveElevatorHome() {
         isResetting = true;
-        elevatorSubsystem.moveElevator(ElevatorConstants.elevatorHomePosition, subsystemCallback, positions.lowerElevatorThreshold);
+        elevatorSubsystem.moveElevatorNormalSpeed(ElevatorConstants.elevatorHomePosition, subsystemCallback, positions.lowerElevatorThreshold);
         return true;
     }
 
-    public boolean moveArmForward() {
-        armSubsystem.moveArm(positions.armForwardPosition, subsystemCallback);
+    // Note: first and second stage elevator raises are used in movements (like reef pickup, which require multi-stage elevator raises)
+    public boolean elevatorFirstStage() {
+        elevatorSubsystem.moveElevatorNormalSpeed(positions.raiseElevatorPosition, subsystemCallback);
         return true;
     }
 
-    public boolean checkIfShouldScore() {
-        // TODO put autonomous handling in here when ready
-        handIntakeSubsystem.watchForScoreDetection(subsystemCallback);
+    public boolean elevatorSecondStage() {
+        elevatorSubsystem.moveElevatorNormalSpeed(positions.secondStageElevatorPosition, subsystemCallback);
         return true;
     }
 
-    public boolean moveArmToScore() {
-        armSubsystem.moveArm(positions.armScoringPosition, subsystemCallback);
+    /*
+     * ARM OPERATIONAL METHODS
+     * Note: these are general methods shared by multiple sequences, use care when updating and understand what the impact
+     * will be in other sequences. If you need something custom for a specific sequence, spin off a separate method.
+     */
+
+    public boolean moveArm() {
+        armSubsystem.moveArmNormalSpeed(positions.firstStageArmPosition, subsystemCallback);
+        return true;
+    }
+
+    public boolean moveArmWithThreshold() {
+        armSubsystem.moveArmNormalSpeed(positions.firstStageArmPosition, subsystemCallback, positions.firstStageArmThreshold);
+        return true;
+    }
+
+    public boolean moveArmSlowly() {
+        armSubsystem.moveArmSlowSpeed(positions.firstStageArmPosition, subsystemCallback);
+        return true;
+    }
+
+    public boolean armSecondStage() {
+        armSubsystem.moveArmNormalSpeed(positions.secondStageArmPosition, subsystemCallback);
         return true;
     }
 
     public boolean moveArmHome() {
-        armSubsystem.moveArm(ArmConstants.armHomePosition, subsystemCallback);
+        armSubsystem.moveArmNormalSpeed(ArmConstants.armHomePosition, subsystemCallback);
+        return true;
+    }
+
+    /*
+     * HAND/INTAKE OPERATIONAL METHODS
+     * Note: these are general methods shared by multiple sequences, use care when updating and understand what the impact
+     * will be in other sequences. If you need something custom for a specific sequence, spin off a separate method.
+     */
+
+    public boolean closeHandWithoutCallback() {
+        handClamperSubsystem.close();
+        return true;
+    }
+
+    public boolean openHand() {
+        handClamperSubsystem.open(positions.clamperOpenPosition, subsystemCallback);
         return true;
     }
 
     public boolean closeHand() {
-        handClamperSubsystem.close();
+        handClamperSubsystem.close(subsystemCallback);
         return true;
     }
 
@@ -145,10 +186,13 @@ public class SequenceStateMachine extends StateMachine {
         handIntakeSubsystem.stop();
         return true;
     }
-
+    
     public boolean prepareToIntake() {
         handClamperSubsystem.open(positions.clamperIntakePosition);
-        handIntakeSubsystem.intake(HandConstants.intakeVelocity, subsystemCallback);
+        handIntakeSubsystem.intake(
+            currentGamePiece == GamePiece.CORAL? HandConstants.intakeCoralVelocity : HandConstants.intakeAlgaeVelocity, 
+            subsystemCallback
+        );
         return true;
     }
 
@@ -158,42 +202,87 @@ public class SequenceStateMachine extends StateMachine {
         return true;
     }
 
-    public boolean holdAndLower() {
-        handClamperSubsystem.moveHand(positions.clamperHoldPosition);
-        elevatorSubsystem.moveElevator(ElevatorConstants.elevatorHomePosition, subsystemCallback);
-        return true;
-    }
-
     public boolean releasePiece() {
         handIntakeSubsystem.stop();
-        handIntakeSubsystem.release(HandConstants.intakeVelocity, HandConstants.defaultReleaseRuntime);
+        handIntakeSubsystem.release(HandConstants.releaseVelocity, HandConstants.defaultReleaseRuntime);
         return true;
     }
 
-    public boolean shootToScore() {
-        handIntakeSubsystem.release(HandConstants.scoreAlgaeVelocity, HandConstants.defaultReleaseRuntime, subsystemCallback);
+    /*
+     * CORAL-SPECIFIC OPERATIONAL METHODS
+     * Note: these methods are specific to certain parts of sequences and should only be updated when updating 
+     * those specific sequences.
+     */
+
+    public boolean coralTimedIntake() {
+        armSecondStage();
+        handIntakeSubsystem.timedPieceDetection(2, subsystemCallback);
         return true;
     }
+
+    public boolean checkIfShouldScoreCoral() {
+        // watch for the reef detection sensor to flip
+        handIntakeSubsystem.watchForScoreDetection(subsystemCallback);
+        return true;
+    }
+
+    public boolean moveArmToScoreCoral() {
+        armSubsystem.moveArmNormalSpeed(positions.secondStageArmPosition, subsystemCallback);
+        return true;
+    }
+
+    /*
+     * ALGAE-SPECIFIC OPERATIONAL METHODS
+     * Note: these methods are specific to certain parts of sequences and should only be updated when updating 
+     * those specific sequences.
+     */
+
+    public boolean shootAlgaeInBarge() {
+        // move arm forward
+        armSubsystem.moveArmNormalSpeed(positions.firstStageArmPosition, subsystemCallback);
+        handClamperSubsystem.close();
+        handIntakeSubsystem.release(HandConstants.releaseVelocity, HandConstants.defaultReleaseRuntime);
+        return true;
+    }
+
+    public boolean pickupReefAlgae() {
+        elevatorSubsystem.moveElevatorSlowSpeed(positions.raiseElevatorPosition, subsystemCallback);
+        return true;
+    }
+
+    public boolean grabAlgaeAndLower() {
+        handClamperSubsystem.moveHand(positions.clamperHoldPosition);
+        elevatorSubsystem.moveElevatorSlowSpeed(ElevatorConstants.elevatorHomePosition, subsystemCallback);
+        return true;
+    }
+
+    public boolean handoffAlgae() {
+        handClamperSubsystem.close();
+        handIntakeSubsystem.release(HandConstants.releaseVelocity, HandConstants.defaultReleaseRuntime, subsystemCallback);
+        return true;
+    }
+
+    /*
+     * UPDATE LEVEL OPERATIONAL METHODS
+     */
 
     // Drive the elevator to a new position when the operator overrides it midstream
     public boolean updateElevator() {
-        // Find the new elevator position by using the new level with the current action and game piece
-        Sequence updatedLevelSequence = SequenceFactory.getSequence(updatedLevel, currentGamePiece, currentAction);
-        Positions updatedLevelPositions = SequenceFactory.getPositions(updatedLevelSequence);
-        // Drive to the updated position
-        elevatorSubsystem.moveElevator(updatedLevelPositions.raiseElevatorPosition, subsystemCallback);
+        // raise with no threshold b/c may have to move up or down, threshold potentially not valid
+        elevatorSubsystem.moveElevatorNormalSpeed(positions.raiseElevatorPosition, subsystemCallback);
         return true;
     }
 
     // Used to return the arm home (and stop intake) before driving the elevator to a new position
     public boolean returnArmForUpdate() {
-        if(currentAction == Action.INTAKE) {
-            handClamperSubsystem.close();
-            handIntakeSubsystem.stop();
-        }
-        armSubsystem.moveArm(ArmConstants.armHomePosition, subsystemCallback);
+        armSubsystem.moveArmNormalSpeed(ArmConstants.armHomePosition, subsystemCallback);
         return true;
     }
+
+
+    /*
+     * RESET OPERATIONAL METHODS
+     */
 
     public boolean startReset() {
         isResetting = true;
@@ -201,8 +290,8 @@ public class SequenceStateMachine extends StateMachine {
         armSubsystem.stopArm();
         elevatorSubsystem.stopElevator();
         // move back home
-        armSubsystem.moveArm(ArmConstants.armHomePosition, subsystemCallback);
-        elevatorSubsystem.moveElevator(ElevatorConstants.elevatorHomePosition, subsystemCallback);
+        armSubsystem.moveArmNormalSpeed(ArmConstants.armHomePosition, subsystemCallback);
+        elevatorSubsystem.moveElevatorNormalSpeed(ElevatorConstants.elevatorHomePosition, subsystemCallback);
         return true;
     }
 
@@ -217,7 +306,6 @@ public class SequenceStateMachine extends StateMachine {
         currentSequence = null;
         currentAction = null;
         currentGamePiece = null;
-        updatedLevel = null;
         positions = null;
         isResetting = false;
         elevatorResetDone = false;

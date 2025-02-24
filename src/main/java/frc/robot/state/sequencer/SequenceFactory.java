@@ -7,6 +7,7 @@ import frc.robot.state.sequencer.transitions.AlgaeHandoffTransitions;
 import frc.robot.state.sequencer.transitions.AlgaeReefPickupTransitions;
 import frc.robot.state.sequencer.transitions.AlgaeScoreBargeTransitions;
 import frc.robot.state.sequencer.transitions.CoralFeederPickupTransitions;
+import frc.robot.state.sequencer.transitions.CoralScoreL1Transitions;
 import frc.robot.state.sequencer.transitions.CoralScoreTransitions;
 import frc.robot.state.sequencer.transitions.ResetTransitions;
 
@@ -57,6 +58,8 @@ public class SequenceFactory {
                 // Currently disabled, may not need
                 return null; // return CoralUprightFloorPickupTransitions.getTransitionTable();
             case SCORE_CORAL_L1:
+                return CoralScoreL1Transitions.getTransitionTable();
+                //return CoralScoreL1AltTransitions.getTransitionTable();
             case SCORE_CORAL_L2:
             case SCORE_CORAL_L3:
             case SCORE_CORAL_L4:
@@ -91,6 +94,7 @@ public class SequenceFactory {
             //Currently disabled may not need
             //case INTAKE_CORAL_FLOOR_UPRIGHT: return PositionsFactory.getCoralUprightFloorPickupPositions();
             case SCORE_CORAL_L1: return PositionsFactory.getCoralScoreL1Positions();
+            //case SCORE_CORAL_L1: return PositionsFactory.getCoralScoreL1AltPositions();
             case SCORE_CORAL_L2: return PositionsFactory.getCoralScoreL2Positions();
             case SCORE_CORAL_L3: return PositionsFactory.getCoralScoreL3Positions();
             case SCORE_CORAL_L4: return PositionsFactory.getCoralScoreL4Positions();
