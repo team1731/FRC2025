@@ -210,7 +210,6 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
 
     public boolean isAtPosition(double position) {
         double tolerance = 1;
-        System.out.println("Elevator is at position? Pos:" + getElevatorPosition() + " Diff: " +  Math.abs(getElevatorPosition() - position) + " Tol:" + tolerance);
         return Math.abs(getElevatorPosition() - position) < tolerance;
     }
 
