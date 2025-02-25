@@ -12,7 +12,7 @@ public class CoralScoreTransitions {
         {SequenceState.MOVING_ARM_FORWARD,      SequenceInput.ARM_THRESHOLD_MET,          "checkIfShouldScoreCoral",   SequenceState.WAITING}, // operation determines next state
         {SequenceState.MOVING_ARM_FORWARD,      SequenceInput.AUTO_SCORE,                 null,                        SequenceState.AUTO_SCORE_WHEN_READY},
         {SequenceState.WAITING,                 SequenceInput.BUTTON_RELEASED,            "moveArmToScoreCoral",       SequenceState.SCORING}, // driver initiated score
-        {SequenceState.WAITING,                 SequenceInput.SENSOR_SCORE,               "moveArmToScoreCoral",       SequenceState.SCORING}, // hand intake sensor initiated score
+        //{SequenceState.WAITING,                 SequenceInput.SENSOR_SCORE,               "moveArmToScoreCoral",       SequenceState.SCORING}, // hand intake sensor initiated score
         {SequenceState.AUTO_SCORE_WHEN_READY,   SequenceInput.ELEVATOR_DONE,              "moveArmToScoreCoral",       SequenceState.SCORING}, // auto initiated score during elevator raise
         {SequenceState.AUTO_SCORE_WHEN_READY,   SequenceInput.ARM_DONE,                   "moveArmToScoreCoral",       SequenceState.SCORING}, // auto initiated score during arm forward
         {SequenceState.SCORING,                 SequenceInput.ARM_DONE,                   "moveElevatorHome",          SequenceState.LOWERING},

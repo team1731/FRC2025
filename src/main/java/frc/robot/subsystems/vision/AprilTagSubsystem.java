@@ -9,6 +9,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.ToggleableSubsystem;
 import frc.robot.subsystems.leds.LEDSubsystem;
@@ -151,11 +152,16 @@ import frc.robot.subsystems.vision.helpers.AutoLineupHelper.LineupInstruction;
                 LineupInstruction lineupInstruction = autoLineupHelper.getLineupFeedback();
                 if(lineupInstruction == LineupInstruction.TOO_FAR_LEFT) {
                     ledSubsystem.setLineupTooFarLeftScheme();
+                    SmartDashboard.putString("Operator Command too far:","Left");
                 } else if(lineupInstruction == LineupInstruction.TOO_FAR_RIGHT) {
                     ledSubsystem.setLineupTooFarRightScheme();
+                    SmartDashboard.putString("Operator Command too far: ","RIGHT");
                 } else {
                     ledSubsystem.setLineupCenteredScheme();
+                    SmartDashboard.putString("Operator Command too far: ","Just Right");
                 }
+
+                
             }
         }
     }

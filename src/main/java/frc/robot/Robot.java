@@ -230,7 +230,7 @@ public class Robot extends TimedRobot {
 		AprilTagFields.kDefaultField.loadAprilTagLayoutField(); 
 		AprilTagSubsystem aprilTagSubsystem = driveSubsystem.getAprilTagSubsystem();
 		aprilTagSubsystem.setLEDSubsystem(ledSubsystem);
-		aprilTagSubsystem.startAutoLineup();
+		//aprilTagSubsystem.startAutoLineup();
 		//ledSubsystem.init();
 		//ledSubsystem.setColor(LedOption.INIT);
 	}
@@ -267,6 +267,7 @@ public class Robot extends TimedRobot {
 	public void disabledInit() {
 		//ledSubsystem.setBlink(false);
 		//ledSubsystem.setColor(OpConstants.LedOption.INIT);
+		driveSubsystem.getAprilTagSubsystem().startAutoLineup();
 	}
 
 
@@ -351,6 +352,7 @@ public class Robot extends TimedRobot {
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	@Override
 	public void teleopInit() {
+		driveSubsystem.getAprilTagSubsystem().stopAutoLineup();
 		//ledSubsystem.setColor(LedOption.GREEN);
 		//driveSubsystem.seedFieldRelative(new Pose2d(new Translation2d(0,0), new Rotation2d(120)));
 
@@ -405,6 +407,7 @@ public class Robot extends TimedRobot {
 	public void testInit() {
 		// Cancels all running commands at the start of test mode.
 		CommandScheduler.getInstance().cancelAll();
+		driveSubsystem.getAprilTagSubsystem().stopAutoLineup();
 	}
 
 	/** This function is called periodically during test mode. */

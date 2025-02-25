@@ -61,6 +61,7 @@ public class AutoLineupHelper {
 
         List<AprilTagTarget> targetMap = AprilTagSubsystem.getCombinedTargets(camera1, camera2);
         if(targetMap == null) return;
+        System.out.println("target map was not null");
 
         for(var mapping : targetMap) {
             PhotonTrackedTarget target = mapping.target;
@@ -108,13 +109,16 @@ public class AutoLineupHelper {
 
     private double getLockedTargetYaw() {
         List<PhotonTrackedTarget> targets = AprilTagSubsystem.getTargets(lockedCamera);
+        if (targets != null) {
         for(var target : targets) {
             if(target.getFiducialId() == lockedTargetId) {
                 lastMeasuredYaw = target.getYaw();
                 return target.getYaw();
             }
-        }
+        } 
+    }
         return lastMeasuredYaw;
+    
     }
 
     private LineupInstruction checkIfYawWithinTolerance(double measuredYaw, double onTargetYaw) {

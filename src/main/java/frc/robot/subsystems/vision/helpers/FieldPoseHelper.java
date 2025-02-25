@@ -36,7 +36,7 @@ public class FieldPoseHelper {
     public static double autoLineupLeftPositionThreshold = -15;
     public static double autoLineupRightPositionThreshold = 15;
     public static double autoLineupTolerance = 0.5;
-    public static double autoLineupLeftTargetYaw = -26.7654;
+    public static double autoLineupLeftTargetYaw = -60.001;  //ok
     public static double autoLineupCenterTargetYaw = 3.76546;
     public static double autoLineupRightTargetYaw = 29.8778;
     // List of April Tag poses on the reef

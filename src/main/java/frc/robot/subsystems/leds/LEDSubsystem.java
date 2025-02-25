@@ -57,7 +57,7 @@ public class LEDSubsystem extends SubsystemBase implements ToggleableSubsystem {
 
         candle = new CANdle(LEDConstants.CANdleCanId, "rio");
         candleConfig = new CANdleConfiguration();
-        candleConfig.stripType = LEDStripType.GRB; //TODO: what type of LED string do we have?
+        candleConfig.stripType = LEDStripType.RGB; //TODO: what type of LED string do we have?
         candleConfig.brightnessScalar = 0.2;
         candleConfig.disableWhenLOS = false;
         candleConfig.statusLedOffWhenActive = true;
@@ -94,11 +94,7 @@ public class LEDSubsystem extends SubsystemBase implements ToggleableSubsystem {
     }
 
     public void turnLineupColorsOff(){
-        setColor(LEDConstants.LedColor.OFF, 0, 1);
-        setColor(LEDConstants.LedColor.OFF, 1, 2);
-        setColor(LEDConstants.LedColor.OFF, 3, 2);
-        setColor(LEDConstants.LedColor.OFF, 5, 2);
-        setColor(LEDConstants.LedColor.OFF, 7, 1);
+        setColor(LEDConstants.LedColor.OFF, 0, LEDConstants.maxStringLength);
     }
 
 }
