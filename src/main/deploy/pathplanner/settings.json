@@ -3,14 +3,16 @@
   "robotLength": 0.8255,
   "holonomicMode": true,
   "pathFolders": [
+    "Blu_1",
     "Blu_2",
-    "Blu_1"
+    "Blu_3",
+    "Blu_4"
   ],
   "autoFolders": [
     "Test"
   ],
-  "defaultMaxVel": 4.0,
-  "defaultMaxAccel": 4.0,
+  "defaultMaxVel": 3.0,
+  "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "defaultNominalVoltage": 12.0,

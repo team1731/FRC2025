@@ -178,6 +178,10 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
     public void periodic(){
         if (!enabled) return;
 
+        // if(climbSubsystem.isAtPosition(.5)){
+        //     moveArm(ArmConstants.stowArmPosition);
+        // }
+
         /*
          * Score State Machine callback handling
          */

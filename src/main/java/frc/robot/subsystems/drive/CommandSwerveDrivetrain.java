@@ -127,6 +127,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
     private void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
+    
 
     @Override
     public boolean isEnabled() {
@@ -165,7 +166,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
     public AprilTagSubsystem getAprilTagSubsystem() {
         return useAprilTags? aprilTagSubsystem : null;
     }
-
+    public VSLAMSubsystem getVSLAMSubsytem() {
+        return useVSLAM? vslamSubsystem : null;
+    }
 
     /*
      * VSLAM DRIVE TO POSE

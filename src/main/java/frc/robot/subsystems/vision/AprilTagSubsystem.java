@@ -150,7 +150,9 @@ import frc.robot.subsystems.vision.helpers.AutoLineupHelper.LineupInstruction;
 
             if(autoLineupHelper.isInitialized()) {
                 LineupInstruction lineupInstruction = autoLineupHelper.getLineupFeedback();
-                if(lineupInstruction == LineupInstruction.TOO_FAR_LEFT) {
+                if(lineupInstruction == LineupInstruction.TARGET_NOT_VISIBLE) {
+                    ledSubsystem.setNoTagFound();
+                } else if(lineupInstruction == LineupInstruction.TOO_FAR_LEFT) {
                     ledSubsystem.setLineupTooFarLeftScheme();
                     SmartDashboard.putString("Operator Command too far:","Left");
                 } else if(lineupInstruction == LineupInstruction.TOO_FAR_RIGHT) {

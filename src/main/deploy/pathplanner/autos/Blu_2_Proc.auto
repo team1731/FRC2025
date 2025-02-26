@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "HoldCoral"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Blu_2_p1"

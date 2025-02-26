@@ -38,6 +38,7 @@ public class AutoCommandLoader {
     }
 
     public void registerAutoEventCommands() {
+        NamedCommands.registerCommand("HoldCoral", new InstantCommand(() -> handClamperSubsystem.holdCoral()));
         NamedCommands.registerCommand("CoralFeederIntake", getCoralFeederIntakeCommand());
         NamedCommands.registerCommand("FinishCoralFeederIntake", getFinishCoralFeederIntakeCommand());
         NamedCommands.registerCommand("CoralL4Score", getCoralL4ScoreCommand());

@@ -31,14 +31,15 @@ public class FieldPoseHelper {
     // The layout of the AprilTags on the field
     public static final AprilTagFieldLayout kTagLayout = AprilTagFields.kDefaultField.loadAprilTagLayoutField(); 
     // Auto lineup targets
+    // LEFT/CENTER/RIGHT are from the drive team's perspective
     public static int redAllianceAutoLineupTargetId = 10;
     public static int blueAllianceAutoLineupTargetId = 21;
     public static double autoLineupLeftPositionThreshold = -15;
     public static double autoLineupRightPositionThreshold = 15;
-    public static double autoLineupTolerance = 0.5;
-    public static double autoLineupLeftTargetYaw = -60.001;  //ok
-    public static double autoLineupCenterTargetYaw = 3.76546;
-    public static double autoLineupRightTargetYaw = 29.8778;
+    public static double autoLineupTolerance = 0.2;
+    public static double autoLineupLeftTargetYaw =-25.5;  //ok  Barge USB3
+    public static double autoLineupCenterTargetYaw = 0.28; // need to uise usb3
+    public static double autoLineupRightTargetYaw = 31.1; // ok Processor side USB1
     // List of April Tag poses on the reef
     /*
     public static Pose3d[] reefAprilTagPoses = {

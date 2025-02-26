@@ -3,7 +3,6 @@ package frc.robot.subsystems.vision;
 import java.util.EnumSet;
 
 import com.ctre.phoenix6.Utils;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -229,7 +228,7 @@ public class VSLAMSubsystem {
                         timestamp,
                         Timer.getFPGATimestamp()));
                  oculusPoseField.setRobotPose(estPose);
-                //drivetrainCallback.addVisionMeasurement(estPose, timestamp, kVSLAMStdDevs);
+                drivetrainCallback.addVisionMeasurement(estPose, timestamp, VisionConstants.kVSLAMStdDevs);
             });
     }
 
@@ -253,7 +252,7 @@ public class VSLAMSubsystem {
         questPosition = ntDatatable.getFloatArrayTopic("position").subscribe(new float[] { 0.0f, 0.0f, 0.0f });
         //questQuaternion = ntDatatable.getFloatArrayTopic("quaternion").subscribe(new float[] { 0.0f, 0.0f, 0.0f, 0.0f });
         questEulerAngles = ntDatatable.getFloatArrayTopic("eulerAngles").subscribe(new float[] { 0.0f, 0.0f, 0.0f });
-        questBattery = ntDatatable.getDoubleTopic("batteryLevel").subscribe(0.0f);
+        questBattery = ntDatatable.getDoubleTopic("batteryPercent").subscribe(0.0f);
         resetPosePub = ntDatatable.getDoubleArrayTopic("resetpose").publish();
     }
 
@@ -296,4 +295,6 @@ public class VSLAMSubsystem {
   public boolean isConnected() {
     return ((RobotController.getFPGATime() - questBattery.getLastChange()) / 1000) < 250;
   }
+
+  
 }

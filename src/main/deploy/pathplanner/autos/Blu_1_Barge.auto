@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "HoldCoral"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Blu_1_p1"
@@ -13,7 +19,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 1.5
+            "waitTime": 1.0
           }
         },
         {
@@ -41,15 +47,9 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "CoralL4Score"
-          }
-        },
-        {
           "type": "wait",
           "data": {
-            "waitTime": 1.5
+            "waitTime": 1.0
           }
         },
         {
@@ -77,15 +77,9 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "CoralL4Score"
-          }
-        },
-        {
           "type": "wait",
           "data": {
-            "waitTime": 1.5
+            "waitTime": 1.0
           }
         },
         {

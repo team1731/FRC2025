@@ -20,6 +20,7 @@ public class LEDSubsystem extends SubsystemBase implements ToggleableSubsystem {
     private static final int[] RED = { 255, 0, 0, 0 };
     private static final int[] BLUE = { 0, 255, 0, 0 };
     private static final int[] GREEN = { 0, 0, 255, 0 };
+    private static final int[] YELLOW = { 0, 255, 255, 0 };
     private static final int[] WHITE = { 0, 0, 0, 1 }; //need to check this is how we get white LEDs
 
     @Override
@@ -73,13 +74,13 @@ public class LEDSubsystem extends SubsystemBase implements ToggleableSubsystem {
         setColor(LEDConstants.LedColor.GREEN, 0, LEDConstants.maxStringLength);
     }
 
-    public void setLineupTooFarLeftScheme(){
+    public void setLineupTooFarRightScheme(){
         setColor(LEDConstants.LedColor.RED, 0, 1);
         setColor(LEDConstants.LedColor.OFF, 1, 6);
         setColor(LEDConstants.LedColor.RED, 7, 1);
     }
     
-    public void setLineupTooFarRightScheme(){
+    public void setLineupTooFarLeftScheme(){
         setColor(LEDConstants.LedColor.OFF, 0, 3);
         setColor(LEDConstants.LedColor.RED, 3, 2);
         setColor(LEDConstants.LedColor.OFF, 5, 3);
@@ -93,6 +94,9 @@ public class LEDSubsystem extends SubsystemBase implements ToggleableSubsystem {
         setColor(LEDConstants.LedColor.OFF, 7, 1);
     }
 
+    public void setNoTagFound(){
+        setColor(LEDConstants.LedColor.YELLOW, 0, 8);
+    }
     public void turnLineupColorsOff(){
         setColor(LEDConstants.LedColor.OFF, 0, LEDConstants.maxStringLength);
     }

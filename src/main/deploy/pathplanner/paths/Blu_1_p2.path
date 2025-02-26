@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.243832236842105,
-        "y": 5.00641447368421
+        "x": 5.272697368421052,
+        "y": 5.0419
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.358634868421052,
-        "y": 6.0551809210526315
+        "x": 5.4458881578947365,
+        "y": 6.032936184210526
       },
       "isLocked": false,
       "linkedName": "Blu_1_P1_Stop"
     },
     {
       "anchor": {
-        "x": 1.2893092105263155,
-        "y": 7.469572368421052
+        "x": 1.3470394736842104,
+        "y": 7.334868421052631
       },
       "prevControl": {
-        "x": 2.299588815789474,
-        "y": 7.01735197368421
+        "x": 2.357319078947369,
+        "y": 6.882648026315789
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,8 +30,8 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.2102161100196465,
-      "rotationDegrees": -25.99382100142058
+      "waypointRelativePos": 0.3223270440251572,
+      "rotationDegrees": -45.046561351385954
     }
   ],
   "constraintZones": [],
@@ -50,8 +50,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 2.8,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -62,7 +62,7 @@
     "rotation": -53.392925187392436
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Blu_1",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -119.098431658427

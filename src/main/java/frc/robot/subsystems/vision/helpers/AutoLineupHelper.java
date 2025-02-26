@@ -14,7 +14,7 @@ public class AutoLineupHelper {
     }
 
     public enum LineupInstruction {
-        TOO_FAR_LEFT, ON_TARGET, TOO_FAR_RIGHT
+        TOO_FAR_LEFT, ON_TARGET, TOO_FAR_RIGHT, TARGET_NOT_VISIBLE
     }
 
     private Camera camera1;
@@ -45,7 +45,9 @@ public class AutoLineupHelper {
 
     public LineupInstruction getLineupFeedback() {
         double measuredYaw = getLockedTargetYaw();
-        if(lineupPosition == LineupPosition.LEFT) {
+        if(measuredYaw == -1) {
+            return LineupInstruction.TARGET_NOT_VISIBLE;
+        } else if(lineupPosition == LineupPosition.LEFT) {
             return checkIfYawWithinTolerance(measuredYaw, FieldPoseHelper.autoLineupLeftTargetYaw);
         } else if(lineupPosition == LineupPosition.RIGHT) {
             return checkIfYawWithinTolerance(measuredYaw, FieldPoseHelper.autoLineupRightTargetYaw);
@@ -56,12 +58,9 @@ public class AutoLineupHelper {
 
     private void determineCameraForLineup() {
         Camera winningCamera = null;
-        PhotonTrackedTarget winningTarget = null;
-        double winningCameraYaw = 0;
 
         List<AprilTagTarget> targetMap = AprilTagSubsystem.getCombinedTargets(camera1, camera2);
         if(targetMap == null) return;
-        System.out.println("target map was not null");
 
         for(var mapping : targetMap) {
             PhotonTrackedTarget target = mapping.target;
@@ -71,29 +70,18 @@ public class AutoLineupHelper {
                targetId != FieldPoseHelper.redAllianceAutoLineupTargetId) continue; // do not see either lineup target
             
             double measuredYaw = target.getYaw();
-            boolean newWinningCamera = false;
             if(winningCamera == null) {
-                newWinningCamera = true;
-            } else {
-                LineupPosition position = determineLineupPosition(measuredYaw);
-                if((position == LineupPosition.LEFT && measuredYaw > winningCameraYaw) || // for left position, higher yaw is closer to target
-                   (position != LineupPosition.LEFT && measuredYaw < winningCameraYaw)) { // for center/right, lower yaw is closer to target
-                    newWinningCamera = true;
-                }
+                // For left/center lineup use #1 (ArducamUSB1), otherwise use #2 (ArducamUSB3)
+                winningCamera = (measuredYaw > FieldPoseHelper.autoLineupRightPositionThreshold)? camera1 : camera2; 
             }
-
-            if(newWinningCamera) {
-                winningCamera = mapping.camera;
-                winningTarget = target;
-                winningCameraYaw = measuredYaw;
+            
+            if(winningCamera != null && mapping.camera.getName() == winningCamera.getName()) {
+                // this camera associated with this target is our inside camera
+                lockedCamera = winningCamera;
+                lockedTargetId = target.getFiducialId();
+                lastMeasuredYaw = measuredYaw;
+                lineupPosition = determineLineupPosition(measuredYaw);
             }
-        }
-
-        if(winningCamera != null) {
-            lockedCamera = winningCamera;
-            lockedTargetId = winningTarget.getFiducialId();
-            lastMeasuredYaw = winningCameraYaw;
-            lineupPosition = determineLineupPosition(winningCameraYaw);
         }
     }
 
@@ -117,7 +105,7 @@ public class AutoLineupHelper {
             }
         } 
     }
-        return lastMeasuredYaw;
+        return -1; // don't see the target anymore
     
     }
 

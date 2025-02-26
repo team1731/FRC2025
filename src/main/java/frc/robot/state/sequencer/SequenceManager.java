@@ -45,6 +45,18 @@ public class SequenceManager {
         actionSelection = action;
     }
 
+    public static boolean isCoralScoreSequence(Sequence sequence) {
+        switch (sequence) {
+            case SCORE_CORAL_L1:
+            case SCORE_CORAL_L2:
+            case SCORE_CORAL_L3:
+            case SCORE_CORAL_L4:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     public static SequenceStateMachine getStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem clamperSubsystem, HandIntakeSubsystem intakeSubsystem) {
         if(stateMachine ==  null) {
             stateMachine = new SequenceStateMachine(elevatorSubsystem, armSubsystem, clamperSubsystem, intakeSubsystem);
