@@ -7,6 +7,7 @@ import frc.robot.state.sequencer.transitions.AlgaeHandoffTransitions;
 import frc.robot.state.sequencer.transitions.AlgaeReefPickupTransitions;
 import frc.robot.state.sequencer.transitions.AlgaeScoreBargeTransitions;
 import frc.robot.state.sequencer.transitions.CoralFeederPickupTransitions;
+import frc.robot.state.sequencer.transitions.CoralScoreL1AltTransitions;
 import frc.robot.state.sequencer.transitions.CoralScoreL1Transitions;
 import frc.robot.state.sequencer.transitions.CoralScoreTransitions;
 import frc.robot.state.sequencer.transitions.ResetTransitions;
@@ -58,7 +59,7 @@ public class SequenceFactory {
                 // Currently disabled, may not need
                 return null; // return CoralUprightFloorPickupTransitions.getTransitionTable();
             case SCORE_CORAL_L1:
-                return CoralScoreL1Transitions.getTransitionTable();
+                return CoralScoreL1AltTransitions.getTransitionTable();
                 //return CoralScoreL1AltTransitions.getTransitionTable();
             case SCORE_CORAL_L2:
             case SCORE_CORAL_L3:

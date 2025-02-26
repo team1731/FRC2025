@@ -97,7 +97,7 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
         stateMachineCallback = callback;
         callbackOnDone = true;
         callbackOnThreshold = true;
-        positionThreshold = threshold;
+        positionThreshold = threshold * ArmConstants.armPositionModifier;
         forwardThreshold = threshold < position;
         moveArmNormalSpeed(position);
     }
@@ -126,7 +126,7 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
 
         armCANcoder = new CANcoder(ArmConstants.armCancoderDeviceId, "rio");
         CANcoderConfiguration cancoderConfigs = new CANcoderConfiguration();
-        cancoderConfigs.MagnetSensor.MagnetOffset = -0.383544921875;
+        cancoderConfigs.MagnetSensor.MagnetOffset = -0.218017578125;
         cancoderConfigs.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5; // TODO what should this be?
         cancoderConfigs.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
         armCANcoder.getConfigurator().apply(cancoderConfigs);
@@ -178,6 +178,10 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
     public void periodic(){
         if (!enabled) return;
 
+        // if(climbSubsystem.isAtPosition(.5)){
+        //     moveArm(ArmConstants.stowArmPosition);
+        // }
+
         /*
          * Score State Machine callback handling
          */
@@ -207,7 +211,7 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
     }
 
     public boolean isAtPosition(double position){
-        double tolerance = .002;
+        double tolerance = .06;
         return Math.abs(getArmPosition() - position) < tolerance;
     }
 

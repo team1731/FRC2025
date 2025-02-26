@@ -29,6 +29,9 @@ import frc.robot.autos.AutoCommandLoader;
 import frc.robot.autos.AutoFactory;
 import frc.robot.autos.AutoLoader;
 import frc.robot.generated.TunerConstants;
+import frc.robot.state.sequencer.GamePiece;
+import frc.robot.state.sequencer.Level;
+import frc.robot.state.sequencer.SequenceManager;
 import frc.robot.util.log.MessageLog;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.arm.ArmSubsystem;
@@ -39,6 +42,7 @@ import frc.robot.subsystems.hand.HandIntakeSubsystem;
 import frc.robot.subsystems.leds.LEDSubsystem;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
 import frc.robot.subsystems.vision.AprilTagSubsystem;
+import frc.robot.subsystems.vision.VSLAMSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -206,7 +210,8 @@ public class Robot extends TimedRobot {
 			System.out.println("New Auto Code read from dashboard. OLD: " + autoCode + ", NEW: " + selectedAutoCode);
 			System.out.println("\nPreloading AUTO CODE --> " + selectedAutoCode);
 
-			m_autonomousCommand = AutoFactory.getAutonomousCommand(selectedAutoCode, redAlliance);
+			boolean isVSLAMConnected = (driveSubsystem.getVSLAMSubsytem() != null)? driveSubsystem.getVSLAMSubsytem().isConnected() : false;
+			m_autonomousCommand = AutoFactory.getAutonomousCommand(selectedAutoCode, redAlliance, isVSLAMConnected);
 
 			System.out.println("AUTONOMOUS COMMAND FDSFLKJDFLKJDSFLKDJFLKSDJFLDKFJLDKFJDLKFJ is"  + m_autonomousCommand);
 			if (m_autonomousCommand != null){
@@ -228,6 +233,9 @@ public class Robot extends TimedRobot {
 		driveSubsystem.configureInitialPosition();
 		driveSubsystem.configureAutoBindings();
 		AprilTagFields.kDefaultField.loadAprilTagLayoutField(); 
+		AprilTagSubsystem aprilTagSubsystem = driveSubsystem.getAprilTagSubsystem();
+		aprilTagSubsystem.setLEDSubsystem(ledSubsystem);
+		//aprilTagSubsystem.startAutoLineup();
 		//ledSubsystem.init();
 		//ledSubsystem.setColor(LedOption.INIT);
 	}
@@ -252,6 +260,7 @@ public class Robot extends TimedRobot {
 		// block in order for anything in the Command-based framework to work.
 		CommandScheduler.getInstance().run();
 		// m_robotContainer.displayEncoders();
+		//SmartDashboard.putBoolean("VSLAM WORKING",driveSubsystem.getVSLAMSubsytem().isConnected());
 	}
 
 	/** This function is called once each time the robot enters Disabled mode. */
@@ -264,6 +273,7 @@ public class Robot extends TimedRobot {
 	public void disabledInit() {
 		//ledSubsystem.setBlink(false);
 		//ledSubsystem.setColor(OpConstants.LedOption.INIT);
+		driveSubsystem.getAprilTagSubsystem().startAutoLineup();
 	}
 
 
@@ -313,9 +323,11 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		System.out.println("AUTO INIT");
-		CommandScheduler.getInstance().cancelAll();
+		driveSubsystem.getAprilTagSubsystem().stopAutoLineup();
 
-		(new InstantCommand(() -> climbSubsystem.stowClimb())).schedule();
+		CommandScheduler.getInstance().cancelAll();
+		
+		climbSubsystem.stowClimb();
 
 		if (m_autonomousCommand == null) {
 			System.out.println("SOMETHING WENT WRONG - UNABLE TO RUN AUTONOMOUS! CHECK SOFTWARE!");
@@ -346,12 +358,17 @@ public class Robot extends TimedRobot {
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	@Override
 	public void teleopInit() {
+		driveSubsystem.getAprilTagSubsystem().stopAutoLineup();
 		//ledSubsystem.setColor(LedOption.GREEN);
 		//driveSubsystem.seedFieldRelative(new Pose2d(new Translation2d(0,0), new Rotation2d(120)));
 
 		// Record both DS control and joystick data in TELEOP
 		MessageLog.getLogger();
 		System.out.println("TELEOP INIT");
+		// resetting to appropriate defaults post auto
+		SequenceManager.setLevelSelection(Level.L2);
+		SequenceManager.setGamePieceSelection(GamePiece.CORAL);
+		// cancel any outstanding auto commands
 		CommandScheduler.getInstance().cancelAll();
 
 		if (m_autonomousCommand != null) {
@@ -400,6 +417,7 @@ public class Robot extends TimedRobot {
 	public void testInit() {
 		// Cancels all running commands at the start of test mode.
 		CommandScheduler.getInstance().cancelAll();
+		driveSubsystem.getAprilTagSubsystem().stopAutoLineup();
 	}
 
 	/** This function is called periodically during test mode. */

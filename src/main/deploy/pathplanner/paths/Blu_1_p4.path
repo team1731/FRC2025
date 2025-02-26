@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.868585526315789,
-        "y": 5.044901315789473
+        "x": 3.993009868421052,
+        "y": 5.208470394736842
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.087249909877433,
-        "y": 5.946442411679884
+        "x": 3.0159468300101038,
+        "y": 6.040645808807627
       },
       "isLocked": false,
       "linkedName": "Blu_1_p3_stop"
     },
     {
       "anchor": {
-        "x": 1.2604440789473683,
-        "y": 7.450328947368421
+        "x": 1.2700657894736842,
+        "y": 7.334868421052631
       },
       "prevControl": {
-        "x": 2.808089626892575,
-        "y": 6.714070385724585
+        "x": 2.5126249618964547,
+        "y": 6.325462529319865
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,8 +45,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 2.8,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -57,10 +57,10 @@
     "rotation": -53.13010235415599
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Blu_1",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -119.88135473954401
+    "rotation": -59.74356283647078
   },
   "useDefaultConstraints": true
 }

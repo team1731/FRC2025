@@ -30,6 +30,7 @@ public final class Constants {
     }
 
     public static final class AutoConstants {
+        public static final String kNoVSLAMPrefix = "NoVSLAM_";
         public static final String kAutoDefault = "2_test"; // TODO replace this when we have a real default auto
         public static final String kAutoCodeKey = "Auto Selector";
 
