@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.state.StateMachineCallback;
 import frc.robot.state.sequencer.SequenceInput;
 import frc.robot.subsystems.ToggleableSubsystem;
+import frc.robot.subsystems.climb.ClimbConstants;
 import frc.robot.subsystems.climb.ClimbSubsystem;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 
@@ -178,9 +179,9 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
     public void periodic(){
         if (!enabled) return;
 
-        // if(climbSubsystem.isAtPosition(.5)){
-        //     moveArm(ArmConstants.stowArmPosition);
-        // }
+        if(climbSubsystem.isClimbing() && climbSubsystem.getClimbPosition() > ClimbConstants.climbArmStowThreshold){
+             moveArm(ArmConstants.stowArmPosition);
+        }
 
         /*
          * Score State Machine callback handling

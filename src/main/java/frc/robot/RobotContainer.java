@@ -140,7 +140,6 @@ public class RobotContainer {
       Pose2d resetPosition = Robot.isRedAlliance() ? new Pose2d(7.168, 5.006, new Rotation2d(Math.toRadians(0)))
           : new Pose2d(7.168, 5.006, new Rotation2d(Math.toRadians(180)));
       driveSubsystem.resetPose(resetPosition);
-    //  driveSubsystem.setOperatorPerspectiveForward(operatorPerspective); // Just a Hack
     }));
 
 
@@ -183,11 +182,10 @@ public class RobotContainer {
 
     //bring up the climb in ready position
     opStart.onTrue(new SequentialCommandGroup(
+      new InstantCommand(() -> climbSubsystem.setIsClimbing(true)),
       new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.climbReadyPosition)),
       new InstantCommand(() -> armSubsystem.moveArmNormalSpeed(ArmConstants.halfedArmPosition)) 
     ));
-
-    //opStart.onTrue(new ResetHandCommand(handClamperSubsystem, handIntakeSubsystem)); //TODO: (SF) can we add this to the SequentialCommandGroup
 
     driveSubsystem.registerTelemetry(logger::telemeterize);
 
