@@ -79,6 +79,7 @@ public class HandClamperSubsystem extends SubsystemBase implements ToggleableSub
 
     public void holdCoral() {
         motor.setControl(new DutyCycleOut(HandConstants.clamperHoldCoral));
+        System.out.println("setting holdcoral()");
     }
     
 
