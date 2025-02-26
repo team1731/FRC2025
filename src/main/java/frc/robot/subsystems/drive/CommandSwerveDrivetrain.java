@@ -127,6 +127,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
     private void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
+    
 
     @Override
     public boolean isEnabled() {
@@ -165,7 +166,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
     public AprilTagSubsystem getAprilTagSubsystem() {
         return useAprilTags? aprilTagSubsystem : null;
     }
-
+    public VSLAMSubsystem getVSLAMSubsytem() {
+        return useVSLAM? vslamSubsystem : null;
+    }
 
     /*
      * VSLAM DRIVE TO POSE
@@ -184,12 +187,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
 
     public Command driveToPose(Pose2d targetPose, StateMachineCallback callback) {
         stateMachineCallback = callback;
-        return driveToPose(targetPose);
-    }
-
-    public Command driveToNearestCoralTarget() {
-        Pose2d currentPose = getCurrentPose();
-        Pose2d targetPose = FieldPoseHelper.getClosestReefLineupPose(currentPose);
         return driveToPose(targetPose);
     }
 

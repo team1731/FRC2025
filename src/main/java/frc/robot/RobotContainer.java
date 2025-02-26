@@ -184,7 +184,7 @@ public class RobotContainer {
     //bring up the climb in ready position
     opStart.onTrue(new SequentialCommandGroup(
       new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.climbReadyPosition)),
-      new InstantCommand(() -> armSubsystem.moveArmNormalSpeed(ArmConstants.stowArmPosition)) 
+      new InstantCommand(() -> armSubsystem.moveArmNormalSpeed(ArmConstants.halfedArmPosition)) 
     ));
 
     //opStart.onTrue(new ResetHandCommand(handClamperSubsystem, handIntakeSubsystem)); //TODO: (SF) can we add this to the SequentialCommandGroup

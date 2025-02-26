@@ -86,11 +86,12 @@ public class SequenceStateMachine extends StateMachine {
             if(sequenceInput == SequenceInput.ARM_DONE) armResetDone = true;
             if(elevatorResetDone && armResetDone) {
                 isResetting = false;
+                if(SequenceManager.isCoralScoreSequence(currentSequence)) closeHandWithoutCallback();
                 setInput(SequenceInput.RESET_DONE);
             }
         } else {
             if(input == SequenceInput.RELEASED_PIECE) closeHandWithoutCallback();
-            if(input == SequenceInput.DETECTED_PIECE && currentGamePiece == GamePiece.CORAL) returnHandToDefault();
+            if(input == SequenceInput.DETECTED_PIECE && currentGamePiece == GamePiece.CORAL) holdCoralPiece();
             if(currentSequence == Sequence.SCORE_CORAL_L2 && input == SequenceInput.ARM_DONE && currentState == SequenceState.SCORING) releasePiece();
             setInput(input);
         }
@@ -180,12 +181,6 @@ public class SequenceStateMachine extends StateMachine {
         handClamperSubsystem.close(subsystemCallback);
         return true;
     }
-
-    public boolean returnHandToDefault() {
-        handClamperSubsystem.close();
-        handIntakeSubsystem.stop();
-        return true;
-    }
     
     public boolean prepareToIntake() {
         handClamperSubsystem.open(positions.clamperIntakePosition);
@@ -217,6 +212,12 @@ public class SequenceStateMachine extends StateMachine {
     public boolean coralTimedIntake() {
         armSecondStage();
         handIntakeSubsystem.timedPieceDetection(2, subsystemCallback);
+        return true;
+    }
+
+    public boolean holdCoralPiece() {
+        handIntakeSubsystem.stop();
+        handClamperSubsystem.holdCoral();
         return true;
     }
 

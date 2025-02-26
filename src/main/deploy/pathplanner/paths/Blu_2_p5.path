@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.2700657894736842,
-        "y": 7.334868421052631
+        "x": 1.2321061643835618,
+        "y": 0.7418878424657532
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.499294612768227,
-        "y": 6.11398524238589
+        "x": 2.2839041095890416,
+        "y": 1.583326198630136
       },
       "isLocked": false,
-      "linkedName": "Blu_1_p4_stop"
+      "linkedName": "Blu_2_feeder"
     },
     {
       "anchor": {
-        "x": 3.7236019736842105,
-        "y": 4.996792763157894
+        "x": 3.993009868421052,
+        "y": 2.9088815789473688
       },
       "prevControl": {
-        "x": 2.9585550152602904,
-        "y": 5.7285939618517325
+        "x": 3.4520852108868056,
+        "y": 2.172623017303534
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Blu_1_p5_stop"
+      "linkedName": "Blu_2_p5_stop"
     }
   ],
   "rotationTargets": [],
@@ -48,23 +48,12 @@
   "eventMarkers": [
     {
       "name": "FinishCoralFeederIntake",
-      "waypointRelativePos": 0.37701974865350124,
+      "waypointRelativePos": 0.6858359957401502,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
           "name": "FinishCoralFeederIntake"
-        }
-      }
-    },
-    {
-      "name": "CoralL4Score",
-      "waypointRelativePos": 0.567324955116697,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "CoralL4Score"
         }
       }
     }
@@ -79,13 +68,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -58.671307132195814
+    "rotation": 58.02661666559414
   },
   "reversed": false,
-  "folder": "Blu_1",
+  "folder": "Blu_2",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -53.13010235415599
+    "rotation": 52.30575953331082
   },
   "useDefaultConstraints": true
 }

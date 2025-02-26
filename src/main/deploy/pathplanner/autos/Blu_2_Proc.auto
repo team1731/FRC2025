@@ -5,9 +5,15 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "HoldCoral"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Blu_1_p1"
+            "pathName": "Blu_2_p1"
           }
         },
         {
@@ -25,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Blu_1_p2"
+            "pathName": "Blu_2_p2"
           }
         },
         {
@@ -37,7 +43,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Blu_1_p3"
+            "pathName": "Blu_2_p3"
           }
         },
         {
@@ -61,7 +67,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Blu_1_p4"
+            "pathName": "Blu_2_p4"
           }
         },
         {
@@ -73,7 +79,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Blu_1_p5"
+            "pathName": "Blu_2_p5"
           }
         },
         {
@@ -85,7 +91,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 1.5
+            "waitTime": 1.0
           }
         },
         {
@@ -97,19 +103,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Blu_1_p6"
+            "pathName": "Blu_2_p6"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.5
+            "waitTime": 1.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Blu_1_p7"
+            "pathName": "Blu_2_p7"
           }
         },
         {
@@ -121,7 +127,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 1.5
+            "waitTime": 1.0
           }
         },
         {

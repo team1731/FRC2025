@@ -62,8 +62,13 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
     }
 
     public void release(double velocity) {
-        VelocityDutyCycle velocityDutyCycle = new VelocityDutyCycle(velocity);
-        motor.setControl(velocityDutyCycle);
+       // VelocityDutyCycle velocityDutyCycle = new VelocityDutyCycle(velocity);
+       // motor.setControl(velocityDutyCycle);
+
+        DutyCycleOut dutycycle = new DutyCycleOut(1);
+    
+        motor.setControl(dutycycle);
+       
     }
 
     public void release(double velocity, double runningTime) {

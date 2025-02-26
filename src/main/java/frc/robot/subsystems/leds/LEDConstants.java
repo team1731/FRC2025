@@ -7,6 +7,6 @@ public class LEDConstants {
     public final static int maxStringLength = 8;
 
     public enum LedColor {
-        OFF, RED, BLUE, GREEN, WHITE
+        OFF, RED, BLUE, GREEN, YELLOW, WHITE
     }
 }
