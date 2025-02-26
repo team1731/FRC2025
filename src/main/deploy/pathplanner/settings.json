@@ -4,11 +4,17 @@
   "holonomicMode": true,
   "pathFolders": [
     "Blu_1",
+    "Blu_1_NoVSLAM",
+    "Blu_2",
+    "Blu_2_NoVSLAM",
     "Blu_3",
+    "Blu_3_NoVSLAM",
     "Blu_4",
-    "Blu_2"
+    "Blu_4_NoVSLAM"
   ],
-  "autoFolders": [],
+  "autoFolders": [
+    "NoVSLAM"
+  ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,
