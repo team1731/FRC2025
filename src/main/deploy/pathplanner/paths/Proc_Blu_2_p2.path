@@ -3,35 +3,35 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.263075657894737,
-        "y": 2.985855263157895
+        "x": 5.272697368421052,
+        "y": 3.0099
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.657962328767123,
-        "y": 2.154302226027397
+        "x": 5.4458881578947365,
+        "y": 2.018863815789474
       },
       "isLocked": false,
-      "linkedName": "Blu_2_p1_stop"
+      "linkedName": "Processor_Blu_1_P1_Stop"
     },
     {
       "anchor": {
-        "x": 1.2321061643835618,
-        "y": 0.7418878424657532
+        "x": 1.3470394736842104,
+        "y": 0.7169315789473689
       },
       "prevControl": {
-        "x": 2.9149828767123287,
-        "y": 1.4631207191780822
+        "x": 2.357319078947369,
+        "y": 1.1691519736842109
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Blu_2_feeder"
+      "linkedName": "Processor_Blu_1_p2_stop"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.2102161100196465,
-      "rotationDegrees": 67.79008620232015
+      "waypointRelativePos": 0.3223270440251572,
+      "rotationDegrees": 45.046561351385954
     }
   ],
   "constraintZones": [],
@@ -59,13 +59,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 52.30575953331082
+    "rotation": 53.392925187392436
   },
   "reversed": false,
   "folder": "Blu_2",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 118.95099520746685
+    "rotation": 119.098431658427
   },
   "useDefaultConstraints": true
 }

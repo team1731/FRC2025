@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "autoTest"
+            "pathName": "Blu_4_p1"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Test",
-  "choreoAuto": true
+  "folder": "NoVSLAM",
+  "choreoAuto": false
 }
