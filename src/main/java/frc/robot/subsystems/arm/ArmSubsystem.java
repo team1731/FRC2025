@@ -21,7 +21,6 @@ import frc.robot.state.sequencer.SequenceInput;
 import frc.robot.subsystems.ToggleableSubsystem;
 import frc.robot.subsystems.climb.ClimbConstants;
 import frc.robot.subsystems.climb.ClimbSubsystem;
-import frc.robot.subsystems.elevator.ElevatorConstants;
 
 
 public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
@@ -68,8 +67,11 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
         if(!enabled) return;
 
         //check if climber will collide with regular arm movments
-        if(climbSubsystem.getClimbPosition() > 0.4) return; //TODO: (SF) check if this is correct
-        position = position * ArmConstants.armPositionModifier;
+        if(climbSubsystem.getClimbPosition() > ClimbConstants.climbArmStowThreshold){
+            position = ArmConstants.stowArmPosition; // override any incoming positon with the stow position
+        }
+
+        position = position * ArmConstants.armGearRationModifier;
         // do not go outside boundary thresholds
         if(position > ArmConstants.maxArmPosition) {
             desiredPosition = ArmConstants.maxArmPosition;
@@ -83,8 +85,9 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
     }
 
     public void moveArmNormalSpeed(double position) {
-        mmReq.Velocity = ElevatorConstants.normalElevatorVelocity;
-        mmReq.Acceleration = ElevatorConstants.normalElevatorAcceleration;
+        mmReq.Velocity = ArmConstants.normalArmVelocity;
+        mmReq.Acceleration = ArmConstants.normalArmAcceleration;
+        System.out.println("ArmSubsystem normal velocity: " + ArmConstants.normalArmVelocity + " accel: " + ArmConstants.normalArmAcceleration);
         callbackOnDone = true;
         moveArm(position);
     }
@@ -98,14 +101,15 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
         stateMachineCallback = callback;
         callbackOnDone = true;
         callbackOnThreshold = true;
-        positionThreshold = threshold * ArmConstants.armPositionModifier;
+        positionThreshold = threshold * ArmConstants.armGearRationModifier;
         forwardThreshold = threshold < position;
         moveArmNormalSpeed(position);
     }
 
     public void moveArmSlowSpeed(double position) {
-        mmReq.Velocity = ElevatorConstants.slowedElevatorVelocity;
-        mmReq.Acceleration = ElevatorConstants.slowedElevatorAcceleration;
+        mmReq.Velocity = ArmConstants.slowedArmVelocity;
+        mmReq.Acceleration = ArmConstants.slowedArmAcceleration;
+        System.out.println("ArmSubsystem slowed velocity: " + ArmConstants.slowedArmVelocity + " accel: " + ArmConstants.slowedArmAcceleration);
         callbackOnDone = true;
         moveArm(position);
     }

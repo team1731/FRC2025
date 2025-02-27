@@ -78,7 +78,7 @@ public class HandClamperSubsystem extends SubsystemBase implements ToggleableSub
     }
 
     public void holdCoral() {
-        motor.setControl(new DutyCycleOut(HandConstants.clamperHoldCoral));
+        motor.setControl(new DutyCycleOut(-1));
         System.out.println("setting holdcoral()");
     }
     
@@ -91,7 +91,7 @@ public class HandClamperSubsystem extends SubsystemBase implements ToggleableSub
 
         clamperCancoder = new CANcoder(HandConstants.clamperCancoderDeviceId, "rio");
         CANcoderConfiguration cancoderConfigs = new CANcoderConfiguration();
-        cancoderConfigs.MagnetSensor.MagnetOffset = 0.4658203125;
+        cancoderConfigs.MagnetSensor.MagnetOffset = 0.45947265625;
         cancoderConfigs.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.25;
         clamperCancoder.getConfigurator().apply(cancoderConfigs);
 
@@ -118,7 +118,7 @@ public class HandClamperSubsystem extends SubsystemBase implements ToggleableSub
         fdb.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
         fdb.RotorToSensorRatio = 125;
         fdb.SensorToMechanismRatio = 1;
-        cfg.CurrentLimits.StatorCurrentLimit = 40;
+        cfg.CurrentLimits.StatorCurrentLimit = 5;
         cfg.CurrentLimits.StatorCurrentLimitEnable = true;
 
         // Apply the config changes

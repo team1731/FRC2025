@@ -22,7 +22,7 @@ public class AutoFactory {
             alliancePathName = (redAlliance ? "Red" : "Blu") + "_" + autoName;
         }
         if(!isVSLAMConnected) {
-            alliancePathName = AutoConstants.kNoVSLAMPrefix + alliancePathName;
+            alliancePathName =  alliancePathName + AutoConstants.kNoVSLAMPostfix;
         }
         // if the named auto (red or blue) exists, use it as-is and do NOT flip the
         // field (red/blue)

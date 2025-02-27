@@ -86,12 +86,13 @@ public class SequenceStateMachine extends StateMachine {
             if(sequenceInput == SequenceInput.ARM_DONE) armResetDone = true;
             if(elevatorResetDone && armResetDone) {
                 isResetting = false;
-                if(SequenceManager.isCoralScoreSequence(currentSequence)) closeHandWithoutCallback();
+                if(SequenceManager.isCoralScoreSequence(currentSequence)) resetHandIfCoralNotDetected();
                 setInput(SequenceInput.RESET_DONE);
             }
         } else {
             if(input == SequenceInput.RELEASED_PIECE) closeHandWithoutCallback();
             if(input == SequenceInput.DETECTED_PIECE && currentGamePiece == GamePiece.CORAL) holdCoralPiece();
+            if(currentSequence == Sequence.SCORE_CORAL_L2 && input == SequenceInput.SENSOR_SCORE) return;
             if(currentSequence == Sequence.SCORE_CORAL_L2 && input == SequenceInput.ARM_DONE && currentState == SequenceState.SCORING) releasePiece();
             setInput(input);
         }
@@ -216,6 +217,7 @@ public class SequenceStateMachine extends StateMachine {
     }
 
     public boolean holdCoralPiece() {
+        System.out.println("SequenceStateMachine: holding coral piece...");
         handIntakeSubsystem.stop();
         handClamperSubsystem.holdCoral();
         return true;
@@ -229,6 +231,13 @@ public class SequenceStateMachine extends StateMachine {
 
     public boolean moveArmToScoreCoral() {
         armSubsystem.moveArmNormalSpeed(positions.secondStageArmPosition, subsystemCallback);
+        return true;
+    }
+
+    public boolean resetHandIfCoralNotDetected() {
+        if(!handIntakeSubsystem.pieceDetectionSwitchFlipped()) {
+            handClamperSubsystem.close();
+        }
         return true;
     }
 
@@ -297,7 +306,9 @@ public class SequenceStateMachine extends StateMachine {
     }
 
     public boolean startIntakeReset() {
-        handClamperSubsystem.close();
+        if(!handIntakeSubsystem.pieceDetectionSwitchFlipped()) {
+            handClamperSubsystem.close();
+        }
         handIntakeSubsystem.stop();
         startReset();
         return true;

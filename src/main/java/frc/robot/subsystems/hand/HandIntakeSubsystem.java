@@ -104,11 +104,11 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
         watchingForScoreDetection = true;
     }
 
-    private boolean pieceDetectionSwitchFlipped() {
+    public boolean pieceDetectionSwitchFlipped() {
         return motor.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround;
     }
 
-    private boolean scoreDetectionSwitchFlipped() {
+    public boolean scoreDetectionSwitchFlipped() {
         return motor.getForwardLimit().getValue() == ForwardLimitValue.ClosedToGround;
     }
 

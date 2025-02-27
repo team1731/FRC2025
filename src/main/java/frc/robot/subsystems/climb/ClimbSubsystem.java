@@ -45,6 +45,7 @@ public class ClimbSubsystem extends SubsystemBase implements ToggleableSubsystem
     }
 
     public boolean isClimbing() {
+       // System.out.println("ClimbSubsystem: Moved into climbing state");
         return isClimbing;
     }
 
@@ -134,14 +135,16 @@ public class ClimbSubsystem extends SubsystemBase implements ToggleableSubsystem
 
     public void periodic(){
         if (!enabled) return;
-
+        
         if(isClimbing && desiredPosition < ClimbConstants.climbResetThreshold && getClimbPosition() < ClimbConstants.climbResetThreshold) {
             // start button was pressed which set isClimbing to true
             // but now the driver is moving the climb back toward home and it's almost there
             // assume this is an attempt to reset
+            System.out.println("ClimbSubsystem: Resetting isClimbing to false");
             isClimbing = false;
         }
         
+
         log();
     }
 
