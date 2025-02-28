@@ -89,27 +89,27 @@ public class HandClamperSubsystem extends SubsystemBase implements ToggleableSub
     private void initializeMotor() {
         System.out.println("HandSubsystem: Starting UP & Initializing intake motor !!!!!!");
 
-        clamperCancoder = new CANcoder(HandConstants.clamperCancoderDeviceId, "rio");
+        clamperCancoder = new CANcoder(HandConstants.clamperCancoderDeviceId, "canivore1");
         CANcoderConfiguration cancoderConfigs = new CANcoderConfiguration();
         cancoderConfigs.MagnetSensor.MagnetOffset = 0.45947265625;
         cancoderConfigs.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.25;
         clamperCancoder.getConfigurator().apply(cancoderConfigs);
 
-        motor = new TalonFX(HandConstants.clamperCanId, "rio");
+        motor = new TalonFX(HandConstants.clamperCanId, "canivore1");
         TalonFXConfiguration cfg = new TalonFXConfiguration();
         motor.getConfigurator().apply(cfg);
 
         /* Configure current limits */
         MotionMagicConfigs mm = cfg.MotionMagic;
-        mm.MotionMagicCruiseVelocity = 70; // 5 rotations per second cruise
-        mm.MotionMagicAcceleration = 250; // Ta200ke approximately 0.5 seconds to reach max vel
+        mm.MotionMagicCruiseVelocity = 70.0/125.0; // 5 rotations per second cruise
+        mm.MotionMagicAcceleration = 140.0/125.0; // Ta200ke approximately 0.5 seconds to reach max vel
         // Take approximately 0.2 seconds to reach max accel
         mm.MotionMagicJerk = 0;
 
         Slot0Configs slot0 = cfg.Slot0;
-        slot0.kP = 120;  
+        slot0.kP = 120;  // seems like this should be more like 612
         slot0.kI = 0;
-        slot0.kD = 0.0078125;
+        slot0.kD = 0.0078125;      
         slot0.kV = 0.009375;
         slot0.kS = 0.02; // Approximately 0.25V to get the mechanism moving
 

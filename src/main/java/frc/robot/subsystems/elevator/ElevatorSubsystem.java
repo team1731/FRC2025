@@ -133,7 +133,7 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
         mm.MotionMagicJerk = ElevatorConstants.elevatorJerk;
 
         Slot0Configs slot0 = cfg.Slot0;
-        slot0.kG = 0.6;
+        slot0.kG = 0.1;
         slot0.kP = 4.9;
         slot0.kI = 0;
         slot0.kD = 0.0078125;

@@ -119,7 +119,7 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
      */
     private void initializeMotor() {
         System.out.println("HandIntakeSubsystem: Starting UP & Initializing motor !!!!!!");
-        motor = new TalonFX(HandConstants.intakeCanId, "rio");
+        motor = new TalonFX(HandConstants.intakeCanId, "canivore1");
         TalonFXConfiguration configs = new TalonFXConfiguration();
 
         /* Voltage-based velocity requires a feed forward to account for the back-emf of the motor */

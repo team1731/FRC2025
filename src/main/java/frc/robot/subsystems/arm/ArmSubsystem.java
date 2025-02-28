@@ -129,14 +129,14 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
 
         System.out.println("armSubsystem: Starting UP & Initializing arm motor!");
 
-        armCANcoder = new CANcoder(ArmConstants.armCancoderDeviceId, "rio");
+        armCANcoder = new CANcoder(ArmConstants.armCancoderDeviceId, "canivore1");
         CANcoderConfiguration cancoderConfigs = new CANcoderConfiguration();
         cancoderConfigs.MagnetSensor.MagnetOffset = -0.218017578125;
         cancoderConfigs.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5; // TODO what should this be?
         cancoderConfigs.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
         armCANcoder.getConfigurator().apply(cancoderConfigs);
 
-        armMotor = new TalonFX(ArmConstants.armCanId, "rio");
+        armMotor = new TalonFX(ArmConstants.armCanId, "canivore1");
         TalonFXConfiguration config = new TalonFXConfiguration();
 
         armMotor.getConfigurator().apply(config);

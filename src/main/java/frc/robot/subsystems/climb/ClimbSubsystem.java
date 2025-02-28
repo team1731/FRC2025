@@ -114,7 +114,7 @@ public class ClimbSubsystem extends SubsystemBase implements ToggleableSubsystem
         fdb.SensorToMechanismRatio = 1;
         
         //for testing
-        config.CurrentLimits.StatorCurrentLimit = 20;
+        config.CurrentLimits.StatorCurrentLimit = 40;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
 
          // Apply the configs to Motor 
