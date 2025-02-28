@@ -62,7 +62,7 @@ public final class PositionConstants {
         public static final class CORAL_L3 {
             public final static double raiseElevatorPosition = 54;
             public final static double raiseElevatorThresholdPosition = 47;
-            public final static double lowerElevatorThresholdPosition = 51;
+            public final static double lowerElevatorThresholdPosition = 48;
             public final static double armForwardPosition = 11;
             public final static double armForwardThreshold = 6;
             public final static double armScorePosition = 15;

@@ -1,7 +1,10 @@
 package frc.robot.subsystems.hand;
 
+import java.util.function.Supplier;
+
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -55,6 +58,12 @@ public class HandClamperSubsystem extends SubsystemBase implements ToggleableSub
         } else {
             desiredPosition = position;
         }
+        TalonFXConfiguration toConfigure = new TalonFXConfiguration();
+        CurrentLimitsConfigs currentLimitConfigs = toConfigure.CurrentLimits;
+        currentLimitConfigs.StatorCurrentLimit = 20;
+        currentLimitConfigs.StatorCurrentLimitEnable = true; // Start with stator limits off
+
+       retryConfigApply(() -> motor.getConfigurator().apply(toConfigure));
 
         motor.setControl(mmReq1.withPosition(desiredPosition).withFeedForward(arbitraryFeedForward));
     }
@@ -78,6 +87,12 @@ public class HandClamperSubsystem extends SubsystemBase implements ToggleableSub
     }
 
     public void holdCoral() {
+  //      TalonFXConfiguration toConfigure = new TalonFXConfiguration();
+  //      CurrentLimitsConfigs currentLimitConfigs = toConfigure.CurrentLimits;
+   //     currentLimitConfigs.StatorCurrentLimit = 5;
+   //     currentLimitConfigs.StatorCurrentLimitEnable = true; // Start with stator limits off
+
+    //    retryConfigApply(() -> motor.getConfigurator().apply(toConfigure));
         motor.setControl(new DutyCycleOut(-1));
         System.out.println("setting holdcoral()");
     }
@@ -91,7 +106,7 @@ public class HandClamperSubsystem extends SubsystemBase implements ToggleableSub
 
         clamperCancoder = new CANcoder(HandConstants.clamperCancoderDeviceId, "canivore1");
         CANcoderConfiguration cancoderConfigs = new CANcoderConfiguration();
-        cancoderConfigs.MagnetSensor.MagnetOffset = 0.45947265625;
+        cancoderConfigs.MagnetSensor.MagnetOffset = 0.121337890625;
         cancoderConfigs.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.25;
         clamperCancoder.getConfigurator().apply(cancoderConfigs);
 
@@ -101,8 +116,8 @@ public class HandClamperSubsystem extends SubsystemBase implements ToggleableSub
 
         /* Configure current limits */
         MotionMagicConfigs mm = cfg.MotionMagic;
-        mm.MotionMagicCruiseVelocity = 70.0/125.0; // 5 rotations per second cruise
-        mm.MotionMagicAcceleration = 140.0/125.0; // Ta200ke approximately 0.5 seconds to reach max vel
+        mm.MotionMagicCruiseVelocity = 70; // should be more like 70.0/125.0; // 5 rotations per second cruise
+        mm.MotionMagicAcceleration = 250; // should be more like140.0/125.0; // Ta200ke approximately 0.5 seconds to reach max vel
         // Take approximately 0.2 seconds to reach max accel
         mm.MotionMagicJerk = 0;
 
@@ -176,5 +191,14 @@ public class HandClamperSubsystem extends SubsystemBase implements ToggleableSub
         SmartDashboard.putNumber("hand motor closedLoopOutput", motor.getClosedLoopOutput().getValueAsDouble());
         SmartDashboard.putNumber("hand motor statorCurrent", motor.getStatorCurrent().getValueAsDouble());
         SmartDashboard.putNumber("Arbitrary Feed Forward", arbitraryFeedForward);
+    }
+
+     private void retryConfigApply(Supplier<StatusCode> toApply) {
+        StatusCode finalCode = StatusCode.StatusCodeNotInitialized;
+        int triesLeftOver = 5;
+        do {
+            finalCode = toApply.get();
+        } while (!finalCode.isOK() && --triesLeftOver > 0);
+        assert(finalCode.isOK());
     }
 }
