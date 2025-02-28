@@ -8,7 +8,7 @@ public class AlgaeFloorPickupTransitions {
         // CURRENT                              INPUT                                     OPERATION                    NEXT
         {SequenceState.HOME,                    SequenceInput.BEGIN,                      "moveArm",                   SequenceState.MOVING_ARM_FORWARD},
         {SequenceState.MOVING_ARM_FORWARD,      SequenceInput.ARM_DONE,                   "prepareToIntake",           SequenceState.INTAKING},
-        {SequenceState.INTAKING,                SequenceInput.DETECTED_PIECE,             "moveArmHome",               SequenceState.FINISHING},
+        {SequenceState.INTAKING,                SequenceInput.DETECTED_PIECE,             "prepareToIntake",               SequenceState.INTAKING},
         {SequenceState.FINISHING,               SequenceInput.ARM_DONE,                   "resetState",                SequenceState.HOME},
 
         // Abort sequences

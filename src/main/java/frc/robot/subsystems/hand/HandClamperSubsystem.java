@@ -11,6 +11,7 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -30,6 +31,7 @@ public class HandClamperSubsystem extends SubsystemBase implements ToggleableSub
     private MotionMagicVoltage mmReq1 = new MotionMagicVoltage(0);
     private boolean enabled;
     private StateMachineCallback scoreStateMachineCallback;
+    TalonFXConfiguration cfg = new TalonFXConfiguration();
     
     
     @Override
@@ -58,12 +60,8 @@ public class HandClamperSubsystem extends SubsystemBase implements ToggleableSub
         } else {
             desiredPosition = position;
         }
-        TalonFXConfiguration toConfigure = new TalonFXConfiguration();
-        CurrentLimitsConfigs currentLimitConfigs = toConfigure.CurrentLimits;
-        currentLimitConfigs.StatorCurrentLimit = 20;
-        currentLimitConfigs.StatorCurrentLimitEnable = true; // Start with stator limits off
+ 
 
-       retryConfigApply(() -> motor.getConfigurator().apply(toConfigure));
 
         motor.setControl(mmReq1.withPosition(desiredPosition).withFeedForward(arbitraryFeedForward));
     }
@@ -87,13 +85,9 @@ public class HandClamperSubsystem extends SubsystemBase implements ToggleableSub
     }
 
     public void holdCoral() {
-  //      TalonFXConfiguration toConfigure = new TalonFXConfiguration();
-  //      CurrentLimitsConfigs currentLimitConfigs = toConfigure.CurrentLimits;
-   //     currentLimitConfigs.StatorCurrentLimit = 5;
-   //     currentLimitConfigs.StatorCurrentLimitEnable = true; // Start with stator limits off
 
-    //    retryConfigApply(() -> motor.getConfigurator().apply(toConfigure));
-        motor.setControl(new DutyCycleOut(-1));
+      
+        motor.setControl(new TorqueCurrentFOC(-5));
         System.out.println("setting holdcoral()");
     }
     
@@ -133,7 +127,7 @@ public class HandClamperSubsystem extends SubsystemBase implements ToggleableSub
         fdb.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
         fdb.RotorToSensorRatio = 125;
         fdb.SensorToMechanismRatio = 1;
-        cfg.CurrentLimits.StatorCurrentLimit = 5;
+        cfg.CurrentLimits.StatorCurrentLimit = 40;
         cfg.CurrentLimits.StatorCurrentLimitEnable = true;
 
         // Apply the config changes

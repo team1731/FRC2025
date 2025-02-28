@@ -11,7 +11,7 @@ public final class HandConstants {
     public final static double maxClamperPosition = 0.22;
 
     public final static double intakeCoralVelocity = 5000/60;
-    public final static double intakeAlgaeVelocity = 2000/60;
+    public final static double intakeAlgaeVelocity = 5000/60;
     public final static double releaseVelocity = 5000/60;
     public final static double intakeHoldOutput = 0.1;
     public final static double intakeStoppedThreshold = 5;
