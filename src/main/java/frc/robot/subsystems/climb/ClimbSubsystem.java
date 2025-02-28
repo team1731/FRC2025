@@ -29,6 +29,7 @@ public class ClimbSubsystem extends SubsystemBase implements ToggleableSubsystem
     private double desiredPosition;
     private boolean enabled;
     private double arbitraryFeedForward = 0;
+    private boolean isClimbing = false;
     
 
     @Override
@@ -41,6 +42,15 @@ public class ClimbSubsystem extends SubsystemBase implements ToggleableSubsystem
         if (!enabled)
             return;
         initializeClimbMotor();
+    }
+
+    public boolean isClimbing() {
+       // System.out.println("ClimbSubsystem: Moved into climbing state");
+        return isClimbing;
+    }
+
+    public void setIsClimbing(boolean climbing) {
+        isClimbing = climbing;
     }
     
     public void moveClimb(double position){
@@ -104,7 +114,7 @@ public class ClimbSubsystem extends SubsystemBase implements ToggleableSubsystem
         fdb.SensorToMechanismRatio = 1;
         
         //for testing
-        config.CurrentLimits.StatorCurrentLimit = 20;
+        config.CurrentLimits.StatorCurrentLimit = 40;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
 
          // Apply the configs to Motor 
@@ -126,6 +136,15 @@ public class ClimbSubsystem extends SubsystemBase implements ToggleableSubsystem
     public void periodic(){
         if (!enabled) return;
         
+        if(isClimbing && desiredPosition < ClimbConstants.climbResetThreshold && getClimbPosition() < ClimbConstants.climbResetThreshold) {
+            // start button was pressed which set isClimbing to true
+            // but now the driver is moving the climb back toward home and it's almost there
+            // assume this is an attempt to reset
+            System.out.println("ClimbSubsystem: Resetting isClimbing to false");
+            isClimbing = false;
+        }
+        
+
         log();
     }
 

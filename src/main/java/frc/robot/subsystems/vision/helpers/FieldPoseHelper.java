@@ -37,7 +37,7 @@ public class FieldPoseHelper {
     public static double autoLineupLeftPositionThreshold = -15;
     public static double autoLineupRightPositionThreshold = 15;
     public static double autoLineupTolerance = 0.2;
-    public static double autoLineupLeftTargetYaw =-25.5;  //ok  Barge USB3
+    public static double autoLineupLeftTargetYaw =-26.3;  //ok  Barge USB3
     public static double autoLineupCenterTargetYaw = 0.28; // need to uise usb3
     public static double autoLineupRightTargetYaw = 31.1; // ok Processor side USB1
     // List of April Tag poses on the reef

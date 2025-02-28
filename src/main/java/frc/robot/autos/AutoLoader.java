@@ -38,7 +38,7 @@ public class AutoLoader {
         List<String> autoModes = new ArrayList<String>();
         for (String key : autoPaths.keySet()) {
             String stripKey = key.toString();
-            if (stripKey.startsWith(AutoConstants.kNoVSLAMPrefix)) {
+            if (stripKey.endsWith(AutoConstants.kNoVSLAMPostfix)) {
                 continue; // exclude these from the chooser
             }
             if (stripKey.startsWith("Red_") || stripKey.startsWith("Blu_")) {

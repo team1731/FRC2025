@@ -20,7 +20,7 @@ public class LEDSubsystem extends SubsystemBase implements ToggleableSubsystem {
     private static final int[] RED = { 255, 0, 0, 0 };
     private static final int[] BLUE = { 0, 255, 0, 0 };
     private static final int[] GREEN = { 0, 0, 255, 0 };
-    private static final int[] YELLOW = { 0, 255, 255, 0 };
+    private static final int[] YELLOW = { 0, 255, 255, 0 }; //TODO: (SF) not right RGB values
     private static final int[] WHITE = { 0, 0, 0, 1 }; //need to check this is how we get white LEDs
 
     @Override
@@ -49,6 +49,7 @@ public class LEDSubsystem extends SubsystemBase implements ToggleableSubsystem {
           case BLUE:    r = BLUE[0]; g = BLUE[1]; b = BLUE[2]; w = BLUE[3]; break;
           case RED:     r = RED[0]; g = RED[1]; b = RED[2]; w = RED[3];break;
           case GREEN:   r = GREEN[0]; g = GREEN[1]; b = GREEN[2]; w = GREEN[3];break;
+          case YELLOW:   r = YELLOW[0]; g = YELLOW[1]; b = YELLOW[2]; w = YELLOW[3];break;
         }
             candle.setLEDs(r, g, b, w, startLED, numberOfLEDs);
         }
@@ -95,10 +96,9 @@ public class LEDSubsystem extends SubsystemBase implements ToggleableSubsystem {
     }
 
     public void setNoTagFound(){
-        setColor(LEDConstants.LedColor.YELLOW, 0, 8);
+        setColor(LEDConstants.LedColor.OFF, 0, 8);
     }
     public void turnLineupColorsOff(){
         setColor(LEDConstants.LedColor.OFF, 0, LEDConstants.maxStringLength);
     }
-
 }

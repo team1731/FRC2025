@@ -37,10 +37,11 @@ public final class PositionConstants {
 
     public static final class CORAL_SCORE {
         public static final class CORAL_L1 {
-            public final static double raiseElevatorPosition = 21;
-            public final static double raiseElevatorThresholdPosition = 10;
-            public final static double armForwardPosition = 15;
-            public final static double armForwardThreshold = 11;
+            public final static double raiseElevatorPosition = 45;
+            public final static double raiseElevatorThresholdPosition = 38;
+            public final static double armForwardPosition = 26;
+            public final static double armForwardThreshold = 21;
+            public final static double clamperOpenPosition = coralIntakeWidth;
         }
 
         public static final class CORAL_L1_ALT {
@@ -50,27 +51,27 @@ public final class PositionConstants {
         }
 
         public static final class CORAL_L2 {
-            public final static double raiseElevatorPosition = 23;
-            public final static double raiseElevatorThresholdPosition = 16;
-            public final static double lowerElevatorThresholdPosition = 20;
+            public final static double raiseElevatorPosition = 25;
+            public final static double raiseElevatorThresholdPosition = 18;
+            public final static double lowerElevatorThresholdPosition = 25;
             public final static double armForwardPosition = 11;
             public final static double armForwardThreshold = 6;
-            public final static double armScorePosition = 15;
+            public final static double armScorePosition = 17;
         }
 
         public static final class CORAL_L3 {
             public final static double raiseElevatorPosition = 54;
             public final static double raiseElevatorThresholdPosition = 47;
-            public final static double lowerElevatorThresholdPosition = 49;
+            public final static double lowerElevatorThresholdPosition = 48;
             public final static double armForwardPosition = 11;
             public final static double armForwardThreshold = 6;
             public final static double armScorePosition = 15;
         }
 
         public static final class CORAL_L4 {
-            public final static double raiseElevatorPosition = 87;
-            public final static double raiseElevatorThresholdPosition = 82;
-            public final static double lowerElevatorThresholdPosition = 87;
+            public final static double raiseElevatorPosition = 85.5;
+            public final static double raiseElevatorThresholdPosition = 80.5;
+            public final static double lowerElevatorThresholdPosition = 83.5;
             public final static double armForwardPosition = 9;
             public final static double armForwardThreshold = 6;
             public final static double armScorePosition = 15;
@@ -87,8 +88,8 @@ public final class PositionConstants {
     public static final class ALGAE_INTAKE {
         public static final class ALGAE_REEF_L2 {
             // position definitions
-            public final static double raiseElevatorPosition = 22;
-            public final static double secondStageElevatorPosition = 31;
+            public final static double raiseElevatorPosition = 18;
+            public final static double secondStageElevatorPosition = 25;
             public final static double clamperIntakePosition = reefIntakeWidth;
             public final static double clamperHoldPosition = algaeIntakeWidth;
         }

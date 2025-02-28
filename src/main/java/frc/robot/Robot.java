@@ -235,9 +235,6 @@ public class Robot extends TimedRobot {
 		AprilTagFields.kDefaultField.loadAprilTagLayoutField(); 
 		AprilTagSubsystem aprilTagSubsystem = driveSubsystem.getAprilTagSubsystem();
 		aprilTagSubsystem.setLEDSubsystem(ledSubsystem);
-		//aprilTagSubsystem.startAutoLineup();
-		//ledSubsystem.init();
-		//ledSubsystem.setColor(LedOption.INIT);
 	}
 
 	/**
@@ -259,8 +256,6 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
 		// block in order for anything in the Command-based framework to work.
 		CommandScheduler.getInstance().run();
-		// m_robotContainer.displayEncoders();
-		//SmartDashboard.putBoolean("VSLAM WORKING",driveSubsystem.getVSLAMSubsytem().isConnected());
 	}
 
 	/** This function is called once each time the robot enters Disabled mode. */
@@ -271,8 +266,6 @@ public class Robot extends TimedRobot {
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	@Override
 	public void disabledInit() {
-		//ledSubsystem.setBlink(false);
-		//ledSubsystem.setColor(OpConstants.LedOption.INIT);
 		driveSubsystem.getAprilTagSubsystem().startAutoLineup();
 	}
 
@@ -359,8 +352,6 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopInit() {
 		driveSubsystem.getAprilTagSubsystem().stopAutoLineup();
-		//ledSubsystem.setColor(LedOption.GREEN);
-		//driveSubsystem.seedFieldRelative(new Pose2d(new Translation2d(0,0), new Rotation2d(120)));
 
 		// Record both DS control and joystick data in TELEOP
 		MessageLog.getLogger();

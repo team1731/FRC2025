@@ -13,13 +13,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Proc_Blu_2_p1"
+            "pathName": "Blu_1_p1"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.5
+            "waitTime": 0.6
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Proc_Blu_2_p2"
+            "pathName": "Blu_1_p2"
           }
         },
         {
@@ -43,13 +43,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Proc_Blu_2_p3"
+            "pathName": "Blu_1_p3"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.5
+            "waitTime": 0.6
           }
         },
         {
@@ -61,7 +61,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Proc_Blu_2_p4"
+            "pathName": "Blu_1_p4"
           }
         },
         {
@@ -73,13 +73,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Proc_Blu_2_p5"
+            "pathName": "Blu_1_p5"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.5
+            "waitTime": 0.6
           }
         },
         {
@@ -91,19 +91,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Proc_Blu_2_p6"
+            "pathName": "Blu_1_p6"
           }
         },
         {
           "type": "wait",
           "data": {
             "waitTime": 0.5
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Proc_Blu_2_p7"
           }
         },
         {
@@ -128,6 +122,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "NoVSLAM",
   "choreoAuto": false
 }
