@@ -13,11 +13,9 @@ import com.ctre.phoenix6.signals.ReverseLimitSourceValue;
 import com.ctre.phoenix6.signals.ReverseLimitValue;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.state.StateMachineCallback;
 import frc.robot.state.sequencer.SequenceInput;
-import frc.robot.state.sequencer.SequenceManager;
 import frc.robot.subsystems.ToggleableSubsystem;
 
 public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubsystem {
@@ -62,13 +60,8 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
     }
 
     public void release(double velocity) {
-       // VelocityDutyCycle velocityDutyCycle = new VelocityDutyCycle(velocity);
-       // motor.setControl(velocityDutyCycle);
-
-        DutyCycleOut dutycycle = new DutyCycleOut(1);
-    
-        motor.setControl(dutycycle);
-       
+       DutyCycleOut dutycycle = new DutyCycleOut(1);
+       motor.setControl(dutycycle);
     }
 
     public void release(double velocity, double runningTime) {
@@ -111,11 +104,11 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
         watchingForScoreDetection = true;
     }
 
-    private boolean pieceDetectionSwitchFlipped() {
+    public boolean pieceDetectionSwitchFlipped() {
         return motor.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround;
     }
 
-    private boolean scoreDetectionSwitchFlipped() {
+    public boolean scoreDetectionSwitchFlipped() {
         return motor.getForwardLimit().getValue() == ForwardLimitValue.ClosedToGround;
     }
 
@@ -126,7 +119,7 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
      */
     private void initializeMotor() {
         System.out.println("HandIntakeSubsystem: Starting UP & Initializing motor !!!!!!");
-        motor = new TalonFX(HandConstants.intakeCanId, "rio");
+        motor = new TalonFX(HandConstants.intakeCanId, "canivore1");
         TalonFXConfiguration configs = new TalonFXConfiguration();
 
         /* Voltage-based velocity requires a feed forward to account for the back-emf of the motor */

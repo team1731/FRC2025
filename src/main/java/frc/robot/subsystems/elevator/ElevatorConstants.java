@@ -14,7 +14,7 @@ public final class ElevatorConstants {
     // Motion Magic Config
     // Fast/Normal
     public final static double normalElevatorVelocity = 85;
-    public final static double normalElevatorAcceleration = 250;
+    public final static double normalElevatorAcceleration = 200;
     public final static double elevatorJerk = 0;
     // Slow
     public final static double slowedElevatorVelocity = 42;
@@ -24,7 +24,7 @@ public final class ElevatorConstants {
     public final static double idleOutput = 0;
 
     // Positions
-    public final static double elevatorHomePosition = 0;
+    public final static double elevatorHomePosition = 0.0;
     public final static double minElevatorPosition = 0;
     public final static double maxElevatorPosition = 97 * gearRatioModifier;
 
