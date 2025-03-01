@@ -3,35 +3,35 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.397779605263157,
-        "y": 5.0419
+        "x": 5.388157894736842,
+        "y": 3.0099
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.570970394736841,
-        "y": 6.032936184210526
+        "x": 5.561348684210526,
+        "y": 2.018863815789474
       },
       "isLocked": false,
-      "linkedName": "Blu_1_P1_Stop"
+      "linkedName": "Processor_Blu_1_P1_Stop"
     },
     {
       "anchor": {
         "x": 1.3470394736842104,
-        "y": 7.334868421052631
+        "y": 0.7169315789473689
       },
       "prevControl": {
         "x": 2.357319078947369,
-        "y": 6.882648026315789
+        "y": 1.1691519736842109
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Blu_1_p2_stop"
+      "linkedName": "Processor_Blu_1_p2_stop"
     }
   ],
   "rotationTargets": [
     {
       "waypointRelativePos": 0.3223270440251572,
-      "rotationDegrees": -45.046561351385954
+      "rotationDegrees": 45.046561351385954
     }
   ],
   "constraintZones": [],
@@ -59,13 +59,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -53.392925187392436
+    "rotation": 53.392925187392436
   },
   "reversed": false,
-  "folder": "Blu_1_NoVSLAM",
+  "folder": "Blu_2_NoVSLAM",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -121.46013109179631
+    "rotation": 119.098431658427
   },
   "useDefaultConstraints": false
 }

@@ -3,48 +3,54 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.397779605263157,
-        "y": 5.0419
+        "x": 1.3470394736842104,
+        "y": 0.7169315789473689
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.570970394736841,
-        "y": 6.032936184210526
+        "x": 1.5434390381539034,
+        "y": 0.8716920832287327
       },
       "isLocked": false,
-      "linkedName": "Blu_1_P1_Stop"
+      "linkedName": "Processor_Blu_1_p2_stop"
     },
     {
       "anchor": {
-        "x": 1.3470394736842104,
-        "y": 7.334868421052631
+        "x": 3.993009868421052,
+        "y": 2.8433296052631585
       },
       "prevControl": {
-        "x": 2.357319078947369,
-        "y": 6.882648026315789
+        "x": 3.692513521097672,
+        "y": 2.6175657792984106
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Blu_1_p2_stop"
+      "linkedName": "Processor_Blu_1_p3_stop"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.3223270440251572,
-      "rotationDegrees": -45.046561351385954
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "CoralFeederIntake",
-      "waypointRelativePos": 0.357827476038338,
+      "name": "FinishCoralFeederIntake",
+      "waypointRelativePos": 0.2226211849192101,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
-          "name": "CoralFeederIntake"
+          "name": "FinishCoralFeederIntake"
+        }
+      }
+    },
+    {
+      "name": "CoralL4Score",
+      "waypointRelativePos": 0.26032315978456017,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "CoralL4Score"
         }
       }
     }
@@ -59,13 +65,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -53.392925187392436
+    "rotation": 59.74356283647078
   },
   "reversed": false,
-  "folder": "Blu_1_NoVSLAM",
+  "folder": "Blu_2_NoVSLAM",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -121.46013109179631
+    "rotation": 53.392925187392436
   },
   "useDefaultConstraints": false
 }
