@@ -12,7 +12,7 @@
         "y": 2.018863815789474
       },
       "isLocked": false,
-      "linkedName": "Processor_Blu_1_P1_Stop"
+      "linkedName": "Processor_Blu_1_P1_Stop_NoVSLAM"
     },
     {
       "anchor": {
@@ -25,7 +25,7 @@
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Processor_Blu_1_p2_stop"
+      "linkedName": "Processor_Blu_1_p2_stop_NoVSLAM"
     }
   ],
   "rotationTargets": [

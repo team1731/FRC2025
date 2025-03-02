@@ -13,7 +13,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Blu_1_p1_NoVSLAM"
+            "pathName": "Blu_1_push_p1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Blu_1_p1"
           }
         },
         {
@@ -31,7 +37,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Blu_1_p2_NoVSLAM"
+            "pathName": "Blu_1_p2"
           }
         },
         {
@@ -43,7 +49,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Blu_1_p3_NoVSLAM"
+            "pathName": "Blu_1_p3"
           }
         },
         {
@@ -61,7 +67,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Blu_1_p4_NoVSLAM"
+            "pathName": "Blu_1_p4"
           }
         },
         {
@@ -73,7 +79,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Blu_1_p5_NoVSLAM"
+            "pathName": "Blu_1_p5"
           }
         },
         {
@@ -101,6 +107,12 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "Blu_1_p7"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "CoralL4Score"
@@ -122,6 +134,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "NoVSLAM",
+  "folder": null,
   "choreoAuto": false
 }

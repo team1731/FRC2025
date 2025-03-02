@@ -8,45 +8,33 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.54859053588367,
-        "y": 5.096850731365899
+        "x": 7.648073630136986,
+        "y": 5.024208047945206
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.397779605263157,
+        "x": 7.287457191780821,
         "y": 5.0419
       },
       "prevControl": {
-        "x": 5.975082236842104,
-        "y": 5.2247125
+        "x": 6.790686959264599,
+        "y": 5.0268743150684925
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Blu_1_P1_Stop_NoVSLAM"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "CoralL4Score",
-      "waypointRelativePos": 0.4362657091561954,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "CoralL4Score"
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
-    "maxAcceleration": 2.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -54,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -121.46013109179631
+    "rotation": 178.6677801461303
   },
   "reversed": false,
-  "folder": "Blu_1_NoVSLAM",
+  "folder": "Blu_1",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }
