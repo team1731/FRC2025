@@ -12,7 +12,7 @@
         "y": 6.11398524238589
       },
       "isLocked": false,
-      "linkedName": "Blu_1_p4_stop"
+      "linkedName": "Blu_1_p4_stop_NoVSLAM"
     },
     {
       "anchor": {
@@ -25,7 +25,7 @@
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Blu_1_p5_stop"
+      "linkedName": "Blu_1_p5_stop_NoVSLAM"
     }
   ],
   "rotationTargets": [],

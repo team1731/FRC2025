@@ -13,7 +13,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Proc_Blu_2_p1"
+            "pathName": "Blu_2_Proc_p1_NoVSLAM"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Proc_Blu_2_p2"
+            "pathName": "Blu_2_Proc_p2_NoVSLAM"
           }
         },
         {
@@ -43,37 +43,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Proc_Blu_2_p3"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "FinishCoralScore"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Proc_Blu_2_p4"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Proc_Blu_2_p5"
+            "pathName": "Blu_2_Proc_p3_NovSLAM"
           }
         },
         {
@@ -91,7 +61,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Proc_Blu_2_p6"
+            "pathName": "Blu_2_Proc_p4_NoVSLAM"
           }
         },
         {
@@ -103,7 +73,37 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Proc_Blu_2_p7"
+            "pathName": "Blu_2_Proc_p5_NoVSLAM"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FinishCoralScore"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Blu_2_Proc_p6_NoVSLAM"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Blu_2_Proc_p7_NoVSLAM"
           }
         },
         {

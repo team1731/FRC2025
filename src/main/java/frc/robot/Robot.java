@@ -11,6 +11,8 @@ import java.util.OptionalInt;
 import java.util.Scanner;
 
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -66,6 +68,7 @@ public class Robot extends TimedRobot {
 	private HandClamperSubsystem handClamperSubsystem;
 	private HandIntakeSubsystem handIntakeSubsystem;
 	private ClimbSubsystem climbSubsystem;
+	private boolean lastVSLAMConnectedCheck;
 
 	public Robot() {
 	}
@@ -205,12 +208,13 @@ public class Robot extends TimedRobot {
 			selectedAutoCode = (autoCode == null ? Constants.AutoConstants.kAutoDefault : autoCode);
 		}
 		
-		if(!selectedAutoCode.equals(autoCode)) {
+		boolean isVSLAMConnected = (driveSubsystem.getVSLAMSubsytem() != null)? driveSubsystem.getVSLAMSubsytem().isConnected() : false;
+		if(!selectedAutoCode.equals(autoCode) || isVSLAMConnected != lastVSLAMConnectedCheck) {
 			m_autonomousCommand = null;
 			System.out.println("New Auto Code read from dashboard. OLD: " + autoCode + ", NEW: " + selectedAutoCode);
 			System.out.println("\nPreloading AUTO CODE --> " + selectedAutoCode);
 
-			boolean isVSLAMConnected = (driveSubsystem.getVSLAMSubsytem() != null)? driveSubsystem.getVSLAMSubsytem().isConnected() : false;
+			lastVSLAMConnectedCheck = isVSLAMConnected;
 			m_autonomousCommand = AutoFactory.getAutonomousCommand(selectedAutoCode, redAlliance, isVSLAMConnected);
 
 			System.out.println("AUTONOMOUS COMMAND FDSFLKJDFLKJDSFLKDJFLKSDJFLDKFJLDKFJDLKFJ is"  + m_autonomousCommand);
@@ -256,6 +260,11 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
 		// block in order for anything in the Command-based framework to work.
 		CommandScheduler.getInstance().run();
+
+		VSLAMSubsystem vslamSubsystem = driveSubsystem.getVSLAMSubsytem();
+		if(vslamSubsystem != null) {
+            SmartDashboard.putBoolean("VSLAM Connected", vslamSubsystem.isConnected());
+        }
 	}
 
 	/** This function is called once each time the robot enters Disabled mode. */
@@ -277,6 +286,11 @@ public class Robot extends TimedRobot {
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	@Override
 	public void disabledPeriodic() {
+		VSLAMSubsystem vslamSubsystem = driveSubsystem.getVSLAMSubsytem();
+		if(vslamSubsystem != null) {
+            SmartDashboard.putBoolean("VSLAM Connected", vslamSubsystem.isConnected());
+        }
+		
 		// call during periodic to detect changes in auto selection
 		autoInitPreload();
 

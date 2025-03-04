@@ -28,5 +28,5 @@ public final class ArmConstants {
     public final static double minArmPosition = 0;
     public final static double maxArmPosition = 0.37; // TODO are these correct? Seems like arm can't actually go fully 90 degrees
     public final static double stowArmPosition = 19; // TODO are these correct?
-    public final static double halfedArmPosition = 9;
+    public final static double halfedArmPosition = 18;
 }
