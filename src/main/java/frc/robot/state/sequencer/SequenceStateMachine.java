@@ -6,7 +6,6 @@ import frc.robot.state.StateMachineCallback;
 import frc.robot.state.sequencer.positions.Positions;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmSubsystem;
-import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
@@ -162,6 +161,11 @@ public class SequenceStateMachine extends StateMachine {
         return true;
     }
 
+    public boolean moveArmHomeSlowly() {
+        armSubsystem.moveArmSlowSpeed(ArmConstants.armHomePosition, subsystemCallback);
+        return true;
+    }
+
     /*
      * HAND/INTAKE OPERATIONAL METHODS
      * Note: these are general methods shared by multiple sequences, use care when updating and understand what the impact
@@ -185,10 +189,14 @@ public class SequenceStateMachine extends StateMachine {
     
     public boolean prepareToIntake() {
         handClamperSubsystem.open(positions.clamperIntakePosition);
-        handIntakeSubsystem.intake(
-            currentGamePiece == GamePiece.CORAL? HandConstants.intakeCoralVelocity : HandConstants.intakeAlgaeVelocity, 
-            subsystemCallback
-        );
+        if(currentSequence == Sequence.INTAKE_ALGAE_FLOOR) {
+            handIntakeSubsystem.intakeWithCurrent();
+        } else {
+            handIntakeSubsystem.intake(
+                currentGamePiece == GamePiece.CORAL? HandConstants.intakeCoralVelocity : HandConstants.intakeAlgaeVelocity, 
+                subsystemCallback
+            );
+        }
         return true;
     }
 
@@ -248,10 +256,8 @@ public class SequenceStateMachine extends StateMachine {
      */
 
     public boolean shootAlgaeInBarge() {
-        // move arm forward
-        armSubsystem.moveArmNormalSpeed(positions.firstStageArmPosition, subsystemCallback);
         handClamperSubsystem.close();
-        handIntakeSubsystem.release(HandConstants.releaseVelocity, HandConstants.defaultReleaseRuntime);
+        handIntakeSubsystem.release(HandConstants.releaseVelocity, 2.0, subsystemCallback);
         return true;
     }
 

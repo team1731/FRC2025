@@ -117,9 +117,9 @@ public final class PositionConstants {
     public static final class ALGAE_SCORE {
         public static final class ALGAE_SCORE_BARGE {
             public final static double raiseElevatorPosition = 98;
-            public final static double raiseElevatorThresholdPosition = 58;
+            public final static double raiseElevatorThresholdPosition = 70;
             public final static double lowerElevatorThresholdPosition = 97;
-            public final static double armForwardPosition = 5;
+            public final static double armForwardPosition = 3;
         }
 
         public static final class ALGAE_HANDOFF {

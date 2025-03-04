@@ -137,7 +137,7 @@ public class RobotContainer {
     dStart.onTrue(new InstantCommand(() -> {
       System.out.println("resetting position");
     
-      Pose2d resetPosition = Robot.isRedAlliance() ? new Pose2d(7.168, 5.006, new Rotation2d(Math.toRadians(0)))
+      Pose2d resetPosition = Robot.isRedAlliance() ? new Pose2d(10.38, 3.01, new Rotation2d(Math.toRadians(0)))
           : new Pose2d(7.168, 5.006, new Rotation2d(Math.toRadians(180)));
       driveSubsystem.resetPose(resetPosition);
     }));

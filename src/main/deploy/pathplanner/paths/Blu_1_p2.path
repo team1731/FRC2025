@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.272697368421052,
-        "y": 5.0419
+        "x": 5.291940789473683,
+        "y": 5.064144736842105
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.4458881578947365,
-        "y": 6.032936184210526
+        "x": 5.465131578947368,
+        "y": 6.0551809210526315
       },
       "isLocked": false,
       "linkedName": "Blu_1_P1_Stop"
@@ -65,7 +65,7 @@
   "folder": "Blu_1",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -119.098431658427
+    "rotation": -121.46013109179631
   },
   "useDefaultConstraints": true
 }

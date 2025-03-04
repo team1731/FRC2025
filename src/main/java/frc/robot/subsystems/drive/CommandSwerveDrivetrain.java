@@ -274,7 +274,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         System.out.println("configureing a new position");
         // line below is from questNav
 		Pose2d startingConfiguration = Robot.isRedAlliance()
-        ? new Pose2d(7.168, 5.006, new Rotation2d(0
+        ? new Pose2d(10.38, 3.01, new Rotation2d(0
         ))
         : new Pose2d(7.168, 5.006, new Rotation2d(Math.toRadians(180)));
         // Pose2d startingConfiguration = new Pose2d(1.47,5.51, new Rotation2d (0));
