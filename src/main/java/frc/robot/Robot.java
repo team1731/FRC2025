@@ -381,6 +381,7 @@ public class Robot extends TimedRobot {
 		}
 		currentKeypadCommand = "";
 		SmartDashboard.getString("keypadCommand", currentKeypadCommand);
+		climbSubsystem.stowClimb();
 	}
 
 //   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
