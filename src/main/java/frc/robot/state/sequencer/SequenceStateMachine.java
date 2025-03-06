@@ -108,6 +108,13 @@ public class SequenceStateMachine extends StateMachine {
      * will be in other sequences. If you need something custom for a specific sequence, spin off a separate method.
      */
 
+
+     public boolean raiseElevatorAndArmForBarge() {
+        elevatorSubsystem.moveElevatorNormalSpeed(positions.raiseElevatorPosition, subsystemCallback, positions.raiseElevatorThreshold);
+        armSubsystem.moveArmSlowSpeed(-8.0);
+        return true;
+    }
+
     public boolean raiseElevator() {
         elevatorSubsystem.moveElevatorNormalSpeed(positions.raiseElevatorPosition, subsystemCallback, positions.raiseElevatorThreshold);
         return true;
@@ -255,6 +262,14 @@ public class SequenceStateMachine extends StateMachine {
      * those specific sequences.
      */
 
+
+     public boolean moveArmForBarge() {
+       // handClamperSubsystem.close();
+       armSubsystem.moveArmNormalSpeed(positions.firstStageArmPosition, subsystemCallback);
+        handIntakeSubsystem.release(HandConstants.releaseVelocity, 2.0, subsystemCallback);
+        return true;
+    }
+
     public boolean shootAlgaeInBarge() {
         handClamperSubsystem.close();
         handIntakeSubsystem.release(HandConstants.releaseVelocity, 2.0, subsystemCallback);
@@ -262,7 +277,7 @@ public class SequenceStateMachine extends StateMachine {
     }
 
     public boolean pickupReefAlgae() {
-        elevatorSubsystem.moveElevatorSlowSpeed(positions.raiseElevatorPosition, subsystemCallback);
+        elevatorSubsystem.moveElevatorNormalSpeed(positions.raiseElevatorPosition, subsystemCallback);
         return true;
     }
 
