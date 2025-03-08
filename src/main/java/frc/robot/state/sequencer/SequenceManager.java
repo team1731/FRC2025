@@ -7,7 +7,7 @@ import frc.robot.subsystems.hand.HandIntakeSubsystem;
 
 public class SequenceManager {
     private static SequenceStateMachine stateMachine;
-    private static Level levelSelection = Level.L2; // L2 is default
+    private static Level levelSelection = Level.L4; // L4 is default
     private static Action actionSelection;
     private static GamePiece pieceSelection = GamePiece.CORAL; // coral is default
 
@@ -21,8 +21,8 @@ public class SequenceManager {
         evaluateForMidstreamUpdate(); // check to see if requires a midstream update to a running sequence
     }
 
-    public static void resetLevelToL2() {
-        levelSelection = Level.L2;
+    public static void resetLevelToL4() {
+        levelSelection = Level.L4;
     }
 
     public static GamePiece getGamePieceSelection() {

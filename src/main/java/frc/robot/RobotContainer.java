@@ -162,19 +162,32 @@ public class RobotContainer {
     dRightBumper.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.minClimbPosition))) 
     .onFalse(new InstantCommand(() -> climbSubsystem.stopClimb()));
 
-    dY.whileTrue(new DriveToTargetCommand(driveSubsystem, xboxController));
+    // DRIVER - Controls level selection
+    dY.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L4))); //while pressed set to Level 4 
 
-    // Controls level selection
-    opY.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L4))) //while pressed set to Level 4
-      .onFalse(new InstantCommand(() -> SequenceManager.resetLevelToL2())); //if not pressed set default to Level 2  
+    dB.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L3))) //while pressed set to Level 3
+      .onFalse(new InstantCommand(() -> SequenceManager.resetLevelToL4())); //if not pressed set default to Level 4 
+    
+    dA.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L2))) //while pressed set to Level 2
+      .onFalse(new InstantCommand(() -> SequenceManager.resetLevelToL4())); //if not pressed set default to Level 4
+
+    dX.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L1))) //while pressed set to Level 1
+      .onFalse(new InstantCommand(() -> SequenceManager.resetLevelToL4())); //if not pressed set defaullt to Level 4 
+
+    // TODO assign to a new button
+    //dY.whileTrue(new DriveToTargetCommand(driveSubsystem, xboxController));
+
+    // OPERATOR - Controls level selection
+    opY.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L4))); //while pressed set to Level 4 
 
     opB.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L3))) //while pressed set to Level 3
-      .onFalse(new InstantCommand(() -> SequenceManager.resetLevelToL2())); //if not pressed set default to Level 2 
+      .onFalse(new InstantCommand(() -> SequenceManager.resetLevelToL4())); //if not pressed set default to Level 4 
     
-    opA.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L2))); //while pressed set to Level 2
+    opA.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L2))) //while pressed set to Level 2
+      .onFalse(new InstantCommand(() -> SequenceManager.resetLevelToL4())); //if not pressed set default to Level 4
 
     opX.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L1))) //while pressed set to Level 1
-      .onFalse(new InstantCommand(() -> SequenceManager.resetLevelToL2())); //if not pressed set defaullt to Level 2 
+      .onFalse(new InstantCommand(() -> SequenceManager.resetLevelToL4())); //if not pressed set defaullt to Level 4 
 
     // While trigger is true set piece to Algae, when it goes back to false set piece back to Coral
     opLeftTrigger.whileTrue(new InstantCommand(() -> SequenceManager.setGamePieceSelection(GamePiece.ALGAE)))
