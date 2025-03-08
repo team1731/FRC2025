@@ -57,11 +57,12 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
 
     public void intake(double velocity, StateMachineCallback callback) {
         scoreStateMachineCallback = callback;
-        intake(velocity);
+       // intake(velocity);
+       intakeWithCurrent();
     }
 
     public void intakeWithCurrent() {
-        motor.setControl(new TorqueCurrentFOC(-10));
+        motor.setControl(new TorqueCurrentFOC(-20));
     }
 
     public void release(double velocity) {

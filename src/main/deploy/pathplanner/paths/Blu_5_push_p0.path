@@ -8,30 +8,42 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.648073630136986,
-        "y": 5.024208047945206
+        "x": 7.418174342105262,
+        "y": 5.0419
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.287457191780821,
-        "y": 5.0419
+        "x": 7.225904605263157,
+        "y": 5.042
       },
       "prevControl": {
-        "x": 6.790686959264599,
-        "y": 5.0268743150684925
+        "x": 6.975904605263157,
+        "y": 5.042
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "pushend"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "CoralL4Score",
+      "waypointRelativePos": 0.4362657091561954,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "CoralL4Score"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -42,7 +54,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 178.6677801461303
+    "rotation": 180.0
   },
   "reversed": false,
   "folder": "Blu_1",

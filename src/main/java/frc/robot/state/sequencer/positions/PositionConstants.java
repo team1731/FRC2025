@@ -71,7 +71,7 @@ public final class PositionConstants {
         public static final class CORAL_L4 {
             public final static double raiseElevatorPosition = 85.5;
             public final static double raiseElevatorThresholdPosition = 80.5;
-            public final static double lowerElevatorThresholdPosition = 83.5;
+            public final static double lowerElevatorThresholdPosition = 85.0;
             public final static double armForwardPosition = 9;
             public final static double armForwardThreshold = 6;
             public final static double armScorePosition = 15;
@@ -88,21 +88,21 @@ public final class PositionConstants {
     public static final class ALGAE_INTAKE {
         public static final class ALGAE_REEF_L2 {
             // position definitions
-            public final static double raiseElevatorPosition = 18;
-            public final static double secondStageElevatorPosition = 25;
+            public final static double raiseElevatorPosition = 12;
+            public final static double secondStageElevatorPosition = 15;
             public final static double clamperIntakePosition = reefIntakeWidth;
             public final static double clamperHoldPosition = algaeIntakeWidth;
         }
 
         public static final class ALGAE_REEF_L3 {
-            public final static double raiseElevatorPosition = 48;
-            public final static double secondStageElevatorPosition = 57;
+            public final static double raiseElevatorPosition = 42;
+            public final static double secondStageElevatorPosition = 45;
             public final static double clamperIntakePosition = reefIntakeWidth;
             public final static double clamperHoldPosition = algaeIntakeWidth;
         }
 
         public static final class ALGAE_FLOOR {
-            public final static double armForwardPosition = 19;
+            public final static double armForwardPosition = 15;
             public final static double clamperIntakePosition = algaeIntakeWidth;
         }
     }
@@ -119,7 +119,7 @@ public final class PositionConstants {
             public final static double raiseElevatorPosition = 98;
             public final static double raiseElevatorThresholdPosition = 70;
             public final static double lowerElevatorThresholdPosition = 97;
-            public final static double armForwardPosition = 3;
+            public final static double armForwardPosition = 8;
         }
 
         public static final class ALGAE_HANDOFF {
