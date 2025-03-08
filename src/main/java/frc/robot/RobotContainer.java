@@ -187,6 +187,9 @@ public class RobotContainer {
       new InstantCommand(() -> armSubsystem.moveArmNormalSpeed(ArmConstants.halfedArmPosition)) 
     ));
 
+    //bring the climber to the stow position
+    opBack.onTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.climbStowPosition)));
+
     driveSubsystem.registerTelemetry(logger::telemeterize);
 
 

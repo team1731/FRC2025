@@ -71,7 +71,7 @@ public final class PositionConstants {
         public static final class CORAL_L4 {
             public final static double raiseElevatorPosition = 85.5;
             public final static double raiseElevatorThresholdPosition = 80.5;
-            public final static double lowerElevatorThresholdPosition = 83.5;
+            public final static double lowerElevatorThresholdPosition = 85.0;
             public final static double armForwardPosition = 9;
             public final static double armForwardThreshold = 6;
             public final static double armScorePosition = 15;
@@ -102,7 +102,7 @@ public final class PositionConstants {
         }
 
         public static final class ALGAE_FLOOR {
-            public final static double armForwardPosition = 19;
+            public final static double armForwardPosition = 15;
             public final static double clamperIntakePosition = algaeIntakeWidth;
         }
     }
