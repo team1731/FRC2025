@@ -17,12 +17,6 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.6
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "FinishCoralScore"
@@ -47,12 +41,6 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.6
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "FinishCoralScore"
@@ -74,12 +62,6 @@
           "type": "path",
           "data": {
             "pathName": "Blu_1_p5_NoVSLAM"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.6
           }
         },
         {

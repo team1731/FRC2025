@@ -5,6 +5,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.AutoFinishCoralScoreCommand;
 import frc.robot.commands.AutoFireResetSequenceCommand;
 import frc.robot.commands.AutoFireSequenceCommand;
 import frc.robot.commands.ResetSequenceCommand;
@@ -42,7 +43,7 @@ public class AutoCommandLoader {
         NamedCommands.registerCommand("CoralFeederIntake", getCoralFeederIntakeCommand());
         NamedCommands.registerCommand("FinishCoralFeederIntake", getFinishCoralFeederIntakeCommand());
         NamedCommands.registerCommand("CoralL4Score", getCoralL4ScoreCommand());
-        NamedCommands.registerCommand("FinishCoralScore", new InstantCommand(() -> sequenceStateMachine.setInput(SequenceInput.AUTO_SCORE)));
+        NamedCommands.registerCommand("FinishCoralScore", new AutoFinishCoralScoreCommand(sequenceStateMachine));
         NamedCommands.registerCommand("AlgaeReefL2Intake", getAlgaeReefIntakeCommand(Level.L2));
         NamedCommands.registerCommand("AlgaeReefL3Intake", getAlgaeReefIntakeCommand(Level.L3));
         NamedCommands.registerCommand("FinishAlgaeIntake", new InstantCommand(() -> sequenceStateMachine.setInput(SequenceInput.FINISH_INTAKE)));

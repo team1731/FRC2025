@@ -7,8 +7,10 @@ public class CoralScoreTransitions {
     private static final Object transitionTable[][] = {
         // CURRENT                              INPUT                                     OPERATION                    NEXT
         {SequenceState.HOME,                    SequenceInput.BEGIN,                      "raiseElevator",             SequenceState.RAISING_ELEVATOR},
+        {SequenceState.RAISING_ELEVATOR,        SequenceInput.ELEVATOR_DONE,              "moveArmWithThreshold",      SequenceState.MOVING_ARM_FORWARD},
         {SequenceState.RAISING_ELEVATOR,        SequenceInput.ELEVATOR_THRESHOLD_MET,     "moveArmWithThreshold",      SequenceState.MOVING_ARM_FORWARD},
         {SequenceState.RAISING_ELEVATOR,        SequenceInput.AUTO_SCORE,                 null,                        SequenceState.AUTO_SCORE_WHEN_READY},
+        {SequenceState.MOVING_ARM_FORWARD,      SequenceInput.ARM_DONE,                   "checkIfShouldScoreCoral",   SequenceState.WAITING}, // operation determines next state
         {SequenceState.MOVING_ARM_FORWARD,      SequenceInput.ARM_THRESHOLD_MET,          "checkIfShouldScoreCoral",   SequenceState.WAITING}, // operation determines next state
         {SequenceState.MOVING_ARM_FORWARD,      SequenceInput.AUTO_SCORE,                 null,                        SequenceState.AUTO_SCORE_WHEN_READY},
         {SequenceState.WAITING,                 SequenceInput.BUTTON_RELEASED,            "moveArmToScoreCoral",       SequenceState.SCORING}, // driver initiated score
