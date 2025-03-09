@@ -92,7 +92,10 @@ public class SequenceStateMachine extends StateMachine {
             if(input == SequenceInput.RELEASED_PIECE) closeHandWithoutCallback();
             if(input == SequenceInput.DETECTED_PIECE && currentGamePiece == GamePiece.CORAL) holdCoralPiece();
             if(currentSequence == Sequence.SCORE_CORAL_L2 && input == SequenceInput.SENSOR_SCORE) return;
-            if(currentSequence == Sequence.SCORE_CORAL_L2 && input == SequenceInput.ARM_DONE && currentState == SequenceState.SCORING) releasePiece();
+            if(currentSequence == Sequence.SCORE_CORAL_L2 && input == SequenceInput.ARM_DONE && currentState == SequenceState.SCORING) {
+                releaseCoralPiece();
+                return;
+            }
             setInput(input);
         }
     }
@@ -213,12 +216,6 @@ public class SequenceStateMachine extends StateMachine {
         return true;
     }
 
-    public boolean releasePiece() {
-        handIntakeSubsystem.stop();
-        handIntakeSubsystem.release(HandConstants.releaseVelocity, HandConstants.defaultReleaseRuntime);
-        return true;
-    }
-
     /*
      * CORAL-SPECIFIC OPERATIONAL METHODS
      * Note: these methods are specific to certain parts of sequences and should only be updated when updating 
@@ -235,6 +232,12 @@ public class SequenceStateMachine extends StateMachine {
         System.out.println("SequenceStateMachine: holding coral piece...");
         handIntakeSubsystem.stop();
         handClamperSubsystem.holdCoral();
+        return true;
+    }
+
+    public boolean releaseCoralPiece() {
+        System.out.println("SequenceStateMachine: releasing coral piece...");
+        handIntakeSubsystem.release(HandConstants.releaseVelocity, 1.0, subsystemCallback);
         return true;
     }
 

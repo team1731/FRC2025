@@ -11,8 +11,8 @@ public class VisionConstants {
     /*
      * PHOTONVISION CONSTANTS
      */
-    public static final String camera1Name = "ArducamUSB1";
-    public static final String camera2Name = "ArducamUSB3";
+    public static final String camera1Name = "ElevSide";
+    public static final String camera2Name = "BattSide";
 
     // AprilTag drive targeting constants
     public static final double VISION_FORWARD_kP = 1;
