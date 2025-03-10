@@ -13,6 +13,9 @@ public class VisionConstants {
      */
     public static final String camera1Name = "ElevSide";
     public static final String camera2Name = "BattSide";
+    public static final double camera1FOV = 59.76 * 46.81; // field of view for cam 1
+    public static final double camera2FOV = 79.49 * 64.11; // field of view for cam 2
+    public static final double camera2FOVRatio = camera2FOV / camera1FOV;
 
     // AprilTag drive targeting constants
     public static final double VISION_FORWARD_kP = 1;

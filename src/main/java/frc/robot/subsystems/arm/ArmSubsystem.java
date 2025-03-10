@@ -131,7 +131,7 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
 
         armCANcoder = new CANcoder(ArmConstants.armCancoderDeviceId, "canivore1");
         CANcoderConfiguration cancoderConfigs = new CANcoderConfiguration();
-        cancoderConfigs.MagnetSensor.MagnetOffset = -0.217529296875;     //-0.216552734375
+        cancoderConfigs.MagnetSensor.MagnetOffset = -0.212890625;     //-0.216552734375
         cancoderConfigs.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5; // TODO what should this be?
         cancoderConfigs.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
         armCANcoder.getConfigurator().apply(cancoderConfigs);

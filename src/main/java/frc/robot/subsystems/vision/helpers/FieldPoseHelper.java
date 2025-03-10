@@ -88,6 +88,17 @@ public class FieldPoseHelper {
         return Arrays.stream(reefAprilTagIds).anyMatch(i -> i == targetId);
     }
 
+    public static Rotation2d getReefTargetRotation(int targetId) {
+        double targetRotation = 0.0;
+        for(int[] rotation : reefAprilTagRotations) {
+            if(targetId == rotation[0]) {
+                targetRotation = (double)rotation[1];
+            }
+        }
+
+        return new Rotation2d(Units.degreesToRadians(targetRotation));
+    }
+
     public static Rotation2d getReefTargetLineupRotation(int targetId) {
         Rotation2d targetRotation = null;
         Rotation2d lineupRotation = null;

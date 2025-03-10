@@ -67,6 +67,7 @@ public class RobotContainer {
   private final Trigger dB = xboxController.b();
   private final Trigger dA = xboxController.a();
   private final Trigger dX = xboxController.x();
+  private final Trigger dLeftStick = xboxController.leftStick();
   private final Trigger dLeftBumper = xboxController.leftBumper();
   private final Trigger dRightBumper = xboxController.rightBumper();
   private final Trigger dLeftTrigger = xboxController.leftTrigger();
@@ -174,8 +175,7 @@ public class RobotContainer {
     dX.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L1))) //while pressed set to Level 1
       .onFalse(new InstantCommand(() -> SequenceManager.resetLevelToL4())); //if not pressed set defaullt to Level 4 
 
-    // TODO assign to a new button
-    //dY.whileTrue(new DriveToTargetCommand(driveSubsystem, xboxController));
+    //dLeftStick.whileTrue(new DriveToTargetCommand(driveSubsystem, xboxController));
 
     // OPERATOR - Controls level selection
     opY.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L4))); //while pressed set to Level 4 
@@ -192,6 +192,8 @@ public class RobotContainer {
     // While trigger is true set piece to Algae, when it goes back to false set piece back to Coral
     opLeftTrigger.whileTrue(new InstantCommand(() -> SequenceManager.setGamePieceSelection(GamePiece.ALGAE)))
       .onFalse(new InstantCommand(() -> SequenceManager.setGamePieceSelection(GamePiece.CORAL)));
+
+    opRightTrigger.whileTrue(new DriveToTargetCommand(driveSubsystem, xboxController));
 
     //bring up the climb in ready position
     opStart.onTrue(new SequentialCommandGroup(

@@ -10,6 +10,8 @@ import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Scanner;
 
+import com.pathplanner.lib.commands.FollowPathCommand;
+
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -216,6 +218,7 @@ public class Robot extends TimedRobot {
 
 			lastVSLAMConnectedCheck = isVSLAMConnected;
 			m_autonomousCommand = AutoFactory.getAutonomousCommand(selectedAutoCode, redAlliance, isVSLAMConnected);
+			FollowPathCommand.warmupCommand().schedule();
 
 			System.out.println("AUTONOMOUS COMMAND FDSFLKJDFLKJDSFLKDJFLKSDJFLDKFJLDKFJDLKFJ is"  + m_autonomousCommand);
 			if (m_autonomousCommand != null){

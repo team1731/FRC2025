@@ -7,11 +7,11 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.vision.AprilTagSubsystem;
-import frc.robot.subsystems.vision.AprilTagSubsystem.AprilTagTarget;
 import frc.robot.subsystems.vision.VisionConstants;
+import frc.robot.subsystems.vision.AprilTagSubsystem.AprilTagTarget;
 import frc.robot.subsystems.vision.camera.Camera;
 
-public class AprilTagTargetTracker {
+public class WorkingAprilTagTargetTracker {
     private Camera camera1;
     private Camera camera2;
     private Camera lockedCamera;
@@ -22,7 +22,7 @@ public class AprilTagTargetTracker {
     private Rotation2d calculatedDesiredRotation;
     private boolean hasVisibleTarget = false;
 
-    public AprilTagTargetTracker(Camera camera1, Camera camera2) {
+    public WorkingAprilTagTargetTracker(Camera camera1, Camera camera2) {
         this.camera1 = camera1;
         this.camera2 = camera2;
     }
@@ -53,9 +53,17 @@ public class AprilTagTargetTracker {
             return; // haven't captured a heading yet, nothing to re-use
         }
 
-        var currentRobotRotation = currentPose.getRotation().getDegrees();
-        double desiredHeading = hasVisibleTarget? currentRobotRotation - (target.getYaw() * 2.0) : lastHeading;
-        lastHeading = desiredHeading; // store this value for re-use in case don't see target the next time around
+        Rotation2d currentRobotRotation = currentPose.getRotation();
+        Rotation2d lineupRotation = FieldPoseHelper.getReefTargetLineupRotation(lockedTargetId);
+
+        double desiredHeading;
+        if(hasVisibleTarget) {
+            double targetYaw = target.getYaw();
+            desiredHeading = getDesiredHeading(targetYaw, currentRobotRotation, lineupRotation);
+            lastHeading = desiredHeading; // store this value for re-use in case don't see target the next time around
+        } else {
+            desiredHeading = lastHeading;
+        }
 
         // calculate speed
         double speedContributionFromX = fieldCentricX * Math.cos(Units.degreesToRadians(desiredHeading));
@@ -66,7 +74,7 @@ public class AprilTagTargetTracker {
         // calculate updated drive values
         calcuatedX = speed * Math.cos(Units.degreesToRadians(desiredHeading));
         calcuatedY = speed * Math.sin(Units.degreesToRadians(desiredHeading));
-        calculatedDesiredRotation = FieldPoseHelper.getReefTargetLineupRotation(lockedTargetId);
+        calculatedDesiredRotation = lineupRotation;
         
 
         
@@ -74,10 +82,10 @@ public class AprilTagTargetTracker {
         SmartDashboard.putNumber("ATTracker_speedContributionFromY", speedContributionFromY);
         SmartDashboard.putNumber("ATTracker_totalSpeed", speed);
         SmartDashboard.putNumber("ATTracker_targetedAprilTagId", lockedTargetId);
-        SmartDashboard.putNumber("ATTracker_forward", calcuatedX);
-        SmartDashboard.putNumber("ATTracker_strafe", calcuatedY);
-        SmartDashboard.putNumber("ATTracker_rotation", calculatedDesiredRotation.getDegrees());
-        SmartDashboard.putNumber("ATTracker_currentRobotRotation", currentRobotRotation);
+        SmartDashboard.putNumber("ATTracker_calcX", calcuatedX);
+        SmartDashboard.putNumber("ATTracker_calcY", calcuatedY);
+        SmartDashboard.putNumber("ATTracker_calcRotation", calculatedDesiredRotation.getDegrees());
+        SmartDashboard.putNumber("ATTracker_currentRobotRotation", currentPose.getRotation().getDegrees());
         SmartDashboard.putNumber("ATTracker_targetYaw", hasVisibleTarget? target.getYaw() : 0);
         SmartDashboard.putNumber("ATTracker_desiredHeading", desiredHeading);
         
@@ -93,6 +101,18 @@ public class AprilTagTargetTracker {
 
     public Rotation2d getRotationTarget() {
         return calculatedDesiredRotation;
+    }
+
+    private double getDesiredHeading(double targetYaw, Rotation2d robotRotation, Rotation2d lineupRotation) {
+        double modifiedYaw = targetYaw * 2.0;
+        double robotRotationDegrees = robotRotation.getDegrees();
+        double calculatedHeading = robotRotationDegrees - modifiedYaw;
+        double lowerConstraint = lineupRotation.getDegrees() - 90;
+        double upperConstraint = lineupRotation.getDegrees() + 90;
+        //if(calculatedHeading < lowerConstraint) return lowerConstraint;
+        //else if(calculatedHeading > upperConstraint) return upperConstraint;
+        //else return calculatedHeading;
+        return calculatedHeading;
     }
     
     private PhotonTrackedTarget chooseTarget() {

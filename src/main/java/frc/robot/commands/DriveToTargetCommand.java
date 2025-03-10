@@ -56,16 +56,16 @@ public class DriveToTargetCommand extends Command {
 
     @Override
     public void execute() {
-        fieldCentricX = -(Math.abs(m_xboxController.getLeftY()) * m_xboxController.getLeftY()) * MaxSpeed;
-        fieldCentricY = -(Math.abs(m_xboxController.getLeftX()) * m_xboxController.getLeftX()) * MaxSpeed;
+        fieldCentricX = -(Math.abs(m_xboxController.getLeftY()) * m_xboxController.getLeftY());
+        fieldCentricY = -(Math.abs(m_xboxController.getLeftX()) * m_xboxController.getLeftX());
         SmartDashboard.putNumber ("fieldCentricX", fieldCentricX);
         SmartDashboard.putNumber ("fieldCentricY",fieldCentricY);
 
         aprilTagTargetTracker.recalculateDriveFeedback(m_driveSubsystem.getCurrentPose(), fieldCentricX, fieldCentricY);
         m_driveSubsystem.setControl(
 
-            driveAtLocation.withVelocityX(aprilTagTargetTracker.getCalcuatedForward())                                                                                                                     
-                .withVelocityY(aprilTagTargetTracker.getCalculatedStrafe()) 
+            driveAtLocation.withVelocityX(aprilTagTargetTracker.getCalcuatedX() * MaxSpeed)                                                                                                                     
+                .withVelocityY(aprilTagTargetTracker.getCalculatedY()* MaxSpeed) 
                 .withTargetDirection(aprilTagTargetTracker.getRotationTarget())
         );
 
