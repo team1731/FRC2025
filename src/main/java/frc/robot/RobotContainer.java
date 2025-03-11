@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ClimbReadyCommand;
 import frc.robot.commands.DriveToTargetCommand;
+import frc.robot.commands.DriveToTargetCommandAlt;
 import frc.robot.commands.ResetSequenceCommand;
 import frc.robot.commands.RunSequenceCommand;
 import frc.robot.generated.TunerConstants;
@@ -36,6 +37,7 @@ import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
 import frc.robot.subsystems.leds.LEDSubsystem;
+import frc.robot.subsystems.vision.camera.CameraChoice;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
 
 public class RobotContainer {
@@ -194,8 +196,11 @@ public class RobotContainer {
     opLeftTrigger.whileTrue(new InstantCommand(() -> SequenceManager.setGamePieceSelection(GamePiece.ALGAE)))
       .onFalse(new InstantCommand(() -> SequenceManager.setGamePieceSelection(GamePiece.CORAL)));
 
-    dLeftBumper.whileTrue(new DriveToTargetCommand(driveSubsystem, xboxController));
-    dRightBumper.whileTrue(new DriveToTargetCommand(driveSubsystem, xboxController));
+    dLeftBumper.whileTrue(new DriveToTargetCommand(driveSubsystem, xboxController, CameraChoice.ElevSide));
+    dRightBumper.whileTrue(new DriveToTargetCommand(driveSubsystem, xboxController, CameraChoice.BatSide));
+
+    // Uncomment the line below and comment out the two above if you want operator to select the pole
+    //dLeftBumper.whileTrue(new DriveToTargetCommandAlt(driveSubsystem,xboxController, xboxOperatorController));
 
     //bring up the climb in ready position
     opStart.onTrue(new SequentialCommandGroup(

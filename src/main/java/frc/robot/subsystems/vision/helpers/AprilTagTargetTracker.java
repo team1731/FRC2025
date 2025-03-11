@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Robot;
 import frc.robot.subsystems.vision.AprilTagSubsystem;
 import frc.robot.subsystems.vision.AprilTagSubsystem.AprilTagTarget;
 import frc.robot.subsystems.vision.VisionConstants;
@@ -73,7 +74,11 @@ public class AprilTagTargetTracker {
         calculatedX = speed * Math.cos(Units.degreesToRadians(desiredHeading));
         calculatedY = speed * Math.sin(Units.degreesToRadians(desiredHeading));
         calculatedDesiredRotation = FieldPoseHelper.getReefTargetLineupRotation(lockedTargetId);
-        
+        if (!Robot.isRedAlliance()) {
+            calculatedX = calculatedX * -1;
+            calculatedY = calculatedY * -1;
+
+        }
 
         
       //  SmartDashboard.putNumber("ATTracker_speedContributionFromX", fieldCentricSpeed);
