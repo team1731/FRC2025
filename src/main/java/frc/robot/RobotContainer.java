@@ -73,6 +73,7 @@ public class RobotContainer {
   private final Trigger dLeftTrigger = xboxController.leftTrigger();
   private final Trigger dRightTrigger = xboxController.rightTrigger();
   private final Trigger dPOVUp = xboxController.povUp();
+  private final Trigger dPOVDown = xboxController.povDown();
 
   /* Operator Buttons */
 
@@ -156,11 +157,11 @@ public class RobotContainer {
       new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)));
 
     // Climb up
-    dLeftBumper.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.maxClimbPosition))) 
+    dPOVUp.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.maxClimbPosition))) 
       .onFalse(new InstantCommand(() -> climbSubsystem.stopClimb()));
 
     // Climb down
-    dRightBumper.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.minClimbPosition))) 
+    dPOVDown.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.minClimbPosition))) 
     .onFalse(new InstantCommand(() -> climbSubsystem.stopClimb()));
 
     // DRIVER - Controls level selection
@@ -193,7 +194,8 @@ public class RobotContainer {
     opLeftTrigger.whileTrue(new InstantCommand(() -> SequenceManager.setGamePieceSelection(GamePiece.ALGAE)))
       .onFalse(new InstantCommand(() -> SequenceManager.setGamePieceSelection(GamePiece.CORAL)));
 
-    opRightTrigger.whileTrue(new DriveToTargetCommand(driveSubsystem, xboxController));
+    dLeftBumper.whileTrue(new DriveToTargetCommand(driveSubsystem, xboxController));
+    dRightBumper.whileTrue(new DriveToTargetCommand(driveSubsystem, xboxController));
 
     //bring up the climb in ready position
     opStart.onTrue(new SequentialCommandGroup(

@@ -23,7 +23,7 @@ public class DriveToTargetCommand extends Command {
     private boolean m_commandDone = false;
     private double fieldCentricX;
     private double fieldCentricY;
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond)/2;   //Drive at 1/5th of the max speed!!!!!!!!!
 
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
@@ -64,7 +64,7 @@ public class DriveToTargetCommand extends Command {
         aprilTagTargetTracker.recalculateDriveFeedback(m_driveSubsystem.getCurrentPose(), fieldCentricX, fieldCentricY);
         m_driveSubsystem.setControl(
 
-            driveAtLocation.withVelocityX(aprilTagTargetTracker.getCalcuatedX() * MaxSpeed)                                                                                                                     
+            driveAtLocation.withVelocityX(aprilTagTargetTracker.getCalculatedX() * MaxSpeed)                                                                                                                     
                 .withVelocityY(aprilTagTargetTracker.getCalculatedY()* MaxSpeed) 
                 .withTargetDirection(aprilTagTargetTracker.getRotationTarget())
         );

@@ -17,8 +17,8 @@ public class AprilTagTargetTracker {
     private Camera lockedCamera;
     private int lockedTargetId;
     private double lastHeading;
-    private double calcuatedX;
-    private double calcuatedY;
+    private double calculatedX;
+    private double calculatedY;
     private Rotation2d calculatedDesiredRotation;
     private boolean hasVisibleTarget = false;
 
@@ -32,6 +32,8 @@ public class AprilTagTargetTracker {
     }
 
     public void recalculateDriveFeedback(Pose2d currentPose, double fieldCentricX, double fieldCentricY) {
+        calculatedX = fieldCentricX;
+        calculatedY = fieldCentricY;
 
         SmartDashboard.putNumber("fcx", fieldCentricX);
         SmartDashboard.putNumber("fcy",fieldCentricY);
@@ -58,24 +60,28 @@ public class AprilTagTargetTracker {
         lastHeading = desiredHeading; // store this value for re-use in case don't see target the next time around
 
         // calculate speed
+      //  double fieldCentricSpeed = Math.sqrt(fieldCentricX*fieldCentricX - fieldCentricY*fieldCentricY);
+       // double fieldCentricHeading = Math.atan(fieldCentricY/fieldCentricX);
+       // double speed = fieldCentricSpeed * Math.cos(desiredHeading + Math.toRadians(fieldCentricHeading));
+
         double speedContributionFromX = fieldCentricX * Math.cos(Units.degreesToRadians(desiredHeading));
         double speedContributionFromY = fieldCentricY * Math.sin(Units.degreesToRadians(desiredHeading));
         double speed = -Math.sqrt(speedContributionFromX*speedContributionFromX + speedContributionFromY*speedContributionFromY);
 
 
         // calculate updated drive values
-        calcuatedX = speed * Math.cos(Units.degreesToRadians(desiredHeading));
-        calcuatedY = speed * Math.sin(Units.degreesToRadians(desiredHeading));
+        calculatedX = speed * Math.cos(Units.degreesToRadians(desiredHeading));
+        calculatedY = speed * Math.sin(Units.degreesToRadians(desiredHeading));
         calculatedDesiredRotation = FieldPoseHelper.getReefTargetLineupRotation(lockedTargetId);
         
 
         
-        SmartDashboard.putNumber("ATTracker_speedContributionFromX", speedContributionFromX);
-        SmartDashboard.putNumber("ATTracker_speedContributionFromY", speedContributionFromY);
+      //  SmartDashboard.putNumber("ATTracker_speedContributionFromX", fieldCentricSpeed);
+      //  SmartDashboard.putNumber("ATTracker_speedContributionFromY", fieldCentricHeading);
         SmartDashboard.putNumber("ATTracker_totalSpeed", speed);
         SmartDashboard.putNumber("ATTracker_targetedAprilTagId", lockedTargetId);
-        SmartDashboard.putNumber("ATTracker_forward", calcuatedX);
-        SmartDashboard.putNumber("ATTracker_strafe", calcuatedY);
+        SmartDashboard.putNumber("ATTracker_calculatedX", calculatedX);
+        SmartDashboard.putNumber("ATTracker_calculatedY", calculatedY);
         SmartDashboard.putNumber("ATTracker_rotation", calculatedDesiredRotation.getDegrees());
         SmartDashboard.putNumber("ATTracker_currentRobotRotation", currentRobotRotation);
         SmartDashboard.putNumber("ATTracker_targetYaw", hasVisibleTarget? target.getYaw() : 0);
@@ -83,12 +89,12 @@ public class AprilTagTargetTracker {
         
     }
 
-    public double getCalcuatedX() {
-        return calcuatedX;
+    public double getCalculatedX() {
+        return calculatedX;
     }
 
     public double getCalculatedY() {
-        return calcuatedY;
+        return calculatedY;
     }
 
     public Rotation2d getRotationTarget() {
