@@ -100,7 +100,7 @@ public class HandClamperSubsystem extends SubsystemBase implements ToggleableSub
 
         clamperCancoder = new CANcoder(HandConstants.clamperCancoderDeviceId, "canivore1");
         CANcoderConfiguration cancoderConfigs = new CANcoderConfiguration();
-        cancoderConfigs.MagnetSensor.MagnetOffset = 0.280029296875;  //0.248291015625
+        cancoderConfigs.MagnetSensor.MagnetOffset = 0.2854;  //0.248291015625
         cancoderConfigs.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.25;
         clamperCancoder.getConfigurator().apply(cancoderConfigs);
 
