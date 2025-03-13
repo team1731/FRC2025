@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ClimbReadyCommand;
@@ -33,12 +34,14 @@ import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.climb.ClimbConstants;
 import frc.robot.subsystems.climb.ClimbSubsystem;
+import frc.robot.subsystems.climb.ClimbSensorSubsystem;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
 import frc.robot.subsystems.leds.LEDSubsystem;
 import frc.robot.subsystems.vision.camera.CameraChoice;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
+
 
 public class RobotContainer {
   private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -102,6 +105,7 @@ public class RobotContainer {
   private HandClamperSubsystem handClamperSubsystem;
   private HandIntakeSubsystem handIntakeSubsystem;
   private ClimbSubsystem climbSubsystem;
+  private ClimbSensorSubsystem climbSensorSubsystem;
 
   public RobotContainer(
       CommandSwerveDrivetrain s_driveSubsystem,
@@ -217,6 +221,8 @@ public class RobotContainer {
 
     driveSubsystem.registerTelemetry(logger::telemeterize);
 
-
+    new Trigger(climbSensorSubsystem::isLatched)
+      .onTrue(new InstantCommand(() ->  xboxController.setRumble(RumbleType.kBothRumble, 0.4)))
+      .whileFalse(new InstantCommand(() ->  xboxController.setRumble(RumbleType.kBothRumble, 0.0)));
   }
 }

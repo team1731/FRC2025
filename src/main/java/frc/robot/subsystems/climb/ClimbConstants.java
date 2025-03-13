@@ -7,7 +7,9 @@ public class ClimbConstants {
     
     // climb can ID
     public final static int climbCanId = 31;
-    public final static int climbCancoderDeviceId = 28; 
+    public final static int climbCancoderDeviceId = 28;
+    public final static int climbSensor1Dio = 0; // TODO: change to correct port
+    public final static int climbSensor2Dio = 1; // TODO: change to correct port 
 
     // motor direction
     public final static InvertedValue climbMotorDirection = InvertedValue.Clockwise_Positive;
