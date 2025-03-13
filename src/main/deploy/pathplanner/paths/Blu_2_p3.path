@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.3470394736842104,
-        "y": 0.7169315789473689
+        "x": 1.0776315789473683,
+        "y": 0.8805006578947374
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.5434390381539034,
-        "y": 0.8716920832287327
+        "x": 1.2740311434170613,
+        "y": 1.0352611621761012
       },
       "isLocked": false,
-      "linkedName": "Processor_Blu_1_p2_stop_NoVSLAM"
+      "linkedName": "Processor_Blu_1_p2_stop"
     },
     {
       "anchor": {
-        "x": 3.993009868421052,
-        "y": 2.8433296052631585
+        "x": 4.050740131578947,
+        "y": 2.9106815789473686
       },
       "prevControl": {
-        "x": 3.692513521097672,
-        "y": 2.6175657792984106
+        "x": 3.750243784255567,
+        "y": 2.6849177529826207
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Processor_Blu_1_p3_stop_NoVSLAM"
+      "linkedName": "Processor_Blu_1_p3_stop"
     }
   ],
   "rotationTargets": [],
@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "FinishCoralFeederIntake",
-      "waypointRelativePos": 0.2226211849192101,
+      "waypointRelativePos": 0.3500897666068223,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -44,8 +44,19 @@
       }
     },
     {
+      "name": "HoldCoral",
+      "waypointRelativePos": 0.38958707360861755,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "HoldCoral"
+        }
+      }
+    },
+    {
       "name": "CoralL4Score",
-      "waypointRelativePos": 0.26032315978456017,
+      "waypointRelativePos": 0.5368043087971271,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -57,7 +68,7 @@
   ],
   "globalConstraints": {
     "maxVelocity": 3.0,
-    "maxAcceleration": 2.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -65,13 +76,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 59.74356283647078
+    "rotation": 59.9531834029681
   },
   "reversed": false,
-  "folder": "Blu_2_NoVSLAM",
+  "folder": "Blu_2",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 53.392925187392436
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

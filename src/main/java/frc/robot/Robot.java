@@ -11,6 +11,7 @@ import java.util.OptionalInt;
 import java.util.Scanner;
 
 import com.pathplanner.lib.commands.FollowPathCommand;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -49,7 +50,7 @@ import frc.robot.subsystems.vision.VSLAMSubsystem;
  * project.
  */
 public class Robot extends TimedRobot {
-	private Command m_autonomousCommand;
+	private PathPlannerAuto m_autonomousCommand;
 	private SendableChooser<String> autoChooser;
 	private AutoCommandLoader autoCommandLoader;
 	private String autoCode;
@@ -238,7 +239,8 @@ public class Robot extends TimedRobot {
 		 */
 		if(autoCodeChanged || allianceChanged || vslamConnectionStatusChanged) {
 			m_autonomousCommand = null;
-			m_autonomousCommand = AutoFactory.getAutonomousCommand(selectedAutoCode, redAlliance, isVSLAMConnected);
+			m_autonomousCommand = (PathPlannerAuto) AutoFactory.getAutonomousCommand(selectedAutoCode, redAlliance, isVSLAMConnected);		
+			driveSubsystem.resetPose(m_autonomousCommand.getStartingPose());
 			FollowPathCommand.warmupCommand().schedule();
 
 			if (m_autonomousCommand != null){

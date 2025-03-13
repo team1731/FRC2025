@@ -3,43 +3,38 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.388157894736842,
-        "y": 3.0099
+        "x": 3.6918198507849405,
+        "y": 3.082098359812515
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.561348684210526,
-        "y": 2.018863815789474
+        "x": 2.8547310349954667,
+        "y": 2.379713491391463
       },
       "isLocked": false,
-      "linkedName": "Processor_Blu_1_P1_Stop_NoVSLAM"
+      "linkedName": "Processor_Blu_1_p5_stop"
     },
     {
       "anchor": {
-        "x": 1.3470394736842104,
-        "y": 0.7169315789473689
+        "x": 1.4143914473684207,
+        "y": 0.7457967105263172
       },
       "prevControl": {
-        "x": 2.357319078947369,
-        "y": 1.1691519736842109
+        "x": 2.0975328947368412,
+        "y": 1.4866684210526326
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Processor_Blu_1_p2_stop_NoVSLAM"
+      "linkedName": "Processor_Blu_1_p6_stop"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.3223270440251572,
-      "rotationDegrees": 45.046561351385954
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
       "name": "CoralFeederIntake",
-      "waypointRelativePos": 0.357827476038338,
+      "waypointRelativePos": 0.3865814696485616,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -51,7 +46,7 @@
   ],
   "globalConstraints": {
     "maxVelocity": 3.0,
-    "maxAcceleration": 2.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -59,13 +54,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 53.392925187392436
+    "rotation": 51.76617482255302
   },
   "reversed": false,
-  "folder": "Blu_2_NoVSLAM",
+  "folder": "Blu_2",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 119.098431658427
+    "rotation": 58.671307132195814
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }
