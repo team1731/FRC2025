@@ -1,0 +1,102 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.2700657894736842,
+        "y": 7.334868421052631
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.499294612768227,
+        "y": 6.11398524238589
+      },
+      "isLocked": false,
+      "linkedName": "Blu_1_p4_stop_NoVSLAM"
+    },
+    {
+      "anchor": {
+        "x": 3.6918198507849405,
+        "y": 4.969701640187485
+      },
+      "prevControl": {
+        "x": 2.9267728923610203,
+        "y": 5.701502838881323
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Blu_1_p5_stop_NoVSLAM"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.0,
+      "maxWaypointRelativePos": 0.0,
+      "constraints": {
+        "maxVelocity": 3.0,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "FinishCoralFeederIntake",
+      "waypointRelativePos": 0.37701974865350124,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "FinishCoralFeederIntake"
+        }
+      }
+    },
+    {
+      "name": "HoldCoral",
+      "waypointRelativePos": 0.4542190305206465,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "HoldCoral"
+        }
+      }
+    },
+    {
+      "name": "CoralL4Score",
+      "waypointRelativePos": 0.567324955116697,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "CoralL4Score"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -58.671307132195814
+  },
+  "reversed": false,
+  "folder": "Blu_1_NoVSLAM",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -53.13010235415599
+  },
+  "useDefaultConstraints": true
+}
