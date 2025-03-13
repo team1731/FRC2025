@@ -10,6 +10,7 @@ public class SequenceManager {
     private static Level levelSelection = Level.L4; // L4 is default
     private static Action actionSelection;
     private static GamePiece pieceSelection = GamePiece.CORAL; // coral is default
+    private static boolean shouldPluckAlgae = false;
 
 
     public static Level getLevelSelection() {
@@ -43,6 +44,19 @@ public class SequenceManager {
 
     public static void setActionSelection(Action action) {
         actionSelection = action;
+    }
+
+    public static boolean shouldPluckAlgae() {
+        return ( // scoring coral on L4 and should pluck algae has been selected
+            shouldPluckAlgae && 
+            actionSelection == Action.SCORE && 
+            pieceSelection == GamePiece.CORAL && 
+            levelSelection == Level.L4
+        );
+    }
+
+    public static void setShouldPluckAlgae(boolean pluckAlgae) {
+        shouldPluckAlgae = pluckAlgae;
     }
 
     public static boolean isCoralScoreSequence(Sequence sequence) {

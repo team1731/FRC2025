@@ -132,6 +132,9 @@ public class SequenceStateMachine extends StateMachine {
     public boolean moveElevatorHome() {
         isResetting = true;
         elevatorSubsystem.moveElevatorNormalSpeed(ElevatorConstants.elevatorHomePosition, subsystemCallback, positions.lowerElevatorThreshold);
+        if(SequenceManager.shouldPluckAlgae()) {
+            handIntakeSubsystem.intakeWithCurrent();
+        }
         return true;
     }
 
@@ -256,6 +259,9 @@ public class SequenceStateMachine extends StateMachine {
     public boolean moveArmToScoreCoral() {
    //     handClamperSubsystem.open(0.08, subsystemCallback); // comment out this line if you do not want to open clamper and strip off algae
         armSubsystem.moveArmNormalSpeed(positions.secondStageArmPosition, subsystemCallback);
+        if(SequenceManager.shouldPluckAlgae()) {
+            handClamperSubsystem.open(positions.clamperOpenPosition);
+        }
         return true;
     }
 
