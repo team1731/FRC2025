@@ -13,7 +13,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Blu_1_p1_NoVSLAM"
+            "pathName": "Blu_2_p1_NoVSLAM"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Blu_1_p2_NoVSLAM"
+            "pathName": "Blu_2_p2_NoVSLAM"
           }
         },
         {
@@ -43,7 +43,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Blu_1_p3_NoVSLAM"
+            "pathName": "Blu_2_p3_NoVSLAM"
           }
         },
         {
@@ -61,7 +61,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Blu_1_p4_NoVSLAM"
+            "pathName": "Blu_2_p4_NoVSLAM"
           }
         },
         {
@@ -73,7 +73,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Blu_1_p5_NoVSLAM"
+            "pathName": "Blu_2_p5_NoVSLAM"
           }
         },
         {
@@ -91,7 +91,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Blu_1_p6_NoVSLAM"
+            "pathName": "Blu_2_p6_NoVSLAM"
           }
         }
       ]

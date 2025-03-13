@@ -4,28 +4,28 @@
     {
       "anchor": {
         "x": 1.0776315789473683,
-        "y": 7.171299342105263
+        "y": 0.8805006578947374
       },
       "prevControl": null,
       "nextControl": {
         "x": 1.2740311434170613,
-        "y": 7.016538837823899
+        "y": 1.0352611621761012
       },
       "isLocked": false,
-      "linkedName": "Blu_1_p2_stop_NoVSLAM"
+      "linkedName": "Processor_Blu_1_p2_stop_NoVSLAM"
     },
     {
       "anchor": {
         "x": 4.050740131578947,
-        "y": 5.1411184210526315
+        "y": 2.9106815789473686
       },
       "prevControl": {
         "x": 3.750243784255567,
-        "y": 5.366882247017379
+        "y": 2.6849177529826207
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Blu_1_p3_stop_NoVSLAM"
+      "linkedName": "Processor_Blu_1_p3_stop_NoVSLAM"
     }
   ],
   "rotationTargets": [],
@@ -76,13 +76,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -59.9531834029681
+    "rotation": 59.9531834029681
   },
   "reversed": false,
-  "folder": "Blu_1_NoVSLAM",
+  "folder": "Blu_2_NoVSLAM",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -53.392925187392436
+    "rotation": 53.392925187392436
   },
   "useDefaultConstraints": true
 }
