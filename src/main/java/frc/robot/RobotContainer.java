@@ -212,6 +212,9 @@ public class RobotContainer {
     //bring the climber to the stow position
     opBack.onTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.climbStowPosition)));
 
+    opLeftTrigger.whileTrue(new InstantCommand(() -> SequenceManager.setShouldPluckAlgae(true)))
+      .onFalse(new InstantCommand(() -> SequenceManager.setShouldPluckAlgae(false)));
+
     driveSubsystem.registerTelemetry(logger::telemeterize);
 
 

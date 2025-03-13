@@ -8,6 +8,7 @@ public final class PositionConstants {
     public final static double algaeIntakeWidth = HandConstants.clamperAlgaePosition;
     public final static double reefIntakeWidth = HandConstants.clamperReefIntakePosition;
     public final static double dumpCoralWidth = HandConstants.clamperDumpCoralPosition;
+    public final static double pluckAlgaeWidth = HandConstants.clamperPluckAlgaePosition;
 
     /*
      * !!!!!!!!!!!!!!!!!!!!!!!!
@@ -75,6 +76,7 @@ public final class PositionConstants {
             public final static double armForwardPosition = 9;
             public final static double armForwardThreshold = 6;
             public final static double armScorePosition = 15;
+            public final static double clamperPluckAlgaePosition = pluckAlgaeWidth;
         }
     }
 

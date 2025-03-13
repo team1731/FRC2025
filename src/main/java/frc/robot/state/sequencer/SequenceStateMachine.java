@@ -126,6 +126,9 @@ public class SequenceStateMachine extends StateMachine {
     public boolean moveElevatorHome() {
         isResetting = true;
         elevatorSubsystem.moveElevatorNormalSpeed(ElevatorConstants.elevatorHomePosition, subsystemCallback, positions.lowerElevatorThreshold);
+        if(SequenceManager.shouldPluckAlgae()) {
+            handIntakeSubsystem.intakeWithCurrent();
+        }
         return true;
     }
 
@@ -249,6 +252,9 @@ public class SequenceStateMachine extends StateMachine {
 
     public boolean moveArmToScoreCoral() {
         armSubsystem.moveArmNormalSpeed(positions.secondStageArmPosition, subsystemCallback);
+        if(SequenceManager.shouldPluckAlgae()) {
+            handClamperSubsystem.open(positions.clamperOpenPosition);
+        }
         return true;
     }
 
