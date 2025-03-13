@@ -114,6 +114,15 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
         moveArm(position);
     }
 
+    public void moveArmSlowAlgae(double speed, double position, StateMachineCallback callback){
+        stateMachineCallback = callback;
+        mmReq.Velocity = speed;
+        mmReq.Acceleration = ArmConstants.slowedArmAcceleration;
+        System.out.println("ArmSubsystem slowed velocity: " + ArmConstants.slowedArmVelocity + " accel: " + ArmConstants.slowedArmAcceleration);
+        callbackOnDone = true;
+        moveArm(position);
+    }
+
     public void moveArmSlowSpeed(double position, StateMachineCallback callback){
         stateMachineCallback = callback;
         moveArmSlowSpeed(position);

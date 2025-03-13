@@ -180,6 +180,14 @@ public class SequenceStateMachine extends StateMachine {
         return true;
     }
 
+    public boolean moveArmHomeCoral() {
+        if (SequenceManager.shouldPluckAlgae()) {
+            armSubsystem.moveArmSlowAlgae(0.6, 5.0, subsystemCallback);
+        } else
+            armSubsystem.moveArmNormalSpeed(ArmConstants.armHomePosition, subsystemCallback);
+        return true;
+    }
+
     public boolean moveArmHomeSlowly() {
         armSubsystem.moveArmSlowSpeed(ArmConstants.armHomePosition, subsystemCallback);
         return true;
@@ -258,15 +266,20 @@ public class SequenceStateMachine extends StateMachine {
 
     public boolean moveArmToScoreCoral() {
    //     handClamperSubsystem.open(0.08, subsystemCallback); // comment out this line if you do not want to open clamper and strip off algae
-        armSubsystem.moveArmNormalSpeed(positions.secondStageArmPosition, subsystemCallback);
+        
         if(SequenceManager.shouldPluckAlgae()) {
+            armSubsystem.moveArmNormalSpeed(positions.secondStageArmPosition, subsystemCallback);
             handClamperSubsystem.open(positions.clamperOpenPosition);
+        } else {
+            armSubsystem.moveArmNormalSpeed(positions.secondStageArmPosition, subsystemCallback);
         }
         return true;
     }
 
     public boolean resetHandIfCoralNotDetected() {
-        if(!handIntakeSubsystem.pieceDetectionSwitchFlipped()) {
+        if (SequenceManager.shouldPluckAlgae() == true) {
+            handClamperSubsystem.open(0.05);
+        } else if (!handIntakeSubsystem.pieceDetectionSwitchFlipped()) {
             handClamperSubsystem.close();
         }
         return true;
@@ -352,6 +365,9 @@ public class SequenceStateMachine extends StateMachine {
     }
 
     public boolean resetState() {
+        if(SequenceManager.shouldPluckAlgae()){
+            armSubsystem.moveArmSlowAlgae(0.1, -2.0, subsystemCallback);
+        }
         currentSequence = null;
         currentAction = null;
         currentGamePiece = null;
