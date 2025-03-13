@@ -118,6 +118,12 @@ public class SequenceStateMachine extends StateMachine {
         return true;
     }
 
+    public boolean raiseElevatorAndArmForL1() {
+        elevatorSubsystem.moveElevatorNormalSpeed(positions.raiseElevatorPosition, subsystemCallback, positions.raiseElevatorThreshold);
+        armSubsystem.moveArmSlowSpeed(positions.firstStageArmPosition, subsystemCallback);
+        return true;
+    }
+
     public boolean raiseElevator() {
         elevatorSubsystem.moveElevatorNormalSpeed(positions.raiseElevatorPosition, subsystemCallback, positions.raiseElevatorThreshold);
         return true;
@@ -248,6 +254,7 @@ public class SequenceStateMachine extends StateMachine {
     }
 
     public boolean moveArmToScoreCoral() {
+   //     handClamperSubsystem.open(0.08, subsystemCallback); // comment out this line if you do not want to open clamper and strip off algae
         armSubsystem.moveArmNormalSpeed(positions.secondStageArmPosition, subsystemCallback);
         return true;
     }
