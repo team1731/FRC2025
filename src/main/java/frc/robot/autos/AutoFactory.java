@@ -40,6 +40,7 @@ public class AutoFactory {
                 .println("ERROR: no such auto path name found in src/main/deploy/pathplanner/autos: " + alliancePathName + 
                     ", switching to default auto " + AutoConstants.kAutoDefault);
             alliancePathName = AutoConstants.kAutoDefault;
+            flipRedBlue = redAlliance;
         }
         Command command = new PathPlannerAuto(alliancePathName);
         assert command != null : "ERROR: unable to get AUTO path for: " + alliancePathName + ".auto";
