@@ -259,17 +259,11 @@ public class SequenceStateMachine extends StateMachine {
         return true;
     }
 
-
-    public void sensorBroken (boolean sensorBroken) {
-
-    }
-
     public boolean checkIfShouldScoreCoral() {
-        // watch for the reef detection sensor to flip
-        if (SequenceManager.isSensorBroken()) {
-            return false;
-        } else
+        if(!SequenceManager.isReefSensorBroken()) {
+            // watch for the reef detection sensor to flip
             handIntakeSubsystem.watchForScoreDetection(subsystemCallback);
+        }
         return true;
     }
 

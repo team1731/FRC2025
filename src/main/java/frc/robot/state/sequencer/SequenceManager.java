@@ -11,7 +11,7 @@ public class SequenceManager {
     private static Action actionSelection;
     private static GamePiece pieceSelection = GamePiece.CORAL; // coral is default
     private static boolean shouldPluckAlgae = false;
-    private static boolean my_sensorBroken = false;
+    private static boolean isReefSensorBroken = false;
 
 
     public static Level getLevelSelection() {
@@ -60,12 +60,12 @@ public class SequenceManager {
         shouldPluckAlgae = pluckAlgae;
     }
 
-    public static void sensorBroken(boolean sensorBroken) {
-        my_sensorBroken = sensorBroken;
+    public static void setReefSensorBroken(boolean sensorBroken) {
+        isReefSensorBroken = sensorBroken;
     }
 
-    public static boolean isSensorBroken() {
-        return my_sensorBroken;
+    public static boolean isReefSensorBroken() {
+        return isReefSensorBroken;
     }
 
     public static boolean isCoralScoreSequence(Sequence sequence) {

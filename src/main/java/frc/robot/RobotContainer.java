@@ -18,9 +18,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.ClimbReadyCommand;
 import frc.robot.commands.DriveToTargetCommand;
-import frc.robot.commands.DriveToTargetCommandAlt;
 import frc.robot.commands.ResetSequenceCommand;
 import frc.robot.commands.RunSequenceCommand;
 import frc.robot.generated.TunerConstants;
@@ -28,8 +26,6 @@ import frc.robot.state.sequencer.Action;
 import frc.robot.state.sequencer.GamePiece;
 import frc.robot.state.sequencer.Level;
 import frc.robot.state.sequencer.SequenceManager;
-import frc.robot.state.sequencer.SequenceStateMachine;
-import frc.robot.subsystems.*;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.climb.ClimbConstants;
@@ -181,9 +177,6 @@ public class RobotContainer {
 
     //dLeftStick.whileTrue(new DriveToTargetCommand(driveSubsystem, xboxController));
 
-    opLeftBumper.whileTrue(new InstantCommand(() -> SequenceStateMachine.sensorBroken(true)))
-      .onFalse(new InstantCommand(SequenceStateMachine.sensorBroken(false)));
-
     // OPERATOR - Controls level selection
     opY.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L4))); //while pressed set to Level 4 
 
@@ -199,6 +192,9 @@ public class RobotContainer {
     // While trigger is true set piece to Algae, when it goes back to false set piece back to Coral
     opLeftTrigger.whileTrue(new InstantCommand(() -> SequenceManager.setGamePieceSelection(GamePiece.ALGAE)))
       .onFalse(new InstantCommand(() -> SequenceManager.setGamePieceSelection(GamePiece.CORAL)));
+
+    opLeftBumper.onTrue(new InstantCommand(() -> SequenceManager.setReefSensorBroken(true))); // disable reef sensor if broken
+    opRightBumper.onTrue(new InstantCommand(() -> SequenceManager.setReefSensorBroken(false))); // re-enable reef sensor if accidentally disabled
 
     dLeftBumper.whileTrue(new DriveToTargetCommand(driveSubsystem, xboxController, CameraChoice.ElevSide));
     dRightBumper.whileTrue(new DriveToTargetCommand(driveSubsystem, xboxController, CameraChoice.BatSide));
