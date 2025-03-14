@@ -15,6 +15,7 @@ import frc.robot.subsystems.ToggleableSubsystem;
 import frc.robot.subsystems.leds.LEDSubsystem;
 import frc.robot.subsystems.vision.camera.BasicCamera;
 import frc.robot.subsystems.vision.camera.Camera;
+import frc.robot.subsystems.vision.camera.CameraChoice;
 import frc.robot.subsystems.vision.helpers.AutoLineupHelper;
 import frc.robot.subsystems.vision.helpers.AutoLineupHelper.LineupInstruction;
 
@@ -115,10 +116,11 @@ import frc.robot.subsystems.vision.helpers.AutoLineupHelper.LineupInstruction;
         if(camera1Targets != null) {
             mapTargets(combinedTargets, camera1, camera1Targets);
         }
-
-        List<PhotonTrackedTarget> camera2Targets = AprilTagSubsystem.getTargets(camera2);
-        if(camera2Targets != null) {
-            mapTargets(combinedTargets, camera2, camera2Targets);
+        if (camera2 != null) {
+            List<PhotonTrackedTarget> camera2Targets = AprilTagSubsystem.getTargets(camera2);
+            if(camera2Targets != null) {
+                mapTargets(combinedTargets, camera2, camera2Targets);
+            }
         }
 
         return (combinedTargets.size() > 0)? combinedTargets : null;
@@ -165,6 +167,14 @@ import frc.robot.subsystems.vision.helpers.AutoLineupHelper.LineupInstruction;
 
                 
             }
+        }
+    }
+
+    public Camera getCamera(CameraChoice m_cameraChoice) {
+        if (m_cameraChoice == CameraChoice.ElevSide) {
+            return camera1;
+        } else {
+            return camera2;
         }
     }
  }

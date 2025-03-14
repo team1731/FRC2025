@@ -61,9 +61,9 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
         if(!enabled) return;
 
         // do not go outside boundary thresholds
-        if(position > ElevatorConstants.maxElevatorPosition) {
+        if(position * ElevatorConstants.gearRatioModifier > ElevatorConstants.maxElevatorPosition) {
             desiredPosition = ElevatorConstants.maxElevatorPosition;
-        } else if(position < ElevatorConstants.minElevatorPosition) {
+        } else if(position * ElevatorConstants.gearRatioModifier < ElevatorConstants.minElevatorPosition) {
             desiredPosition = ElevatorConstants.minElevatorPosition;
         } else {
             desiredPosition = position * ElevatorConstants.gearRatioModifier;

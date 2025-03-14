@@ -13,7 +13,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Blu_2_p1"
+            "pathName": "Blu_5_push_p0_NoVSLAM"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Blu_5_push_p1_NoVSLAM"
           }
         },
         {
@@ -31,7 +37,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Blu_2_p2"
+            "pathName": "Blu_1_p2_NoVSLAM"
           }
         },
         {
@@ -43,7 +49,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Blu_2_p3"
+            "pathName": "Blu_1_p3_NoVSLAM"
           }
         },
         {
@@ -61,7 +67,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Blu_2_p4"
+            "pathName": "Blu_1_p4_NoVSLAM"
           }
         },
         {
@@ -73,7 +79,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Blu_2_p5"
+            "pathName": "Blu_1_p5_NoVSLAM"
           }
         },
         {
@@ -91,13 +97,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Blu_2_p6"
+            "pathName": "Blu_1_p6_NoVSLAM"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "NoVSLAM",
   "choreoAuto": false
 }

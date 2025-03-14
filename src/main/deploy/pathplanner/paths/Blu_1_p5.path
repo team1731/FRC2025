@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 3.7236019736842105,
-        "y": 4.996792763157894
+        "x": 3.6918198507849405,
+        "y": 4.969701640187485
       },
       "prevControl": {
-        "x": 2.9585550152602904,
-        "y": 5.7285939618517325
+        "x": 2.9267728923610203,
+        "y": 5.701502838881323
       },
       "nextControl": null,
       "isLocked": false,
@@ -54,6 +54,17 @@
         "type": "named",
         "data": {
           "name": "FinishCoralFeederIntake"
+        }
+      }
+    },
+    {
+      "name": "HoldCoral",
+      "waypointRelativePos": 0.4542190305206465,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "HoldCoral"
         }
       }
     },

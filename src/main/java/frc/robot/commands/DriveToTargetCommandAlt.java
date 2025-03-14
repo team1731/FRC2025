@@ -18,12 +18,14 @@ import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.camera.CameraChoice;
 import frc.robot.subsystems.vision.helpers.AprilTagTargetTracker;
 
-public class DriveToTargetCommand extends Command {
+public class DriveToTargetCommandAlt extends Command {
     private CommandSwerveDrivetrain m_driveSubsystem;
     private CommandXboxController m_xboxController;
+    private CommandXboxController m_operatorController;
     private AprilTagTargetTracker aprilTagTargetTracker;
     private boolean m_commandDone = false;
     private CameraChoice m_cameraChoice = CameraChoice.BatSide;
+
     private double fieldCentricX;
     private double fieldCentricY;
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond)/2;   //Drive at 1/5th of the max speed!!!!!!!!!
@@ -37,21 +39,29 @@ public class DriveToTargetCommand extends Command {
     private final SwerveRequest.FieldCentricFacingAngle driveAtLocation =  new SwerveRequest.FieldCentricFacingAngle().withRotationalDeadband( VisionConstants.MAX_ANGULAR_SPEED * 0.01) // Add a 10% deadband
 		.withDriveRequestType(DriveRequestType.OpenLoopVoltage).withDeadband((MaxSpeed * 0.05));
 
-    public DriveToTargetCommand(CommandSwerveDrivetrain driveSubsystem, CommandXboxController xboxController, CameraChoice cameraChoice) {
+
+    public DriveToTargetCommandAlt(CommandSwerveDrivetrain driveSubsystem, CommandXboxController xboxController, CommandXboxController operatorController) {
         m_driveSubsystem = driveSubsystem;
         m_xboxController = xboxController;
-        m_cameraChoice = cameraChoice;
+        m_operatorController = operatorController;
 
         addRequirements(m_driveSubsystem);
     }
 
     @Override
     public void initialize() {
-        System.out.println("DriveToTargetCommand: initializing...");
+        System.out.println("DriveToTargetCommandAlt: initializing...");
         driveAtLocation.HeadingController.setPID(10,0,0);
 	    driveAtLocation.HeadingController.enableContinuousInput(-Math.PI/2, Math.PI/2);
         m_commandDone = false;
         AprilTagSubsystem aprilTagSubsystem = m_driveSubsystem.getAprilTagSubsystem();
+        if (m_operatorController.leftBumper().getAsBoolean() == true) {
+            m_cameraChoice = CameraChoice.ElevSide;
+        } else if (m_operatorController.rightBumper().getAsBoolean() == true){
+            m_cameraChoice = CameraChoice.BatSide;
+        } else {
+            m_commandDone = true;
+        }
         if(aprilTagSubsystem != null) {
             aprilTagTargetTracker = new AprilTagTargetTracker(aprilTagSubsystem.getCamera(m_cameraChoice), null);
         } else {
@@ -61,15 +71,10 @@ public class DriveToTargetCommand extends Command {
 
     @Override
     public void execute() {
-        fieldCentricX = (Math.abs(m_xboxController.getLeftY()) * m_xboxController.getLeftY());
-        fieldCentricY = (Math.abs(m_xboxController.getLeftX()) * m_xboxController.getLeftX());
+        fieldCentricX = -(Math.abs(m_xboxController.getLeftY()) * m_xboxController.getLeftY());
+        fieldCentricY = -(Math.abs(m_xboxController.getLeftX()) * m_xboxController.getLeftX());
 
-        if (Robot.isRedAlliance()) {
-            fieldCentricX = fieldCentricX * -1;
-            fieldCentricY = fieldCentricY * -1;
 
-        }
-        
         SmartDashboard.putNumber ("fieldCentricX", fieldCentricX);
         SmartDashboard.putNumber ("fieldCentricY",fieldCentricY);
 
