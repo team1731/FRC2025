@@ -31,7 +31,7 @@ public final class Constants {
 
     public static final class AutoConstants {
         public static final String kNoVSLAMPostfix = "_NoVSLAM";
-        public static final String kAutoDefault = "4_JustDrive"; // Note: when setting the default auto, do not include Blu_/Red_ prefixes
+        public static final String kAutoDefault = "1_Barge"; // Note: when setting the default auto, do not include Blu_/Red_ prefixes
         public static final String kAutoCodeKey = "Auto Selector";
 
         public static final double kMaxSpeedMetersPerSecond = 0.5; // disabled for testing = 3;
