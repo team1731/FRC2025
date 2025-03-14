@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.050740131578947,
-        "y": 2.9106815789473686
+        "x": 4.127713815789473,
+        "y": 2.8126644736842104
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0736770931679986,
-        "y": 2.0785061648765835
+        "x": 3.150650777378525,
+        "y": 1.9804890596134253
       },
       "isLocked": false,
       "linkedName": "Processor_Blu_1_p3_stop_NoVSLAM"
@@ -46,7 +46,7 @@
   ],
   "globalConstraints": {
     "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -62,5 +62,5 @@
     "velocity": 0,
     "rotation": 59.9531834029681
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }
