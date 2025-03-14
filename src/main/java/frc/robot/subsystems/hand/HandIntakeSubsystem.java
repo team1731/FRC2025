@@ -5,6 +5,7 @@ import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
@@ -56,7 +57,12 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
 
     public void intake(double velocity, StateMachineCallback callback) {
         scoreStateMachineCallback = callback;
-        intake(velocity);
+       // intake(velocity);
+       intakeWithCurrent();
+    }
+
+    public void intakeWithCurrent() {
+        motor.setControl(new TorqueCurrentFOC(-20));
     }
 
     public void release(double velocity) {
@@ -178,8 +184,9 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
             stop();
             releaseRunningTime = 0;
             releaseStartedTime = 0;
+            System.out.println("HandIntakeSubsystem stopped release");
             if(scoreStateMachineCallback != null) {
-                System.out.println("HandIntakeSubsystem stopped release, should have finished shooting");
+                System.out.println("HandIntakeSubsystem notifying state machine that release stopped");
                 scoreStateMachineCallback.setInput(SequenceInput.RELEASED_PIECE);
                 scoreStateMachineCallback = null;
             }

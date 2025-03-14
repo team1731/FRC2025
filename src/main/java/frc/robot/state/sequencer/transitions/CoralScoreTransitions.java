@@ -7,8 +7,10 @@ public class CoralScoreTransitions {
     private static final Object transitionTable[][] = {
         // CURRENT                              INPUT                                     OPERATION                    NEXT
         {SequenceState.HOME,                    SequenceInput.BEGIN,                      "raiseElevator",             SequenceState.RAISING_ELEVATOR},
+        {SequenceState.RAISING_ELEVATOR,        SequenceInput.ELEVATOR_DONE,              "moveArmWithThreshold",      SequenceState.MOVING_ARM_FORWARD},
         {SequenceState.RAISING_ELEVATOR,        SequenceInput.ELEVATOR_THRESHOLD_MET,     "moveArmWithThreshold",      SequenceState.MOVING_ARM_FORWARD},
         {SequenceState.RAISING_ELEVATOR,        SequenceInput.AUTO_SCORE,                 null,                        SequenceState.AUTO_SCORE_WHEN_READY},
+        {SequenceState.MOVING_ARM_FORWARD,      SequenceInput.ARM_DONE,                   "checkIfShouldScoreCoral",   SequenceState.WAITING}, // operation determines next state
         {SequenceState.MOVING_ARM_FORWARD,      SequenceInput.ARM_THRESHOLD_MET,          "checkIfShouldScoreCoral",   SequenceState.WAITING}, // operation determines next state
         {SequenceState.MOVING_ARM_FORWARD,      SequenceInput.AUTO_SCORE,                 null,                        SequenceState.AUTO_SCORE_WHEN_READY},
         {SequenceState.WAITING,                 SequenceInput.BUTTON_RELEASED,            "moveArmToScoreCoral",       SequenceState.SCORING}, // driver initiated score
@@ -17,7 +19,8 @@ public class CoralScoreTransitions {
         {SequenceState.AUTO_SCORE_WHEN_READY,   SequenceInput.ELEVATOR_DONE,              "moveArmToScoreCoral",       SequenceState.SCORING}, // auto initiated score during elevator raise
         {SequenceState.AUTO_SCORE_WHEN_READY,   SequenceInput.ARM_DONE,                   "moveArmToScoreCoral",       SequenceState.SCORING}, // auto initiated score during arm forward
         {SequenceState.SCORING,                 SequenceInput.ARM_DONE,                   "moveElevatorHome",          SequenceState.LOWERING},
-        {SequenceState.LOWERING,                SequenceInput.ELEVATOR_THRESHOLD_MET,     "moveArmHome",               SequenceState.FINISHING},
+        {SequenceState.SCORING,                 SequenceInput.RELEASED_PIECE,             "moveElevatorHome",          SequenceState.LOWERING}, // this transition is used in L2 scores
+        {SequenceState.LOWERING,                SequenceInput.ELEVATOR_THRESHOLD_MET,     "moveArmHomeCoral",               SequenceState.FINISHING},
         {SequenceState.FINISHING,               SequenceInput.RESET_DONE,                 "resetState",                SequenceState.HOME},
 
         // Level change sequences

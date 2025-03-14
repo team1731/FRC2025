@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.993009868421052,
-        "y": 5.208470394736842
+        "x": 4.118092105263158,
+        "y": 5.198848684210526
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0159468300101038,
-        "y": 6.040645808807627
+        "x": 3.1410290668522096,
+        "y": 6.0310240982813115
       },
       "isLocked": false,
-      "linkedName": "Blu_1_p3_stop"
+      "linkedName": "Blu_1_p3_stop_NoVSLAM"
     },
     {
       "anchor": {
@@ -25,7 +25,7 @@
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Blu_1_p4_stop"
+      "linkedName": "Blu_1_p4_stop_NoVSLAM"
     }
   ],
   "rotationTargets": [],
@@ -60,7 +60,7 @@
   "folder": "Blu_1_NoVSLAM",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -59.74356283647078
+    "rotation": -59.9531834029681
   },
   "useDefaultConstraints": false
 }

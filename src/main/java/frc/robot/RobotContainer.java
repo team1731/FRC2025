@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ClimbReadyCommand;
 import frc.robot.commands.DriveToTargetCommand;
+import frc.robot.commands.DriveToTargetCommandAlt;
 import frc.robot.commands.ResetSequenceCommand;
 import frc.robot.commands.RunSequenceCommand;
 import frc.robot.generated.TunerConstants;
@@ -36,6 +37,7 @@ import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
 import frc.robot.subsystems.leds.LEDSubsystem;
+import frc.robot.subsystems.vision.camera.CameraChoice;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
 
 public class RobotContainer {
@@ -67,11 +69,13 @@ public class RobotContainer {
   private final Trigger dB = xboxController.b();
   private final Trigger dA = xboxController.a();
   private final Trigger dX = xboxController.x();
+  private final Trigger dLeftStick = xboxController.leftStick();
   private final Trigger dLeftBumper = xboxController.leftBumper();
   private final Trigger dRightBumper = xboxController.rightBumper();
   private final Trigger dLeftTrigger = xboxController.leftTrigger();
   private final Trigger dRightTrigger = xboxController.rightTrigger();
   private final Trigger dPOVUp = xboxController.povUp();
+  private final Trigger dPOVDown = xboxController.povDown();
 
   /* Operator Buttons */
 
@@ -137,7 +141,7 @@ public class RobotContainer {
     dStart.onTrue(new InstantCommand(() -> {
       System.out.println("resetting position");
     
-      Pose2d resetPosition = Robot.isRedAlliance() ? new Pose2d(7.168, 5.006, new Rotation2d(Math.toRadians(0)))
+      Pose2d resetPosition = Robot.isRedAlliance() ? new Pose2d(10.38, 3.01, new Rotation2d(Math.toRadians(0)))
           : new Pose2d(7.168, 5.006, new Rotation2d(Math.toRadians(180)));
       driveSubsystem.resetPose(resetPosition);
     }));
@@ -155,30 +159,48 @@ public class RobotContainer {
       new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)));
 
     // Climb up
-    dLeftBumper.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.maxClimbPosition))) 
+    dPOVUp.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.maxClimbPosition))) 
       .onFalse(new InstantCommand(() -> climbSubsystem.stopClimb()));
 
     // Climb down
-    dRightBumper.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.minClimbPosition))) 
+    dPOVDown.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.minClimbPosition))) 
     .onFalse(new InstantCommand(() -> climbSubsystem.stopClimb()));
 
-    dY.whileTrue(new DriveToTargetCommand(driveSubsystem, xboxController));
+    // DRIVER - Controls level selection
+    dY.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L4))); //while pressed set to Level 4 
 
-    // Controls level selection
-    opY.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L4))) //while pressed set to Level 4
-      .onFalse(new InstantCommand(() -> SequenceManager.resetLevelToL2())); //if not pressed set default to Level 2  
+    dB.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L3))) //while pressed set to Level 3
+      .onFalse(new InstantCommand(() -> SequenceManager.resetLevelToL4())); //if not pressed set default to Level 4 
+    
+    dA.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L2))) //while pressed set to Level 2
+      .onFalse(new InstantCommand(() -> SequenceManager.resetLevelToL4())); //if not pressed set default to Level 4
+
+    dX.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L1))) //while pressed set to Level 1
+      .onFalse(new InstantCommand(() -> SequenceManager.resetLevelToL4())); //if not pressed set defaullt to Level 4 
+
+    //dLeftStick.whileTrue(new DriveToTargetCommand(driveSubsystem, xboxController));
+
+    // OPERATOR - Controls level selection
+    opY.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L4))); //while pressed set to Level 4 
 
     opB.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L3))) //while pressed set to Level 3
-      .onFalse(new InstantCommand(() -> SequenceManager.resetLevelToL2())); //if not pressed set default to Level 2 
+      .onFalse(new InstantCommand(() -> SequenceManager.resetLevelToL4())); //if not pressed set default to Level 4 
     
-    opA.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L2))); //while pressed set to Level 2
+    opA.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L2))) //while pressed set to Level 2
+      .onFalse(new InstantCommand(() -> SequenceManager.resetLevelToL4())); //if not pressed set default to Level 4
 
     opX.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L1))) //while pressed set to Level 1
-      .onFalse(new InstantCommand(() -> SequenceManager.resetLevelToL2())); //if not pressed set defaullt to Level 2 
+      .onFalse(new InstantCommand(() -> SequenceManager.resetLevelToL4())); //if not pressed set defaullt to Level 4 
 
     // While trigger is true set piece to Algae, when it goes back to false set piece back to Coral
     opLeftTrigger.whileTrue(new InstantCommand(() -> SequenceManager.setGamePieceSelection(GamePiece.ALGAE)))
       .onFalse(new InstantCommand(() -> SequenceManager.setGamePieceSelection(GamePiece.CORAL)));
+
+    dLeftBumper.whileTrue(new DriveToTargetCommand(driveSubsystem, xboxController, CameraChoice.ElevSide));
+    dRightBumper.whileTrue(new DriveToTargetCommand(driveSubsystem, xboxController, CameraChoice.BatSide));
+
+    // Uncomment the line below and comment out the two above if you want operator to select the pole
+    // dLeftBumper.whileTrue(new DriveToTargetCommandAlt(driveSubsystem,xboxController, xboxOperatorController));
 
     //bring up the climb in ready position
     opStart.onTrue(new SequentialCommandGroup(
@@ -186,6 +208,12 @@ public class RobotContainer {
       new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.climbReadyPosition)),
       new InstantCommand(() -> armSubsystem.moveArmNormalSpeed(ArmConstants.halfedArmPosition)) 
     ));
+
+    //bring the climber to the stow position
+    opBack.onTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.climbStowPosition)));
+
+    opRightTrigger.whileTrue(new InstantCommand(() -> SequenceManager.setShouldPluckAlgae(true)))
+      .onFalse(new InstantCommand(() -> SequenceManager.setShouldPluckAlgae(false)));
 
     driveSubsystem.registerTelemetry(logger::telemeterize);
 

@@ -6,8 +6,10 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Robot;
 import frc.robot.subsystems.vision.AprilTagSubsystem;
 import frc.robot.subsystems.vision.AprilTagSubsystem.AprilTagTarget;
+import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.camera.Camera;
 
 public class AprilTagTargetTracker {
@@ -16,8 +18,8 @@ public class AprilTagTargetTracker {
     private Camera lockedCamera;
     private int lockedTargetId;
     private double lastHeading;
-    private double calcuatedStrafe;
-    private double calcuatedForward;
+    private double calculatedX;
+    private double calculatedY;
     private Rotation2d calculatedDesiredRotation;
     private boolean hasVisibleTarget = false;
 
@@ -31,6 +33,8 @@ public class AprilTagTargetTracker {
     }
 
     public void recalculateDriveFeedback(Pose2d currentPose, double fieldCentricX, double fieldCentricY) {
+        calculatedX = fieldCentricX;
+        calculatedY = fieldCentricY;
 
         SmartDashboard.putNumber("fcx", fieldCentricX);
         SmartDashboard.putNumber("fcy",fieldCentricY);
@@ -53,28 +57,36 @@ public class AprilTagTargetTracker {
         }
 
         var currentRobotRotation = currentPose.getRotation().getDegrees();
-        double desiredHeading = hasVisibleTarget? currentRobotRotation - target.getYaw() : lastHeading;
+        double desiredHeading = hasVisibleTarget? currentRobotRotation - (target.getYaw() * 2.0) : lastHeading;
         lastHeading = desiredHeading; // store this value for re-use in case don't see target the next time around
 
         // calculate speed
+      //  double fieldCentricSpeed = Math.sqrt(fieldCentricX*fieldCentricX - fieldCentricY*fieldCentricY);
+       // double fieldCentricHeading = Math.atan(fieldCentricY/fieldCentricX);
+       // double speed = fieldCentricSpeed * Math.cos(desiredHeading + Math.toRadians(fieldCentricHeading));
+
         double speedContributionFromX = fieldCentricX * Math.cos(Units.degreesToRadians(desiredHeading));
         double speedContributionFromY = fieldCentricY * Math.sin(Units.degreesToRadians(desiredHeading));
-        double speed = speedContributionFromX + speedContributionFromY;
+        double speed = -Math.sqrt(speedContributionFromX*speedContributionFromX + speedContributionFromY*speedContributionFromY);
 
 
         // calculate updated drive values
-        calcuatedForward = speed * Math.cos(Units.degreesToRadians(desiredHeading));
-        calcuatedStrafe = speed * Math.sin(Units.degreesToRadians(desiredHeading));
+        calculatedX = speed * Math.cos(Units.degreesToRadians(desiredHeading));
+        calculatedY = speed * Math.sin(Units.degreesToRadians(desiredHeading));
         calculatedDesiredRotation = FieldPoseHelper.getReefTargetLineupRotation(lockedTargetId);
-        
+        if (!Robot.isRedAlliance()) {
+            calculatedX = calculatedX * -1;
+            calculatedY = calculatedY * -1;
+
+        }
 
         
-        SmartDashboard.putNumber("ATTracker_speedContributionFromX", speedContributionFromX);
-        SmartDashboard.putNumber("ATTracker_speedContributionFromY", speedContributionFromY);
+      //  SmartDashboard.putNumber("ATTracker_speedContributionFromX", fieldCentricSpeed);
+      //  SmartDashboard.putNumber("ATTracker_speedContributionFromY", fieldCentricHeading);
         SmartDashboard.putNumber("ATTracker_totalSpeed", speed);
         SmartDashboard.putNumber("ATTracker_targetedAprilTagId", lockedTargetId);
-        SmartDashboard.putNumber("ATTracker_forward", calcuatedForward);
-        SmartDashboard.putNumber("ATTracker_strafe", calcuatedStrafe);
+        SmartDashboard.putNumber("ATTracker_calculatedX", calculatedX);
+        SmartDashboard.putNumber("ATTracker_calculatedY", calculatedY);
         SmartDashboard.putNumber("ATTracker_rotation", calculatedDesiredRotation.getDegrees());
         SmartDashboard.putNumber("ATTracker_currentRobotRotation", currentRobotRotation);
         SmartDashboard.putNumber("ATTracker_targetYaw", hasVisibleTarget? target.getYaw() : 0);
@@ -82,12 +94,12 @@ public class AprilTagTargetTracker {
         
     }
 
-    public double getCalculatedStrafe() {
-        return calcuatedStrafe;
+    public double getCalculatedX() {
+        return calculatedX;
     }
 
-    public double getCalcuatedForward() {
-        return calcuatedForward;
+    public double getCalculatedY() {
+        return calculatedY;
     }
 
     public Rotation2d getRotationTarget() {
@@ -107,7 +119,8 @@ public class AprilTagTargetTracker {
             int targetId = target.getFiducialId();
 
             if(!FieldPoseHelper.isReefTarget(targetId)) continue;
-            double targetSize = Math.abs(target.getArea());
+            double fovRatio = (mapping.camera.getName() == VisionConstants.camera2Name)? VisionConstants.camera2FOVRatio : 1.0;
+            double targetSize = Math.abs(target.getArea()) * fovRatio;
             if(winningTarget == null || targetSize > winningTargetSize) {
                 winningCamera = mapping.camera;
                 winningTarget = target;

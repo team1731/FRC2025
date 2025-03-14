@@ -10,10 +10,12 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Robot;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.vision.AprilTagSubsystem;
 import frc.robot.subsystems.vision.VisionConstants;
+import frc.robot.subsystems.vision.camera.CameraChoice;
 import frc.robot.subsystems.vision.helpers.AprilTagTargetTracker;
 
 public class DriveToTargetCommand extends Command {
@@ -21,9 +23,10 @@ public class DriveToTargetCommand extends Command {
     private CommandXboxController m_xboxController;
     private AprilTagTargetTracker aprilTagTargetTracker;
     private boolean m_commandDone = false;
+    private CameraChoice m_cameraChoice = CameraChoice.BatSide;
     private double fieldCentricX;
     private double fieldCentricY;
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond)/2;   //Drive at 1/5th of the max speed!!!!!!!!!
 
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
@@ -34,9 +37,11 @@ public class DriveToTargetCommand extends Command {
     private final SwerveRequest.FieldCentricFacingAngle driveAtLocation =  new SwerveRequest.FieldCentricFacingAngle().withRotationalDeadband( VisionConstants.MAX_ANGULAR_SPEED * 0.01) // Add a 10% deadband
 		.withDriveRequestType(DriveRequestType.OpenLoopVoltage).withDeadband((MaxSpeed * 0.05));
 
-    public DriveToTargetCommand(CommandSwerveDrivetrain driveSubsystem, CommandXboxController xboxController) {
+    public DriveToTargetCommand(CommandSwerveDrivetrain driveSubsystem, CommandXboxController xboxController, CameraChoice cameraChoice) {
         m_driveSubsystem = driveSubsystem;
         m_xboxController = xboxController;
+        m_cameraChoice = cameraChoice;
+
         addRequirements(m_driveSubsystem);
     }
 
@@ -48,7 +53,7 @@ public class DriveToTargetCommand extends Command {
         m_commandDone = false;
         AprilTagSubsystem aprilTagSubsystem = m_driveSubsystem.getAprilTagSubsystem();
         if(aprilTagSubsystem != null) {
-            aprilTagTargetTracker = new AprilTagTargetTracker(aprilTagSubsystem.getCamera1(), aprilTagSubsystem.getCamera2());
+            aprilTagTargetTracker = new AprilTagTargetTracker(aprilTagSubsystem.getCamera(m_cameraChoice), null);
         } else {
             m_commandDone = true;
         }
@@ -56,16 +61,23 @@ public class DriveToTargetCommand extends Command {
 
     @Override
     public void execute() {
-        fieldCentricX = -(Math.abs(m_xboxController.getLeftY()) * m_xboxController.getLeftY()) * MaxSpeed;
-        fieldCentricY = -(Math.abs(m_xboxController.getLeftX()) * m_xboxController.getLeftX()) * MaxSpeed;
+        fieldCentricX = (Math.abs(m_xboxController.getLeftY()) * m_xboxController.getLeftY());
+        fieldCentricY = (Math.abs(m_xboxController.getLeftX()) * m_xboxController.getLeftX());
+
+        if (Robot.isRedAlliance()) {
+            fieldCentricX = fieldCentricX * -1;
+            fieldCentricY = fieldCentricY * -1;
+
+        }
+        
         SmartDashboard.putNumber ("fieldCentricX", fieldCentricX);
         SmartDashboard.putNumber ("fieldCentricY",fieldCentricY);
 
         aprilTagTargetTracker.recalculateDriveFeedback(m_driveSubsystem.getCurrentPose(), fieldCentricX, fieldCentricY);
         m_driveSubsystem.setControl(
 
-            driveAtLocation.withVelocityX(aprilTagTargetTracker.getCalcuatedForward())                                                                                                                     
-                .withVelocityY(aprilTagTargetTracker.getCalculatedStrafe()) 
+            driveAtLocation.withVelocityX(aprilTagTargetTracker.getCalculatedX() * MaxSpeed)                                                                                                                     
+                .withVelocityY(aprilTagTargetTracker.getCalculatedY()* MaxSpeed) 
                 .withTargetDirection(aprilTagTargetTracker.getRotationTarget())
         );
 

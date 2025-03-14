@@ -1,0 +1,112 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.877549342105263,
+        "y": 5.064144736842105
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 4.984046052635616,
+        "y": 6.161019736838827
+      },
+      "isLocked": false,
+      "linkedName": "Tele_1_p1_stop"
+    },
+    {
+      "anchor": {
+        "x": 7.216282894736842,
+        "y": 6.209128289473683
+      },
+      "prevControl": {
+        "x": 7.063745622040377,
+        "y": 6.571404312127783
+      },
+      "nextControl": {
+        "x": 7.447203947368421,
+        "y": 5.6606907894736835
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.128371710526316,
+        "y": 5.112253289473684
+      },
+      "prevControl": {
+        "x": 5.78264802631579,
+        "y": 5.410526315789473
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Tele_1_p2_stop"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.0566037735849068,
+      "rotationDegrees": 0.0
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.4919210053859964,
+      "maxWaypointRelativePos": 1.2603231597845614,
+      "constraints": {
+        "maxVelocity": 1.0,
+        "maxAcceleration": 1.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Score Algae",
+      "waypointRelativePos": 0.6642728904847398,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "AlgaeBargeScore"
+        }
+      }
+    },
+    {
+      "name": "Start Intkae",
+      "waypointRelativePos": 1.597845601436262,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "AlgaeReefL2Intake"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 5.5,
+    "maxAcceleration": 5.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 150.52411099675436
+  },
+  "reversed": false,
+  "folder": "Tele_1",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -149.26451229875522
+  },
+  "useDefaultConstraints": false
+}

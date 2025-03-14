@@ -13,13 +13,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Proc_Blu_2_p1"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
+            "pathName": "Blu_2_p1"
           }
         },
         {
@@ -29,9 +23,15 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.2
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Proc_Blu_2_p2"
+            "pathName": "Blu_2_p2"
           }
         },
         {
@@ -43,13 +43,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Proc_Blu_2_p3"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
+            "pathName": "Blu_2_p3"
           }
         },
         {
@@ -59,9 +53,15 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.2
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Proc_Blu_2_p4"
+            "pathName": "Blu_2_p4"
           }
         },
         {
@@ -73,13 +73,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Proc_Blu_2_p5"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
+            "pathName": "Blu_2_p5"
           }
         },
         {
@@ -89,39 +83,15 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "Proc_Blu_2_p6"
-          }
-        },
-        {
           "type": "wait",
           "data": {
-            "waitTime": 0.5
+            "waitTime": 0.2
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Proc_Blu_2_p7"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "CoralL4Score"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.5
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "FinishCoralScore"
+            "pathName": "Blu_2_p6"
           }
         }
       ]

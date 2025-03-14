@@ -1,0 +1,101 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.744161184210526,
+        "y": 4.025
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.744161184210526,
+        "y": 4.025
+      },
+      "isLocked": false,
+      "linkedName": "Tele_1_p3_stop"
+    },
+    {
+      "anchor": {
+        "x": 7.110444078947368,
+        "y": 5.246957236842105
+      },
+      "prevControl": {
+        "x": 7.7743421052631545,
+        "y": 4.217434210526315
+      },
+      "nextControl": {
+        "x": 6.531943745106858,
+        "y": 6.1440519574353605
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.4240131578947368,
+        "y": 7.219407894736841
+      },
+      "prevControl": {
+        "x": 1.9419407894736842,
+        "y": 7.215871710526316
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.9182389937106917,
+      "rotationDegrees": 0.0
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.3626570915619383,
+      "maxWaypointRelativePos": 1.0879712746858172,
+      "constraints": {
+        "maxVelocity": 1.0,
+        "maxAcceleration": 2.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "score",
+      "waypointRelativePos": 0.5134649910233404,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "AlgaeBargeScore"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 6.0,
+    "maxAcceleration": 6.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -55.375844920051
+  },
+  "reversed": false,
+  "folder": "Tele_1",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 90.0
+  },
+  "useDefaultConstraints": false
+}
