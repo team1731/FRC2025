@@ -28,6 +28,7 @@ import frc.robot.state.sequencer.Action;
 import frc.robot.state.sequencer.GamePiece;
 import frc.robot.state.sequencer.Level;
 import frc.robot.state.sequencer.SequenceManager;
+import frc.robot.state.sequencer.SequenceStateMachine;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmSubsystem;
@@ -179,6 +180,9 @@ public class RobotContainer {
       .onFalse(new InstantCommand(() -> SequenceManager.resetLevelToL4())); //if not pressed set defaullt to Level 4 
 
     //dLeftStick.whileTrue(new DriveToTargetCommand(driveSubsystem, xboxController));
+
+    opLeftBumper.whileTrue(new InstantCommand(() -> SequenceStateMachine.sensorBroken(true)))
+      .onFalse(new InstantCommand(SequenceStateMachine.sensorBroken(false)));
 
     // OPERATOR - Controls level selection
     opY.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L4))); //while pressed set to Level 4 

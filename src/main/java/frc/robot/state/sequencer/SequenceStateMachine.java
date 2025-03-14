@@ -1,5 +1,6 @@
 package frc.robot.state.sequencer;
 
+import frc.robot.RobotContainer;
 import frc.robot.state.Input;
 import frc.robot.state.StateMachine;
 import frc.robot.state.StateMachineCallback;
@@ -258,9 +259,17 @@ public class SequenceStateMachine extends StateMachine {
         return true;
     }
 
+
+    public void sensorBroken (boolean sensorBroken) {
+
+    }
+
     public boolean checkIfShouldScoreCoral() {
         // watch for the reef detection sensor to flip
-        handIntakeSubsystem.watchForScoreDetection(subsystemCallback);
+        if (SequenceManager.isSensorBroken()) {
+            return false;
+        } else
+            handIntakeSubsystem.watchForScoreDetection(subsystemCallback);
         return true;
     }
 
