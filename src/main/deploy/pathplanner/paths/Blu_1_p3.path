@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.3470394736842104,
-        "y": 7.334868421052631
+        "x": 1.0776315789473683,
+        "y": 7.171299342105263
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.5434390381539034,
-        "y": 7.180107916771267
+        "x": 1.2740311434170613,
+        "y": 7.016538837823899
       },
       "isLocked": false,
       "linkedName": "Blu_1_p2_stop"
     },
     {
       "anchor": {
-        "x": 3.993009868421052,
-        "y": 5.208470394736842
+        "x": 4.050740131578947,
+        "y": 5.1411184210526315
       },
       "prevControl": {
-        "x": 3.692513521097672,
-        "y": 5.4342342207015895
+        "x": 3.750243784255567,
+        "y": 5.366882247017379
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "FinishCoralFeederIntake",
-      "waypointRelativePos": 0.2226211849192101,
+      "waypointRelativePos": 0.3500897666068223,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -44,8 +44,19 @@
       }
     },
     {
+      "name": "HoldCoral",
+      "waypointRelativePos": 0.38958707360861755,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "HoldCoral"
+        }
+      }
+    },
+    {
       "name": "CoralL4Score",
-      "waypointRelativePos": 0.26032315978456017,
+      "waypointRelativePos": 0.5368043087971271,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -65,7 +76,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -59.74356283647078
+    "rotation": -59.9531834029681
   },
   "reversed": false,
   "folder": "Blu_1",

@@ -6,24 +6,23 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Robot;
 import frc.robot.subsystems.vision.AprilTagSubsystem;
-import frc.robot.subsystems.vision.AprilTagSubsystem.AprilTagTarget;
 import frc.robot.subsystems.vision.VisionConstants;
+import frc.robot.subsystems.vision.AprilTagSubsystem.AprilTagTarget;
 import frc.robot.subsystems.vision.camera.Camera;
 
-public class AprilTagTargetTracker {
+public class WorkingAprilTagTargetTracker {
     private Camera camera1;
     private Camera camera2;
     private Camera lockedCamera;
     private int lockedTargetId;
     private double lastHeading;
-    private double calculatedX;
-    private double calculatedY;
+    private double calcuatedX;
+    private double calcuatedY;
     private Rotation2d calculatedDesiredRotation;
     private boolean hasVisibleTarget = false;
 
-    public AprilTagTargetTracker(Camera camera1, Camera camera2) {
+    public WorkingAprilTagTargetTracker(Camera camera1, Camera camera2) {
         this.camera1 = camera1;
         this.camera2 = camera2;
     }
@@ -33,8 +32,6 @@ public class AprilTagTargetTracker {
     }
 
     public void recalculateDriveFeedback(Pose2d currentPose, double fieldCentricX, double fieldCentricY) {
-        calculatedX = fieldCentricX;
-        calculatedY = fieldCentricY;
 
         SmartDashboard.putNumber("fcx", fieldCentricX);
         SmartDashboard.putNumber("fcy",fieldCentricY);
@@ -56,54 +53,66 @@ public class AprilTagTargetTracker {
             return; // haven't captured a heading yet, nothing to re-use
         }
 
-        var currentRobotRotation = currentPose.getRotation().getDegrees();
-        double desiredHeading = hasVisibleTarget? currentRobotRotation - (target.getYaw() * 2.0) : lastHeading;
-        lastHeading = desiredHeading; // store this value for re-use in case don't see target the next time around
+        Rotation2d currentRobotRotation = currentPose.getRotation();
+        Rotation2d lineupRotation = FieldPoseHelper.getReefTargetLineupRotation(lockedTargetId);
+
+        double desiredHeading;
+        if(hasVisibleTarget) {
+            double targetYaw = target.getYaw();
+            desiredHeading = getDesiredHeading(targetYaw, currentRobotRotation, lineupRotation);
+            lastHeading = desiredHeading; // store this value for re-use in case don't see target the next time around
+        } else {
+            desiredHeading = lastHeading;
+        }
 
         // calculate speed
-      //  double fieldCentricSpeed = Math.sqrt(fieldCentricX*fieldCentricX - fieldCentricY*fieldCentricY);
-       // double fieldCentricHeading = Math.atan(fieldCentricY/fieldCentricX);
-       // double speed = fieldCentricSpeed * Math.cos(desiredHeading + Math.toRadians(fieldCentricHeading));
-
         double speedContributionFromX = fieldCentricX * Math.cos(Units.degreesToRadians(desiredHeading));
         double speedContributionFromY = fieldCentricY * Math.sin(Units.degreesToRadians(desiredHeading));
         double speed = -Math.sqrt(speedContributionFromX*speedContributionFromX + speedContributionFromY*speedContributionFromY);
 
 
         // calculate updated drive values
-        calculatedX = speed * Math.cos(Units.degreesToRadians(desiredHeading));
-        calculatedY = speed * Math.sin(Units.degreesToRadians(desiredHeading));
-        calculatedDesiredRotation = FieldPoseHelper.getReefTargetLineupRotation(lockedTargetId);
-        if (!Robot.isRedAlliance()) {
-            calculatedX = calculatedX * -1;
-            calculatedY = calculatedY * -1;
-
-        }
+        calcuatedX = speed * Math.cos(Units.degreesToRadians(desiredHeading));
+        calcuatedY = speed * Math.sin(Units.degreesToRadians(desiredHeading));
+        calculatedDesiredRotation = lineupRotation;
+        
 
         
-      //  SmartDashboard.putNumber("ATTracker_speedContributionFromX", fieldCentricSpeed);
-      //  SmartDashboard.putNumber("ATTracker_speedContributionFromY", fieldCentricHeading);
+        SmartDashboard.putNumber("ATTracker_speedContributionFromX", speedContributionFromX);
+        SmartDashboard.putNumber("ATTracker_speedContributionFromY", speedContributionFromY);
         SmartDashboard.putNumber("ATTracker_totalSpeed", speed);
         SmartDashboard.putNumber("ATTracker_targetedAprilTagId", lockedTargetId);
-        SmartDashboard.putNumber("ATTracker_calculatedX", calculatedX);
-        SmartDashboard.putNumber("ATTracker_calculatedY", calculatedY);
-        SmartDashboard.putNumber("ATTracker_rotation", calculatedDesiredRotation.getDegrees());
-        SmartDashboard.putNumber("ATTracker_currentRobotRotation", currentRobotRotation);
+        SmartDashboard.putNumber("ATTracker_calcX", calcuatedX);
+        SmartDashboard.putNumber("ATTracker_calcY", calcuatedY);
+        SmartDashboard.putNumber("ATTracker_calcRotation", calculatedDesiredRotation.getDegrees());
+        SmartDashboard.putNumber("ATTracker_currentRobotRotation", currentPose.getRotation().getDegrees());
         SmartDashboard.putNumber("ATTracker_targetYaw", hasVisibleTarget? target.getYaw() : 0);
         SmartDashboard.putNumber("ATTracker_desiredHeading", desiredHeading);
         
     }
 
-    public double getCalculatedX() {
-        return calculatedX;
+    public double getCalcuatedX() {
+        return calcuatedX;
     }
 
     public double getCalculatedY() {
-        return calculatedY;
+        return calcuatedY;
     }
 
     public Rotation2d getRotationTarget() {
         return calculatedDesiredRotation;
+    }
+
+    private double getDesiredHeading(double targetYaw, Rotation2d robotRotation, Rotation2d lineupRotation) {
+        double modifiedYaw = targetYaw * 2.0;
+        double robotRotationDegrees = robotRotation.getDegrees();
+        double calculatedHeading = robotRotationDegrees - modifiedYaw;
+        double lowerConstraint = lineupRotation.getDegrees() - 90;
+        double upperConstraint = lineupRotation.getDegrees() + 90;
+        //if(calculatedHeading < lowerConstraint) return lowerConstraint;
+        //else if(calculatedHeading > upperConstraint) return upperConstraint;
+        //else return calculatedHeading;
+        return calculatedHeading;
     }
     
     private PhotonTrackedTarget chooseTarget() {

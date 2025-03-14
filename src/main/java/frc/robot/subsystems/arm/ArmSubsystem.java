@@ -114,6 +114,15 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
         moveArm(position);
     }
 
+    public void moveArmSlowAlgae(double speed, double position, StateMachineCallback callback){
+        stateMachineCallback = callback;
+        mmReq.Velocity = speed;
+        mmReq.Acceleration = ArmConstants.slowedArmAcceleration;
+        System.out.println("ArmSubsystem slowed velocity: " + ArmConstants.slowedArmVelocity + " accel: " + ArmConstants.slowedArmAcceleration);
+        callbackOnDone = true;
+        moveArm(position);
+    }
+
     public void moveArmSlowSpeed(double position, StateMachineCallback callback){
         stateMachineCallback = callback;
         moveArmSlowSpeed(position);
@@ -131,7 +140,7 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
 
         armCANcoder = new CANcoder(ArmConstants.armCancoderDeviceId, "canivore1");
         CANcoderConfiguration cancoderConfigs = new CANcoderConfiguration();
-        cancoderConfigs.MagnetSensor.MagnetOffset = -0.216552734375;
+        cancoderConfigs.MagnetSensor.MagnetOffset = -0.2138671875;     //-0.216552734375
         cancoderConfigs.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5; // TODO what should this be?
         cancoderConfigs.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
         armCANcoder.getConfigurator().apply(cancoderConfigs);

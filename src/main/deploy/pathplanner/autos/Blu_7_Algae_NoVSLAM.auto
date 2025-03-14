@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Tele_1_p1"
+            "pathName": "Tele_1_p1_NoVSLAM"
           }
         },
         {
@@ -25,7 +25,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Tele_1_p2"
+            "pathName": "Tele_1_p2_NoVSLAM"
           }
         },
         {
@@ -43,7 +43,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Tele_1_p3"
+            "pathName": "Tele_1_p3_NoVSLAM"
           }
         },
         {
@@ -61,7 +61,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Tele_1_p4"
+            "pathName": "Tele_1_p4_NoVSLAM"
           }
         }
       ]

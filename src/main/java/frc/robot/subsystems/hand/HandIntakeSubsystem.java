@@ -184,8 +184,9 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
             stop();
             releaseRunningTime = 0;
             releaseStartedTime = 0;
+            System.out.println("HandIntakeSubsystem stopped release");
             if(scoreStateMachineCallback != null) {
-                System.out.println("HandIntakeSubsystem stopped release, should have finished shooting");
+                System.out.println("HandIntakeSubsystem notifying state machine that release stopped");
                 scoreStateMachineCallback.setInput(SequenceInput.RELEASED_PIECE);
                 scoreStateMachineCallback = null;
             }

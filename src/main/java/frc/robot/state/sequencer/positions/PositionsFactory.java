@@ -84,6 +84,7 @@ public class PositionsFactory {
         positions.firstStageArmPosition = CORAL_L4.armForwardPosition;
         positions.firstStageArmThreshold = CORAL_L4.armForwardThreshold;
         positions.secondStageArmPosition = CORAL_L4.armScorePosition;
+        positions.clamperOpenPosition = CORAL_L4.clamperPluckAlgaePosition;
         return positions;
     }
 
