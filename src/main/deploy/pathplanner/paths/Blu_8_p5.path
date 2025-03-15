@@ -70,7 +70,7 @@
     },
     {
       "name": "CoralL4Score",
-      "waypointRelativePos": 0.567324955116697,
+      "waypointRelativePos": 0.5673249551166982,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -81,8 +81,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 5.0,
+    "maxAcceleration": 5.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -98,5 +98,5 @@
     "velocity": 0,
     "rotation": -53.13010235415599
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

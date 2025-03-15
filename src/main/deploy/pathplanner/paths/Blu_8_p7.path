@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.954523026315788,
-        "y": 6.603618421052631
+        "x": 2.6683796713835353,
+        "y": 5.053226377564169
       },
       "isLocked": false,
       "linkedName": "Blu_8_p6_stop"
     },
     {
       "anchor": {
-        "x": 4.984046052631578,
-        "y": 5.218092105263159
+        "x": 3.1944078947368415,
+        "y": 4.2944078947368425
       },
       "prevControl": {
-        "x": 4.743503289473684,
-        "y": 6.016694078947369
+        "x": 2.4439144736842104,
+        "y": 4.958305921052631
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,8 +45,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 5.0,
+    "maxAcceleration": 5.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -54,7 +54,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -121.42956561483851
+    "rotation": -5.07960786001462
   },
   "reversed": false,
   "folder": "Blu_8",
@@ -62,5 +62,5 @@
     "velocity": 0,
     "rotation": -51.76617482255302
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

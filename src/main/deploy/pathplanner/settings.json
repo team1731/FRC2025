@@ -11,8 +11,9 @@
     "Blu_3_NoVSLAM",
     "Blu_4",
     "Blu_4_NoVSLAM",
-    "Tele_1_NoVSLAM",
-    "Tele_1"
+    "Blu_8",
+    "Tele_1",
+    "Tele_1_NoVSLAM"
   ],
   "autoFolders": [
     "NoVSLAM"

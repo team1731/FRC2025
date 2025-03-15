@@ -93,6 +93,24 @@
           "data": {
             "pathName": "Blu_8_p6"
           }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Blu_8_p7"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FinishCoralScore"
+          }
         }
       ]
     }

@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.291940789473683,
-        "y": 4.996792763157894
+        "x": 5.047902504248925,
+        "y": 5.136891223551222
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.465131578947368,
-        "y": 5.9878289473684205
+        "x": 4.031496710526316,
+        "y": 6.478536184210526
       },
       "isLocked": false,
       "linkedName": "Blu_8_P1_Stop"
@@ -20,20 +20,15 @@
         "y": 7.171299342105263
       },
       "prevControl": {
-        "x": 2.087911184210526,
-        "y": 6.719078947368421
+        "x": 1.8185032894736841,
+        "y": 6.9692434210526315
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Blu_8_p2_stop"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.3223270440251572,
-      "rotationDegrees": -45.046561351385954
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
@@ -50,8 +45,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 5.0,
+    "maxAcceleration": 5.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -65,7 +60,7 @@
   "folder": "Blu_8",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -121.46013109179631
+    "rotation": -118.6809550993258
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }
