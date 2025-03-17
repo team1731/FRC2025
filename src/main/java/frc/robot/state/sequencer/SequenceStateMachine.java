@@ -39,6 +39,12 @@ public class SequenceStateMachine extends StateMachine {
         setCurrentState(SequenceState.HOME);
     }
 
+    public void hardReset() {
+        resetState();
+        setCurrentState(SequenceState.HOME);
+        System.out.println("SequenceStateMachine: hard reset complete - current state: " + currentState);
+    }
+
     /*
      * COMMAND INTERFACE
      */

@@ -62,6 +62,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
       //  System.out.println("someone is calling addvision meas");
         this.addVisionMeasurement(pose, timestamp, visionMeasurementStdDevs);  // comment this out to disable vslam
     };
+    private DrivetrainSetPoseCallback setPoseCallback = () -> {
+        //  System.out.println("someone is calling addvision meas");
+          this.configureInitialPosition();  // comment this out to disable vslam
+    };
 
     /* Swerve requests to apply during SysId characterization */
     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
@@ -139,7 +143,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         super(driveTrainConstants, OdometryUpdateFrequency, modules);
         setEnabled(enabled);
         if(!enabled) return;
-        if(useVSLAM) vslamSubsystem = new VSLAMSubsystem(visionCallback);
+        if(useVSLAM) vslamSubsystem = new VSLAMSubsystem(visionCallback, setPoseCallback);
         if(useAprilTags) aprilTagSubsystem = new AprilTagSubsystem(true);
     }
 
@@ -148,7 +152,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         super(driveTrainConstants, modules);
         setEnabled(enabled);
         if(!enabled) return;
-        if(useVSLAM) vslamSubsystem = new VSLAMSubsystem(visionCallback);
+        if(useVSLAM) vslamSubsystem = new VSLAMSubsystem(visionCallback, setPoseCallback);
         if(useAprilTags) aprilTagSubsystem = new AprilTagSubsystem(true);
     }
 
@@ -273,10 +277,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
     public void configureInitialPosition() {
         System.out.println("configureing a new position");
         // line below is from questNav
-		Pose2d startingConfiguration = Robot.isRedAlliance()
+
+        Pose2d startingConfiguration = new Pose2d(10.38, 3.01, new Rotation2d(0)); // use for RED
+        //Pose2d startingConfiguration = new Pose2d(7.168, 5.006, new Rotation2d(Math.toRadians(180))); // USE for BLUE
+	/* 	Pose2d startingConfiguration = Robot.isRedAlliance()
         ? new Pose2d(10.38, 3.01, new Rotation2d(0
         ))
         : new Pose2d(7.168, 5.006, new Rotation2d(Math.toRadians(180)));
+        */
         // Pose2d startingConfiguration = new Pose2d(1.47,5.51, new Rotation2d (0));
         resetPose(startingConfiguration);
         Rotation2d operatorPerspective = Robot.isRedAlliance() ? new Rotation2d(Math.toRadians(180))
@@ -315,7 +323,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
     // Zero the absolute 3D position of the robot
     @Override
     public void resetPose(Pose2d position) {
-        System.out.println("Adjusting the position of the robot");
+        System.out.println("Adjusting the position of the robot x=" + position.getX() +  " y = " + position.getY() + " rotation = " + position.getRotation().getDegrees());
         super.resetPose(position);
         if(useVSLAM) {
             vslamSubsystem.calculateNewOffset(position);

@@ -242,7 +242,7 @@ public class Robot extends TimedRobot {
 		if(autoCodeChanged || allianceChanged || vslamConnectionStatusChanged) {
 			m_autonomousCommand = null;
 			m_autonomousCommand = (PathPlannerAuto) AutoFactory.getAutonomousCommand(selectedAutoCode, redAlliance, isVSLAMConnected);		
-			resetToBargeSideStartingPose();
+			//resetToBargeSideStartingPose();
 			//FollowPathCommand.warmupCommand().schedule();
 
 			if (m_autonomousCommand != null){
@@ -267,7 +267,7 @@ public class Robot extends TimedRobot {
 //   █▀ ▀██ ██▄ █▀ ▀███ ██████ ▀▀▀ ██▄▀▀▄██ ▀▀ ██ ▀▀▀ ████ ████ ▀▀▀ ███ ████ ▀▀▀██ ███ ██ ▀▀▀ 
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	private void initSubsystems() {
-		driveSubsystem.configureInitialPosition();
+		//driveSubsystem.configureInitialPosition();
 		driveSubsystem.configureAutoBindings();
 		AprilTagFields.kDefaultField.loadAprilTagLayoutField(); 
 		AprilTagSubsystem aprilTagSubsystem = driveSubsystem.getAprilTagSubsystem();

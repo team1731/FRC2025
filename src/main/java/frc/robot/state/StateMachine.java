@@ -41,6 +41,8 @@ public abstract class StateMachine {
 
   protected abstract void handleSubsystemCallback(Input input);
 
+  protected abstract void hardReset(); // implements state machine specific hard reset logic
+
   
   /*
    * INPUT AND STATE TRANSITION HANDLING METHODS
