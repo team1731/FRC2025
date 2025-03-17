@@ -60,7 +60,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
     private VSLAMSubsystem vslamSubsystem;
     private DrivetrainVisionCallback visionCallback = (Pose2d pose, double timestamp, Matrix<N3,N1> visionMeasurementStdDevs) -> {
       //  System.out.println("someone is calling addvision meas");
-        this.addVisionMeasurement(pose, timestamp, visionMeasurementStdDevs);
+        this.addVisionMeasurement(pose, timestamp, visionMeasurementStdDevs);  // comment this out to disable vslam
     };
 
     /* Swerve requests to apply during SysId characterization */

@@ -14,6 +14,8 @@ import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -227,7 +229,7 @@ public class Robot extends TimedRobot {
 		}
 		
 		boolean vslamConnectionStatusChanged = false;
-		boolean isVSLAMConnected = (driveSubsystem.getVSLAMSubsytem() != null)? driveSubsystem.getVSLAMSubsytem().isConnected() : false;
+		boolean isVSLAMConnected = (driveSubsystem.getVSLAMSubsytem() != null)? driveSubsystem.getVSLAMSubsytem().isConnected() : false;   // hardcode to false to disable
 		if(isVSLAMConnected != lastVSLAMConnectedCheck) {
 			System.out.println("VSLAM connection status changed. VSLAM connection status: " + (isVSLAMConnected? "Connected" : "Disconnected"));
 			vslamConnectionStatusChanged = true;
@@ -240,8 +242,8 @@ public class Robot extends TimedRobot {
 		if(autoCodeChanged || allianceChanged || vslamConnectionStatusChanged) {
 			m_autonomousCommand = null;
 			m_autonomousCommand = (PathPlannerAuto) AutoFactory.getAutonomousCommand(selectedAutoCode, redAlliance, isVSLAMConnected);		
-			driveSubsystem.resetPose(m_autonomousCommand.getStartingPose());
-			FollowPathCommand.warmupCommand().schedule();
+			resetToBargeSideStartingPose();
+			//FollowPathCommand.warmupCommand().schedule();
 
 			if (m_autonomousCommand != null){
 				autoCode = selectedAutoCode;
@@ -250,6 +252,12 @@ public class Robot extends TimedRobot {
 				System.out.println("\nAUTO CODE " + selectedAutoCode + " IS NOT IMPLEMENTED -- STAYING WITH AUTO CODE " + autoCode);
 			}
 		}
+	}
+
+	public void resetToBargeSideStartingPose() {
+		Pose2d resetPosition = Robot.isRedAlliance() ? new Pose2d(10.38, 3.01, new Rotation2d(Math.toRadians(0)))
+			: new Pose2d(7.168, 5.006, new Rotation2d(Math.toRadians(180)));
+		driveSubsystem.resetPose(resetPosition);
 	}
 
 
