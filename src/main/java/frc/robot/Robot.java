@@ -225,11 +225,12 @@ public class Robot extends TimedRobot {
 			System.out.println("\n\n===============>>>>>>>>>>>>>>  WE ARE " + (isRedAlliance ? "RED" : "BLUE")
 					+ " ALLIANCE  <<<<<<<<<<<<=========================");
 			redAlliance = isRedAlliance;
+			driveSubsystem.configureInitialPosition();
 			allianceChanged = true;
 		}
 		
 		boolean vslamConnectionStatusChanged = false;
-		boolean isVSLAMConnected = (driveSubsystem.getVSLAMSubsytem() != null)? driveSubsystem.getVSLAMSubsytem().isConnected() : false;   // hardcode to false to disable
+		boolean isVSLAMConnected = (driveSubsystem.getVSLAMSubsytem() != null)? driveSubsystem.getVSLAMSubsytem().isConnected() : false; 
 		if(isVSLAMConnected != lastVSLAMConnectedCheck) {
 			System.out.println("VSLAM connection status changed. VSLAM connection status: " + (isVSLAMConnected? "Connected" : "Disconnected"));
 			vslamConnectionStatusChanged = true;
@@ -242,8 +243,7 @@ public class Robot extends TimedRobot {
 		if(autoCodeChanged || allianceChanged || vslamConnectionStatusChanged) {
 			m_autonomousCommand = null;
 			m_autonomousCommand = (PathPlannerAuto) AutoFactory.getAutonomousCommand(selectedAutoCode, redAlliance, isVSLAMConnected);		
-			//resetToBargeSideStartingPose();
-			//FollowPathCommand.warmupCommand().schedule();
+			FollowPathCommand.warmupCommand().schedule();
 
 			if (m_autonomousCommand != null){
 				autoCode = selectedAutoCode;
@@ -254,12 +254,6 @@ public class Robot extends TimedRobot {
 		}
 	}
 
-	public void resetToBargeSideStartingPose() {
-		Pose2d resetPosition = Robot.isRedAlliance() ? new Pose2d(10.38, 3.01, new Rotation2d(Math.toRadians(0)))
-			: new Pose2d(7.168, 5.006, new Rotation2d(Math.toRadians(180)));
-		driveSubsystem.resetPose(resetPosition);
-	}
-
 
 //   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 //   █▄ ▄██ ▀██ █▄ ▄█▄▄ ▄▄████ ▄▄▄ ██ ██ ██ ▄▄▀██ ▄▄▄ ██ ███ ██ ▄▄▄ █▄▄ ▄▄██ ▄▄▄██ ▄▀▄ ██ ▄▄▄ 
@@ -267,7 +261,6 @@ public class Robot extends TimedRobot {
 //   █▀ ▀██ ██▄ █▀ ▀███ ██████ ▀▀▀ ██▄▀▀▄██ ▀▀ ██ ▀▀▀ ████ ████ ▀▀▀ ███ ████ ▀▀▀██ ███ ██ ▀▀▀ 
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	private void initSubsystems() {
-		//driveSubsystem.configureInitialPosition();
 		driveSubsystem.configureAutoBindings();
 		AprilTagFields.kDefaultField.loadAprilTagLayoutField(); 
 		AprilTagSubsystem aprilTagSubsystem = driveSubsystem.getAprilTagSubsystem();

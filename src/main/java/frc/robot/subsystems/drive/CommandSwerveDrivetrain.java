@@ -19,12 +19,9 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
-import frc.robot.state.StateMachineCallback;
 import frc.robot.subsystems.ToggleableSubsystem;
 import frc.robot.subsystems.vision.AprilTagSubsystem;
 import frc.robot.subsystems.vision.VSLAMSubsystem;
-import frc.robot.subsystems.vision.helpers.FieldPoseHelper;
-
 import static edu.wpi.first.units.Units.*;
 import frc.robot.autos.AutoFactory;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -41,7 +38,6 @@ import com.pathplanner.lib.path.PathConstraints;
  */
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements ToggleableSubsystem {
     private boolean enabled;
-    private StateMachineCallback stateMachineCallback;
     private final SwerveRequest.ApplyRobotSpeeds autoRequest = new SwerveRequest.ApplyRobotSpeeds();
 
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
@@ -50,6 +46,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
     private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
     /* Keep track if we've ever applied the operator perspective before or not */
     private boolean m_hasAppliedOperatorPerspective = false;
+    private boolean m_hasConfiguredInitialPosition = false;
 
     /* AprilTag vision */
     private boolean useAprilTags = true;
@@ -59,11 +56,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
     private boolean useVSLAM = true;
     private VSLAMSubsystem vslamSubsystem;
     private DrivetrainVisionCallback visionCallback = (Pose2d pose, double timestamp, Matrix<N3,N1> visionMeasurementStdDevs) -> {
-      //  System.out.println("someone is calling addvision meas");
         this.addVisionMeasurement(pose, timestamp, visionMeasurementStdDevs);  // comment this out to disable vslam
     };
     private DrivetrainSetPoseCallback setPoseCallback = () -> {
-        //  System.out.println("someone is calling addvision meas");
           this.configureInitialPosition();  // comment this out to disable vslam
     };
 
@@ -143,8 +138,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         super(driveTrainConstants, OdometryUpdateFrequency, modules);
         setEnabled(enabled);
         if(!enabled) return;
-        if(useVSLAM) vslamSubsystem = new VSLAMSubsystem(visionCallback, setPoseCallback);
         if(useAprilTags) aprilTagSubsystem = new AprilTagSubsystem(true);
+        if(useVSLAM) {
+            vslamSubsystem = new VSLAMSubsystem(visionCallback, setPoseCallback);
+            vslamSubsystem.configure();
+        }
     }
 
     public CommandSwerveDrivetrain(boolean enabled, SwerveDrivetrainConstants driveTrainConstants,
@@ -152,8 +150,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         super(driveTrainConstants, modules);
         setEnabled(enabled);
         if(!enabled) return;
-        if(useVSLAM) vslamSubsystem = new VSLAMSubsystem(visionCallback, setPoseCallback);
         if(useAprilTags) aprilTagSubsystem = new AprilTagSubsystem(true);
+        if(useVSLAM) {
+            vslamSubsystem = new VSLAMSubsystem(visionCallback, setPoseCallback);
+            vslamSubsystem.configure();
+        }
     }
 
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
@@ -187,11 +188,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
             ), 
             0
         );
-    }
-
-    public Command driveToPose(Pose2d targetPose, StateMachineCallback callback) {
-        stateMachineCallback = callback;
-        return driveToPose(targetPose);
     }
 
     /*
@@ -274,21 +270,25 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         return m_sysIdRoutineToApply.dynamic(direction);
     }
     
+    /*
+     * This method will get called in two instances:
+     * 1. After the VSLAM connects successfully
+     * 2. When the alliance changes
+     */
     public void configureInitialPosition() {
-        System.out.println("configureing a new position");
-        // line below is from questNav
+        // If using VSLAM, don't configure the position until the VSLAM is connected
+        if((useVSLAM && vslamSubsystem == null) || (vslamSubsystem != null && !vslamSubsystem.isConnected())) return;
 
-        Pose2d startingConfiguration = new Pose2d(10.38, 3.01, new Rotation2d(0)); // use for RED
-        //Pose2d startingConfiguration = new Pose2d(7.168, 5.006, new Rotation2d(Math.toRadians(180))); // USE for BLUE
-	/* 	Pose2d startingConfiguration = Robot.isRedAlliance()
-        ? new Pose2d(10.38, 3.01, new Rotation2d(0
-        ))
-        : new Pose2d(7.168, 5.006, new Rotation2d(Math.toRadians(180)));
-        */
-        // Pose2d startingConfiguration = new Pose2d(1.47,5.51, new Rotation2d (0));
+        System.out.println("CommandSwerveDrivetrain: configuring a new position");
+
+	    Pose2d startingConfiguration = Robot.isRedAlliance()? 
+            new Pose2d(10.38, 3.01, new Rotation2d(0)) : 
+            new Pose2d(7.168, 5.006, new Rotation2d(Math.toRadians(180)));
         resetPose(startingConfiguration);
-        Rotation2d operatorPerspective = Robot.isRedAlliance() ? new Rotation2d(Math.toRadians(180))
-                : new Rotation2d(Math.toRadians(0));
+
+        Rotation2d operatorPerspective = Robot.isRedAlliance()? 
+                new Rotation2d(Math.toRadians(180)) : 
+                new Rotation2d(Math.toRadians(0));
         setOperatorPerspectiveForward(operatorPerspective);
     }
 

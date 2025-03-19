@@ -65,8 +65,6 @@ public class VSLAMSubsystem {
         poseConfigCallback = poseCallback;
         networkTableInstance = NetworkTableInstance.getDefault();
         startingOffset = new Pose2d();
-
-        configure();
     }
 
     public void configure() {
