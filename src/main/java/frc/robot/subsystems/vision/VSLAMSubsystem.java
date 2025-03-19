@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.subsystems.drive.DrivetrainSetPoseCallback;
 import frc.robot.subsystems.drive.DrivetrainVisionCallback;
 
 
@@ -44,7 +45,8 @@ public class VSLAMSubsystem {
     private FloatArraySubscriber questEulerAngles;
     private DoubleSubscriber questBattery;
 
-    private DrivetrainVisionCallback drivetrainCallback;
+    private DrivetrainVisionCallback visionMeasurementCallback;
+    private DrivetrainSetPoseCallback poseConfigCallback;
 
     private final Field2d oculusPoseField = new Field2d();
     private final Field2d oculusRawPoseField = new Field2d();
@@ -58,12 +60,11 @@ public class VSLAMSubsystem {
    */
      public static final Transform2d ROBOT_TO_OCULUS = new Transform2d(Units.inchesToMeters(6.0), Units.inchesToMeters(-10), new Rotation2d());
 
-    public VSLAMSubsystem(DrivetrainVisionCallback callback) {
-        drivetrainCallback = callback;
+    public VSLAMSubsystem(DrivetrainVisionCallback visionCallback, DrivetrainSetPoseCallback poseCallback) {
+        visionMeasurementCallback = visionCallback;
+        poseConfigCallback = poseCallback;
         networkTableInstance = NetworkTableInstance.getDefault();
         startingOffset = new Pose2d();
-
-        configure();
     }
 
     public void configure() {
@@ -131,6 +132,7 @@ public class VSLAMSubsystem {
     public void calculateNewOffset(Pose2d newPose) {
         resetPoseOculus = new Pose2d().transformBy(ROBOT_TO_OCULUS.inverse());
         resetPoseRobot = newPose;
+        System.out.println("calculating a new offset");
         if (questMiso.get() != 99) {
             questMosi.set(1);
           }
@@ -162,6 +164,8 @@ public class VSLAMSubsystem {
         return networkTableInstance.addConnectionListener(true, event -> {
             if (event.is(NetworkTableEvent.Kind.kConnected)) {
                 System.out.println("Connected to " + event.connInfo.remote_id);
+                poseConfigCallback.configureInitialPosition();
+                
             } else if (event.is(NetworkTableEvent.Kind.kDisconnected)) {
                 System.out.println("Disconnected from " + event.connInfo.remote_id);
             }
@@ -182,8 +186,7 @@ public class VSLAMSubsystem {
                 Pose2d oculousRawPose = new Pose2d(oculousRawPosition,oculousRawRotation);
 
               //  Pose2d oculusrobotmove = oculousRawPose.transformBy(ROBOT_TO_OCULUS.inverse());
-              //  oculusRawPoseField.setRobotPose(oculusrobotmove);
-
+          //      oculusRawPoseField.setRobotPose(oculousRawPose);
               //  var positionrelativetoreset = oculousRawPose.minus(resetPoseOculus);
                // var estPose = resetPoseRobot.plus(positionrelativetoreset);
                 //var estPose = resetPoseRobot.transformBy(oculousRawPose);
@@ -228,7 +231,7 @@ public class VSLAMSubsystem {
                         timestamp,
                         Timer.getFPGATimestamp()));
                  oculusPoseField.setRobotPose(estPose);
-                drivetrainCallback.addVisionMeasurement(estPose, timestamp, VisionConstants.kVSLAMStdDevs);
+                visionMeasurementCallback.addVisionMeasurement(estPose, timestamp, VisionConstants.kVSLAMStdDevs);
             });
     }
 

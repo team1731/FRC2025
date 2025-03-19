@@ -14,6 +14,8 @@ import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -223,11 +225,12 @@ public class Robot extends TimedRobot {
 			System.out.println("\n\n===============>>>>>>>>>>>>>>  WE ARE " + (isRedAlliance ? "RED" : "BLUE")
 					+ " ALLIANCE  <<<<<<<<<<<<=========================");
 			redAlliance = isRedAlliance;
+			driveSubsystem.configureInitialPosition();
 			allianceChanged = true;
 		}
 		
 		boolean vslamConnectionStatusChanged = false;
-		boolean isVSLAMConnected = (driveSubsystem.getVSLAMSubsytem() != null)? driveSubsystem.getVSLAMSubsytem().isConnected() : false;
+		boolean isVSLAMConnected = (driveSubsystem.getVSLAMSubsytem() != null)? driveSubsystem.getVSLAMSubsytem().isConnected() : false; 
 		if(isVSLAMConnected != lastVSLAMConnectedCheck) {
 			System.out.println("VSLAM connection status changed. VSLAM connection status: " + (isVSLAMConnected? "Connected" : "Disconnected"));
 			vslamConnectionStatusChanged = true;
@@ -240,7 +243,6 @@ public class Robot extends TimedRobot {
 		if(autoCodeChanged || allianceChanged || vslamConnectionStatusChanged) {
 			m_autonomousCommand = null;
 			m_autonomousCommand = (PathPlannerAuto) AutoFactory.getAutonomousCommand(selectedAutoCode, redAlliance, isVSLAMConnected);		
-			driveSubsystem.resetPose(m_autonomousCommand.getStartingPose());
 			FollowPathCommand.warmupCommand().schedule();
 
 			if (m_autonomousCommand != null){
@@ -259,7 +261,6 @@ public class Robot extends TimedRobot {
 //   █▀ ▀██ ██▄ █▀ ▀███ ██████ ▀▀▀ ██▄▀▀▄██ ▀▀ ██ ▀▀▀ ████ ████ ▀▀▀ ███ ████ ▀▀▀██ ███ ██ ▀▀▀ 
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	private void initSubsystems() {
-		driveSubsystem.configureInitialPosition();
 		driveSubsystem.configureAutoBindings();
 		AprilTagFields.kDefaultField.loadAprilTagLayoutField(); 
 		AprilTagSubsystem aprilTagSubsystem = driveSubsystem.getAprilTagSubsystem();
