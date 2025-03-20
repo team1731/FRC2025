@@ -67,8 +67,29 @@ public class RobotContainer {
   private final Trigger dPOVDown = xboxController.povDown();
 
   /* Operator Buttons */
-  private final Joystick opJoystick = new Joystick(1);
-  private final JoystickButton opPostA = new JoystickButton(opJoystick, JoystickConstants.opA);
+  private final Joystick opJoystick1 = new Joystick(1);
+  private final JoystickButton opPostA = new JoystickButton(opJoystick1, JoystickConstants.opA);
+  private final JoystickButton opPostB = new JoystickButton(opJoystick1, JoystickConstants.opB);
+  private final JoystickButton opPostC = new JoystickButton(opJoystick1, JoystickConstants.opC);
+  private final JoystickButton opPostD = new JoystickButton(opJoystick1, JoystickConstants.opD);
+  private final JoystickButton opPostE = new JoystickButton(opJoystick1, JoystickConstants.opE);
+  private final JoystickButton opPostF = new JoystickButton(opJoystick1, JoystickConstants.opF);
+  private final JoystickButton opPostG = new JoystickButton(opJoystick1, JoystickConstants.opG);
+  private final JoystickButton opPostH = new JoystickButton(opJoystick1, JoystickConstants.opH);
+  private final JoystickButton opPostI = new JoystickButton(opJoystick1, JoystickConstants.opI);
+  private final JoystickButton opPostJ = new JoystickButton(opJoystick1, JoystickConstants.opJ);
+  private final JoystickButton opPostK = new JoystickButton(opJoystick1, JoystickConstants.opK);
+  private final JoystickButton opPostL = new JoystickButton(opJoystick1, JoystickConstants.opL);
+  private final Joystick opJoystick2 = new Joystick(2);
+  private final JoystickButton opbButton1 = new JoystickButton(opJoystick2, JoystickConstants.op1);
+  private final JoystickButton opbButton2 = new JoystickButton(opJoystick2, JoystickConstants.op2);
+  private final JoystickButton opbButton3 = new JoystickButton(opJoystick2, JoystickConstants.op3);
+  private final JoystickButton opbButton4 = new JoystickButton(opJoystick2, JoystickConstants.op4);
+  private final JoystickButton opbButton5 = new JoystickButton(opJoystick2, JoystickConstants.op5);
+  private final JoystickButton opbButton6 = new JoystickButton(opJoystick2, JoystickConstants.op6);
+  private final JoystickButton opbButton7 = new JoystickButton(opJoystick2, JoystickConstants.op7);
+  private final JoystickButton opbButton8 = new JoystickButton(opJoystick2, JoystickConstants.op8);
+  
   private final Trigger opStart = xboxOperatorController.start();
   private final Trigger opBack = xboxOperatorController.back();
   private final Trigger opY = xboxOperatorController.y();
@@ -185,10 +206,6 @@ public class RobotContainer {
       new InstantCommand(() -> armSubsystem.moveArmNormalSpeed(ArmConstants.halfedArmPosition)) 
     ));
 
-    // Operator drive to target buttons
-    opPostA.onTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.A)));
-    // TODO add all of the button bindings for the reef post buttons on the switchboard
-
     //bring the climber to the stow position
     opBack.onTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.climbStowPosition)));
 
@@ -196,6 +213,43 @@ public class RobotContainer {
       .onFalse(new InstantCommand(() -> SequenceManager.setShouldPluckAlgae(false)));
 
     opRightBumper.onTrue(new InstantCommand(() -> SequenceManager.stateMachineHardReset()));
+
+    // Operator drive to target buttons
+    opPostA.onTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.A)));
+
+    // opPostB.whileTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.B)));
+    // opPostC.whileTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.C)));
+    // opPostD.whileTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.D)));
+    // opPostE.whileTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.E)));
+    // opPostF.whileTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.F)));
+    // opPostG.whileTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.G)));
+    // opPostH.whileTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.H)));
+    // opPostI.whileTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.I)));
+    // opPostJ.whileTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.J)));
+    // opPostK.whileTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.K)));
+    // opPostL.whileTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.L)));
+
+    opPostA.onTrue(new InstantCommand(() -> System.out.println("button A")));
+    opPostB.onTrue(new InstantCommand(() -> System.out.println("button B")));
+    opPostC.onTrue(new InstantCommand(() -> System.out.println("button C")));
+    opPostD.onTrue(new InstantCommand(() -> System.out.println("button D")));
+    opPostE.onTrue(new InstantCommand(() -> System.out.println("button E")));
+    opPostF.onTrue(new InstantCommand(() -> System.out.println("button F")));
+    opPostG.onTrue(new InstantCommand(() -> System.out.println("button G")));
+    opPostH.onTrue(new InstantCommand(() -> System.out.println("button H")));
+    opPostI.onTrue(new InstantCommand(() -> System.out.println("button I")));
+    opPostJ.onTrue(new InstantCommand(() -> System.out.println("button J")));
+    opPostK.onTrue(new InstantCommand(() -> System.out.println("button K")));
+    opPostL.onTrue(new InstantCommand(() -> System.out.println("button L")));
+
+    opbButton1.onTrue(new InstantCommand(() -> System.out.println("button 1")));
+    opbButton2.onTrue(new InstantCommand(() -> System.out.println("button 2")));
+    opbButton3.onTrue(new InstantCommand(() -> System.out.println("button 3")));
+    opbButton4.onTrue(new InstantCommand(() -> System.out.println("button 4")));
+    opbButton5.onTrue(new InstantCommand(() -> System.out.println("button 5")));
+    opbButton6.onTrue(new InstantCommand(() -> System.out.println("button 6")));
+    opbButton7.onTrue(new InstantCommand(() -> System.out.println("button 7")));
+    opbButton8.onTrue(new InstantCommand(() -> System.out.println("button 8")));
 
     driveSubsystem.registerTelemetry(logger::telemeterize);
   }
