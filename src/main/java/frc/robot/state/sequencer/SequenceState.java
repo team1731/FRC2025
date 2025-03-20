@@ -18,6 +18,7 @@ public enum SequenceState implements State {
     OPENING_HAND,
     CLOSING_HAND,
     UPDATING_LEVEL,
+    UNSTUCKING,
     INIT_RESET,
     RESETTING,
     FINISHING
