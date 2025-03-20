@@ -11,6 +11,10 @@ public final class Constants {
     public static final int kTICKS = 33024; // 16.125 * 2048;
     public static final String CANBUS_NAME = "canivore1";
 
+    public static final class JoystickConstants {
+        public static final int opA = 1;
+    }
+
     public static final class LogConstants {
         /*
          * To write to a log you must:

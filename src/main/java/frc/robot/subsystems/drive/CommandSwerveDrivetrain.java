@@ -162,6 +162,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         return run(() -> this.setControl(requestSupplier.get()));
     }
 
+    public void runRequest(Supplier<SwerveRequest> requestSupplier) {
+        if(!enabled) return;
+        this.setControl(requestSupplier.get());
+    }
+
     public ChassisSpeeds getCurrentRobotChassisSpeeds() {
         if (!enabled || Robot.isSimulation())
             return new ChassisSpeeds();

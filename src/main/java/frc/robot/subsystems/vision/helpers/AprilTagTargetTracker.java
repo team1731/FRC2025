@@ -8,13 +8,13 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.subsystems.vision.AprilTagSubsystem;
-import frc.robot.subsystems.vision.AprilTagSubsystem.AprilTagTarget;
+import frc.robot.subsystems.vision.ReefTarget;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.camera.Camera;
 
 public class AprilTagTargetTracker {
-    private Camera camera1;
-    private Camera camera2;
+    private AprilTagSubsystem aprilTagSubsystem;
+    private static ReefTarget currentReefTarget;
     private Camera lockedCamera;
     private int lockedTargetId;
     private double lastHeading;
@@ -23,9 +23,12 @@ public class AprilTagTargetTracker {
     private Rotation2d calculatedDesiredRotation;
     private boolean hasVisibleTarget = false;
 
-    public AprilTagTargetTracker(Camera camera1, Camera camera2) {
-        this.camera1 = camera1;
-        this.camera2 = camera2;
+    public AprilTagTargetTracker(AprilTagSubsystem subsystem) {
+        aprilTagSubsystem = subsystem;
+    }
+
+    public static void setReefTarget(ReefTarget reefTarget) {
+        currentReefTarget = reefTarget;
     }
 
     public boolean hasVisibleTarget() {
@@ -61,10 +64,6 @@ public class AprilTagTargetTracker {
         lastHeading = desiredHeading; // store this value for re-use in case don't see target the next time around
 
         // calculate speed
-      //  double fieldCentricSpeed = Math.sqrt(fieldCentricX*fieldCentricX - fieldCentricY*fieldCentricY);
-       // double fieldCentricHeading = Math.atan(fieldCentricY/fieldCentricX);
-       // double speed = fieldCentricSpeed * Math.cos(desiredHeading + Math.toRadians(fieldCentricHeading));
-
         double speedContributionFromX = fieldCentricX * Math.cos(Units.degreesToRadians(desiredHeading));
         double speedContributionFromY = fieldCentricY * Math.sin(Units.degreesToRadians(desiredHeading));
         double speed = -Math.sqrt(speedContributionFromX*speedContributionFromX + speedContributionFromY*speedContributionFromY);
@@ -81,8 +80,8 @@ public class AprilTagTargetTracker {
         }
 
         
-      //  SmartDashboard.putNumber("ATTracker_speedContributionFromX", fieldCentricSpeed);
-      //  SmartDashboard.putNumber("ATTracker_speedContributionFromY", fieldCentricHeading);
+        //SmartDashboard.putNumber("ATTracker_speedContributionFromX", speedContributionFromX);
+        //SmartDashboard.putNumber("ATTracker_speedContributionFromY", speedContributionFromY);
         SmartDashboard.putNumber("ATTracker_totalSpeed", speed);
         SmartDashboard.putNumber("ATTracker_targetedAprilTagId", lockedTargetId);
         SmartDashboard.putNumber("ATTracker_calculatedX", calculatedX);
@@ -105,35 +104,16 @@ public class AprilTagTargetTracker {
     public Rotation2d getRotationTarget() {
         return calculatedDesiredRotation;
     }
-    
+
     private PhotonTrackedTarget chooseTarget() {
-        Camera winningCamera = null;
-        PhotonTrackedTarget winningTarget = null;
-        double winningTargetSize = 0;
+        if(aprilTagSubsystem == null) return null;
 
-        List<AprilTagTarget> targetMap = AprilTagSubsystem.getCombinedTargets(camera1, camera2);
-        if(targetMap == null) return null;
-
-        for(var mapping : targetMap) {
-            PhotonTrackedTarget target = mapping.target;
-            int targetId = target.getFiducialId();
-
-            if(!FieldPoseHelper.isReefTarget(targetId)) continue;
-            double fovRatio = (mapping.camera.getName() == VisionConstants.camera2Name)? VisionConstants.camera2FOVRatio : 1.0;
-            double targetSize = Math.abs(target.getArea()) * fovRatio;
-            if(winningTarget == null || targetSize > winningTargetSize) {
-                winningCamera = mapping.camera;
-                winningTarget = target;
-                winningTargetSize = targetSize;
-            }
-        }
-
-        if(winningTarget != null) {
-            lockedCamera = winningCamera;
-            lockedTargetId = winningTarget.getFiducialId();
-        }
-
-        return winningTarget;
+        lockedTargetId = currentReefTarget.getTargetId();
+        lockedCamera = currentReefTarget.getCameraName() == VisionConstants.camera1Name? 
+            aprilTagSubsystem.getCamera1() : 
+            aprilTagSubsystem.getCamera2();
+        
+        return lookForLockedTarget();
     }
 
     private PhotonTrackedTarget lookForLockedTarget() {

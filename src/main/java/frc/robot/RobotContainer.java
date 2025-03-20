@@ -8,27 +8,24 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
-
-import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.swerve.SwerveRequest;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.ClimbReadyCommand;
-import frc.robot.commands.DriveToTargetCommand;
-import frc.robot.commands.DriveToTargetCommandAlt;
+import frc.robot.Constants.JoystickConstants;
+import frc.robot.commands.DriveCommand;
 import frc.robot.commands.ResetSequenceCommand;
 import frc.robot.commands.RunSequenceCommand;
+import frc.robot.commands.DriveCommand.DriveMode;
 import frc.robot.generated.TunerConstants;
 import frc.robot.state.sequencer.Action;
 import frc.robot.state.sequencer.GamePiece;
 import frc.robot.state.sequencer.Level;
 import frc.robot.state.sequencer.SequenceManager;
-import frc.robot.subsystems.*;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.climb.ClimbConstants;
@@ -37,20 +34,12 @@ import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
 import frc.robot.subsystems.leds.LEDSubsystem;
-import frc.robot.subsystems.vision.camera.CameraChoice;
+import frc.robot.subsystems.vision.ReefTarget;
+import frc.robot.subsystems.vision.helpers.AprilTagTargetTracker;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
 
 public class RobotContainer {
   private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-  private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
-
-  /* Setting up bindings for necessary control of the swerve drive platform */
-  private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-      .withDeadband(MaxSpeed * 0.05).withRotationalDeadband(MaxAngularRate * 0.05) // Add a 10% deadband
-      .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
-  private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-  private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
-
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
   private final CommandXboxController xboxController = new CommandXboxController(0);
@@ -78,21 +67,17 @@ public class RobotContainer {
   private final Trigger dPOVDown = xboxController.povDown();
 
   /* Operator Buttons */
-
+  private final Joystick opJoystick = new Joystick(1);
+  private final JoystickButton opPostA = new JoystickButton(opJoystick, JoystickConstants.opA);
   private final Trigger opStart = xboxOperatorController.start();
   private final Trigger opBack = xboxOperatorController.back();
   private final Trigger opY = xboxOperatorController.y();
   private final Trigger opB = xboxOperatorController.b();
   private final Trigger opA = xboxOperatorController.a();
   private final Trigger opX = xboxOperatorController.x();
-  private final Trigger opLeftBumper = xboxOperatorController.leftBumper();
   private final Trigger opRightBumper = xboxOperatorController.rightBumper();
   private final Trigger opLeftTrigger = xboxOperatorController.leftTrigger();
   private final Trigger opRightTrigger = xboxOperatorController.rightTrigger();
-  private final Trigger opPOVDown = xboxOperatorController.povDown();
-  private final Trigger opPOVUp = xboxOperatorController.povUp();
-  private final Trigger opPOVLeft = xboxOperatorController.povLeft();
-  private final Trigger opPOVRight = xboxOperatorController.povRight();
 
   /* Subsystems */
   private CommandSwerveDrivetrain driveSubsystem;
@@ -111,7 +96,7 @@ public class RobotContainer {
       HandClamperSubsystem s_HandClamperSubsystem,
       HandIntakeSubsystem s_HandIntakeSubsystem,
       ClimbSubsystem s_ClimbSubsystem
-      ) {
+    ) {
 
     driveSubsystem = s_driveSubsystem;
     elevatorSubsystem = s_elevatorSubsystem;
@@ -130,11 +115,7 @@ public class RobotContainer {
     // and Y is defined as to the left according to WPILib convention.
 
     driveSubsystem.setDefaultCommand( // Drivetrain will execute this command periodically
-      driveSubsystem.applyRequest(
-          () -> drive.withVelocityX(-(Math.abs(xboxController.getLeftY()) * xboxController.getLeftY()) * MaxSpeed)                                                                                                                     
-              .withVelocityY(-(Math.abs(xboxController.getLeftX()) * xboxController.getLeftX()) * MaxSpeed) 
-              .withRotationalRate(-xboxController.getRightX() * MaxAngularRate)
-      )
+      new DriveCommand(driveSubsystem, xboxController)
     );
 
  
@@ -178,7 +159,8 @@ public class RobotContainer {
     dX.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L1))) //while pressed set to Level 1
       .onFalse(new InstantCommand(() -> SequenceManager.resetLevelToL4())); //if not pressed set defaullt to Level 4 
 
-    //dLeftStick.whileTrue(new DriveToTargetCommand(driveSubsystem, xboxController));
+    dRightBumper.whileTrue(new InstantCommand(() -> DriveCommand.setDriveMode(DriveMode.TARGETING)))
+      .onFalse(new InstantCommand(() -> DriveCommand.setDriveMode(DriveMode.DEFAULT)));
 
     // OPERATOR - Controls level selection
     opY.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L4))); //while pressed set to Level 4 
@@ -196,18 +178,16 @@ public class RobotContainer {
     opLeftTrigger.whileTrue(new InstantCommand(() -> SequenceManager.setGamePieceSelection(GamePiece.ALGAE)))
       .onFalse(new InstantCommand(() -> SequenceManager.setGamePieceSelection(GamePiece.CORAL)));
 
-    dLeftBumper.whileTrue(new DriveToTargetCommand(driveSubsystem, xboxController, CameraChoice.ElevSide));
-    dRightBumper.whileTrue(new DriveToTargetCommand(driveSubsystem, xboxController, CameraChoice.BatSide));
-
-    // Uncomment the line below and comment out the two above if you want operator to select the pole
-    // dLeftBumper.whileTrue(new DriveToTargetCommandAlt(driveSubsystem,xboxController, xboxOperatorController));
-
     //bring up the climb in ready position
     opStart.onTrue(new SequentialCommandGroup(
       new InstantCommand(() -> climbSubsystem.setIsClimbing(true)),
       new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.climbReadyPosition)),
       new InstantCommand(() -> armSubsystem.moveArmNormalSpeed(ArmConstants.halfedArmPosition)) 
     ));
+
+    // Operator drive to target buttons
+    opPostA.onTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.A)));
+    // TODO add all of the button bindings for the reef post buttons on the switchboard
 
     //bring the climber to the stow position
     opBack.onTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.climbStowPosition)));
@@ -218,7 +198,5 @@ public class RobotContainer {
     opRightBumper.onTrue(new InstantCommand(() -> SequenceManager.stateMachineHardReset()));
 
     driveSubsystem.registerTelemetry(logger::telemeterize);
-
-
   }
 }
