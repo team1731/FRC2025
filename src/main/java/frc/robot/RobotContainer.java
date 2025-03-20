@@ -2,8 +2,6 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-// (SCH) This RobotContainer can just be replaced with the old one.
-// However, look in the configureBindings() method for another (SCH) note.
 
 package frc.robot;
 
@@ -215,7 +213,13 @@ public class RobotContainer {
     opRightTrigger.whileTrue(new InstantCommand(() -> SequenceManager.setShouldPluckAlgae(true)))
       .onFalse(new InstantCommand(() -> SequenceManager.setShouldPluckAlgae(false)));
 
-    opRightBumper.onTrue(new InstantCommand(() -> SequenceManager.stateMachineHardReset()));
+      // Resets the state machine
+    opRightBumper.whileTrue(new SequentialCommandGroup(
+      new InstantCommand(() -> SequenceManager.stateMachineHardReset()),
+      new InstantCommand(() -> elevatorSubsystem.setElevatorUnstuck(true))))
+      .onFalse(new SequentialCommandGroup(
+        new InstantCommand(() -> elevatorSubsystem.setElevatorUnstuck(false)),
+        new InstantCommand(() -> elevatorSubsystem.stopElevator())));
 
     driveSubsystem.registerTelemetry(logger::telemeterize);
 
