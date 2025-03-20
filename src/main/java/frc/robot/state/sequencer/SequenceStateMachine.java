@@ -39,6 +39,12 @@ public class SequenceStateMachine extends StateMachine {
         setCurrentState(SequenceState.HOME);
     }
 
+    public void hardReset() {
+        resetState();
+        setCurrentState(SequenceState.HOME);
+        System.out.println("SequenceStateMachine: hard reset complete - current state: " + currentState);
+    }
+
     /*
      * COMMAND INTERFACE
      */
@@ -265,8 +271,6 @@ public class SequenceStateMachine extends StateMachine {
     }
 
     public boolean moveArmToScoreCoral() {
-   //     handClamperSubsystem.open(0.08, subsystemCallback); // comment out this line if you do not want to open clamper and strip off algae
-        
         if(SequenceManager.shouldPluckAlgae()) {
             armSubsystem.moveArmNormalSpeed(positions.secondStageArmPosition, subsystemCallback);
             handClamperSubsystem.open(positions.clamperOpenPosition);
@@ -293,8 +297,7 @@ public class SequenceStateMachine extends StateMachine {
 
 
      public boolean moveArmForBarge() {
-       // handClamperSubsystem.close();
-       armSubsystem.moveArmNormalSpeed(positions.firstStageArmPosition, subsystemCallback);
+        armSubsystem.moveArmNormalSpeed(positions.firstStageArmPosition, subsystemCallback);
         handIntakeSubsystem.release(HandConstants.releaseVelocity, 2.0, subsystemCallback);
         return true;
     }

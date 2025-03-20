@@ -215,6 +215,8 @@ public class RobotContainer {
     opRightTrigger.whileTrue(new InstantCommand(() -> SequenceManager.setShouldPluckAlgae(true)))
       .onFalse(new InstantCommand(() -> SequenceManager.setShouldPluckAlgae(false)));
 
+    opRightBumper.onTrue(new InstantCommand(() -> SequenceManager.stateMachineHardReset()));
+
     driveSubsystem.registerTelemetry(logger::telemeterize);
 
 

@@ -71,6 +71,13 @@ public class SequenceManager {
         }
     }
 
+    public static void stateMachineHardReset() {
+        if(stateMachine != null) {
+            System.out.println("SequenceManager: performing a hard reset on the state machine!!!!!!!!!!!!!!!!");
+            stateMachine.hardReset();
+        }
+    }
+
     public static SequenceStateMachine getStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem clamperSubsystem, HandIntakeSubsystem intakeSubsystem) {
         if(stateMachine ==  null) {
             stateMachine = new SequenceStateMachine(elevatorSubsystem, armSubsystem, clamperSubsystem, intakeSubsystem);
