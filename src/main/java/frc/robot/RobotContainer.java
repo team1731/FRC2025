@@ -10,7 +10,9 @@ package frc.robot;
 import static edu.wpi.first.units.Units.*;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.simulation.GenericHIDSim;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -67,7 +69,7 @@ public class RobotContainer {
   private final Trigger dPOVDown = xboxController.povDown();
 
   /* Operator Buttons */
-  private final Joystick opJoystick1 = new Joystick(1);
+  private final GenericHID opJoystick1 = new Joystick(1);
   private final JoystickButton opPostA = new JoystickButton(opJoystick1, JoystickConstants.opA);
   private final JoystickButton opPostB = new JoystickButton(opJoystick1, JoystickConstants.opB);
   private final JoystickButton opPostC = new JoystickButton(opJoystick1, JoystickConstants.opC);
@@ -80,7 +82,7 @@ public class RobotContainer {
   private final JoystickButton opPostJ = new JoystickButton(opJoystick1, JoystickConstants.opJ);
   private final JoystickButton opPostK = new JoystickButton(opJoystick1, JoystickConstants.opK);
   private final JoystickButton opPostL = new JoystickButton(opJoystick1, JoystickConstants.opL);
-  private final Joystick opJoystick2 = new Joystick(2);
+  private final GenericHID opJoystick2 = new Joystick(2);
   private final JoystickButton opbButton1 = new JoystickButton(opJoystick2, JoystickConstants.op1);
   private final JoystickButton opbButton2 = new JoystickButton(opJoystick2, JoystickConstants.op2);
   private final JoystickButton opbButton3 = new JoystickButton(opJoystick2, JoystickConstants.op3);
