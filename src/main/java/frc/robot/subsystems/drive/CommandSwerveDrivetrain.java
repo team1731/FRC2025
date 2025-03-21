@@ -197,6 +197,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
     public void periodic() {
         if(useVSLAM) {
             vslamSubsystem.cleanUpSubroutineMessages(); 
+            vslamSubsystem.processHeartbeat();
         }
 
         /*
