@@ -9,7 +9,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.simulation.GenericHIDSim;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -85,8 +84,8 @@ public class RobotContainer {
   private final JoystickButton opL2 = new JoystickButton(sideButtons, JoystickConstants.op2);
   private final JoystickButton opL3 = new JoystickButton(sideButtons, JoystickConstants.op3);
   private final JoystickButton opL4 = new JoystickButton(sideButtons, JoystickConstants.op4);
-  private final JoystickButton opAutoToggle = new JoystickButton(sideButtons, JoystickConstants.op5);
-  private final JoystickButton opReset = new JoystickButton(sideButtons, JoystickConstants.op6);
+  private final JoystickButton opTargetModeToggle = new JoystickButton(sideButtons, JoystickConstants.op5);
+  private final JoystickButton opElevReset = new JoystickButton(sideButtons, JoystickConstants.op6);
   private final JoystickButton opKnockAlgae = new JoystickButton(sideButtons, JoystickConstants.op7);
   private final JoystickButton opAlgae = new JoystickButton(sideButtons, JoystickConstants.op8);
 

@@ -38,7 +38,7 @@ public class DriveCommand extends Command {
     private double fieldCentricX;
     private double fieldCentricY;
     private double DriveToTargetMaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond)/2;   //Drive at 1/5th of the max speed!!!!!!!!!
-    private final SwerveRequest.FieldCentricFacingAngle driveAtLocation =  new SwerveRequest.FieldCentricFacingAngle().withRotationalDeadband(VisionConstants.MAX_ANGULAR_SPEED * 0.01) // Add a 10% deadband
+    private final SwerveRequest.FieldCentricFacingAngle driveAtTarget =  new SwerveRequest.FieldCentricFacingAngle().withRotationalDeadband(VisionConstants.MAX_ANGULAR_SPEED * 0.01) // Add a 10% deadband
 		.withDriveRequestType(DriveRequestType.OpenLoopVoltage).withDeadband((DriveToTargetMaxSpeed * 0.05));
 
     
@@ -57,8 +57,8 @@ public class DriveCommand extends Command {
     @Override
     public void initialize() {
         System.out.println("DriveCommand: initializing...");
-        driveAtLocation.HeadingController.setPID(10,0,0);
-	    driveAtLocation.HeadingController.enableContinuousInput(-Math.PI/2, Math.PI/2);
+        driveAtTarget.HeadingController.setPID(10,0,0);
+	    driveAtTarget.HeadingController.enableContinuousInput(-Math.PI/2, Math.PI/2);
         aprilTagTargetTracker = new AprilTagTargetTracker(m_driveSubsystem.getAprilTagSubsystem());
     }
 
@@ -72,8 +72,8 @@ public class DriveCommand extends Command {
     }
 
     private void drive() {
-        m_driveSubsystem.runRequest(
-          () -> defaultDrive.withVelocityX(-(Math.abs(m_xboxController.getLeftY()) * m_xboxController.getLeftY()) * DefaultMaxSpeed)                                                                                                                     
+        m_driveSubsystem.setControl(
+          defaultDrive.withVelocityX(-(Math.abs(m_xboxController.getLeftY()) * m_xboxController.getLeftY()) * DefaultMaxSpeed)                                                                                                                     
               .withVelocityY(-(Math.abs(m_xboxController.getLeftX()) * m_xboxController.getLeftX()) * DefaultMaxSpeed) 
               .withRotationalRate(-m_xboxController.getRightX() * DefaultMaxAngularRate)
         );
@@ -94,14 +94,14 @@ public class DriveCommand extends Command {
 
         aprilTagTargetTracker.recalculateDriveFeedback(m_driveSubsystem.getCurrentPose(), fieldCentricX, fieldCentricY);
         m_driveSubsystem.setControl(
-            driveAtLocation.withVelocityX(aprilTagTargetTracker.getCalculatedX() * DriveToTargetMaxSpeed)                                                                                                                     
+            driveAtTarget.withVelocityX(aprilTagTargetTracker.getCalculatedX() * DriveToTargetMaxSpeed)                                                                                                                     
                 .withVelocityY(aprilTagTargetTracker.getCalculatedY()* DriveToTargetMaxSpeed) 
                 .withTargetDirection(aprilTagTargetTracker.getRotationTarget())
         );
 
-        SmartDashboard.putNumber("PID Setpoint", driveAtLocation.HeadingController.getSetpoint());
-		SmartDashboard.putNumber("PID Output", driveAtLocation.HeadingController.getLastAppliedOutput());
-		SmartDashboard.putNumber("PID Error", driveAtLocation.HeadingController.getPositionError());
+        SmartDashboard.putNumber("PID Setpoint", driveAtTarget.HeadingController.getSetpoint());
+		SmartDashboard.putNumber("PID Output", driveAtTarget.HeadingController.getLastAppliedOutput());
+		SmartDashboard.putNumber("PID Error", driveAtTarget.HeadingController.getPositionError());
         SmartDashboard.putNumber ("current heading",m_driveSubsystem.getState().Pose.getRotation().getDegrees());
     }
 }
