@@ -58,9 +58,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
     private DrivetrainVisionCallback visionCallback = (Pose2d pose, double timestamp, Matrix<N3,N1> visionMeasurementStdDevs) -> {
         this.addVisionMeasurement(pose, timestamp, visionMeasurementStdDevs);  // comment this out to disable vslam
     };
-    private DrivetrainSetPoseCallback setPoseCallback = () -> {
-          this.configureInitialPosition();  // comment this out to disable vslam
-    };
 
     /* Swerve requests to apply during SysId characterization */
     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
@@ -140,7 +137,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         if(!enabled) return;
         if(useAprilTags) aprilTagSubsystem = new AprilTagSubsystem(true);
         if(useVSLAM) {
-            vslamSubsystem = new VSLAMSubsystem(visionCallback, setPoseCallback);
+            vslamSubsystem = new VSLAMSubsystem(visionCallback);
             vslamSubsystem.configure();
         }
     }
@@ -152,7 +149,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
         if(!enabled) return;
         if(useAprilTags) aprilTagSubsystem = new AprilTagSubsystem(true);
         if(useVSLAM) {
-            vslamSubsystem = new VSLAMSubsystem(visionCallback, setPoseCallback);
+            vslamSubsystem = new VSLAMSubsystem(visionCallback);
             vslamSubsystem.configure();
         }
     }
@@ -277,9 +274,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
      * 2. When the alliance changes
      */
     public void configureInitialPosition() {
-        // If using VSLAM, don't configure the position until the VSLAM is connected
-        if((useVSLAM && vslamSubsystem == null) || (vslamSubsystem != null && !vslamSubsystem.isConnected())) return;
-
         System.out.println("CommandSwerveDrivetrain: configuring a new position");
 
 	    Pose2d startingConfiguration = Robot.isRedAlliance()? 
