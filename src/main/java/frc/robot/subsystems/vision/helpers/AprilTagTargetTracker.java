@@ -112,6 +112,11 @@ public class AprilTagTargetTracker {
         lockedCamera = currentReefTarget.getCameraName() == VisionConstants.camera1Name? 
             aprilTagSubsystem.getCamera1() : 
             aprilTagSubsystem.getCamera2();
+
+        System.out.println("AprilTagTargetTracker: chose target for post " + 
+            currentReefTarget + " Target ID: " + 
+            lockedTargetId + " Camera: " + 
+            lockedCamera.getName());
         
         return lookForLockedTarget();
     }
