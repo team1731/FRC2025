@@ -28,6 +28,7 @@ public class AprilTagTargetTracker {
     }
 
     public static void setReefTarget(ReefTarget reefTarget) {
+        System.out.println("AprilTagTargetTracker: changed reef target to " + reefTarget);
         currentReefTarget = reefTarget;
     }
 
