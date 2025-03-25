@@ -12,6 +12,7 @@ import java.util.Scanner;
 
 import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -68,6 +69,8 @@ public class Robot extends TimedRobot {
 	private HandIntakeSubsystem handIntakeSubsystem;
 	private ClimbSubsystem climbSubsystem;
 	private boolean lastVSLAMConnectedCheck;
+	private Pose2d currentPose;
+	private Pose2d targetPose;
 
 	public Robot() {
 	}
@@ -133,6 +136,13 @@ public class Robot extends TimedRobot {
 		autoCommandLoader.registerAutoEventCommands();
 		autoPreload();
 		setupSmartDashboard();
+		PathPlannerLogging.setLogCurrentPoseCallback((pose) -> {
+			currentPose = pose;
+		});
+
+		PathPlannerLogging.setLogTargetPoseCallback((pose) -> {
+			targetPose = pose;
+		});
 	}
 
 	private void setupSmartDashboard() {
@@ -372,6 +382,10 @@ public class Robot extends TimedRobot {
 	public void autonomousPeriodic() {
 		if (doSD()) {
 			System.out.println("AUTO PERIODIC");
+		}
+		if (m_autonomousCommand != null && m_autonomousCommand.isRunning().getAsBoolean() && (currentPose.getTranslation().getDistance(targetPose.getTranslation()) > 0.3)) {
+			m_autonomousCommand.cancel();
+			System.out.println("Had to Kill the auto because the target pose and current pose were apart by more than a foot");
 		}
 	}
 
