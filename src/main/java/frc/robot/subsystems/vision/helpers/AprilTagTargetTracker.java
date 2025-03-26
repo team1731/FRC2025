@@ -13,21 +13,32 @@ import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.camera.Camera;
 
 public class AprilTagTargetTracker {
+    private static AprilTagTargetTracker instance;
     private AprilTagSubsystem aprilTagSubsystem;
-    private static ReefTarget currentReefTarget;
-    private Camera lockedCamera;
-    private int lockedTargetId;
+    private static ReefTarget currentReefTarget = ReefTarget.A;
+    private static Camera lockedCamera;
+    private static int lockedTargetId;
     private double lastHeading;
     private double calculatedX;
     private double calculatedY;
     private Rotation2d calculatedDesiredRotation;
     private boolean hasVisibleTarget = false;
 
-    public AprilTagTargetTracker(AprilTagSubsystem subsystem) {
+    public static AprilTagTargetTracker getTargetTracker(AprilTagSubsystem subsystem) {
+        if(instance == null) {
+            instance = new AprilTagTargetTracker(subsystem);
+        }
+        return instance;
+    }
+
+    private AprilTagTargetTracker(AprilTagSubsystem subsystem) {
         aprilTagSubsystem = subsystem;
     }
 
     public static void setReefTarget(ReefTarget reefTarget) {
+        System.out.println("AprilTagTargetTracker: changed reef target to " + reefTarget);
+        lockedTargetId = 0;
+        lockedCamera = null;
         currentReefTarget = reefTarget;
     }
 
@@ -54,7 +65,7 @@ public class AprilTagTargetTracker {
         } else {
             hasVisibleTarget = true;
         }
-
+        
         if(!hasVisibleTarget && lastHeading == 0) {
             return; // haven't captured a heading yet, nothing to re-use
         }
@@ -107,11 +118,16 @@ public class AprilTagTargetTracker {
 
     private PhotonTrackedTarget chooseTarget() {
         if(aprilTagSubsystem == null) return null;
-
+        
         lockedTargetId = currentReefTarget.getTargetId();
         lockedCamera = currentReefTarget.getCameraName() == VisionConstants.camera1Name? 
             aprilTagSubsystem.getCamera1() : 
             aprilTagSubsystem.getCamera2();
+
+        System.out.println("AprilTagTargetTracker: chose target for post " + 
+            currentReefTarget + " Target ID: " + 
+            lockedTargetId + " Camera: " + 
+            lockedCamera.getName());
         
         return lookForLockedTarget();
     }
