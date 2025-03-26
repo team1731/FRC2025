@@ -351,7 +351,7 @@ public class Robot extends TimedRobot {
 
 		CommandScheduler.getInstance().cancelAll();
 		
-		climbSubsystem.stowClimb();
+		//climbSubsystem.stowClimb();
 
 		if (m_autonomousCommand == null) {
 			System.out.println("SOMETHING WENT WRONG - UNABLE TO RUN AUTONOMOUS! CHECK SOFTWARE!");
@@ -398,7 +398,7 @@ public class Robot extends TimedRobot {
 		}
 		currentKeypadCommand = "";
 		SmartDashboard.getString("keypadCommand", currentKeypadCommand);
-		climbSubsystem.stowClimb();
+		//climbSubsystem.stowClimb();
 	}
 
 //   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄

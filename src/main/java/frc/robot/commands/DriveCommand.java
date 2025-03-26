@@ -21,7 +21,7 @@ public class DriveCommand extends Command {
 
     private CommandSwerveDrivetrain m_driveSubsystem;
     private CommandXboxController m_xboxController;
-    private AprilTagTargetTracker aprilTagTargetTracker;
+    private static AprilTagTargetTracker aprilTagTargetTracker;
     private static DriveMode currentDriveMode = DriveMode.DEFAULT; 
 
     /*
@@ -59,7 +59,7 @@ public class DriveCommand extends Command {
         System.out.println("DriveCommand: initializing...");
         driveAtTarget.HeadingController.setPID(10,0,0);
 	    driveAtTarget.HeadingController.enableContinuousInput(-Math.PI/2, Math.PI/2);
-        aprilTagTargetTracker = new AprilTagTargetTracker(m_driveSubsystem.getAprilTagSubsystem());
+        aprilTagTargetTracker = AprilTagTargetTracker.getTargetTracker(m_driveSubsystem.getAprilTagSubsystem());
     }
 
     @Override
@@ -91,7 +91,6 @@ public class DriveCommand extends Command {
         
         SmartDashboard.putNumber ("fieldCentricX", fieldCentricX);
         SmartDashboard.putNumber ("fieldCentricY",fieldCentricY);
-
         aprilTagTargetTracker.recalculateDriveFeedback(m_driveSubsystem.getCurrentPose(), fieldCentricX, fieldCentricY);
         m_driveSubsystem.setControl(
             driveAtTarget.withVelocityX(aprilTagTargetTracker.getCalculatedX() * DriveToTargetMaxSpeed)                                                                                                                     
