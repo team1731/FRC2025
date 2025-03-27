@@ -78,7 +78,7 @@ public class AprilTagTargetTracker {
         double fieldCentricSpeed = Math.sqrt(fieldCentricX*fieldCentricX + fieldCentricY*fieldCentricY);
         double fieldCentricHeading = Math.atan(fieldCentricY/fieldCentricX);
         double fieldCentricHeadingError = Math.toRadians(desiredHeading) - fieldCentricHeading;
-        double speed  = fieldCentricSpeed * Math.cos(fieldCentricHeadingError);
+        double speed  = -fieldCentricSpeed * Math.cos(fieldCentricHeadingError);
 
 
         // calculate updated drive values
