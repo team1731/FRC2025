@@ -148,7 +148,10 @@ public class VSLAMSubsystem {
         return networkTableInstance.addConnectionListener(true, event -> {
             if (event.is(NetworkTableEvent.Kind.kConnected)) {
                 System.out.println("Connected to " + event.connInfo.remote_id);
-                resetQuestHeading();
+                if (event.connInfo.remote_id == "QuestNav@1") {
+                    System.out.println("connected to QuestNav");
+                    resetQuestHeading();
+                }
 
             } else if (event.is(NetworkTableEvent.Kind.kDisconnected)) {
                 System.out.println("Disconnected from " + event.connInfo.remote_id);
