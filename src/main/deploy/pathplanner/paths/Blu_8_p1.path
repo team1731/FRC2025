@@ -1,0 +1,66 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.168174342105263,
+        "y": 5.0419
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.54859053588367,
+        "y": 5.096850731365899
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.047902504248925,
+        "y": 5.136891223551222
+      },
+      "prevControl": {
+        "x": 5.625205135827872,
+        "y": 5.319703723551222
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Blu_8_P1_Stop"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "CoralL4Score",
+      "waypointRelativePos": 0.4362657091561954,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "CoralL4Score"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -118.6809550993258
+  },
+  "reversed": false,
+  "folder": "Blu_8",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "useDefaultConstraints": true
+}
