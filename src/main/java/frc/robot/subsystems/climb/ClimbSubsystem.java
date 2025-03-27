@@ -84,7 +84,7 @@ public class ClimbSubsystem extends SubsystemBase implements ToggleableSubsystem
 
         climbCancoder = new CANcoder(ClimbConstants.climbCancoderDeviceId, "canivore1");
         CANcoderConfiguration cancoderConfig = new CANcoderConfiguration();
-        cancoderConfig.MagnetSensor.MagnetOffset = -0.179931640625; 
+        cancoderConfig.MagnetSensor.MagnetOffset = -0.315185546875; 
         cancoderConfig.MagnetSensor.SensorDirection = ClimbConstants.climbCanConderDirection;
         cancoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.900146484375;
         climbCancoder.getConfigurator().apply(cancoderConfig);

@@ -139,22 +139,23 @@ public class RobotContainer {
 
 
     // Sets arm to intake
-    // dLeftTrigger.whileTrue(new SequentialCommandGroup(
-    //   new InstantCommand(() -> SequenceManager.setActionSelection(Action.INTAKE)),
-    //   new ResetSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem),
-    //   new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)));
+    dLeftTrigger.whileTrue(new SequentialCommandGroup(
+      new InstantCommand(() -> SequenceManager.setActionSelection(Action.INTAKE)),
+      new ResetSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem),
+      new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)));
 
     // Sets arm to score
-    // dRightTrigger.whileTrue(new SequentialCommandGroup(
-    //   new InstantCommand(() -> SequenceManager.setActionSelection(Action.SCORE)),
-    //   new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)));
+    dRightTrigger.whileTrue(new SequentialCommandGroup(
+      new InstantCommand(() -> SequenceManager.setActionSelection(Action.SCORE)),
+      new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)));
+
     // Climb up
-    // dPOVUp.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.maxClimbPosition))) 
-    //   .onFalse(new InstantCommand(() -> climbSubsystem.stopClimb()));
+    dPOVUp.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.maxClimbPosition))) 
+      .onFalse(new InstantCommand(() -> climbSubsystem.stopClimb()));
 
     // Climb down
-    // dPOVDown.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.minClimbPosition))) 
-    // .onFalse(new InstantCommand(() -> climbSubsystem.stopClimb()));
+    dPOVDown.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.minClimbPosition))) 
+    .onFalse(new InstantCommand(() -> climbSubsystem.stopClimb()));
 
     // DRIVER - Controls level selection
     dY.whileTrue(new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L4))); //while pressed set to Level 4 
@@ -188,11 +189,11 @@ public class RobotContainer {
       .onFalse(new InstantCommand(() -> SequenceManager.setGamePieceSelection(GamePiece.CORAL)));
 
     //bring up the climb in ready position
-    // dStart.onTrue(new SequentialCommandGroup( 
-    //   new InstantCommand(() -> climbSubsystem.setIsClimbing(true)),
-    //   new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.climbReadyPosition)),
-    //   new InstantCommand(() -> armSubsystem.moveArmNormalSpeed(ArmConstants.halfedArmPosition)) 
-    // ));
+    dStart.onTrue(new SequentialCommandGroup( 
+      new InstantCommand(() -> climbSubsystem.setIsClimbing(true)),
+      new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.climbReadyPosition)),
+      new InstantCommand(() -> armSubsystem.moveArmNormalSpeed(ArmConstants.halfedArmPosition)) 
+    ));
 
      //bring the climber to the stow position 
     // opRightBumper.onTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.climbStowPosition)));
