@@ -76,11 +76,17 @@ public class AprilTagTargetTracker {
         double desiredHeading = hasVisibleTarget? currentRobotRotation - (target.getYaw() * 2.0) : lastHeading;
         lastHeading = desiredHeading; // store this value for re-use in case don't see target the next time around
 
-        // calculate speed
+       /*  calculate speed
         double fieldCentricSpeed = Math.sqrt(fieldCentricX*fieldCentricX + fieldCentricY*fieldCentricY);
         double fieldCentricHeading = Math.atan(fieldCentricY/fieldCentricX);
         double fieldCentricHeadingError = Math.toRadians(desiredHeading) - fieldCentricHeading;
         double speed  = -fieldCentricSpeed * Math.cos(fieldCentricHeadingError);
+       */
+
+        double fieldCentricSpeed = Math.sqrt(fieldCentricX*fieldCentricX + fieldCentricY*fieldCentricY);
+        double fieldCentricHeading = Math.atan(fieldCentricY/fieldCentricX);
+        double fieldCentricHeadingError = Math.toRadians(desiredHeading) - fieldCentricHeading;
+        double speed  = fieldCentricSpeed * Math.cos(fieldCentricHeadingError);
 
 
         // calculate updated drive values
