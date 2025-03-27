@@ -92,11 +92,21 @@ public class DriveCommand extends Command {
         SmartDashboard.putNumber ("fieldCentricX", fieldCentricX);
         SmartDashboard.putNumber ("fieldCentricY",fieldCentricY);
         aprilTagTargetTracker.recalculateDriveFeedback(m_driveSubsystem.getCurrentPose(), fieldCentricX, fieldCentricY);
-        m_driveSubsystem.setControl(
+
+        if (aprilTagTargetTracker.hasVisibleTarget()) {
+                    m_driveSubsystem.setControl(
             driveAtTarget.withVelocityX(aprilTagTargetTracker.getCalculatedX() * DriveToTargetMaxSpeed)                                                                                                                     
                 .withVelocityY(aprilTagTargetTracker.getCalculatedY()* DriveToTargetMaxSpeed) 
                 .withTargetDirection(aprilTagTargetTracker.getRotationTarget())
         );
+        } else {
+            m_driveSubsystem.setControl(
+                defaultDrive.withVelocityX(-(Math.abs(m_xboxController.getLeftY()) * m_xboxController.getLeftY()) * DefaultMaxSpeed)                                                                                                                     
+                    .withVelocityY(-(Math.abs(m_xboxController.getLeftX()) * m_xboxController.getLeftX()) * DefaultMaxSpeed) 
+                    .withRotationalRate(-m_xboxController.getRightX() * DefaultMaxAngularRate)
+              );
+        }
+
 
         SmartDashboard.putNumber("PID Setpoint", driveAtTarget.HeadingController.getSetpoint());
 		SmartDashboard.putNumber("PID Output", driveAtTarget.HeadingController.getLastAppliedOutput());

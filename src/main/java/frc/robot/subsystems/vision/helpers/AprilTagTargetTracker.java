@@ -55,7 +55,9 @@ public class AprilTagTargetTracker {
 
         PhotonTrackedTarget target;
         if(lockedTargetId != 0) { 
-            target = lookForLockedTarget();
+           // target = lookForLockedTarget();
+            target = chooseTarget();
+            lastHeading = 0;
         } else {
             target = chooseTarget();
         }
