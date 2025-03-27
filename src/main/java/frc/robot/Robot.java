@@ -57,7 +57,7 @@ public class Robot extends TimedRobot {
 	private AutoCommandLoader autoCommandLoader;
 	private String autoCode;
 	private String currentKeypadCommand = "";
-	private boolean redAlliance;
+	private boolean redAlliance = false;
 	private int stationNumber = 0;
 	public static long millis = System.currentTimeMillis();
 
@@ -262,6 +262,7 @@ public class Robot extends TimedRobot {
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	private void initSubsystems() {
 		driveSubsystem.configureAutoBindings();
+		driveSubsystem.configureInitialPosition();
 		AprilTagFields.kDefaultField.loadAprilTagLayoutField(); 
 		AprilTagSubsystem aprilTagSubsystem = driveSubsystem.getAprilTagSubsystem();
 		aprilTagSubsystem.setLEDSubsystem(ledSubsystem);

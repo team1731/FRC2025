@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.subsystems.drive.DrivetrainSetPoseCallback;
 import frc.robot.subsystems.drive.DrivetrainVisionCallback;
 
 public class VSLAMSubsystem {
@@ -47,7 +46,6 @@ public class VSLAMSubsystem {
     private double lastProcessedHeartbeatId = 0;
 
     private DrivetrainVisionCallback visionMeasurementCallback;
-    private DrivetrainSetPoseCallback poseConfigCallback;
 
     private final Field2d oculusPoseField = new Field2d();
     private final Field2d oculusRawPoseField = new Field2d();
@@ -60,9 +58,8 @@ public class VSLAMSubsystem {
     public static final Transform2d ROBOT_TO_OCULUS = new Transform2d(Units.inchesToMeters(6.0),
             Units.inchesToMeters(-10), new Rotation2d());
 
-    public VSLAMSubsystem(DrivetrainVisionCallback visionCallback, DrivetrainSetPoseCallback poseCallback) {
+    public VSLAMSubsystem(DrivetrainVisionCallback visionCallback) {
         visionMeasurementCallback = visionCallback;
-        poseConfigCallback = poseCallback;
         networkTableInstance = NetworkTableInstance.getDefault();
     }
 
@@ -104,9 +101,13 @@ public class VSLAMSubsystem {
     }
 
     public void calculateNewOffset(Pose2d newPose) {
+        System.out.println("VSLAMSubsystem: calculating a new offset");
         resetPoseOculus = new Pose2d().transformBy(ROBOT_TO_OCULUS.inverse());
         resetPoseRobot = newPose;
-        System.out.println("calculating a new offset");
+    }
+
+    public void resetQuestHeading() {
+        System.out.println("VSLAMSubsystem: resetting QuestNav heading");
         if (questMiso.get() != 99) {
             questMosi.set(1);
         }
@@ -147,7 +148,7 @@ public class VSLAMSubsystem {
         return networkTableInstance.addConnectionListener(true, event -> {
             if (event.is(NetworkTableEvent.Kind.kConnected)) {
                 System.out.println("Connected to " + event.connInfo.remote_id);
-                poseConfigCallback.configureInitialPosition();
+                resetQuestHeading();
 
             } else if (event.is(NetworkTableEvent.Kind.kDisconnected)) {
                 System.out.println("Disconnected from " + event.connInfo.remote_id);
