@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.0776315789473683,
-        "y": 7.171299342105263
+        "x": 1.3566611842105263,
+        "y": 7.344490131578947
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.2740311434170613,
-        "y": 7.016538837823899
+        "x": 1.5530607486802193,
+        "y": 7.1897296272975835
       },
       "isLocked": false,
       "linkedName": "Blu_8_p2_stop"
@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "FinishCoralFeederIntake",
-      "waypointRelativePos": 0.3500897666068223,
+      "waypointRelativePos": 0.0,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -45,7 +45,7 @@
     },
     {
       "name": "HoldCoral",
-      "waypointRelativePos": 0.38958707360861755,
+      "waypointRelativePos": 0.0,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -67,8 +67,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 5.0,
-    "maxAcceleration": 5.0,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 4.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

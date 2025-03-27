@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 3.1944078947368415,
-        "y": 4.2944078947368425
+        "x": 3.281003289473684,
+        "y": 4.246299342105263
       },
       "prevControl": {
-        "x": 2.4439144736842104,
-        "y": 4.958305921052631
+        "x": 2.5305098684210527,
+        "y": 4.910197368421051
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "FinishCoralFeederIntake",
-      "waypointRelativePos": 0.7603833865814721,
+      "waypointRelativePos": 0.0,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -42,11 +42,33 @@
           "name": "FinishCoralFeederIntake"
         }
       }
+    },
+    {
+      "name": "HoldCoral",
+      "waypointRelativePos": 0.010771992818671455,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "HoldCoral"
+        }
+      }
+    },
+    {
+      "name": "CoralL4Score",
+      "waypointRelativePos": 0.41292639138240667,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "CoralL4Score"
+        }
+      }
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 5.0,
-    "maxAcceleration": 5.0,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 4.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
