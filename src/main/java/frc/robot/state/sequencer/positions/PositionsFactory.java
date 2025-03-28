@@ -101,6 +101,8 @@ public class PositionsFactory {
         positions.secondStageElevatorPosition = ALGAE_REEF_L2.secondStageElevatorPosition;
         positions.clamperIntakePosition = ALGAE_REEF_L2.clamperIntakePosition;
         positions.clamperHoldPosition = ALGAE_REEF_L2.clamperHoldPosition;
+        positions.clamperJigglePosition = ALGAE_REEF_L2.clamperJigglePosition;
+        positions.secondStageArmPosition = ALGAE_REEF_L2.secondStageArmPosition;
         return positions;
     }
 
@@ -110,6 +112,8 @@ public class PositionsFactory {
         positions.secondStageElevatorPosition = ALGAE_REEF_L3.secondStageElevatorPosition;
         positions.clamperIntakePosition = ALGAE_REEF_L3.clamperIntakePosition;
         positions.clamperHoldPosition = ALGAE_REEF_L3.clamperHoldPosition;
+        positions.clamperJigglePosition = ALGAE_REEF_L3.clamperJigglePosition;
+        positions.secondStageArmPosition = ALGAE_REEF_L3.secondStageArmPosition;
         return positions;
     }
 

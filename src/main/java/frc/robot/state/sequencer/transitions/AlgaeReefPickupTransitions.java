@@ -11,7 +11,12 @@ public class AlgaeReefPickupTransitions {
         {SequenceState.INTAKING,                SequenceInput.BUTTON_RELEASED,            "elevatorSecondStage",       SequenceState.MOVING_TO_2ND_STAGE},
         {SequenceState.INTAKING,                SequenceInput.FINISH_INTAKE,              "elevatorSecondStage",       SequenceState.MOVING_TO_2ND_STAGE},
         {SequenceState.MOVING_TO_2ND_STAGE,     SequenceInput.ELEVATOR_DONE,              "grabAlgaeAndLower",         SequenceState.LOWERING},
-        {SequenceState.LOWERING,                SequenceInput.ELEVATOR_DONE,              "resetState",                SequenceState.HOME},
+
+        {SequenceState.LOWERING,                SequenceInput.ELEVATOR_DONE,              "armSecondStage",            SequenceState.MOVING_ARM_BACK}, 
+
+        {SequenceState.MOVING_ARM_BACK,         SequenceInput.ARM_DONE,                   "algaeJiggle",               SequenceState.JIGGLING}, 
+        {SequenceState.JIGGLING,                SequenceInput.TIMER_DONE,                 "stopIntake",                SequenceState.STOPPING_INTAKE},  //!!!!!!!
+        {SequenceState.STOPPING_INTAKE,         null,                                     "resetState",                SequenceState.HOME},  //!!!!!!!
 
         // Level change sequences
         {SequenceState.RAISING_ELEVATOR,        SequenceInput.LEVEL_CHANGED,              "updateElevator",            SequenceState.UPDATING_LEVEL},
@@ -20,7 +25,7 @@ public class AlgaeReefPickupTransitions {
         {SequenceState.UPDATING_LEVEL,          SequenceInput.ELEVATOR_DONE,              "prepareToIntake",           SequenceState.INTAKING},
 
         // Abort sequences
-        {SequenceState.RAISING_ELEVATOR,        SequenceInput.BUTTON_RELEASED,            "startReset",               SequenceState.LOWERING}
+        {SequenceState.RAISING_ELEVATOR,        SequenceInput.BUTTON_RELEASED,            "startReset",                SequenceState.LOWERING}
     };
     
 

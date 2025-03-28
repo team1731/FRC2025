@@ -94,6 +94,8 @@ public final class PositionConstants {
             public final static double secondStageElevatorPosition = 15;
             public final static double clamperIntakePosition = reefIntakeWidth;
             public final static double clamperHoldPosition = algaeIntakeWidth;
+            public final static double secondStageArmPosition = -0.05;
+            public final static double clamperJigglePosition = 0.05;
         }
 
         public static final class ALGAE_REEF_L3 {
@@ -101,6 +103,8 @@ public final class PositionConstants {
             public final static double secondStageElevatorPosition = 45;
             public final static double clamperIntakePosition = reefIntakeWidth;
             public final static double clamperHoldPosition = algaeIntakeWidth;
+            public final static double secondStageArmPosition = -0.05;
+            public final static double clamperJigglePosition = 0.05;
         }
 
         public static final class ALGAE_FLOOR {
