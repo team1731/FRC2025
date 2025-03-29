@@ -133,6 +133,7 @@ public class Robot extends TimedRobot {
 		autoCommandLoader.registerAutoEventCommands();
 		autoPreload();
 		setupSmartDashboard();
+		FollowPathCommand.warmupCommand().schedule();
 	}
 
 	private void setupSmartDashboard() {
@@ -243,7 +244,7 @@ public class Robot extends TimedRobot {
 		if(autoCodeChanged || allianceChanged || vslamConnectionStatusChanged) {
 			m_autonomousCommand = null;
 			m_autonomousCommand = (PathPlannerAuto) AutoFactory.getAutonomousCommand(selectedAutoCode, redAlliance, isVSLAMConnected);		
-			FollowPathCommand.warmupCommand().schedule();
+			
 			if (m_autonomousCommand.getStartingPose() != null) {
 			Pose2d startingPose = isRedAlliance? new Pose2d(17.55 - m_autonomousCommand.getStartingPose().getX(), 8.05 - m_autonomousCommand.getStartingPose().getY(),m_autonomousCommand.getStartingPose().getRotation().rotateBy(Rotation2d.k180deg)): m_autonomousCommand.getStartingPose();
             driveSubsystem.resetPose(startingPose);
