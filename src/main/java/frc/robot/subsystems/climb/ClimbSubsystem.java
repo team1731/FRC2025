@@ -110,7 +110,7 @@ public class ClimbSubsystem extends SubsystemBase implements ToggleableSubsystem
         FeedbackConfigs fdb = config.Feedback;
         fdb.FeedbackRemoteSensorID = climbCancoder.getDeviceID();
         fdb.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-        fdb.RotorToSensorRatio = 480/1; 
+        fdb.RotorToSensorRatio = 640; 
         fdb.SensorToMechanismRatio = 1;
         
         //for testing
