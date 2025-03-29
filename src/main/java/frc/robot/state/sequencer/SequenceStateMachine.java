@@ -329,9 +329,18 @@ public class SequenceStateMachine extends StateMachine {
 
     public boolean algaeJiggle(){
         System.out.println("Jiggling algae");
-        handClamperSubsystem.open(positions.clamperJigglePosition);
-        handIntakeSubsystem.intake(HandConstants.intakeAlgaeVelocity, subsystemCallback);
-        
+        //handClamperSubsystem.moveHand(positions.clamperIntakePosition);
+        handIntakeSubsystem.release(5, 0.75, subsystemCallback);
+        return true;
+    }
+
+    public boolean algaeIntake(){
+       handIntakeSubsystem.intake(HandConstants.intakeAlgaeVelocity, 1, subsystemCallback); // intake with a timer
+        return true;
+    }
+
+    public boolean algaeStopIntake(){
+        handIntakeSubsystem.stop();
         return true;
     }
 

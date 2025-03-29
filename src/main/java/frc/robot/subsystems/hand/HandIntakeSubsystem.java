@@ -55,6 +55,16 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
         intaking = true;
     }
 
+    public void intake(double velocity, double runningTime) {
+        detectionStartedTime = Timer.getFPGATimestamp();
+        detectionRunningTime = runningTime;
+        intake(velocity);
+    }
+
+    public void intake(double velocity, double runningTime, StateMachineCallback callback) {
+        intake(velocity, runningTime);
+    }
+
     public void intake(double velocity, StateMachineCallback callback) {
         scoreStateMachineCallback = callback;
        // intake(velocity);
