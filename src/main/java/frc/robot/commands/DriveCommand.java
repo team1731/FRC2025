@@ -23,6 +23,7 @@ public class DriveCommand extends Command {
     private CommandXboxController m_xboxController;
     private static AprilTagTargetTracker aprilTagTargetTracker;
     private static DriveMode currentDriveMode = DriveMode.DEFAULT; 
+    private static boolean lockedOnce = false;
 
     /*
      * Default drive state
@@ -37,7 +38,7 @@ public class DriveCommand extends Command {
      */
     private double fieldCentricX;
     private double fieldCentricY;
-    private double DriveToTargetMaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond)/2;   //Drive at 1/5th of the max speed!!!!!!!!!
+    private double DriveToTargetMaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);   
     private final SwerveRequest.FieldCentricFacingAngle driveAtTarget =  new SwerveRequest.FieldCentricFacingAngle().withRotationalDeadband(VisionConstants.MAX_ANGULAR_SPEED * 0.01) // Add a 10% deadband
 		.withDriveRequestType(DriveRequestType.OpenLoopVoltage).withDeadband((DriveToTargetMaxSpeed * 0.05));
 
@@ -52,6 +53,8 @@ public class DriveCommand extends Command {
     public static void setDriveMode(DriveMode driveMode) {
         System.out.println("DriveCommand: changing drive mode to " + driveMode);
         currentDriveMode = driveMode;
+        lockedOnce = false;
+
     }
 
     @Override
@@ -90,34 +93,35 @@ public class DriveCommand extends Command {
         }
         
         SmartDashboard.putNumber ("fieldCentricX", fieldCentricX);
-        SmartDashboard.putNumber ("fieldCentricY",fieldCentricY);
+        SmartDashboard.putNumber("fieldCentricY", fieldCentricY);
         aprilTagTargetTracker.recalculateDriveFeedback(m_driveSubsystem.getCurrentPose(), fieldCentricX, fieldCentricY);
         SmartDashboard.putBoolean("hasVisibleTarget", aprilTagTargetTracker.hasVisibleTarget());
 
-        if (aprilTagTargetTracker.hasVisibleTarget() || lostTargetCount < 5) {
-
-            if (aprilTagTargetTracker.hasVisibleTarget()) {
-                lostTargetCount = 0;
-            } else {
-                lostTargetCount++;
-            }
-        
-                    m_driveSubsystem.setControl(
-            driveAtTarget.withVelocityX(aprilTagTargetTracker.getCalculatedX() * DriveToTargetMaxSpeed)                                                                                                                     
-                .withVelocityY(aprilTagTargetTracker.getCalculatedY()* DriveToTargetMaxSpeed) 
-                .withTargetDirection(aprilTagTargetTracker.getRotationTarget())
-        );
+        if (aprilTagTargetTracker.hasVisibleTarget()) {
+            lostTargetCount = 0;
+            lockedOnce = true;
         } else {
-            m_driveSubsystem.setControl(
-                defaultDrive.withVelocityX(-(Math.abs(m_xboxController.getLeftY()) * m_xboxController.getLeftY()) * DefaultMaxSpeed)                                                                                                                     
-                    .withVelocityY(-(Math.abs(m_xboxController.getLeftX()) * m_xboxController.getLeftX()) * DefaultMaxSpeed) 
-                    .withRotationalRate(-m_xboxController.getRightX() * DefaultMaxAngularRate)
-              );
+            lostTargetCount++;
         }
 
+        if (aprilTagTargetTracker.hasVisibleTarget() || ((lostTargetCount < 5) && lockedOnce == true)) {
+
+            m_driveSubsystem.setControl(
+                    driveAtTarget.withVelocityX(aprilTagTargetTracker.getCalculatedX() * DriveToTargetMaxSpeed)
+                            .withVelocityY(aprilTagTargetTracker.getCalculatedY() * DriveToTargetMaxSpeed)
+                            .withTargetDirection(aprilTagTargetTracker.getRotationTarget()));
+        } else {
+            m_driveSubsystem.setControl(
+                    defaultDrive
+                            .withVelocityX(-(Math.abs(m_xboxController.getLeftY()) * m_xboxController.getLeftY())
+                                    * DefaultMaxSpeed)
+                            .withVelocityY(-(Math.abs(m_xboxController.getLeftX()) * m_xboxController.getLeftX())
+                                    * DefaultMaxSpeed)
+                            .withRotationalRate(-m_xboxController.getRightX() * DefaultMaxAngularRate));
+        }
 
         SmartDashboard.putNumber("PID Setpoint", driveAtTarget.HeadingController.getSetpoint());
-		SmartDashboard.putNumber("PID Output", driveAtTarget.HeadingController.getLastAppliedOutput());
+        SmartDashboard.putNumber("PID Output", driveAtTarget.HeadingController.getLastAppliedOutput());
 		SmartDashboard.putNumber("PID Error", driveAtTarget.HeadingController.getPositionError());
         SmartDashboard.putNumber ("current heading",m_driveSubsystem.getState().Pose.getRotation().getDegrees());
     }
