@@ -11,4 +11,5 @@ public class Positions {
     public double clamperIntakePosition;
     public double clamperHoldPosition;
     public double clamperOpenPosition;
+    public double clamperJigglePosition;
 }

@@ -1,5 +1,7 @@
 package frc.robot.state.sequencer;
 
+import javax.security.auth.callback.Callback;
+
 import frc.robot.state.Input;
 import frc.robot.state.StateMachine;
 import frc.robot.state.StateMachineCallback;
@@ -322,6 +324,23 @@ public class SequenceStateMachine extends StateMachine {
     public boolean handoffAlgae() {
         handClamperSubsystem.close();
         handIntakeSubsystem.release(HandConstants.releaseVelocity, HandConstants.defaultReleaseRuntime, subsystemCallback);
+        return true;
+    }
+
+    public boolean algaeJiggle(){
+        System.out.println("Jiggling algae");
+        //handClamperSubsystem.moveHand(positions.clamperIntakePosition);
+        handIntakeSubsystem.release(5, 0.75, subsystemCallback);
+        return true;
+    }
+
+    public boolean algaeIntake(){
+       handIntakeSubsystem.intake(HandConstants.intakeAlgaeVelocity, 1, subsystemCallback); // intake with a timer
+        return true;
+    }
+
+    public boolean algaeStopIntake(){
+        handIntakeSubsystem.stop();
         return true;
     }
 
