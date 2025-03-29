@@ -105,10 +105,10 @@ public class DriveCommand extends Command {
         }
 
         if (aprilTagTargetTracker.hasVisibleTarget() || ((lostTargetCount < 5) && lockedOnce == true)) {
-
+            // note to self since this is confusing... Y becomes X and X becomes Y and that change happens earlier for driving at target
             m_driveSubsystem.setControl(
                     driveAtTarget.withVelocityX(aprilTagTargetTracker.getCalculatedX() * DriveToTargetMaxSpeed)
-                            .withVelocityY(aprilTagTargetTracker.getCalculatedY() * DriveToTargetMaxSpeed)
+                            .withVelocityY(  aprilTagTargetTracker.getCalculatedY() *DriveToTargetMaxSpeed)
                             .withTargetDirection(aprilTagTargetTracker.getRotationTarget()));
         } else {
             m_driveSubsystem.setControl(
