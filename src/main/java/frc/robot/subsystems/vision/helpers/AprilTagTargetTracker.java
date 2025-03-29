@@ -55,9 +55,9 @@ public class AprilTagTargetTracker {
 
         PhotonTrackedTarget target;
         if(lockedTargetId != 0) { 
-           // target = lookForLockedTarget();
-            target = chooseTarget();
-            lastHeading = 0;
+          //  target = lookForLockedTarget();
+            target = chooseTarget();  // enables changing of target mid drive
+          //  lastHeading = 0;
         } else {
             target = chooseTarget();
         }
@@ -83,10 +83,11 @@ public class AprilTagTargetTracker {
         double speed  = -fieldCentricSpeed * Math.cos(fieldCentricHeadingError);
        */
 
-        double fieldCentricSpeed = Math.sqrt(fieldCentricX*fieldCentricX + fieldCentricY*fieldCentricY);
-        double fieldCentricHeading = Math.atan(fieldCentricY/fieldCentricX);
-        double fieldCentricHeadingError = Math.toRadians(desiredHeading) - fieldCentricHeading;
-        double speed  = fieldCentricSpeed * Math.cos(fieldCentricHeadingError);
+
+        double speedContributionFromX = fieldCentricX * Math.cos(Units.degreesToRadians(desiredHeading));
+        double speedContributionFromY = fieldCentricY * Math.sin(Units.degreesToRadians(desiredHeading));
+        double speed = -Math.sqrt(speedContributionFromX*speedContributionFromX + speedContributionFromY*speedContributionFromY);
+
 
 
         // calculate updated drive values

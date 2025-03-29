@@ -41,7 +41,7 @@ public class DriveCommand extends Command {
     private final SwerveRequest.FieldCentricFacingAngle driveAtTarget =  new SwerveRequest.FieldCentricFacingAngle().withRotationalDeadband(VisionConstants.MAX_ANGULAR_SPEED * 0.01) // Add a 10% deadband
 		.withDriveRequestType(DriveRequestType.OpenLoopVoltage).withDeadband((DriveToTargetMaxSpeed * 0.05));
 
-    
+    private int lostTargetCount = 0;
     
     public DriveCommand(CommandSwerveDrivetrain driveSubsystem, CommandXboxController xboxController) {
         m_driveSubsystem = driveSubsystem;
@@ -92,8 +92,16 @@ public class DriveCommand extends Command {
         SmartDashboard.putNumber ("fieldCentricX", fieldCentricX);
         SmartDashboard.putNumber ("fieldCentricY",fieldCentricY);
         aprilTagTargetTracker.recalculateDriveFeedback(m_driveSubsystem.getCurrentPose(), fieldCentricX, fieldCentricY);
+        SmartDashboard.putBoolean("hasVisibleTarget", aprilTagTargetTracker.hasVisibleTarget());
 
-        if (aprilTagTargetTracker.hasVisibleTarget()) {
+        if (aprilTagTargetTracker.hasVisibleTarget() || lostTargetCount < 5) {
+
+            if (aprilTagTargetTracker.hasVisibleTarget()) {
+                lostTargetCount = 0;
+            } else {
+                lostTargetCount++;
+            }
+        
                     m_driveSubsystem.setControl(
             driveAtTarget.withVelocityX(aprilTagTargetTracker.getCalculatedX() * DriveToTargetMaxSpeed)                                                                                                                     
                 .withVelocityY(aprilTagTargetTracker.getCalculatedY()* DriveToTargetMaxSpeed) 
