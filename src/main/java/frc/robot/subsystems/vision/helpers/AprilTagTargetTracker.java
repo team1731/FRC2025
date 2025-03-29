@@ -84,15 +84,31 @@ public class AprilTagTargetTracker {
        */
 
 
-        double speedContributionFromX = fieldCentricX * Math.cos(Units.degreesToRadians(desiredHeading));
-        double speedContributionFromY = fieldCentricY * Math.sin(Units.degreesToRadians(desiredHeading));
-        double speed = -Math.sqrt(speedContributionFromX*speedContributionFromX + speedContributionFromY*speedContributionFromY);
+       // double speedContributionFromX = fieldCentricX * Math.cos(Units.degreesToRadians(desiredHeading));
+       // double speedContributionFromY = fieldCentricY * Math.sin(Units.degreesToRadians(desiredHeading));
+       // double speed = -Math.sqrt(speedContributionFromX*speedContributionFromX + speedContributionFromY*speedContributionFromY);
 
 
 
         // calculate updated drive values
-        calculatedX = speed * Math.cos(Units.degreesToRadians(desiredHeading));
-        calculatedY = speed * Math.sin(Units.degreesToRadians(desiredHeading));
+       // calculatedX = speed * Math.cos(Units.degreesToRadians(desiredHeading));
+      //  calculatedY = speed * Math.sin(Units.degreesToRadians(desiredHeading));
+
+
+        double uhx = Math.cos(Units.degreesToRadians(desiredHeading));
+        double uhy = Math.sin(Units.degreesToRadians(desiredHeading));
+
+        double vel_hdg = fieldCentricX * uhx + fieldCentricY * uhy;
+
+        calculatedX = vel_hdg * uhx;
+        calculatedY = vel_hdg * uhy;
+
+
+
+
+
+
+
         calculatedDesiredRotation = FieldPoseHelper.getReefTargetLineupRotation(lockedTargetId);
         if (!Robot.isRedAlliance()) {
             calculatedX = calculatedX * -1;
@@ -103,7 +119,7 @@ public class AprilTagTargetTracker {
         
         //SmartDashboard.putNumber("ATTracker_speedContributionFromX", speedContributionFromX);
         //SmartDashboard.putNumber("ATTracker_speedContributionFromY", speedContributionFromY);
-        SmartDashboard.putNumber("ATTracker_totalSpeed", speed);
+        SmartDashboard.putNumber("ATTracker_totalSpeed", vel_hdg);
         SmartDashboard.putNumber("ATTracker_targetedAprilTagId", lockedTargetId);
         SmartDashboard.putNumber("ATTracker_calculatedX", calculatedX);
         SmartDashboard.putNumber("ATTracker_calculatedY", calculatedY);
