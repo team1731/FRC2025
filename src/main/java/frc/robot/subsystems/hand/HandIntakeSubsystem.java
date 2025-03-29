@@ -63,6 +63,7 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
 
     public void intakeWithCurrent() {
         motor.setControl(new TorqueCurrentFOC(-20));
+        intaking = true;
     }
 
     public void release(double velocity) {
