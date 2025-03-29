@@ -23,21 +23,9 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.1
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Blu_8_p2"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.01
           }
         },
         {
@@ -53,21 +41,9 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.1
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Blu_8_p4"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.01
           }
         },
         {
@@ -83,21 +59,9 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.1
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Blu_8_p6"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.01
           }
         },
         {
