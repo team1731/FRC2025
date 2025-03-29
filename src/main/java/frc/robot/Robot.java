@@ -225,7 +225,7 @@ public class Robot extends TimedRobot {
 			System.out.println("\n\n===============>>>>>>>>>>>>>>  WE ARE " + (isRedAlliance ? "RED" : "BLUE")
 					+ " ALLIANCE  <<<<<<<<<<<<=========================");
 			redAlliance = isRedAlliance;
-			driveSubsystem.configureInitialPosition();
+		//	driveSubsystem.configureInitialPosition();
 			allianceChanged = true;
 		}
 		
@@ -244,6 +244,10 @@ public class Robot extends TimedRobot {
 			m_autonomousCommand = null;
 			m_autonomousCommand = (PathPlannerAuto) AutoFactory.getAutonomousCommand(selectedAutoCode, redAlliance, isVSLAMConnected);		
 			FollowPathCommand.warmupCommand().schedule();
+			if (m_autonomousCommand.getStartingPose() != null) {
+			Pose2d startingPose = isRedAlliance? new Pose2d(17.55 - m_autonomousCommand.getStartingPose().getX(), 8.05 - m_autonomousCommand.getStartingPose().getY(),m_autonomousCommand.getStartingPose().getRotation().rotateBy(Rotation2d.k180deg)): m_autonomousCommand.getStartingPose();
+            driveSubsystem.resetPose(startingPose);
+			}
 
 			if (m_autonomousCommand != null){
 				autoCode = selectedAutoCode;
@@ -291,6 +295,7 @@ public class Robot extends TimedRobot {
 		VSLAMSubsystem vslamSubsystem = driveSubsystem.getVSLAMSubsytem();
 		if(vslamSubsystem != null) {
             SmartDashboard.putBoolean("VSLAM Connected", vslamSubsystem.isConnected());
+			SmartDashboard.putBoolean("VSLAM Tracking", vslamSubsystem.isTracking());
         }
 	}
 

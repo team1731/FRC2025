@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.BooleanSubscriber;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
@@ -40,10 +41,11 @@ public class VSLAMSubsystem {
     private FloatArraySubscriber questPosition;
     // private FloatArraySubscriber questQuaternion;
     private FloatArraySubscriber questEulerAngles;
-    private DoubleSubscriber questBattery;
+    private DoubleSubscriber questBatteryPercent;
     private DoubleSubscriber heartbeatRequestSub;
     private DoublePublisher heartbeatResponsePub;
     private double lastProcessedHeartbeatId = 0;
+    private BooleanSubscriber questIsTracking;
 
     private DrivetrainVisionCallback visionMeasurementCallback;
 
@@ -104,6 +106,7 @@ public class VSLAMSubsystem {
         System.out.println("VSLAMSubsystem: calculating a new offset");
         resetPoseOculus = new Pose2d().transformBy(ROBOT_TO_OCULUS.inverse());
         resetPoseRobot = newPose;
+        resetQuestHeading();
     }
 
     public void resetQuestHeading() {
@@ -148,10 +151,10 @@ public class VSLAMSubsystem {
         return networkTableInstance.addConnectionListener(true, event -> {
             if (event.is(NetworkTableEvent.Kind.kConnected)) {
                 System.out.println("Connected to " + event.connInfo.remote_id);
-                if (event.connInfo.remote_id == "QuestNav@1") {
+                if ((event.connInfo.remote_id.substring(0,8) == "QuestNav")) {              
                     System.out.println("connected to QuestNav");
                     resetQuestHeading();
-                }
+               }
 
             } else if (event.is(NetworkTableEvent.Kind.kDisconnected)) {
                 System.out.println("Disconnected from " + event.connInfo.remote_id);
@@ -215,10 +218,11 @@ public class VSLAMSubsystem {
         // questQuaternion = ntDatatable.getFloatArrayTopic("quaternion").subscribe(new
         // float[] { 0.0f, 0.0f, 0.0f, 0.0f });
         questEulerAngles = ntDatatable.getFloatArrayTopic("eulerAngles").subscribe(new float[] { 0.0f, 0.0f, 0.0f });
-        questBattery = ntDatatable.getDoubleTopic("batteryPercent").subscribe(0.0f);
+        questBatteryPercent = ntDatatable.getDoubleTopic("device/batteryPercent").subscribe(0.0f);
         resetPosePub = ntDatatable.getDoubleArrayTopic("resetpose").publish();
         heartbeatRequestSub = ntDatatable.getDoubleTopic("heartbeat/quest_to_robot").subscribe(0.0);
         heartbeatResponsePub = ntDatatable.getDoubleTopic("heartbeat/robot_to_quest").publish();
+        questIsTracking = ntDatatable.getBooleanTopic("device/isTracking").subscribe(false);
 
     }
 
@@ -230,7 +234,10 @@ public class VSLAMSubsystem {
      * @return true if the Quest is connected
      */
     public boolean isConnected() {
-        return ((RobotController.getFPGATime() - questBattery.getLastChange()) / 1000) < 250;
+        return ((RobotController.getFPGATime() - questBatteryPercent.getLastChange()) / 1000) < 250;
+    }
+    public boolean isTracking() {
+        return questIsTracking.getAsBoolean();
     }
 
 }
