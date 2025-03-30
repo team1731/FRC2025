@@ -31,6 +31,8 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
     private double releaseRunningTime = 0;
     private double detectionStartedTime = 0;
     private double detectionRunningTime = 0;
+    private double algaeStartedTime = 0;
+    private double algaeRunningTime = 0;
     private boolean enabled;
     
     
@@ -76,6 +78,13 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
         intaking = true;
     }
 
+    public void intakeWithCurrent(double runningTime, StateMachineCallback callback) {
+        detectionStartedTime = Timer.getFPGATimestamp();
+        detectionRunningTime = runningTime;
+        scoreStateMachineCallback = callback;
+        intakeWithCurrent();
+    }
+
     public void release(double velocity) {
        DutyCycleOut dutycycle = new DutyCycleOut(1);
        motor.setControl(dutycycle);
@@ -90,6 +99,14 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
     public void release(double velocity, double runningTime, StateMachineCallback callback) {
         scoreStateMachineCallback = callback;
         release(velocity, runningTime);
+    }
+
+    public void releaseWithVelocity(double velocity, double runningTime, StateMachineCallback callback){
+        VelocityDutyCycle velocityDutyCycle = new VelocityDutyCycle(velocity); // velocity
+        motor.setControl(velocityDutyCycle);
+        algaeStartedTime = Timer.getFPGATimestamp();
+        algaeRunningTime = runningTime;
+        scoreStateMachineCallback = callback;
     }
 
     public void hold() {
@@ -246,6 +263,16 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
             System.out.println("HandIntakeSubsystem stopped intake");
             scoreStateMachineCallback.setInput(SequenceInput.STOPPED_INTAKE);
             scoreStateMachineCallback = null;
+        }
+
+        if(algaeRunningTime != 0 && Timer.getFPGATimestamp() - algaeStartedTime >= algaeRunningTime) {
+            algaeRunningTime = 0;
+            algaeStartedTime = 0;
+            if(scoreStateMachineCallback != null) {
+                System.out.println("Hand intake timer done, no piece detected");
+                scoreStateMachineCallback.setInput(SequenceInput.TIMER_DONE);
+                scoreStateMachineCallback = null;
+            }
         }
 
         log();

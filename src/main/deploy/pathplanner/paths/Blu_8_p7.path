@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 3.281003289473684,
-        "y": 4.246299342105263
+        "x": 3.290625,
+        "y": 4.198190789473684
       },
       "prevControl": {
-        "x": 2.5305098684210527,
-        "y": 4.910197368421051
+        "x": 2.540131578947369,
+        "y": 4.862088815789472
       },
       "nextControl": null,
       "isLocked": false,
@@ -56,7 +56,7 @@
     },
     {
       "name": "CoralL4Score",
-      "waypointRelativePos": 0.41292639138240667,
+      "waypointRelativePos": 0.27468581687612276,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -76,7 +76,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -5.07960786001462
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": "Blu_8",

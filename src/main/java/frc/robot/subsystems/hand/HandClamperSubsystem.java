@@ -61,7 +61,7 @@ public class HandClamperSubsystem extends SubsystemBase implements ToggleableSub
             desiredPosition = position;
         }
  
-
+       System.out.println("setting pos: " + desiredPosition);
 
         motor.setControl(mmReq1.withPosition(desiredPosition).withFeedForward(arbitraryFeedForward));
     }

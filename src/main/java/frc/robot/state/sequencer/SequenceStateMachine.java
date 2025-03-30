@@ -97,7 +97,10 @@ public class SequenceStateMachine extends StateMachine {
                 setInput(SequenceInput.RESET_DONE);
             }
         } else {
-            if(input == SequenceInput.RELEASED_PIECE) closeHandWithoutCallback();
+            if(input == SequenceInput.RELEASED_PIECE) {
+                closeHandWithoutCallback();
+                System.out.println("closing hand without callback"); 
+            }
             if(input == SequenceInput.DETECTED_PIECE && currentGamePiece == GamePiece.CORAL) holdCoralPiece();
             if(currentSequence == Sequence.SCORE_CORAL_L2 && input == SequenceInput.SENSOR_SCORE) return;
             if(currentSequence == Sequence.SCORE_CORAL_L2 && input == SequenceInput.ARM_DONE && currentState == SequenceState.SCORING) {
@@ -262,6 +265,7 @@ public class SequenceStateMachine extends StateMachine {
 
     public boolean releaseCoralPiece() {
         System.out.println("SequenceStateMachine: releasing coral piece...");
+        handClamperSubsystem.open(0.013);  
         handIntakeSubsystem.release(HandConstants.releaseVelocity, 1.0, subsystemCallback);
         return true;
     }
@@ -329,13 +333,16 @@ public class SequenceStateMachine extends StateMachine {
 
     public boolean algaeJiggle(){
         System.out.println("Jiggling algae");
-        //handClamperSubsystem.moveHand(positions.clamperIntakePosition);
-        handIntakeSubsystem.release(5, 0.75, subsystemCallback);
+        handClamperSubsystem.moveHand(0.07);
+        handIntakeSubsystem.releaseWithVelocity(5, 0.5, subsystemCallback);
         return true;
     }
 
     public boolean algaeIntake(){
-       handIntakeSubsystem.intake(HandConstants.intakeAlgaeVelocity, 1, subsystemCallback); // intake with a timer
+        System.out.println("Intaking algae");
+       // handIntakeSubsystem.stop();
+       handIntakeSubsystem.intakeWithCurrent(); 
+       resetState();
         return true;
     }
 
