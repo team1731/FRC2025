@@ -12,6 +12,7 @@ import frc.robot.state.sequencer.positions.PositionConstants.CORAL_SCORE.CORAL_L
 import frc.robot.state.sequencer.positions.PositionConstants.CORAL_SCORE.CORAL_L2;
 import frc.robot.state.sequencer.positions.PositionConstants.CORAL_SCORE.CORAL_L3;
 import frc.robot.state.sequencer.positions.PositionConstants.CORAL_SCORE.CORAL_L4;
+import frc.robot.state.sequencer.positions.PositionConstants.RESET.UNSTUCK;
 
 
 public class PositionsFactory {
@@ -88,6 +89,12 @@ public class PositionsFactory {
         return positions;
     }
 
+    public static Positions getUnStuckElevator() {
+        Positions positions = new Positions();
+        positions.raiseElevatorPosition = UNSTUCK.raiseElevatorPosition;
+        return positions;
+    }
+
 
     /*
      * !!!!!!!!!!!!!!!!!!!!!!
@@ -121,6 +128,8 @@ public class PositionsFactory {
         Positions positions = new Positions();
         positions.firstStageArmPosition = ALGAE_FLOOR.armForwardPosition;
         positions.clamperIntakePosition = ALGAE_FLOOR.clamperIntakePosition;
+        positions.clamperJigglePosition = ALGAE_FLOOR.clamperJigglePosition;
+        positions.secondStageArmPosition = ALGAE_FLOOR.secondStageArmPosition;
         return positions;
     }
 

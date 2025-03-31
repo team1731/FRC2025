@@ -94,8 +94,8 @@ public final class PositionConstants {
             public final static double secondStageElevatorPosition = 15;
             public final static double clamperIntakePosition = reefIntakeWidth;
             public final static double clamperHoldPosition = algaeIntakeWidth;
-            public final static double secondStageArmPosition = -3; //need to get angle
-            public final static double clamperJigglePosition = 0.05; //need to get pos
+            public final static double secondStageArmPosition = -3;
+            public final static double clamperJigglePosition = 0.07;
         }
 
         public static final class ALGAE_REEF_L3 {
@@ -103,13 +103,15 @@ public final class PositionConstants {
             public final static double secondStageElevatorPosition = 45;
             public final static double clamperIntakePosition = reefIntakeWidth;
             public final static double clamperHoldPosition = algaeIntakeWidth;
-            public final static double secondStageArmPosition = -3; //need to get angle
-            public final static double clamperJigglePosition = 0.05; //need to get pos
+            public final static double secondStageArmPosition = -3; 
+            public final static double clamperJigglePosition = 0.07; 
         }
 
         public static final class ALGAE_FLOOR {
             public final static double armForwardPosition = 15;
             public final static double clamperIntakePosition = algaeIntakeWidth;
+            public final static double secondStageArmPosition = -3; 
+            public final static double clamperJigglePosition = 0.07; 
         }
     }
 
@@ -130,6 +132,13 @@ public final class PositionConstants {
 
         public static final class ALGAE_HANDOFF {
             public final static double armForwardPosition = 17;
+        }
+    }
+
+    public static final class RESET {
+        // reset positions
+        public static final class UNSTUCK {
+            public final static double raiseElevatorPosition = 23;
         }
     }
 }

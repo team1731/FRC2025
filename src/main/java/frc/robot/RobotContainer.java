@@ -2,6 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+
 package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
@@ -202,6 +203,14 @@ public class RobotContainer {
       .onFalse(new InstantCommand(() -> SequenceManager.setShouldPluckAlgae(false)));
 
     dPOVLeft.onTrue(new InstantCommand(() -> SequenceManager.stateMachineHardReset())); 
+
+    // Resets the state machine
+    opElevReset.onTrue(new SequentialCommandGroup(
+      new InstantCommand(() -> elevatorSubsystem.setElevatorUnstuck(true))))
+      .onFalse(new SequentialCommandGroup(
+        new InstantCommand(() -> elevatorSubsystem.setElevatorUnstuck(false)),
+        new InstantCommand(() -> elevatorSubsystem.stopElevator()),
+        new InstantCommand(() -> System.out.println("Reset elevator postion"))));
 
     // Operator drive to target buttons
     opPostA.whileTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.A)));
