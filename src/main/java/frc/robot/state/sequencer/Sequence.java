@@ -15,5 +15,7 @@ public enum Sequence {
     SCORE_CORAL_L1,
     SCORE_CORAL_L2,
     SCORE_CORAL_L3,
-    SCORE_CORAL_L4
+    SCORE_CORAL_L4,
+
+    UNSTUCK_ELEVATOR
 }

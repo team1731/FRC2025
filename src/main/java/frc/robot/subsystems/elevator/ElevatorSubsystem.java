@@ -8,11 +8,13 @@ import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.state.StateMachineCallback;
@@ -38,6 +40,7 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
     private boolean callbackOnThreshold = false;
     private double positionThreshold = 0;
     private boolean raisingThreshold = false;
+    private boolean unStuckElevator = false;
 
     private boolean enabled;
     
@@ -199,6 +202,14 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
             }
         }
 
+        if(unStuckElevator){
+            DutyCycleOut dutyCycle = new DutyCycleOut(-0.1);
+            elevatorMotor1.setControl(dutyCycle);
+            elevatorMotor2.setControl(dutyCycle);
+            elevatorMotor1.setPosition(0);
+            elevatorMotor2.setPosition(0);
+        };
+
         log();
     }
 
@@ -212,6 +223,11 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
         double tolerance = 1;
         return Math.abs(getElevatorPosition() - position) < tolerance;
     }
+
+    public boolean setElevatorUnstuck(boolean unstuck){
+        unStuckElevator = unstuck;
+        return unStuckElevator;  
+    };
 
     private void log(){
         SmartDashboard.putNumber("elevator motor 1 position", elevatorMotor1.getPosition().getValueAsDouble());
