@@ -128,6 +128,8 @@ public class PositionsFactory {
         Positions positions = new Positions();
         positions.firstStageArmPosition = ALGAE_FLOOR.armForwardPosition;
         positions.clamperIntakePosition = ALGAE_FLOOR.clamperIntakePosition;
+        positions.clamperJigglePosition = ALGAE_FLOOR.clamperJigglePosition;
+        positions.secondStageArmPosition = ALGAE_FLOOR.secondStageArmPosition;
         return positions;
     }
 

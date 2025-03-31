@@ -333,7 +333,7 @@ public class SequenceStateMachine extends StateMachine {
 
     public boolean algaeJiggle(){
         System.out.println("Jiggling algae");
-        handClamperSubsystem.moveHand(0.07);
+        handClamperSubsystem.moveHand(positions.clamperJigglePosition);
         handIntakeSubsystem.releaseWithVelocity(5, 0.5, subsystemCallback);
         return true;
     }

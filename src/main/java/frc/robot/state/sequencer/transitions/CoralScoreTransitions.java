@@ -20,7 +20,7 @@ public class CoralScoreTransitions {
         {SequenceState.AUTO_SCORE_WHEN_READY,   SequenceInput.ARM_DONE,                   "moveArmToScoreCoral",       SequenceState.SCORING}, // auto initiated score during arm forward
         {SequenceState.SCORING,                 SequenceInput.ARM_DONE,                   "moveElevatorHome",          SequenceState.LOWERING},
         {SequenceState.SCORING,                 SequenceInput.RELEASED_PIECE,             "moveElevatorHome",          SequenceState.LOWERING}, // this transition is used in L2 scores
-        {SequenceState.LOWERING,                SequenceInput.ELEVATOR_THRESHOLD_MET,     "moveArmHomeCoral",               SequenceState.FINISHING},
+        {SequenceState.LOWERING,                SequenceInput.ELEVATOR_THRESHOLD_MET,     "moveArmHomeCoral",          SequenceState.FINISHING},
         {SequenceState.FINISHING,               SequenceInput.RESET_DONE,                 "resetState",                SequenceState.HOME},
 
         // Level change sequences
