@@ -61,6 +61,7 @@ public class RobotContainer {
   private final Trigger dRightBumper = xboxController.rightBumper();
   private final Trigger dLeftTrigger = xboxController.leftTrigger();
   private final Trigger dRightTrigger = xboxController.rightTrigger();
+  private final Trigger dPOVUpLeft = xboxController.povUpLeft();
   private final Trigger dPOVUp = xboxController.povUp();
   private final Trigger dPOVDown = xboxController.povDown();
   private final Trigger dPOVLeft = xboxController.povLeft();
@@ -149,7 +150,7 @@ public class RobotContainer {
     dRightTrigger.whileTrue(new SequentialCommandGroup(
       new InstantCommand(() -> SequenceManager.setActionSelection(Action.SCORE)),
       new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)));
-
+   
     // Climb up
     dPOVUp.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.maxClimbPosition))) 
       .onFalse(new InstantCommand(() -> climbSubsystem.stopClimb()));
@@ -204,7 +205,7 @@ public class RobotContainer {
 
     dPOVLeft.onTrue(new InstantCommand(() -> SequenceManager.stateMachineHardReset())); 
 
-    // Resets the state machine
+    // Rezero the elevator
     opElevReset.onTrue(new SequentialCommandGroup(
       new InstantCommand(() -> elevatorSubsystem.setElevatorUnstuck(true))))
       .onFalse(new SequentialCommandGroup(
