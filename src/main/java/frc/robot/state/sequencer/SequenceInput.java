@@ -21,6 +21,7 @@ public enum SequenceInput implements Input {
     ARM_THRESHOLD_MET,
     HAND_DONE,
     DETECTED_PIECE,
+    START_JIGGLE,
     JIGGLE_DONE,
     TIMER_DONE,
     RELEASED_PIECE,
