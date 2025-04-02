@@ -7,6 +7,7 @@ public enum SequenceState implements State {
     DRIVING_TO_TARGET,
     RAISING_ELEVATOR,
     MOVING_TO_2ND_STAGE,
+    MOVING_TO_3RD_STAGE,
     LOWERING,
     MOVING_ARM_FORWARD,
     MOVING_ARM_BACK,

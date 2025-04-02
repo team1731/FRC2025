@@ -25,8 +25,8 @@ public class CoralScoreTransitions {
 
         // Algae jiggle sequences
         {SequenceState.FINISHING,               SequenceInput.START_JIGGLE,               "moveArmSlowAlgae",          SequenceState.INTAKING},
-        {SequenceState.INTAKING,                SequenceInput.TIMER_DONE,                 "armThirdStage",             SequenceState.MOVING_ARM_BACK},  
-        {SequenceState.MOVING_ARM_BACK,         SequenceInput.ARM_DONE,                   "algaeJiggle",               SequenceState.JIGGLING}, 
+        {SequenceState.INTAKING,                SequenceInput.TIMER_DONE,                 "armThirdStageSlow",         SequenceState.MOVING_TO_3RD_STAGE},  
+        {SequenceState.MOVING_TO_3RD_STAGE,     SequenceInput.ARM_DONE,                   "algaeJiggle",               SequenceState.JIGGLING}, 
         {SequenceState.JIGGLING,                SequenceInput.TIMER_DONE,                 "algaeIntake",               SequenceState.HOME},
 
         // Level change sequences

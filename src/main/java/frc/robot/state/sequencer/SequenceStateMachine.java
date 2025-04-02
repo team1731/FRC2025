@@ -197,6 +197,11 @@ public class SequenceStateMachine extends StateMachine {
         return true;
     }
 
+    public boolean armThirdStageSlow() {
+        armSubsystem.moveArmSlowSpeed(positions.thirdStageArmPosition, subsystemCallback);
+        return true;
+    }
+
     public boolean moveArmHome() {
         armSubsystem.moveArmNormalSpeed(ArmConstants.armHomePosition, subsystemCallback);
         return true;
@@ -290,7 +295,7 @@ public class SequenceStateMachine extends StateMachine {
 
     public boolean moveArmToScoreCoral() {
         if(SequenceManager.shouldPluckAlgae()) {
-            armSubsystem.moveArmNormalSpeed(positions.secondStageArmPosition, subsystemCallback);
+            armSubsystem.moveArmSlowSpeed(positions.secondStageArmPosition, subsystemCallback);
             handClamperSubsystem.open(positions.clamperOpenPosition);
         } else {
             armSubsystem.moveArmNormalSpeed(positions.secondStageArmPosition, subsystemCallback);
