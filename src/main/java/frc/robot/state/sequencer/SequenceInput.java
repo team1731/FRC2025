@@ -10,6 +10,8 @@ public enum SequenceInput implements Input {
     RESET_DONE,
     BUTTON_RELEASED,
     LEVEL_CHANGED,
+    PLUCK_ALGAE,
+    READY_FOR_JIGGLE,
 
     // Subsystem feedback
     DRIVE_THRESHOLD_MET,
@@ -21,7 +23,6 @@ public enum SequenceInput implements Input {
     ARM_THRESHOLD_MET,
     HAND_DONE,
     DETECTED_PIECE,
-    START_JIGGLE,
     JIGGLE_DONE,
     TIMER_DONE,
     RELEASED_PIECE,

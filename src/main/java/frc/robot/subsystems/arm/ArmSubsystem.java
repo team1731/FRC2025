@@ -236,9 +236,8 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
             algaeRunningTime = 0;
             algaeStartedTime = 0;
             if(scoreStateMachineCallback != null) {
-                System.out.println("Hand intake timer done, no piece detected");
+                System.out.println("Arm subsystem timer threshold callback");
                 scoreStateMachineCallback.setInput(SequenceInput.TIMER_DONE);
-                scoreStateMachineCallback = null;
             }
         }
 
