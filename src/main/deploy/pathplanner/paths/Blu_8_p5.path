@@ -70,7 +70,7 @@
     },
     {
       "name": "CoralL4Score",
-      "waypointRelativePos": 0.5673249551166982,
+      "waypointRelativePos": 0.31956912028725354,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
