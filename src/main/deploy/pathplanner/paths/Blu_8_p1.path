@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "CoralL4Score",
-      "waypointRelativePos": 0.4362657091561954,
+      "waypointRelativePos": 0.32495511669658894,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
