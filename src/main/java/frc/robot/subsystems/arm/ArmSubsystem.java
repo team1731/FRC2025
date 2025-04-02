@@ -39,7 +39,6 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
 
     // state machine callback handling
     private StateMachineCallback stateMachineCallback;
-    private StateMachineCallback scoreStateMachineCallback; //do we need both callbacks?
     private boolean callbackOnDone = false;
     private boolean callbackOnThreshold = false;
     private double positionThreshold = 0;
@@ -235,9 +234,9 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
          if(algaeRunningTime != 0 && Timer.getFPGATimestamp() - algaeStartedTime >= algaeRunningTime) {
             algaeRunningTime = 0;
             algaeStartedTime = 0;
-            if(scoreStateMachineCallback != null) {
+            if(stateMachineCallback != null) {
                 System.out.println("Arm subsystem timer threshold callback");
-                scoreStateMachineCallback.setInput(SequenceInput.TIMER_DONE);
+                stateMachineCallback.setInput(SequenceInput.TIMER_DONE);
             }
         }
 
