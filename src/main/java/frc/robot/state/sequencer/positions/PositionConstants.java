@@ -78,6 +78,7 @@ public final class PositionConstants {
             public final static double armScorePosition = 15;
             public final static double clamperPluckAlgaePosition = pluckAlgaeWidth;
             public final static double thirdStageArmPosition = -3;
+            public final static double clamperJigglePosition = 0.07;
         }
     }
 
