@@ -202,7 +202,10 @@ public class SequenceStateMachine extends StateMachine {
         return true;
     }
 
-    public boolean moveArmHomeCoral() { //////////////
+    public boolean moveArmHomeCoral() {
+        if (SequenceManager.shouldPluckAlgae()) {
+            armSubsystem.moveArmSlowAlgae(0.6, 5.0, subsystemCallback);
+        } else
             armSubsystem.moveArmNormalSpeed(ArmConstants.armHomePosition, subsystemCallback);
         return true;
     }
