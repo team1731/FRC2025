@@ -275,6 +275,7 @@ public class SequenceStateMachine extends StateMachine {
         System.out.println("SequenceStateMachine: releasing coral piece...");
         handClamperSubsystem.open(0.013);  
         handIntakeSubsystem.release(HandConstants.releaseVelocity, 1.0, subsystemCallback);
+        elevatorSubsystem.moveElevatorNormalSpeed(15);
         return true;
     }
 
@@ -328,7 +329,7 @@ public class SequenceStateMachine extends StateMachine {
     }
 
     public boolean moveArmSlowAlgae(){
-        armSubsystem.moveArmSlowAlgae(0.6, 5.0, subsystemCallback);
+        armSubsystem.moveArmSlowAlgae(0.6, 5.0, 1, subsystemCallback);
         return true;
     }
 
@@ -397,6 +398,26 @@ public class SequenceStateMachine extends StateMachine {
         return true;
     }
 
+    public boolean startResetSlowly() {
+        isResetting = true;
+        // stop current movements
+        armSubsystem.stopArm();
+        elevatorSubsystem.stopElevator();
+        // move back home slowly
+        armSubsystem.moveArmSlowSpeed(ArmConstants.armHomePosition, subsystemCallback);
+        elevatorSubsystem.moveElevatorSlowSpeed(ElevatorConstants.elevatorHomePosition, subsystemCallback);
+        return true;
+    }
+
+    public boolean startIntakeResetSlow() {
+        if(!handIntakeSubsystem.pieceDetectionSwitchFlipped()) {
+            handClamperSubsystem.close();
+        }
+        handIntakeSubsystem.stop();
+        startResetSlowly();
+        return true;
+    }
+    
     public boolean startIntakeReset() {
         if(!handIntakeSubsystem.pieceDetectionSwitchFlipped()) {
             handClamperSubsystem.close();

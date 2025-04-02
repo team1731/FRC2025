@@ -38,8 +38,8 @@ public final class PositionConstants {
 
     public static final class CORAL_SCORE {
         public static final class CORAL_L1 {
-            public final static double raiseElevatorPosition = 45;
-            public final static double raiseElevatorThresholdPosition = 38;
+            public final static double raiseElevatorPosition = 42;
+            public final static double raiseElevatorThresholdPosition = 35;
             public final static double armForwardPosition = 26;
             public final static double armForwardThreshold = 21;
             public final static double clamperOpenPosition = coralIntakeWidth;
