@@ -61,7 +61,7 @@ public class HandClamperSubsystem extends SubsystemBase implements ToggleableSub
             desiredPosition = position;
         }
  
-
+       System.out.println("setting pos: " + desiredPosition);
 
         motor.setControl(mmReq1.withPosition(desiredPosition).withFeedForward(arbitraryFeedForward));
     }
@@ -100,8 +100,8 @@ public class HandClamperSubsystem extends SubsystemBase implements ToggleableSub
 
         clamperCancoder = new CANcoder(HandConstants.clamperCancoderDeviceId, "canivore1");
         CANcoderConfiguration cancoderConfigs = new CANcoderConfiguration();
-        cancoderConfigs.MagnetSensor.MagnetOffset = 0.2854;  //0.248291015625
-        cancoderConfigs.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.25;
+        cancoderConfigs.MagnetSensor.MagnetOffset = 0.1376953125; //0.2854;  //0.248291015625
+        cancoderConfigs.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
         clamperCancoder.getConfigurator().apply(cancoderConfigs);
 
         motor = new TalonFX(HandConstants.clamperCanId, "canivore1");

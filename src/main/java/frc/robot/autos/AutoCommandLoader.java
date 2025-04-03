@@ -53,7 +53,7 @@ public class AutoCommandLoader {
     public SequentialCommandGroup getCoralFeederIntakeCommand() {
         return new SequentialCommandGroup(
             new InstantCommand(() -> SequenceManager.setGamePieceSelection(GamePiece.CORAL)),
-            new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L2)),
+            new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L4)),
             new InstantCommand(() -> SequenceManager.setActionSelection(Action.INTAKE)),
             new ResetSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem),
             new AutoFireSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)

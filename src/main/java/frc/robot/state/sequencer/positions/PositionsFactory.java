@@ -12,6 +12,7 @@ import frc.robot.state.sequencer.positions.PositionConstants.CORAL_SCORE.CORAL_L
 import frc.robot.state.sequencer.positions.PositionConstants.CORAL_SCORE.CORAL_L2;
 import frc.robot.state.sequencer.positions.PositionConstants.CORAL_SCORE.CORAL_L3;
 import frc.robot.state.sequencer.positions.PositionConstants.CORAL_SCORE.CORAL_L4;
+import frc.robot.state.sequencer.positions.PositionConstants.RESET.UNSTUCK;
 
 
 public class PositionsFactory {
@@ -84,7 +85,16 @@ public class PositionsFactory {
         positions.firstStageArmPosition = CORAL_L4.armForwardPosition;
         positions.firstStageArmThreshold = CORAL_L4.armForwardThreshold;
         positions.secondStageArmPosition = CORAL_L4.armScorePosition;
+        positions.secondStageArmThreshold = CORAL_L4.armScoreThreshold;
         positions.clamperOpenPosition = CORAL_L4.clamperPluckAlgaePosition;
+        positions.thirdStageArmPosition = CORAL_L4.thirdStageArmPosition;
+        positions.clamperJigglePosition = CORAL_L4.clamperJigglePosition;
+        return positions;
+    }
+
+    public static Positions getUnStuckElevator() {
+        Positions positions = new Positions();
+        positions.raiseElevatorPosition = UNSTUCK.raiseElevatorPosition;
         return positions;
     }
 
@@ -101,6 +111,8 @@ public class PositionsFactory {
         positions.secondStageElevatorPosition = ALGAE_REEF_L2.secondStageElevatorPosition;
         positions.clamperIntakePosition = ALGAE_REEF_L2.clamperIntakePosition;
         positions.clamperHoldPosition = ALGAE_REEF_L2.clamperHoldPosition;
+        positions.clamperJigglePosition = ALGAE_REEF_L2.clamperJigglePosition;
+        positions.secondStageArmPosition = ALGAE_REEF_L2.secondStageArmPosition;
         return positions;
     }
 
@@ -110,6 +122,8 @@ public class PositionsFactory {
         positions.secondStageElevatorPosition = ALGAE_REEF_L3.secondStageElevatorPosition;
         positions.clamperIntakePosition = ALGAE_REEF_L3.clamperIntakePosition;
         positions.clamperHoldPosition = ALGAE_REEF_L3.clamperHoldPosition;
+        positions.clamperJigglePosition = ALGAE_REEF_L3.clamperJigglePosition;
+        positions.secondStageArmPosition = ALGAE_REEF_L3.secondStageArmPosition;
         return positions;
     }
 
@@ -117,6 +131,8 @@ public class PositionsFactory {
         Positions positions = new Positions();
         positions.firstStageArmPosition = ALGAE_FLOOR.armForwardPosition;
         positions.clamperIntakePosition = ALGAE_FLOOR.clamperIntakePosition;
+        positions.clamperJigglePosition = ALGAE_FLOOR.clamperJigglePosition;
+        positions.secondStageArmPosition = ALGAE_FLOOR.secondStageArmPosition;
         return positions;
     }
 

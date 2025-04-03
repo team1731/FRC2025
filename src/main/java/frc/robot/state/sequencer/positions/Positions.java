@@ -7,8 +7,11 @@ public class Positions {
     public double lowerElevatorThreshold;
     public double firstStageArmPosition;
     public double firstStageArmThreshold;
+    public double secondStageArmThreshold;
     public double secondStageArmPosition; // used when sequence includes multiple arm movements before going home
+    public double thirdStageArmPosition;
     public double clamperIntakePosition;
     public double clamperHoldPosition;
     public double clamperOpenPosition;
+    public double clamperJigglePosition;
 }

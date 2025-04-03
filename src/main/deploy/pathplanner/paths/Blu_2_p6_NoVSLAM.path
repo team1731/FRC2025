@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.8101973684210524,
-        "y": 2.9569901315789475
+        "x": 3.9256578947368417,
+        "y": 2.899259868421052
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.9731085526315786,
-        "y": 2.2546052631578952
+        "x": 3.088569078947368,
+        "y": 2.196875
       },
       "isLocked": false,
       "linkedName": "Processor_Blu_1_p5_stop_NoVSLAM"
