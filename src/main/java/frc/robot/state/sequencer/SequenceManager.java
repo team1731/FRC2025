@@ -11,9 +11,15 @@ public class SequenceManager {
     private static Action actionSelection;
     private static GamePiece pieceSelection = GamePiece.CORAL; // coral is default
     private static boolean shouldPluckAlgae = false;
+    private static boolean shouldPreventL4 = false;
 
+
+    public static void setShouldPreventL4(boolean shouldPrevent) {
+        shouldPreventL4 = shouldPrevent;
+    }
 
     public static Level getLevelSelection() {
+        if(shouldPreventL4 && levelSelection == Level.L4) return Level.L2;
         return levelSelection;
     }
 
@@ -86,7 +92,7 @@ public class SequenceManager {
     }
 
     public static Sequence getSequence() {
-        return SequenceFactory.getSequence(levelSelection, pieceSelection, actionSelection);
+        return SequenceFactory.getSequence(getLevelSelection(), pieceSelection, actionSelection);
     }
 
     private static void evaluateForMidstreamUpdate() {

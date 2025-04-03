@@ -75,6 +75,7 @@ public final class PositionConstants {
             public final static double lowerElevatorThresholdPosition = 85.0;
             public final static double armForwardPosition = 9;
             public final static double armForwardThreshold = 9;
+            public final static double armScoreThreshold = 12;
             public final static double armScorePosition = 15;
             public final static double clamperPluckAlgaePosition = pluckAlgaeWidth;
             public final static double thirdStageArmPosition = -3;

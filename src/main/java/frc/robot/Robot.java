@@ -422,7 +422,7 @@ public class Robot extends TimedRobot {
 		MessageLog.getLogger();
 		System.out.println("TELEOP INIT");
 		// resetting to appropriate defaults post auto
-		SequenceManager.setLevelSelection(Level.L2);
+		SequenceManager.setLevelSelection(Level.L4);
 		SequenceManager.setGamePieceSelection(GamePiece.CORAL);
 		// cancel any outstanding auto commands
 		CommandScheduler.getInstance().cancelAll();

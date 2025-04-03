@@ -231,6 +231,9 @@ public class VSLAMSubsystem {
      * @return true if the Quest is connected
      */
     public boolean isConnected() {
+        return areGettingUpdates() && isTracking();
+    }
+    public boolean areGettingUpdates() {
         return ((RobotController.getFPGATime() - questBatteryPercent.getLastChange()) / 1000) < 250;
     }
     public boolean isTracking() {

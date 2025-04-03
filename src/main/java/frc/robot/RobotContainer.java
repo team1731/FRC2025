@@ -86,7 +86,8 @@ public class RobotContainer {
   private final JoystickButton opL2 = new JoystickButton(sideButtons, JoystickConstants.op2);
   private final JoystickButton opL3 = new JoystickButton(sideButtons, JoystickConstants.op3);
   private final JoystickButton opL4 = new JoystickButton(sideButtons, JoystickConstants.op4);
-  private final JoystickButton opTargetModeToggle = new JoystickButton(sideButtons, JoystickConstants.op5);
+  private final JoystickButton opL4RestrictionToggle = new JoystickButton(sideButtons, JoystickConstants.op5);
+  //private final JoystickButton opTargetModeToggle = new JoystickButton(sideButtons, JoystickConstants.op5);
   private final JoystickButton opElevReset = new JoystickButton(sideButtons, JoystickConstants.op6);
   private final JoystickButton opKnockAlgae = new JoystickButton(sideButtons, JoystickConstants.op7);
   private final JoystickButton opAlgae = new JoystickButton(sideButtons, JoystickConstants.op8);
@@ -152,7 +153,7 @@ public class RobotContainer {
       new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)));
    
     // Climb up
-    dPOVUp.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.maxClimbPosition))) 
+    dRightBumper.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.maxClimbPosition))) 
       .onFalse(new InstantCommand(() -> climbSubsystem.stopClimb()));
 
     // Climb down
@@ -207,11 +208,14 @@ public class RobotContainer {
 
     // Rezero the elevator
     opElevReset.onTrue(new SequentialCommandGroup(
+      new InstantCommand(() -> SequenceManager.setShouldPreventL4(true)),
       new InstantCommand(() -> elevatorSubsystem.setElevatorUnstuck(true))))
       .onFalse(new SequentialCommandGroup(
         new InstantCommand(() -> elevatorSubsystem.setElevatorUnstuck(false)),
         new InstantCommand(() -> elevatorSubsystem.stopElevator()),
         new InstantCommand(() -> System.out.println("Reset elevator postion"))));
+    
+    opL4RestrictionToggle.onTrue(new InstantCommand(() -> SequenceManager.setShouldPreventL4(false)));
 
     // Operator drive to target buttons
     opPostA.whileTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.A)));

@@ -112,6 +112,7 @@ public class SequenceStateMachine extends StateMachine {
                 System.out.println("closing hand without callback"); 
             }
             if(input == SequenceInput.DETECTED_PIECE && currentGamePiece == GamePiece.CORAL && !SequenceManager.shouldPluckAlgae()) holdCoralPiece();
+            if(currentState == SequenceState.SCORING && SequenceManager.shouldPluckAlgae() && input == SequenceInput.ARM_DONE) handClamperSubsystem.open(positions.clamperOpenPosition);
             if(currentSequence == Sequence.SCORE_CORAL_L2 && input == SequenceInput.SENSOR_SCORE) return;
             if(currentSequence == Sequence.SCORE_CORAL_L2 && input == SequenceInput.ARM_DONE && currentState == SequenceState.SCORING) {
                 releaseCoralPiece();
@@ -284,7 +285,7 @@ public class SequenceStateMachine extends StateMachine {
     public boolean moveArmToScoreCoral() {
         if(SequenceManager.shouldPluckAlgae()) {
             armSubsystem.moveArmSlowSpeed(positions.secondStageArmPosition, subsystemCallback);
-            handClamperSubsystem.open(positions.clamperOpenPosition);
+            //handClamperSubsystem.open(positions.clamperOpenPosition);
         } else {
             armSubsystem.moveArmNormalSpeed(positions.secondStageArmPosition, subsystemCallback);
         }
@@ -338,7 +339,7 @@ public class SequenceStateMachine extends StateMachine {
 
     public boolean pluckAlgae() {
         handIntakeSubsystem.intakeWithCurrent();
-        armSubsystem.moveArmSlowAlgae(0.6, 5.0, 1, subsystemCallback);
+        armSubsystem.moveArmSlowAlgae(0.3, 5.0, 1, subsystemCallback);
         return true;
     }
 

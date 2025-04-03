@@ -225,7 +225,7 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
             if(scoreStateMachineCallback != null) {
                 System.out.println("HandIntakeSubsystem reverse limit switch flipped, should have game piece");
                 scoreStateMachineCallback.setInput(SequenceInput.DETECTED_PIECE);
-                scoreStateMachineCallback = null;
+                //scoreStateMachineCallback = null;
             }
         }
         
@@ -245,7 +245,7 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
             if(scoreStateMachineCallback != null) {
                 System.out.println("HandIntakeSubsystem reverse limit switch flipped, should have game piece");
                 scoreStateMachineCallback.setInput(SequenceInput.DETECTED_PIECE);
-                scoreStateMachineCallback = null;
+                //scoreStateMachineCallback = null;
             }
         }
         
