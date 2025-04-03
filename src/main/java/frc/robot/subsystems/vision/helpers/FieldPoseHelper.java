@@ -1,10 +1,7 @@
 package frc.robot.subsystems.vision.helpers;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -39,7 +36,7 @@ public class FieldPoseHelper {
     public static double autoLineupTolerance = 0.2;
     public static double autoLineupLeftTargetYaw =-23.75;  //ok  Barge battside  
     public static double autoLineupCenterTargetYaw = 0.28; // need to uise battside
-    public static double autoLineupRightTargetYaw = 27.85; // ok Processor side elevside 
+    public static double autoLineupRightTargetYaw = 26.53; // ok Processor side elevside 
 
     // List of April Tag poses on the reef
     /*
@@ -75,8 +72,7 @@ public class FieldPoseHelper {
         { 20, 60 },
         { 21, 0 }, 
         { 22, 300 }
-    };
-    
+    };    
 
     /*
      * List of line up poses for reef scoring

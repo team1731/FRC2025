@@ -1,5 +1,7 @@
 package frc.robot.state.sequencer;
 
+import javax.security.auth.callback.Callback;
+
 import frc.robot.state.Input;
 import frc.robot.state.StateMachine;
 import frc.robot.state.StateMachineCallback;
@@ -37,6 +39,12 @@ public class SequenceStateMachine extends StateMachine {
         this.handClamperSubsystem = handClamperSubsystem;
         this.handIntakeSubsystem = handIntakeSubsystem;
         setCurrentState(SequenceState.HOME);
+    }
+
+    public void hardReset() {
+        resetState();
+        setCurrentState(SequenceState.HOME);
+        System.out.println("SequenceStateMachine: hard reset complete - current state: " + currentState);
     }
 
     /*
@@ -77,7 +85,7 @@ public class SequenceStateMachine extends StateMachine {
      */
 
     protected void handleSubsystemCallback(Input input) {
-        if(isResetting) {
+        if(isResetting && !SequenceManager.shouldPluckAlgae()) {
             System.out.println("SequenceStateMachine: reset input " + input);
             SequenceInput sequenceInput = (SequenceInput)input;
             if(sequenceInput == SequenceInput.ELEVATOR_THRESHOLD_MET) setInput(input); // not home yet
@@ -88,9 +96,23 @@ public class SequenceStateMachine extends StateMachine {
                 if(SequenceManager.isCoralScoreSequence(currentSequence)) resetHandIfCoralNotDetected();
                 setInput(SequenceInput.RESET_DONE);
             }
+        } else if(isResetting && SequenceManager.shouldPluckAlgae()) {
+            System.out.println("SequenceStateMachine: algae plucking started " + input);
+            SequenceInput sequenceInput = (SequenceInput)input;
+            if(sequenceInput == SequenceInput.ELEVATOR_THRESHOLD_MET) setInput(SequenceInput.PLUCK_ALGAE);
+            if(sequenceInput == SequenceInput.ELEVATOR_DONE) elevatorResetDone = true;
+            if(sequenceInput == SequenceInput.TIMER_DONE) armResetDone = true;
+            if(elevatorResetDone && armResetDone) {
+                isResetting = false;
+                setInput(SequenceInput.READY_FOR_JIGGLE);
+            }
         } else {
-            if(input == SequenceInput.RELEASED_PIECE) closeHandWithoutCallback();
-            if(input == SequenceInput.DETECTED_PIECE && currentGamePiece == GamePiece.CORAL) holdCoralPiece();
+            if(input == SequenceInput.RELEASED_PIECE) {
+                closeHandWithoutCallback();
+                System.out.println("closing hand without callback"); 
+            }
+            if(input == SequenceInput.DETECTED_PIECE && currentGamePiece == GamePiece.CORAL && !SequenceManager.shouldPluckAlgae()) holdCoralPiece();
+            if(currentState == SequenceState.SCORING && SequenceManager.shouldPluckAlgae() && input == SequenceInput.ARM_DONE) handClamperSubsystem.open(positions.clamperOpenPosition);
             if(currentSequence == Sequence.SCORE_CORAL_L2 && input == SequenceInput.SENSOR_SCORE) return;
             if(currentSequence == Sequence.SCORE_CORAL_L2 && input == SequenceInput.ARM_DONE && currentState == SequenceState.SCORING) {
                 releaseCoralPiece();
@@ -132,9 +154,6 @@ public class SequenceStateMachine extends StateMachine {
     public boolean moveElevatorHome() {
         isResetting = true;
         elevatorSubsystem.moveElevatorNormalSpeed(ElevatorConstants.elevatorHomePosition, subsystemCallback, positions.lowerElevatorThreshold);
-        if(SequenceManager.shouldPluckAlgae()) {
-            handIntakeSubsystem.intakeWithCurrent();
-        }
         return true;
     }
 
@@ -181,10 +200,7 @@ public class SequenceStateMachine extends StateMachine {
     }
 
     public boolean moveArmHomeCoral() {
-        if (SequenceManager.shouldPluckAlgae()) {
-            armSubsystem.moveArmSlowAlgae(0.6, 5.0, subsystemCallback);
-        } else
-            armSubsystem.moveArmNormalSpeed(ArmConstants.armHomePosition, subsystemCallback);
+        armSubsystem.moveArmNormalSpeed(ArmConstants.armHomePosition, subsystemCallback);
         return true;
     }
 
@@ -254,7 +270,9 @@ public class SequenceStateMachine extends StateMachine {
 
     public boolean releaseCoralPiece() {
         System.out.println("SequenceStateMachine: releasing coral piece...");
+        handClamperSubsystem.open(0.013);  
         handIntakeSubsystem.release(HandConstants.releaseVelocity, 1.0, subsystemCallback);
+        elevatorSubsystem.moveElevatorNormalSpeed(15);
         return true;
     }
 
@@ -265,11 +283,9 @@ public class SequenceStateMachine extends StateMachine {
     }
 
     public boolean moveArmToScoreCoral() {
-   //     handClamperSubsystem.open(0.08, subsystemCallback); // comment out this line if you do not want to open clamper and strip off algae
-        
         if(SequenceManager.shouldPluckAlgae()) {
-            armSubsystem.moveArmNormalSpeed(positions.secondStageArmPosition, subsystemCallback);
-            handClamperSubsystem.open(positions.clamperOpenPosition);
+            armSubsystem.moveArmSlowSpeed(positions.secondStageArmPosition, subsystemCallback);
+            //handClamperSubsystem.open(positions.clamperOpenPosition);
         } else {
             armSubsystem.moveArmNormalSpeed(positions.secondStageArmPosition, subsystemCallback);
         }
@@ -293,8 +309,7 @@ public class SequenceStateMachine extends StateMachine {
 
 
      public boolean moveArmForBarge() {
-       // handClamperSubsystem.close();
-       armSubsystem.moveArmNormalSpeed(positions.firstStageArmPosition, subsystemCallback);
+        armSubsystem.moveArmNormalSpeed(positions.firstStageArmPosition, subsystemCallback);
         handIntakeSubsystem.release(HandConstants.releaseVelocity, 2.0, subsystemCallback);
         return true;
     }
@@ -319,6 +334,37 @@ public class SequenceStateMachine extends StateMachine {
     public boolean handoffAlgae() {
         handClamperSubsystem.close();
         handIntakeSubsystem.release(HandConstants.releaseVelocity, HandConstants.defaultReleaseRuntime, subsystemCallback);
+        return true;
+    }
+
+    public boolean pluckAlgae() {
+        handIntakeSubsystem.intakeWithCurrent();
+        armSubsystem.moveArmSlowAlgae(0.3, 5.0, 1, subsystemCallback);
+        return true;
+    }
+
+    public boolean moveArmForAlgaeJiggle() {
+        armSubsystem.moveArmSlowSpeed(positions.thirdStageArmPosition, subsystemCallback);
+        return true;
+    }
+
+    public boolean algaeJiggle(){
+        System.out.println("Jiggling algae");
+        handClamperSubsystem.moveHand(positions.clamperJigglePosition);
+        handIntakeSubsystem.releaseWithVelocity(5, 0.2, subsystemCallback);
+        return true;
+    }
+
+    public boolean algaeIntake(){
+        System.out.println("Intaking algae");
+        // handIntakeSubsystem.stop();
+        handIntakeSubsystem.intakeWithCurrent(); 
+        resetState();
+        return true;
+    }
+
+    public boolean algaeStopIntake(){
+        handIntakeSubsystem.stop();
         return true;
     }
 
@@ -355,6 +401,26 @@ public class SequenceStateMachine extends StateMachine {
         return true;
     }
 
+    public boolean startResetSlowly() {
+        isResetting = true;
+        // stop current movements
+        armSubsystem.stopArm();
+        elevatorSubsystem.stopElevator();
+        // move back home slowly
+        armSubsystem.moveArmSlowSpeed(ArmConstants.armHomePosition, subsystemCallback);
+        elevatorSubsystem.moveElevatorSlowSpeed(ElevatorConstants.elevatorHomePosition, subsystemCallback);
+        return true;
+    }
+
+    public boolean startIntakeResetSlow() {
+        if(!handIntakeSubsystem.pieceDetectionSwitchFlipped()) {
+            handClamperSubsystem.close();
+        }
+        handIntakeSubsystem.stop();
+        startResetSlowly();
+        return true;
+    }
+    
     public boolean startIntakeReset() {
         if(!handIntakeSubsystem.pieceDetectionSwitchFlipped()) {
             handClamperSubsystem.close();
@@ -365,9 +431,6 @@ public class SequenceStateMachine extends StateMachine {
     }
 
     public boolean resetState() {
-        if(SequenceManager.shouldPluckAlgae()){
-            armSubsystem.moveArmSlowAlgae(0.1, -2.0, subsystemCallback);
-        }
         currentSequence = null;
         currentAction = null;
         currentGamePiece = null;

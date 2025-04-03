@@ -31,6 +31,8 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
     private double releaseRunningTime = 0;
     private double detectionStartedTime = 0;
     private double detectionRunningTime = 0;
+    private double algaeStartedTime = 0;
+    private double algaeRunningTime = 0;
     private boolean enabled;
     
     
@@ -55,6 +57,16 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
         intaking = true;
     }
 
+    public void intake(double velocity, double runningTime) {
+        detectionStartedTime = Timer.getFPGATimestamp();
+        detectionRunningTime = runningTime;
+        intake(velocity);
+    }
+
+    public void intake(double velocity, double runningTime, StateMachineCallback callback) {
+        intake(velocity, runningTime);
+    }
+
     public void intake(double velocity, StateMachineCallback callback) {
         scoreStateMachineCallback = callback;
        // intake(velocity);
@@ -63,6 +75,14 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
 
     public void intakeWithCurrent() {
         motor.setControl(new TorqueCurrentFOC(-20));
+        intaking = true;
+    }
+
+    public void intakeWithCurrent(double runningTime, StateMachineCallback callback) {
+        detectionStartedTime = Timer.getFPGATimestamp();
+        detectionRunningTime = runningTime;
+        scoreStateMachineCallback = callback;
+        intakeWithCurrent();
     }
 
     public void release(double velocity) {
@@ -79,6 +99,14 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
     public void release(double velocity, double runningTime, StateMachineCallback callback) {
         scoreStateMachineCallback = callback;
         release(velocity, runningTime);
+    }
+
+    public void releaseWithVelocity(double velocity, double runningTime, StateMachineCallback callback){
+        VelocityDutyCycle velocityDutyCycle = new VelocityDutyCycle(velocity); // velocity
+        motor.setControl(velocityDutyCycle);
+        algaeStartedTime = Timer.getFPGATimestamp();
+        algaeRunningTime = runningTime;
+        scoreStateMachineCallback = callback;
     }
 
     public void hold() {
@@ -197,7 +225,7 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
             if(scoreStateMachineCallback != null) {
                 System.out.println("HandIntakeSubsystem reverse limit switch flipped, should have game piece");
                 scoreStateMachineCallback.setInput(SequenceInput.DETECTED_PIECE);
-                scoreStateMachineCallback = null;
+                //scoreStateMachineCallback = null;
             }
         }
         
@@ -217,7 +245,7 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
             if(scoreStateMachineCallback != null) {
                 System.out.println("HandIntakeSubsystem reverse limit switch flipped, should have game piece");
                 scoreStateMachineCallback.setInput(SequenceInput.DETECTED_PIECE);
-                scoreStateMachineCallback = null;
+                //scoreStateMachineCallback = null;
             }
         }
         
@@ -235,6 +263,16 @@ public class HandIntakeSubsystem extends SubsystemBase implements ToggleableSubs
             System.out.println("HandIntakeSubsystem stopped intake");
             scoreStateMachineCallback.setInput(SequenceInput.STOPPED_INTAKE);
             scoreStateMachineCallback = null;
+        }
+
+        if(algaeRunningTime != 0 && Timer.getFPGATimestamp() - algaeStartedTime >= algaeRunningTime) {
+            algaeRunningTime = 0;
+            algaeStartedTime = 0;
+            if(scoreStateMachineCallback != null) {
+                System.out.println("Hand intake timer done, no piece detected");
+                scoreStateMachineCallback.setInput(SequenceInput.TIMER_DONE);
+                scoreStateMachineCallback = null;
+            }
         }
 
         log();
