@@ -39,7 +39,7 @@ public class AutoFactory {
             System.out
                 .println("ERROR: no such auto path name found in src/main/deploy/pathplanner/autos: " + alliancePathName + 
                     ", switching to default auto " + AutoConstants.kAutoDefault);
-            alliancePathName = "Blu_" + AutoConstants.kAutoDefault;
+            alliancePathName = "Blu_" + AutoConstants.kAutoDefault + (!isVSLAMConnected? AutoConstants.kNoVSLAMPostfix : "");
             flipRedBlue = redAlliance;
         }
         Command command = new PathPlannerAuto(alliancePathName);
