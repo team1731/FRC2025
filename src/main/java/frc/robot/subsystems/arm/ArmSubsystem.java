@@ -14,6 +14,7 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.state.StateMachineCallback;
@@ -42,6 +43,9 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
     private boolean callbackOnThreshold = false;
     private double positionThreshold = 0;
     private boolean forwardThreshold = false;
+
+    private double algaeStartedTime = 0;
+    private double algaeRunningTime = 0;
 
     private ClimbSubsystem climbSubsystem;
 
@@ -108,6 +112,17 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
 
     public void moveArmSlowSpeed(double position) {
         mmReq.Velocity = ArmConstants.slowedArmVelocity;
+        mmReq.Acceleration = ArmConstants.slowedArmAcceleration;
+        System.out.println("ArmSubsystem slowed velocity: " + ArmConstants.slowedArmVelocity + " accel: " + ArmConstants.slowedArmAcceleration);
+        callbackOnDone = true;
+        moveArm(position);
+    }
+
+    public void moveArmSlowAlgae(double speed, double position, double runningTime, StateMachineCallback callback){
+        stateMachineCallback = callback;
+        algaeStartedTime = Timer.getFPGATimestamp();
+        algaeRunningTime = runningTime;
+        mmReq.Velocity = speed;
         mmReq.Acceleration = ArmConstants.slowedArmAcceleration;
         System.out.println("ArmSubsystem slowed velocity: " + ArmConstants.slowedArmVelocity + " accel: " + ArmConstants.slowedArmAcceleration);
         callbackOnDone = true;
@@ -213,6 +228,15 @@ public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
                 stateMachineCallback.setInput(SequenceInput.ARM_THRESHOLD_MET);
                 callbackOnThreshold = false;
                 positionThreshold = 0;
+            }
+        }
+
+         if(algaeRunningTime != 0 && Timer.getFPGATimestamp() - algaeStartedTime >= algaeRunningTime) {
+            algaeRunningTime = 0;
+            algaeStartedTime = 0;
+            if(stateMachineCallback != null) {
+                System.out.println("Arm subsystem timer threshold callback");
+                stateMachineCallback.setInput(SequenceInput.TIMER_DONE);
             }
         }
 

@@ -12,6 +12,7 @@ import java.util.Scanner;
 
 import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -21,6 +22,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -57,7 +59,7 @@ public class Robot extends TimedRobot {
 	private AutoCommandLoader autoCommandLoader;
 	private String autoCode;
 	private String currentKeypadCommand = "";
-	private boolean redAlliance;
+	private boolean redAlliance = false;
 	private int stationNumber = 0;
 	public static long millis = System.currentTimeMillis();
 
@@ -68,6 +70,9 @@ public class Robot extends TimedRobot {
 	private HandIntakeSubsystem handIntakeSubsystem;
 	private ClimbSubsystem climbSubsystem;
 	private boolean lastVSLAMConnectedCheck;
+	private Pose2d currentPose;
+	private Pose2d targetPose;
+	private double autoStartTime;
 
 	public Robot() {
 	}
@@ -133,6 +138,14 @@ public class Robot extends TimedRobot {
 		autoCommandLoader.registerAutoEventCommands();
 		autoPreload();
 		setupSmartDashboard();
+		PathPlannerLogging.setLogCurrentPoseCallback((pose) -> {
+			currentPose = pose;
+		});
+
+		PathPlannerLogging.setLogTargetPoseCallback((pose) -> {
+			targetPose = pose;
+		});
+		FollowPathCommand.warmupCommand().schedule();
 	}
 
 	private void setupSmartDashboard() {
@@ -225,7 +238,7 @@ public class Robot extends TimedRobot {
 			System.out.println("\n\n===============>>>>>>>>>>>>>>  WE ARE " + (isRedAlliance ? "RED" : "BLUE")
 					+ " ALLIANCE  <<<<<<<<<<<<=========================");
 			redAlliance = isRedAlliance;
-			driveSubsystem.configureInitialPosition();
+		//	driveSubsystem.configureInitialPosition();
 			allianceChanged = true;
 		}
 		
@@ -243,7 +256,11 @@ public class Robot extends TimedRobot {
 		if(autoCodeChanged || allianceChanged || vslamConnectionStatusChanged) {
 			m_autonomousCommand = null;
 			m_autonomousCommand = (PathPlannerAuto) AutoFactory.getAutonomousCommand(selectedAutoCode, redAlliance, isVSLAMConnected);		
-			FollowPathCommand.warmupCommand().schedule();
+			
+			if (m_autonomousCommand.getStartingPose() != null) {
+			Pose2d startingPose = isRedAlliance? new Pose2d(17.55 - m_autonomousCommand.getStartingPose().getX(), 8.05 - m_autonomousCommand.getStartingPose().getY(),m_autonomousCommand.getStartingPose().getRotation().rotateBy(Rotation2d.k180deg)): m_autonomousCommand.getStartingPose();
+            driveSubsystem.resetPose(startingPose);
+			}
 
 			if (m_autonomousCommand != null){
 				autoCode = selectedAutoCode;
@@ -262,6 +279,7 @@ public class Robot extends TimedRobot {
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	private void initSubsystems() {
 		driveSubsystem.configureAutoBindings();
+		driveSubsystem.configureInitialPosition();
 		AprilTagFields.kDefaultField.loadAprilTagLayoutField(); 
 		AprilTagSubsystem aprilTagSubsystem = driveSubsystem.getAprilTagSubsystem();
 		aprilTagSubsystem.setLEDSubsystem(ledSubsystem);
@@ -290,6 +308,7 @@ public class Robot extends TimedRobot {
 		VSLAMSubsystem vslamSubsystem = driveSubsystem.getVSLAMSubsytem();
 		if(vslamSubsystem != null) {
             SmartDashboard.putBoolean("VSLAM Connected", vslamSubsystem.isConnected());
+			SmartDashboard.putBoolean("VSLAM Tracking", vslamSubsystem.isTracking());
         }
 	}
 
@@ -352,6 +371,7 @@ public class Robot extends TimedRobot {
 		CommandScheduler.getInstance().cancelAll();
 		
 		climbSubsystem.stowClimb();
+		autoStartTime = Timer.getFPGATimestamp();
 
 		if (m_autonomousCommand == null) {
 			System.out.println("SOMETHING WENT WRONG - UNABLE TO RUN AUTONOMOUS! CHECK SOFTWARE!");
@@ -373,6 +393,20 @@ public class Robot extends TimedRobot {
 		if (doSD()) {
 			System.out.println("AUTO PERIODIC");
 		}
+		//SmartDashboard.putString("Path running", PathPlannerAuto.currentPathName);
+		//SmartDashboard.putNumber("current Pose X", currentPose.getX());
+		//SmartDashboard.putNumber ("current Pose Y", currentPose.getY());
+		//SmartDashboard.putNumber("target pose X",targetPose.getX());
+		//SmartDashboard.putNumber("target Pose Y", targetPose.getY());
+		//SmartDashboard.putNumber("PP Error", currentPose.getTranslation().getDistance(targetPose.getTranslation()));
+		//SmartDashboard.putNumber("AutoRunningTime", Timer.getFPGATimestamp()- autoStartTime);
+
+
+		if (m_autonomousCommand != null && (Timer.getFPGATimestamp()- autoStartTime) >= 0.25 && (currentPose.getTranslation().getDistance(targetPose.getTranslation()) > 0.6)) {
+			System.out.println("distance is" + currentPose.getTranslation().getDistance(targetPose.getTranslation()));
+			m_autonomousCommand.cancel();
+			System.out.println("Had to Kill the auto because the target pose and current pose were apart by more than a foot");
+		}
 	}
 
 //   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
@@ -388,7 +422,7 @@ public class Robot extends TimedRobot {
 		MessageLog.getLogger();
 		System.out.println("TELEOP INIT");
 		// resetting to appropriate defaults post auto
-		SequenceManager.setLevelSelection(Level.L2);
+		SequenceManager.setLevelSelection(Level.L4);
 		SequenceManager.setGamePieceSelection(GamePiece.CORAL);
 		// cancel any outstanding auto commands
 		CommandScheduler.getInstance().cancelAll();

@@ -38,8 +38,8 @@ public final class PositionConstants {
 
     public static final class CORAL_SCORE {
         public static final class CORAL_L1 {
-            public final static double raiseElevatorPosition = 45;
-            public final static double raiseElevatorThresholdPosition = 38;
+            public final static double raiseElevatorPosition = 42;
+            public final static double raiseElevatorThresholdPosition = 35;
             public final static double armForwardPosition = 26;
             public final static double armForwardThreshold = 21;
             public final static double clamperOpenPosition = coralIntakeWidth;
@@ -52,12 +52,12 @@ public final class PositionConstants {
         }
 
         public static final class CORAL_L2 {
-            public final static double raiseElevatorPosition = 23;
-            public final static double raiseElevatorThresholdPosition = 18;
-            public final static double lowerElevatorThresholdPosition = 23;
-            public final static double armForwardPosition = 11;
-            public final static double armForwardThreshold = 6;
-            public final static double armScorePosition = 17;
+            public final static double raiseElevatorPosition = 21;
+            public final static double raiseElevatorThresholdPosition = 20;
+            public final static double lowerElevatorThresholdPosition = 18;
+            public final static double armForwardPosition = 10;
+            public final static double armForwardThreshold = 9;
+            public final static double armScorePosition = 11;
         }
 
         public static final class CORAL_L3 {
@@ -71,12 +71,15 @@ public final class PositionConstants {
 
         public static final class CORAL_L4 {
             public final static double raiseElevatorPosition = 93.5;
-            public final static double raiseElevatorThresholdPosition = 60.0;  
+            public final static double raiseElevatorThresholdPosition = 68;  
             public final static double lowerElevatorThresholdPosition = 85.0;
             public final static double armForwardPosition = 9;
-            public final static double armForwardThreshold = 6;
+            public final static double armForwardThreshold = 9;
+            public final static double armScoreThreshold = 12;
             public final static double armScorePosition = 15;
             public final static double clamperPluckAlgaePosition = pluckAlgaeWidth;
+            public final static double thirdStageArmPosition = -3;
+            public final static double clamperJigglePosition = 0.07;
         }
     }
 
@@ -94,6 +97,8 @@ public final class PositionConstants {
             public final static double secondStageElevatorPosition = 15;
             public final static double clamperIntakePosition = reefIntakeWidth;
             public final static double clamperHoldPosition = algaeIntakeWidth;
+            public final static double secondStageArmPosition = -3;
+            public final static double clamperJigglePosition = 0.07;
         }
 
         public static final class ALGAE_REEF_L3 {
@@ -101,11 +106,15 @@ public final class PositionConstants {
             public final static double secondStageElevatorPosition = 45;
             public final static double clamperIntakePosition = reefIntakeWidth;
             public final static double clamperHoldPosition = algaeIntakeWidth;
+            public final static double secondStageArmPosition = -3; 
+            public final static double clamperJigglePosition = 0.07; 
         }
 
         public static final class ALGAE_FLOOR {
             public final static double armForwardPosition = 15;
             public final static double clamperIntakePosition = algaeIntakeWidth;
+            public final static double secondStageArmPosition = -3; 
+            public final static double clamperJigglePosition = 0.07; 
         }
     }
 
@@ -126,6 +135,13 @@ public final class PositionConstants {
 
         public static final class ALGAE_HANDOFF {
             public final static double armForwardPosition = 17;
+        }
+    }
+
+    public static final class RESET {
+        // reset positions
+        public static final class UNSTUCK {
+            public final static double raiseElevatorPosition = 23;
         }
     }
 }

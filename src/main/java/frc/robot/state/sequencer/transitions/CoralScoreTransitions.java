@@ -16,12 +16,19 @@ public class CoralScoreTransitions {
         {SequenceState.WAITING,                 SequenceInput.BUTTON_RELEASED,            "moveArmToScoreCoral",       SequenceState.SCORING}, // driver initiated score
         {SequenceState.WAITING,                 SequenceInput.SENSOR_SCORE,               "moveArmToScoreCoral",       SequenceState.SCORING}, // hand intake sensor initiated score
         {SequenceState.WAITING,                 SequenceInput.AUTO_SCORE,                 "moveArmToScoreCoral",       SequenceState.SCORING}, // hand intake sensor initiated score       
-        {SequenceState.AUTO_SCORE_WHEN_READY,   SequenceInput.ELEVATOR_DONE,              "moveArmToScoreCoral",       SequenceState.SCORING}, // auto initiated score during elevator raise
+        {SequenceState.AUTO_SCORE_WHEN_READY,   SequenceInput.ELEVATOR_THRESHOLD_MET,     "moveArmWithThreshold",       SequenceState.AUTO_SCORE_WHEN_READY}, // auto initiated score during elevator raise
+        {SequenceState.AUTO_SCORE_WHEN_READY,   SequenceInput.ELEVATOR_DONE,              "moveArmToScoreCoral",       SequenceState.SCORING}, // auto initiated score during elevator raise       
         {SequenceState.AUTO_SCORE_WHEN_READY,   SequenceInput.ARM_DONE,                   "moveArmToScoreCoral",       SequenceState.SCORING}, // auto initiated score during arm forward
         {SequenceState.SCORING,                 SequenceInput.ARM_DONE,                   "moveElevatorHome",          SequenceState.LOWERING},
         {SequenceState.SCORING,                 SequenceInput.RELEASED_PIECE,             "moveElevatorHome",          SequenceState.LOWERING}, // this transition is used in L2 scores
-        {SequenceState.LOWERING,                SequenceInput.ELEVATOR_THRESHOLD_MET,     "moveArmHomeCoral",               SequenceState.FINISHING},
+        {SequenceState.LOWERING,                SequenceInput.ELEVATOR_THRESHOLD_MET,     "moveArmHomeCoral",          SequenceState.FINISHING},
         {SequenceState.FINISHING,               SequenceInput.RESET_DONE,                 "resetState",                SequenceState.HOME},
+
+        // Algae pluck/jiggle sequences
+        {SequenceState.LOWERING,                SequenceInput.PLUCK_ALGAE,                "pluckAlgae",                SequenceState.INTAKING},
+        {SequenceState.INTAKING,                SequenceInput.READY_FOR_JIGGLE,           "moveArmForAlgaeJiggle",     SequenceState.STARTING_JIGGLE},  
+        {SequenceState.STARTING_JIGGLE,         SequenceInput.ARM_DONE,                   "algaeJiggle",               SequenceState.JIGGLING}, 
+        {SequenceState.JIGGLING,                SequenceInput.TIMER_DONE,                 "algaeIntake",               SequenceState.HOME},
 
         // Level change sequences
         {SequenceState.RAISING_ELEVATOR,        SequenceInput.LEVEL_CHANGED,              "updateElevator",            SequenceState.UPDATING_LEVEL},

@@ -84,7 +84,7 @@ public class ClimbSubsystem extends SubsystemBase implements ToggleableSubsystem
 
         climbCancoder = new CANcoder(ClimbConstants.climbCancoderDeviceId, "canivore1");
         CANcoderConfiguration cancoderConfig = new CANcoderConfiguration();
-        cancoderConfig.MagnetSensor.MagnetOffset = -0.179931640625; 
+        cancoderConfig.MagnetSensor.MagnetOffset = -0.315185546875; 
         cancoderConfig.MagnetSensor.SensorDirection = ClimbConstants.climbCanConderDirection;
         cancoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.900146484375;
         climbCancoder.getConfigurator().apply(cancoderConfig);
@@ -110,11 +110,11 @@ public class ClimbSubsystem extends SubsystemBase implements ToggleableSubsystem
         FeedbackConfigs fdb = config.Feedback;
         fdb.FeedbackRemoteSensorID = climbCancoder.getDeviceID();
         fdb.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-        fdb.RotorToSensorRatio = 800/1; 
+        fdb.RotorToSensorRatio = 640; 
         fdb.SensorToMechanismRatio = 1;
         
         //for testing
-        config.CurrentLimits.StatorCurrentLimit = 40;
+        config.CurrentLimits.StatorCurrentLimit = 80;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
 
          // Apply the configs to Motor 

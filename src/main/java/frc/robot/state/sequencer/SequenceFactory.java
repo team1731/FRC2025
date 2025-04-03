@@ -10,6 +10,7 @@ import frc.robot.state.sequencer.transitions.CoralFeederPickupTransitions;
 import frc.robot.state.sequencer.transitions.CoralScoreL1Transitions;
 import frc.robot.state.sequencer.transitions.CoralScoreTransitions;
 import frc.robot.state.sequencer.transitions.ResetTransitions;
+import frc.robot.state.sequencer.transitions.UnStuckElevator;
 
 public class SequenceFactory {
     public static Sequence getSequence(Level levelSelection, GamePiece pieceSelection, Action actionSelection) { 
@@ -20,6 +21,8 @@ public class SequenceFactory {
         //Currently disabled may not need
         //if(pieceSelection == GamePiece.CORAL && levelSelection == Level.L1 && actionSelection == Action.INTAKE) return Sequence.INTAKE_CORAL_FLOOR;
         //if(pieceSelection == GamePiece.CORAL && levelSelection == Level.L1 && actionSelection == Action.INTAKE) return Sequence.INTAKE_CORAL_FLOOR_UPRIGHT;
+        //if(pieceSelection == GamePiece.CORAL && levelSelection == Level.L1 && actionSelection == Action.INTAKE) return Sequence.UNSTUCK_ELEVATOR;
+        if(pieceSelection == GamePiece.CORAL && levelSelection == Level.L1 && actionSelection == Action.INTAKE) return Sequence.INTAKE_CORAL_FEEDER;
         if(pieceSelection == GamePiece.CORAL && levelSelection == Level.L2 && actionSelection == Action.INTAKE) return Sequence.INTAKE_CORAL_FEEDER;
         if(pieceSelection == GamePiece.CORAL && levelSelection == Level.L3 && actionSelection == Action.INTAKE) return Sequence.INTAKE_CORAL_FEEDER;
         if(pieceSelection == GamePiece.CORAL && levelSelection == Level.L4 && actionSelection == Action.INTAKE) return Sequence.INTAKE_CORAL_FEEDER;
@@ -80,6 +83,10 @@ public class SequenceFactory {
                 return AlgaeScoreBargeTransitions.getTransitionTable();
             case HANDOFF_ALGAE: 
                 return AlgaeHandoffTransitions.getTransitionTable();
+
+                
+            case UNSTUCK_ELEVATOR:
+                return UnStuckElevator.getTransitionTable();
         
             default:
                 return null;
@@ -110,6 +117,8 @@ public class SequenceFactory {
             case INTAKE_ALGAE_FLOOR: return PositionsFactory.getAlgaeFloorPickupPositions();
             case SHOOT_ALGAE: return PositionsFactory.getAlgaeScoreBargePositions();
             case HANDOFF_ALGAE: return PositionsFactory.getAlgaeHandoffPositions();
+
+            case UNSTUCK_ELEVATOR: return PositionsFactory.getUnStuckElevator();
         
             default:
                 return null;

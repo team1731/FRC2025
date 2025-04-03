@@ -4,28 +4,28 @@
     {
       "anchor": {
         "x": 4.050740131578947,
-        "y": 5.093009868421053
+        "y": 5.1411184210526315
       },
       "prevControl": null,
       "nextControl": {
         "x": 3.0736770931679986,
-        "y": 5.925185282491838
+        "y": 5.973293835123417
       },
       "isLocked": false,
-      "linkedName": "Blu_1_p3_stop"
+      "linkedName": "Blu_8_p3_stop"
     },
     {
       "anchor": {
-        "x": 1.2700657894736842,
-        "y": 7.334868421052631
+        "x": 1.3759046052631578,
+        "y": 7.1616776315789465
       },
       "prevControl": {
-        "x": 2.5126249618964547,
-        "y": 6.325462529319865
+        "x": 2.6184637776859283,
+        "y": 6.152271739846181
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Blu_1_p4_stop"
+      "linkedName": "Blu_8_p4_stop"
     }
   ],
   "rotationTargets": [],
@@ -45,8 +45,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.4,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -57,10 +57,10 @@
     "rotation": -53.13010235415599
   },
   "reversed": false,
-  "folder": "Blu_1",
+  "folder": "Blu_8",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -59.9531834029681
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

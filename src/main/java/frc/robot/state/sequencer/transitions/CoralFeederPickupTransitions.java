@@ -10,6 +10,7 @@ public class CoralFeederPickupTransitions {
         {SequenceState.MOVING_ARM_BACK,         SequenceInput.ARM_DONE,                   "prepareToIntake",           SequenceState.INTAKING},
         {SequenceState.INTAKING,                SequenceInput.BUTTON_RELEASED,            "coralTimedIntake",          SequenceState.WAITING},
         {SequenceState.WAITING,                 SequenceInput.DETECTED_PIECE,             "startIntakeReset",          SequenceState.FINISHING},
+        {SequenceState.INTAKING,                SequenceInput.DETECTED_PIECE,             "startIntakeReset",          SequenceState.FINISHING},
         {SequenceState.WAITING,                 SequenceInput.TIMER_DONE,                 "startIntakeReset",          SequenceState.FINISHING},
         {SequenceState.FINISHING,               SequenceInput.RESET_DONE,                 "resetState",                SequenceState.HOME},
 

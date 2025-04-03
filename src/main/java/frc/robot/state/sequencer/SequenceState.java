@@ -7,6 +7,7 @@ public enum SequenceState implements State {
     DRIVING_TO_TARGET,
     RAISING_ELEVATOR,
     MOVING_TO_2ND_STAGE,
+    MOVING_TO_3RD_STAGE,
     LOWERING,
     MOVING_ARM_FORWARD,
     MOVING_ARM_BACK,
@@ -18,6 +19,9 @@ public enum SequenceState implements State {
     OPENING_HAND,
     CLOSING_HAND,
     UPDATING_LEVEL,
+    UNSTUCKING,
+    STARTING_JIGGLE,
+    JIGGLING,
     INIT_RESET,
     RESETTING,
     FINISHING
