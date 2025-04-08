@@ -190,7 +190,9 @@ public class VSLAMSubsystem {
                             timestamp,
                             Timer.getFPGATimestamp()));
                     oculusPoseField.setRobotPose(estPose);
+                    if (isConnected()) {
                     visionMeasurementCallback.addVisionMeasurement(estPose, timestamp, VisionConstants.kVSLAMStdDevs);
+                    }
                 });
     }
 
