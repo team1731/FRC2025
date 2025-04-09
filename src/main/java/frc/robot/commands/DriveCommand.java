@@ -5,6 +5,9 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -21,6 +24,7 @@ public class DriveCommand extends Command {
 
     private CommandSwerveDrivetrain m_driveSubsystem;
     private CommandXboxController m_xboxController;
+    private GenericHID m_sideButtons;
     private static AprilTagTargetTracker aprilTagTargetTracker;
     private static DriveMode currentDriveMode = DriveMode.DEFAULT; 
     private static boolean lockedOnce = false;
@@ -45,9 +49,10 @@ public class DriveCommand extends Command {
 
     private int lostTargetCount = 0;
     
-    public DriveCommand(CommandSwerveDrivetrain driveSubsystem, CommandXboxController xboxController) {
+    public DriveCommand(CommandSwerveDrivetrain driveSubsystem, CommandXboxController xboxController, GenericHID sideButtons) {
         m_driveSubsystem = driveSubsystem;
         m_xboxController = xboxController;
+        m_sideButtons = sideButtons;
         addRequirements(m_driveSubsystem);
     }
 
@@ -84,7 +89,7 @@ public class DriveCommand extends Command {
         m_driveSubsystem.setControl(
           defaultDrive.withVelocityX(-(Math.abs(m_xboxController.getLeftY()) * m_xboxController.getLeftY()) * DefaultMaxSpeed)
               .withVelocityY(-(Math.abs(m_xboxController.getLeftX()) * m_xboxController.getLeftX()) * DefaultMaxSpeed) 
-              .withRotationalRate(-m_xboxController.getRightX() * DefaultMaxAngularRate));
+              .withRotationalRate(-m_xboxController.getRightX() * DefaultMaxAngularRate).withCenterOfRotation(new Translation2d(m_sideButtons.getRawAxis(0)* 0.3,m_sideButtons.getRawAxis(1) * 0.3 )));
         }
     }
 
