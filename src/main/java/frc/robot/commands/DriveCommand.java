@@ -32,6 +32,7 @@ public class DriveCommand extends Command {
     private double DefaultMaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
     private final SwerveRequest.FieldCentric defaultDrive = new SwerveRequest.FieldCentric()
       .withDeadband(DefaultMaxSpeed * 0.05).withRotationalDeadband(DefaultMaxAngularRate * 0.05); // Add a 10% deadband
+    private final SwerveRequest.SwerveDriveBrake Brake = new SwerveRequest.SwerveDriveBrake();
 
     /*
      * Drive to target state
@@ -75,11 +76,16 @@ public class DriveCommand extends Command {
     }
 
     private void drive() {
+        if ((Math.abs(m_xboxController.getLeftY()) * DefaultMaxSpeed < DefaultMaxSpeed * 0.05) && 
+            (Math.abs(m_xboxController.getLeftX()) * DefaultMaxSpeed < DefaultMaxSpeed * 0.05) &&
+            (Math.abs(m_xboxController.getRightX()) * DefaultMaxAngularRate < DefaultMaxAngularRate * 0.05)){
+                m_driveSubsystem.setControl(Brake);
+        } else {
         m_driveSubsystem.setControl(
-          defaultDrive.withVelocityX(-(Math.abs(m_xboxController.getLeftY()) * m_xboxController.getLeftY()) * DefaultMaxSpeed)                                                                                                                     
+          defaultDrive.withVelocityX(-(Math.abs(m_xboxController.getLeftY()) * m_xboxController.getLeftY()) * DefaultMaxSpeed)
               .withVelocityY(-(Math.abs(m_xboxController.getLeftX()) * m_xboxController.getLeftX()) * DefaultMaxSpeed) 
-              .withRotationalRate(-m_xboxController.getRightX() * DefaultMaxAngularRate)
-        );
+              .withRotationalRate(-m_xboxController.getRightX() * DefaultMaxAngularRate));
+        }
     }
 
     private void driveToTarget() {
