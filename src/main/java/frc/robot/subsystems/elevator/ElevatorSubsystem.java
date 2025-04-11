@@ -3,7 +3,9 @@ package frc.robot.subsystems.elevator;
 import java.util.ResourceBundle.Control;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -12,9 +14,16 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Temperature;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -29,10 +38,24 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
     private TalonFX elevatorFollower;
     private double desiredPosition;
 
+    // Status Signals
+    private  StatusSignal<Angle> position;
+    private  StatusSignal<AngularVelocity> velocity;
+    private  StatusSignal<Voltage> appliedVolts;
+    private  StatusSignal<Current> torqueCurrent;
+    private  StatusSignal<Current> supplyCurrent;
+    private  StatusSignal<Temperature> temp;
+    private  StatusSignal<Voltage> followerAppliedVolts;
+    private  StatusSignal<Current> followerTorqueCurrent;
+    private  StatusSignal<Current> followerSupplyCurrent;
+    private  StatusSignal<Temperature> followerTemp;
+
+
     // motor movement
     private double arbitraryFeedForward = 0;
     private DynamicMotionMagicVoltage mmReq = new DynamicMotionMagicVoltage(
-        0, ElevatorConstants.normalElevatorVelocity, ElevatorConstants.normalElevatorAcceleration, ElevatorConstants.elevatorJerk);
+            0,
+            ElevatorConstants.normalElevatorVelocity, ElevatorConstants.normalElevatorAcceleration, ElevatorConstants.elevatorJerk);
     private final NeutralOut brake = new NeutralOut();
 
     // state machine callback handling
@@ -54,6 +77,8 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
         this.enabled = enabled;
         if (!enabled)
             return;
+
+
         initializeElevatorMotors();
     }
     
@@ -158,11 +183,37 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
         }
 
         elevatorMotor1.setPosition(0);
+        position = elevatorMotor1.getPosition();
+        velocity = elevatorMotor1.getVelocity();
+        appliedVolts = elevatorMotor1.getMotorVoltage();
+        torqueCurrent = elevatorMotor1.getTorqueCurrent();
+        supplyCurrent = elevatorMotor1.getSupplyCurrent();
+        temp = elevatorMotor1.getDeviceTemp();
+        followerAppliedVolts = elevatorFollower.getMotorVoltage();
+        followerTorqueCurrent = elevatorFollower.getTorqueCurrent();
+        followerSupplyCurrent = elevatorFollower.getSupplyCurrent();
+        followerTemp = elevatorFollower.getDeviceTemp();
+
+
+        BaseStatusSignal.setUpdateFrequencyForAll(
+                50.0,
+                position,
+                velocity,
+                appliedVolts,
+                supplyCurrent,
+                temp,
+                followerAppliedVolts,
+                followerTorqueCurrent,
+                followerSupplyCurrent,
+                followerTemp);
+        torqueCurrent.setUpdateFrequency(250);
+        ParentDevice.optimizeBusUtilizationForAll(elevatorMotor1, elevatorFollower);
 
     }
 
     public void periodic() {
-        if(!enabled) return;
+        if (!enabled)
+            return;
 
         /*
          * Score State Machine callback handling
