@@ -140,7 +140,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
             vslamSubsystem = new VSLAMSubsystem(visionCallback);
             vslamSubsystem.configure();
         }
-        SignalLogger.enableAutoLogging(false);
+        SignalLogger.enableAutoLogging(true);
     }
 
     public CommandSwerveDrivetrain(boolean enabled, SwerveDrivetrainConstants driveTrainConstants,
