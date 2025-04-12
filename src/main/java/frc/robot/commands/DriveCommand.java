@@ -4,10 +4,12 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix.Util;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -16,6 +18,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.helpers.AprilTagTargetTracker;
+import frc.robot.util.Utils;
 
 public class DriveCommand extends Command {
     public enum DriveMode {
@@ -28,6 +31,9 @@ public class DriveCommand extends Command {
     private static AprilTagTargetTracker aprilTagTargetTracker;
     private static DriveMode currentDriveMode = DriveMode.DEFAULT; 
     private static boolean lockedOnce = false;
+
+    private double fieldCentricHeading = 0.0;
+    private double robotCentricHeading = 0.0;
 
     /*
      * Default drive state
@@ -81,6 +87,27 @@ public class DriveCommand extends Command {
     }
 
     private void drive() {
+
+        Translation2d RotationCenter =  new Translation2d();
+
+        if(m_xboxController.getHID().getRightStickButton()){ // might need to flip X and Y due to field begin Y,X
+            fieldCentricHeading = Math.toDegrees(Math.atan2(m_xboxController.getLeftX(),  m_xboxController.getLeftY())); // desired heading in field centric
+            robotCentricHeading = m_driveSubsystem.getCurrentPose().getRotation().getDegrees() - fieldCentricHeading; // current robot rotation in degrees
+            if(robotCentricHeading >= 0 && robotCentricHeading < 90){ // between 0 and 90
+                RotationCenter = new Translation2d( 0.3, 0.3);
+            } else if(robotCentricHeading >= 90 && robotCentricHeading < 180){ // between 90 and 180
+                RotationCenter = new Translation2d( 0.3, -0.3);
+            } else if(robotCentricHeading >= 180 && robotCentricHeading < 270){ // between 180 and 270
+                RotationCenter = new Translation2d( -0.3, -0.3);
+            } else if(robotCentricHeading >= 270 && robotCentricHeading < 0){ // between 270 and 360
+                RotationCenter = new Translation2d( -0.3, 0.3);
+            } else {
+                RotationCenter = new Translation2d(0, 0);
+            }
+        } else {
+            RotationCenter = new Translation2d(0, 0);
+        }
+
         if ((Math.abs(m_xboxController.getLeftY()) * DefaultMaxSpeed < DefaultMaxSpeed * 0.05) && 
             (Math.abs(m_xboxController.getLeftX()) * DefaultMaxSpeed < DefaultMaxSpeed * 0.05) &&
             (Math.abs(m_xboxController.getRightX()) * DefaultMaxAngularRate < DefaultMaxAngularRate * 0.05)){
@@ -88,8 +115,9 @@ public class DriveCommand extends Command {
         } else {
         m_driveSubsystem.setControl(
           defaultDrive.withVelocityX(-(Math.abs(m_xboxController.getLeftY()) * m_xboxController.getLeftY()) * DefaultMaxSpeed)
-              .withVelocityY(-(Math.abs(m_xboxController.getLeftX()) * m_xboxController.getLeftX()) * DefaultMaxSpeed) 
-              .withRotationalRate(-m_xboxController.getRightX() * DefaultMaxAngularRate).withCenterOfRotation(new Translation2d(m_sideButtons.getRawAxis(0)* 0.3,m_sideButtons.getRawAxis(1) * 0.3 )));
+              .withVelocityY(-(Math.abs(m_xboxController.getLeftX()) * m_xboxController.getLeftX()) * DefaultMaxSpeed)
+              .withRotationalRate(-m_xboxController.getRightX() * DefaultMaxAngularRate)
+              .withCenterOfRotation(RotationCenter)); 
         }
     }
 
@@ -134,6 +162,8 @@ public class DriveCommand extends Command {
         SmartDashboard.putNumber("PID Setpoint", driveAtTarget.HeadingController.getSetpoint());
         SmartDashboard.putNumber("PID Output", driveAtTarget.HeadingController.getLastAppliedOutput());
 		SmartDashboard.putNumber("PID Error", driveAtTarget.HeadingController.getPositionError());
-        SmartDashboard.putNumber ("current heading",m_driveSubsystem.getState().Pose.getRotation().getDegrees());
+        SmartDashboard.putNumber("current heading",m_driveSubsystem.getState().Pose.getRotation().getDegrees());
+        SmartDashboard.putNumber("Field centric heading", fieldCentricHeading);
+        SmartDashboard.putNumber("Robot centric heading", robotCentricHeading);
     }
 }
