@@ -271,7 +271,7 @@ public class SequenceStateMachine extends StateMachine {
     public boolean releaseCoralPiece() {
         System.out.println("SequenceStateMachine: releasing coral piece...");
         handClamperSubsystem.open(0.013);  
-        handIntakeSubsystem.release(HandConstants.releaseVelocity, 1.0, subsystemCallback);
+        handIntakeSubsystem.releaseWithVelocity(10, 1.0, subsystemCallback);
         elevatorSubsystem.moveElevatorNormalSpeed(15);
         return true;
     }
