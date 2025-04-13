@@ -1,0 +1,66 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.7139802631578944,
+        "y": 3.0838723684210523
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.803277527245374,
+        "y": 2.1489112365816485
+      },
+      "isLocked": false,
+      "linkedName": "Processor_Blu_8_p5_stop"
+    },
+    {
+      "anchor": {
+        "x": 1.318174342105263,
+        "y": 0.8131486842105273
+      },
+      "prevControl": {
+        "x": 1.8875730435282514,
+        "y": 1.3456492796990487
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Processor_Blu_8_p6_stop"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "CoralFeederIntake",
+      "waypointRelativePos": 0.3865814696485616,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "CoralFeederIntake"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 5.0,
+    "maxAcceleration": 3.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 51.76617482255302
+  },
+  "reversed": false,
+  "folder": "Blu_9",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 58.671307132195814
+  },
+  "useDefaultConstraints": false
+}
