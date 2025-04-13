@@ -90,7 +90,7 @@ public class DriveCommand extends Command {
 
         Translation2d RotationCenter =  new Translation2d();
 
-        if(m_xboxController.getHID().getRightStickButton()){ // might need to flip X and Y due to field begin Y,X
+        if(m_xboxController.getHID().getLeftStickButton()){ // might need to flip X and Y due to field begin Y,X
             fieldCentricHeading = Math.toDegrees(Math.atan2(m_xboxController.getLeftX(),  m_xboxController.getLeftY())); // desired heading in field centric
             robotCentricHeading = m_driveSubsystem.getCurrentPose().getRotation().getDegrees() - fieldCentricHeading; // current robot rotation in degrees
             if(robotCentricHeading >= 0 && robotCentricHeading < 90){ // between 0 and 90
