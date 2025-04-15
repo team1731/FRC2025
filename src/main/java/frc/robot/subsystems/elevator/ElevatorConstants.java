@@ -13,8 +13,8 @@ public final class ElevatorConstants {
 
     // Motion Magic Config
     // Fast/Normal
-    public final static double normalElevatorVelocity = 85;
-    public final static double normalElevatorAcceleration = 200;
+    public final static double normalElevatorVelocity = 95;
+    public final static double normalElevatorAcceleration = 230;
     public final static double elevatorJerk = 0;
     // Slow
     public final static double slowedElevatorVelocity = 42;

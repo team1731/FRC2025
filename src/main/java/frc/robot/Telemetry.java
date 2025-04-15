@@ -30,7 +30,9 @@ public class Telemetry {
      */
     public Telemetry(double maxSpeed) {
         MaxSpeed = maxSpeed;
-        //SignalLogger.start();
+      //  SignalLogger.setPath("/media/sda1/");
+
+        SignalLogger.start();
     }
 
     /* What to publish over networktables for telemetry */
@@ -114,9 +116,9 @@ public class Telemetry {
         }
 
       //  SignalLogger.writeDoubleArray("DriveState/Pose", m_poseArray);
-      //  SignalLogger.writeDoubleArray("DriveState/ModuleStates", m_moduleStatesArray);
-       // SignalLogger.writeDoubleArray("DriveState/ModuleTargets", m_moduleTargetsArray);
-       // SignalLogger.writeDouble("DriveState/OdometryPeriod", state.OdometryPeriod, "seconds");
+     //   SignalLogger.writeDoubleArray("DriveState/ModuleStates", m_moduleStatesArray);
+     //   SignalLogger.writeDoubleArray("DriveState/ModuleTargets", m_moduleTargetsArray);
+     //   SignalLogger.writeDouble("DriveState/OdometryPeriod", state.OdometryPeriod, "seconds");
 
         /* Telemeterize the pose to a Field2d */
         fieldTypePub.set("Field2d");

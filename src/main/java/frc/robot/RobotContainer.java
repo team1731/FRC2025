@@ -128,7 +128,7 @@ public class RobotContainer {
     // and Y is defined as to the left according to WPILib convention.
 
     driveSubsystem.setDefaultCommand( // Drivetrain will execute this command periodically
-      new DriveCommand(driveSubsystem, xboxController)
+      new DriveCommand(driveSubsystem, xboxController, sideButtons)
     );
 
  
