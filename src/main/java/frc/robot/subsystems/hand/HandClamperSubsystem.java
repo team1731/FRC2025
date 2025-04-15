@@ -96,15 +96,15 @@ public class HandClamperSubsystem extends SubsystemBase implements ToggleableSub
      * MOTOR INITIALIZATION
      */
     private void initializeMotor() {
-        System.out.println("HandSubsystem: Starting UP & Initializing intake motor !!!!!!");
+        System.out.println("HandSubsystem: Starting UP & Initializing intake motor !!!!!!"); 
 
-        clamperCancoder = new CANcoder(HandConstants.clamperCancoderDeviceId, "canivore1");
+        clamperCancoder = new CANcoder(HandConstants.clamperCancoderDeviceId, "canivore2");
         CANcoderConfiguration cancoderConfigs = new CANcoderConfiguration();
-        cancoderConfigs.MagnetSensor.MagnetOffset = 0.1376953125; //0.2854;  //0.248291015625
+        cancoderConfigs.MagnetSensor.MagnetOffset = 0.195556640625; //0.2854;  //0.248291015625
         cancoderConfigs.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
         clamperCancoder.getConfigurator().apply(cancoderConfigs);
 
-        motor = new TalonFX(HandConstants.clamperCanId, "canivore1");
+        motor = new TalonFX(HandConstants.clamperCanId, "canivore2");
         TalonFXConfiguration cfg = new TalonFXConfiguration();
         motor.getConfigurator().apply(cfg);
 

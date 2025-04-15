@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -71,7 +72,9 @@ public class Robot extends TimedRobot {
 	private ClimbSubsystem climbSubsystem;
 	private boolean lastVSLAMConnectedCheck;
 	private Pose2d currentPose;
+	private final Field2d currentPoseField = new Field2d();
 	private Pose2d targetPose;
+	private final Field2d targetPoseField = new Field2d();
 	private double autoStartTime;
 
 	public Robot() {
@@ -140,10 +143,14 @@ public class Robot extends TimedRobot {
 		setupSmartDashboard();
 		PathPlannerLogging.setLogCurrentPoseCallback((pose) -> {
 			currentPose = pose;
+			currentPoseField.setRobotPose(pose);
+			SmartDashboard.putData("PathPlanner current pose", currentPoseField);
 		});
 
 		PathPlannerLogging.setLogTargetPoseCallback((pose) -> {
 			targetPose = pose;
+			targetPoseField.setRobotPose(pose);
+			SmartDashboard.putData("PathPlanner target pose", targetPoseField);
 		});
 		FollowPathCommand.warmupCommand().schedule();
 	}
@@ -213,7 +220,7 @@ public class Robot extends TimedRobot {
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	private void autoPreload() {
 		//m_autonomousCommand = null;
-		if(autoChooser == null) return;
+		//if(autoChooser == null) return;
 
 		/*
 		 * Check for conditions that could require a change to the auto command
@@ -221,8 +228,11 @@ public class Robot extends TimedRobot {
 		 * 2. Alliance changed
 		 * 3. VSLAM connection status changed
 		 */
+		String selectedAutoCode = null;
 		boolean autoCodeChanged = false;
-		String selectedAutoCode = autoChooser.getSelected();
+		if (autoChooser != null) {
+		    selectedAutoCode = autoChooser.getSelected();
+		} 
 		if(selectedAutoCode == null) {
 			selectedAutoCode = autoCode == null ? Constants.AutoConstants.kAutoDefault : autoCode;
 		}
@@ -402,7 +412,7 @@ public class Robot extends TimedRobot {
 		//SmartDashboard.putNumber("AutoRunningTime", Timer.getFPGATimestamp()- autoStartTime);
 
 
-		if (m_autonomousCommand != null && (Timer.getFPGATimestamp()- autoStartTime) >= 0.25 && (currentPose.getTranslation().getDistance(targetPose.getTranslation()) > 0.6)) {
+		if (m_autonomousCommand != null && (Timer.getFPGATimestamp()- autoStartTime) >= 0.25 && (currentPose.getTranslation().getDistance(targetPose.getTranslation()) > 1.0)) {
 			System.out.println("distance is" + currentPose.getTranslation().getDistance(targetPose.getTranslation()));
 			m_autonomousCommand.cancel();
 			System.out.println("Had to Kill the auto because the target pose and current pose were apart by more than a foot");
