@@ -1,0 +1,93 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.5326198630178922,
+        "y": 7.383240582191884
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.532619863017892,
+        "y": 7.383240582191884
+      },
+      "isLocked": false,
+      "linkedName": "Blu_11_p2_stop"
+    },
+    {
+      "anchor": {
+        "x": 5.829965753426775,
+        "y": 6.992572773971654
+      },
+      "prevControl": {
+        "x": 4.876005272199567,
+        "y": 7.598261968407837
+      },
+      "nextControl": {
+        "x": 6.783926234653983,
+        "y": 6.38688357953547
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.7384049242450645,
+        "y": 4.20178499424102
+      },
+      "prevControl": {
+        "x": 6.760151499584651,
+        "y": 5.02819766547966
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "FinishCoralFeederIntake",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "FinishCoralFeederIntake"
+        }
+      }
+    },
+    {
+      "name": "HoldCoral",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "HoldCoral"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 179.7930888333885
+  },
+  "reversed": false,
+  "folder": "Blu_11",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -52.12501634852566
+  },
+  "useDefaultConstraints": true
+}
