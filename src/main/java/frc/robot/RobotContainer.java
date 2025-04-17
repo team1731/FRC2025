@@ -22,12 +22,10 @@ import frc.robot.commands.ResetSequenceCommand;
 import frc.robot.commands.RunSequenceCommand;
 import frc.robot.commands.DriveCommand.DriveMode;
 import frc.robot.generated.TunerConstants;
-import frc.robot.state.StateMachine;
 import frc.robot.state.sequencer.Action;
 import frc.robot.state.sequencer.GamePiece;
 import frc.robot.state.sequencer.Level;
 import frc.robot.state.sequencer.SequenceManager;
-import frc.robot.state.sequencer.SequenceState;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.climb.ClimbConstants;
@@ -103,7 +101,6 @@ public class RobotContainer {
   private HandClamperSubsystem handClamperSubsystem;
   private HandIntakeSubsystem handIntakeSubsystem;
   private ClimbSubsystem climbSubsystem;
-  private StateMachine stateMachine;
 
   public RobotContainer(
       CommandSwerveDrivetrain s_driveSubsystem,
@@ -196,17 +193,17 @@ public class RobotContainer {
       .onFalse(new InstantCommand(() -> SequenceManager.setGamePieceSelection(GamePiece.CORAL)));
 
     //bring up the climb in ready position
-dStart.onTrue(
-  new ConditionalCommand(
-    new SequentialCommandGroup(
-      new InstantCommand(() -> climbSubsystem.setIsClimbing(true)),
-      new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.climbReadyPosition)),
-      new InstantCommand(() -> armSubsystem.moveArmNormalSpeed(ArmConstants.halfedArmPosition))
-    ),
-    new InstantCommand(() -> {}), // Do nothing if condition is false
-    () -> SequenceState.HOME == stateMachine.getCurrentState()
-  )
-);
+    dStart.onTrue(
+      new ConditionalCommand(
+        new SequentialCommandGroup(
+          new InstantCommand(() -> climbSubsystem.setIsClimbing(true)),
+          new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.climbReadyPosition)),
+          new InstantCommand(() -> armSubsystem.moveArmNormalSpeed(ArmConstants.halfedArmPosition))
+        ),
+        new InstantCommand(() -> {}), // Do nothing if condition is false
+        () -> SequenceManager.isStateMachineHome()
+      )
+    );
 
      //bring the climber to the stow position 
     // opRightBumper.onTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.climbStowPosition)));

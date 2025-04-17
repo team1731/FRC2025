@@ -84,6 +84,10 @@ public class SequenceManager {
         }
     }
 
+    public static boolean isStateMachineHome() {
+        return (stateMachine != null)? stateMachine.isReady() : false;
+    }
+
     public static SequenceStateMachine getStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem clamperSubsystem, HandIntakeSubsystem intakeSubsystem) {
         if(stateMachine ==  null) {
             stateMachine = new SequenceStateMachine(elevatorSubsystem, armSubsystem, clamperSubsystem, intakeSubsystem);
