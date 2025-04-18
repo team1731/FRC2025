@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.316790254237288,
-        "y": 5.099470338983051
+        "x": 7.495312499999999,
+        "y": 5.064144736842105
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.610115131578947,
-        "y": 5.093009868421053
+        "x": 6.788637377341658,
+        "y": 5.057684266280107
       },
       "isLocked": false,
       "linkedName": "Blu_10_p3_end"
@@ -48,7 +48,7 @@
   "folder": "Blu_10",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 32.619243071192734
+    "rotation": 8.760916925229672
   },
   "useDefaultConstraints": true
 }
