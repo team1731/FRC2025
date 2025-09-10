@@ -25,8 +25,6 @@ import frc.robot.subsystems.climb.ClimbSubsystem;
 
 
 public class ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
-    
-    
     private TalonFX armMotor;
     private CANcoder armCANcoder;
     private DynamicMotionMagicVoltage mmReq = new DynamicMotionMagicVoltage(

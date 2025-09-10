@@ -25,6 +25,7 @@ import frc.robot.state.sequencer.Action;
 import frc.robot.state.sequencer.GamePiece;
 import frc.robot.state.sequencer.Level;
 import frc.robot.state.sequencer.SequenceManager;
+import frc.robot.subsystems.HandSubsystem;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.climb.ClimbConstants;
