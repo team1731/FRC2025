@@ -1,0 +1,21 @@
+package frc.lib.hardware.motor.rev;
+
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkFlexConfig;
+
+import frc.lib.hardware.motor.PortConfig;
+
+/**
+ * Wrapper class for motors that use the Spark Flex motor controller
+ */
+public class MotorIOSparkFlex extends MotorIOSparkBase<SparkFlex, SparkFlexConfig> {
+    public MotorIOSparkFlex(PortConfig config) {
+        super(
+            config.kBus,
+            new SparkFlex(config.kPort, MotorType.kBrushless), 
+            new SparkFlexConfig(),
+            config.kInverted
+        );
+    }
+}

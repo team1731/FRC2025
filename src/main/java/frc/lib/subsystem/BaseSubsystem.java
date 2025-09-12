@@ -1,10 +1,10 @@
-package frc.robot.subsystems;
+package frc.lib.subsystem;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.lib.SmartLogger;
+import frc.lib.logging.SmartLogger;
 
 public abstract class BaseSubsystem extends SubsystemBase {
     private boolean enabled = false;

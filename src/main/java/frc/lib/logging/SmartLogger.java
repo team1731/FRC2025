@@ -1,4 +1,4 @@
-package frc.lib;
+package frc.lib.logging;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -8,7 +8,7 @@ import edu.wpi.first.util.struct.StructSerializable;
  * Class to easily log to AdvantageKit under a named folder
  */
 public class SmartLogger {
-    private String logFolder = "/Logs/";
+    private String logFolder = "/CustomsLogs/";
 
     public SmartLogger(String name) {
         this.logFolder = logFolder + name + "/";
