@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.JoystickConstants;
+import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.ResetSequenceCommand;
 import frc.robot.commands.RunSequenceCommand;
@@ -140,12 +141,14 @@ public class RobotContainer {
       driveSubsystem.resetPose(resetPosition);
     }));
 
-
     // Sets arm to intake
-    dLeftTrigger.whileTrue(new SequentialCommandGroup(
-      new InstantCommand(() -> SequenceManager.setActionSelection(Action.INTAKE)),
-      new ResetSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem),
-      new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)));
+    dLeftTrigger.whileTrue(
+      new CoralIntakeCommand(armSubsystem, handClamperSubsystem, handIntakeSubsystem)
+      // new SequentialCommandGroup(
+      // new InstantCommand(() -> SequenceManager.setActionSelection(Action.INTAKE)),
+      // new ResetSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem),
+      // new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem))
+    );
 
     // Sets arm to score
     dRightTrigger.whileTrue(new SequentialCommandGroup(
