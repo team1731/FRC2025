@@ -10,12 +10,14 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.JoystickConstants;
+import frc.robot.commands.AlgaeIntakeCommand;
 import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.ResetSequenceCommand;
@@ -131,7 +133,6 @@ public class RobotContainer {
     driveSubsystem.setDefaultCommand( // Drivetrain will execute this command periodically
       new DriveCommand(driveSubsystem, xboxController, sideButtons)
     );
-
  
     dPOVRight.onTrue(new InstantCommand(() -> {
       System.out.println("resetting position");
@@ -142,12 +143,16 @@ public class RobotContainer {
     }));
 
     // Sets arm to intake
+    // dLeftTrigger.whileTrue(new CoralIntakeCommand(armSubsystem, handClamperSubsystem, handIntakeSubsystem, elevatorSubsystem));
+
     dLeftTrigger.whileTrue(
-      new CoralIntakeCommand(armSubsystem, handClamperSubsystem, handIntakeSubsystem)
-      // new SequentialCommandGroup(
-      // new InstantCommand(() -> SequenceManager.setActionSelection(Action.INTAKE)),
-      // new ResetSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem),
-      // new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem))
+      Commands.either(
+        new AlgaeIntakeCommand(
+          elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem
+        ), new CoralIntakeCommand(
+          armSubsystem, handClamperSubsystem, handIntakeSubsystem, elevatorSubsystem
+        ), () -> opAlgae.getAsBoolean()
+      )
     );
 
     // Sets arm to score
