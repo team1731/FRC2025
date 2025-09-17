@@ -19,7 +19,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.JoystickConstants;
 import frc.robot.commands.AlgaeIntakeCommand;
 import frc.robot.commands.CoralIntakeCommand;
+import frc.robot.commands.CoralScoreCommand;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.HomeCommand;
+import frc.robot.commands.PrepCoralScoreCommand;
 import frc.robot.commands.ResetSequenceCommand;
 import frc.robot.commands.RunSequenceCommand;
 import frc.robot.commands.DriveCommand.DriveMode;
@@ -28,6 +31,7 @@ import frc.robot.state.sequencer.Action;
 import frc.robot.state.sequencer.GamePiece;
 import frc.robot.state.sequencer.Level;
 import frc.robot.state.sequencer.SequenceManager;
+import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.climb.ClimbConstants;
@@ -156,9 +160,13 @@ public class RobotContainer {
     );
 
     // Sets arm to score
-    dRightTrigger.whileTrue(new SequentialCommandGroup(
-      new InstantCommand(() -> SequenceManager.setActionSelection(Action.SCORE)),
-      new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)));
+    dRightTrigger
+        .whileTrue(new PrepCoralScoreCommand(armSubsystem, elevatorSubsystem, handClamperSubsystem, xboxController,
+            sideButtons))
+        .onFalse(Commands.either(
+            new CoralScoreCommand(armSubsystem, elevatorSubsystem, handClamperSubsystem, xboxController, sideButtons),
+            new HomeCommand(armSubsystem, elevatorSubsystem, handClamperSubsystem, handIntakeSubsystem),
+            () -> SubsystemManager.isAtScorePosition()));
    
     // Climb up
     dRightBumper.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.maxClimbPosition))) 
