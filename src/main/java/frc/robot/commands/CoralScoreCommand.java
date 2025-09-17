@@ -37,7 +37,7 @@ public class CoralScoreCommand extends Command{
         if (doneScoring == false){
             arm.moveArmNormalSpeed(SubsystemManager.getScorePosition().secondStageArmPosition);
         }
-        else if (elevator.getElevatorPosition() < SubsystemManager.getScorePosition().lowerElevatorThreshold){
+        else if (elevator.getElevatorPositionWithRatio() < SubsystemManager.getScorePosition().lowerElevatorThreshold){
             arm.moveArmSlowSpeed(ArmConstants.armHomePosition);
         }
         if (arm.isAtPosition(SubsystemManager.getScorePosition().secondStageArmPosition) && doneScoring == false){

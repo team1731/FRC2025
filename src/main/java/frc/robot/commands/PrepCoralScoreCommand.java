@@ -51,13 +51,13 @@ public class PrepCoralScoreCommand extends Command{
             positions = PositionsFactory.getCoralScoreL4Positions();
         }
         elevator.moveElevatorNormalSpeed(positions.raiseElevatorPosition);
-        if (elevator.getElevatorPosition() > positions.raiseElevatorThreshold){
+        if (elevator.getElevatorPositionWithRatio() > positions.raiseElevatorThreshold){
             arm.moveArmNormalSpeed(positions.firstStageArmPosition);
         }
         else {
             arm.moveArmSlowSpeed(ArmConstants.armHomePosition);
         }
-        if (elevator.isAtPosition(positions.raiseElevatorPosition) && arm.isAtPosition(positions.firstStageArmPosition)){
+        if (elevator.isAtPositionWithRatio(positions.raiseElevatorPosition) && arm.isAtPosition(positions.firstStageArmPosition)){
             SubsystemManager.setAtScorePosition(true, positions, targetLevel);
         }
         else {
