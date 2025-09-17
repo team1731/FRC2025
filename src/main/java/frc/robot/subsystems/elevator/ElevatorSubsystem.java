@@ -254,7 +254,7 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
     public double getElevatorPositionWithRatio() {
         if (!enabled)
             return 0;
-        return elevatorMotor1.getPosition().getValueAsDouble()*ElevatorConstants.gearRatioModifier;
+        return elevatorMotor1.getPosition().getValueAsDouble() / ElevatorConstants.gearRatioModifier;
     }
 
     public boolean isAtPosition(double position) {
@@ -273,6 +273,6 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
     };
 
     private void log(){
-
+        SmartDashboard.putNumber("Elevator Position", getElevatorPositionWithRatio());
     }
 }
