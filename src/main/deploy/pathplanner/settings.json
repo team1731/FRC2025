@@ -4,6 +4,7 @@
   "holonomicMode": true,
   "pathFolders": [
     "Blu_1",
+    "Blu_10",
     "Blu_1_NoVSLAM",
     "Blu_2",
     "Blu_2_NoVSLAM",
@@ -13,6 +14,7 @@
     "Blu_4_NoVSLAM",
     "Blu_8",
     "Blu_9",
+    "Blu_11",
     "Tele_1",
     "Tele_1_NoVSLAM"
   ],

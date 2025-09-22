@@ -315,7 +315,8 @@ public class SequenceStateMachine extends StateMachine {
     }
 
     public boolean shootAlgaeInBarge() {
-        handClamperSubsystem.close();
+      //  handClamperSubsystem.close();
+        handClamperSubsystem.moveHand(positions.clamperJigglePosition);
         handIntakeSubsystem.release(HandConstants.releaseVelocity, 0.1, subsystemCallback);
         return true;
     }
