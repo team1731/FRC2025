@@ -1,3 +1,3 @@
 # FRC2025
 
-Current release: v4.0 (Worlds Competition)
+Current release: v4.1 (Worlds Competition)
