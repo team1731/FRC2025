@@ -251,10 +251,20 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
             return 0;
         return elevatorMotor1.getPosition().getValueAsDouble();
     }
+    public double getElevatorPositionWithRatio() {
+        if (!enabled)
+            return 0;
+        return elevatorMotor1.getPosition().getValueAsDouble() / ElevatorConstants.gearRatioModifier;
+    }
 
     public boolean isAtPosition(double position) {
         double tolerance = 1;
         return Math.abs(getElevatorPosition() - position) < tolerance;
+    }
+
+    public boolean isAtPositionWithRatio(double position) {
+        double tolerance = 1;
+        return Math.abs(getElevatorPositionWithRatio() - position) < tolerance;
     }
 
     public boolean setElevatorUnstuck(boolean unstuck){
@@ -263,6 +273,6 @@ public class ElevatorSubsystem extends SubsystemBase implements ToggleableSubsys
     };
 
     private void log(){
-
+        SmartDashboard.putNumber("Elevator Position", getElevatorPositionWithRatio());
     }
 }

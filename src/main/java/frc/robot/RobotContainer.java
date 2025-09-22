@@ -10,13 +10,19 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.JoystickConstants;
+import frc.robot.commands.AlgaeIntakeCommand;
+import frc.robot.commands.CoralIntakeCommand;
+import frc.robot.commands.CoralScoreCommand;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.HomeCommand;
+import frc.robot.commands.PrepCoralScoreCommand;
 import frc.robot.commands.ResetSequenceCommand;
 import frc.robot.commands.RunSequenceCommand;
 import frc.robot.commands.DriveCommand.DriveMode;
@@ -25,6 +31,7 @@ import frc.robot.state.sequencer.Action;
 import frc.robot.state.sequencer.GamePiece;
 import frc.robot.state.sequencer.Level;
 import frc.robot.state.sequencer.SequenceManager;
+import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.climb.ClimbConstants;
@@ -130,7 +137,6 @@ public class RobotContainer {
     driveSubsystem.setDefaultCommand( // Drivetrain will execute this command periodically
       new DriveCommand(driveSubsystem, xboxController, sideButtons)
     );
-
  
     dPOVRight.onTrue(new InstantCommand(() -> {
       System.out.println("resetting position");
@@ -140,17 +146,27 @@ public class RobotContainer {
       driveSubsystem.resetPose(resetPosition);
     }));
 
-
     // Sets arm to intake
-    dLeftTrigger.whileTrue(new SequentialCommandGroup(
-      new InstantCommand(() -> SequenceManager.setActionSelection(Action.INTAKE)),
-      new ResetSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem),
-      new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)));
+    // dLeftTrigger.whileTrue(new CoralIntakeCommand(armSubsystem, handClamperSubsystem, handIntakeSubsystem, elevatorSubsystem));
+
+    dLeftTrigger.whileTrue(
+      Commands.either(
+        new AlgaeIntakeCommand(
+          elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem
+        ), new CoralIntakeCommand(
+          armSubsystem, handClamperSubsystem, handIntakeSubsystem, elevatorSubsystem
+        ), () -> opAlgae.getAsBoolean()
+      )
+    );
 
     // Sets arm to score
-    dRightTrigger.whileTrue(new SequentialCommandGroup(
-      new InstantCommand(() -> SequenceManager.setActionSelection(Action.SCORE)),
-      new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)));
+    dRightTrigger
+        .whileTrue(new PrepCoralScoreCommand(armSubsystem, elevatorSubsystem, handClamperSubsystem, xboxController,
+            sideButtons))
+        .onFalse(Commands.either(
+            new CoralScoreCommand(armSubsystem, elevatorSubsystem, handClamperSubsystem, xboxController, sideButtons),
+            new HomeCommand(armSubsystem, elevatorSubsystem, handClamperSubsystem, handIntakeSubsystem),
+            () -> SubsystemManager.isAtScorePosition()));
    
     // Climb up
     dRightBumper.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.maxClimbPosition))) 
