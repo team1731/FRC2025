@@ -16,6 +16,7 @@ public final class ArmConstants {
     public final static double normalArmVelocity = 90 * armGearRationModifier;
     public final static double normalArmAcceleration = 250;// * armGearRationModifier;
     public final static double armJerk = 0;
+
     // Slow
     public final static double slowedArmVelocity = 35 * armGearRationModifier;
     public final static double slowedArmAcceleration = 125;// * armGearRationModifier;
@@ -29,4 +30,6 @@ public final class ArmConstants {
     public final static double maxArmPosition = 0.37; // TODO are these correct? Seems like arm can't actually go fully 90 degrees
     public final static double stowArmPosition = 19; // TODO are these correct?
     public final static double halfedArmPosition = 18;
+
+    public final static double atPositionThreshold = 0.06;
 }
