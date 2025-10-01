@@ -52,6 +52,8 @@ public class VSLAMSubsystem {
     private final Field2d oculusPoseField = new Field2d();
     private final Field2d oculusRawPoseField = new Field2d();
 
+    private double lastTime = Timer.getFPGATimestamp();
+
     /**
      * Transform from the robot center to the headset. Coordinate system: - X:
      * Positive is forwards -
@@ -168,30 +170,34 @@ public class VSLAMSubsystem {
                     float[] oculusPosition = timestampedPosition.value;
                     double timestamp = timestampedPosition.timestamp;
                     timestamp = timestamp / 1000000;
-                    Rotation2d oculousRawRotation = Rotation2d.fromDegrees(getYaw());
-                    Translation2d oculousRawPosition = new Translation2d(oculusPosition[2], -oculusPosition[0]);
-                    Pose2d oculousRawPose = new Pose2d(oculousRawPosition, oculousRawRotation);
+                    if (Timer.getFPGATimestamp() - lastTime > 0.02)
+                    {    
+                        Rotation2d oculousRawRotation = Rotation2d.fromDegrees(getYaw());
+                        Translation2d oculousRawPosition = new Translation2d(oculusPosition[2], -oculusPosition[0]);
+                        Pose2d oculousRawPose = new Pose2d(oculousRawPosition, oculousRawRotation);
 
-                    var poseRelativeToReset = oculousRawPose.minus(resetPoseOculus);
-                    var estPose = resetPoseRobot.transformBy(poseRelativeToReset);
+                        var poseRelativeToReset = oculousRawPose.minus(resetPoseOculus);
+                        var estPose = resetPoseRobot.transformBy(poseRelativeToReset);
 
-                    estPose = estPose.transformBy(ROBOT_TO_OCULUS.inverse());
+                        estPose = estPose.transformBy(ROBOT_TO_OCULUS.inverse());
 
-                    SmartDashboard.putNumber("timestamp from nt", timestamp);
-                    SmartDashboard.putNumber("timestamp current from FPGA)", Timer.getFPGATimestamp());
-                    timestamp = Utils.fpgaToCurrentTime(timestamp);
-                    SmartDashboard.putNumber("converted timestamp from FPGA)", timestamp);
-                    SmartDashboard.putNumber("timestamp from oculus", questTimestamp.getAsDouble());
+                        SmartDashboard.putNumber("timestamp from nt", timestamp);
+                        SmartDashboard.putNumber("timestamp current from FPGA)", Timer.getFPGATimestamp());
+                        timestamp = Utils.fpgaToCurrentTime(timestamp);
+                        SmartDashboard.putNumber("converted timestamp from FPGA)", timestamp);
+                        SmartDashboard.putNumber("timestamp from oculus", questTimestamp.getAsDouble());
 
-                    SmartDashboard.putString("VSLAM pose", String.format("(%.2f, %.2f) %.2f %.2f %.2f",
-                            estPose.getTranslation().getX(),
-                            estPose.getTranslation().getY(),
-                            estPose.getRotation().getDegrees(),
-                            timestamp,
-                            Timer.getFPGATimestamp()));
-                    oculusPoseField.setRobotPose(estPose);
-                    if (isConnected()) {
-                    visionMeasurementCallback.addVisionMeasurement(estPose, timestamp, VisionConstants.kVSLAMStdDevs);
+                        SmartDashboard.putString("VSLAM pose", String.format("(%.2f, %.2f) %.2f %.2f %.2f",
+                                estPose.getTranslation().getX(),
+                                estPose.getTranslation().getY(),
+                                estPose.getRotation().getDegrees(),
+                                timestamp,
+                                Timer.getFPGATimestamp()));
+                        oculusPoseField.setRobotPose(estPose);
+                        if (isConnected()) {
+                            visionMeasurementCallback.addVisionMeasurement(estPose, timestamp, VisionConstants.kVSLAMStdDevs);
+                            lastTime = Timer.getFPGATimestamp();
+                        }
                     }
                 });
     }
