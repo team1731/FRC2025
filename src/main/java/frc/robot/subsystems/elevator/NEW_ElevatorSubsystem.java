@@ -1,5 +1,7 @@
 package frc.robot.subsystems.elevator;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
@@ -9,7 +11,6 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -19,8 +20,12 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.Utils;
 import frc.robot.subsystems.ToggleableSubsystem;
+import frc.robot.subsystems.arm.ArmConstants;
 
 public class NEW_ElevatorSubsystem extends SubsystemBase implements ToggleableSubsystem {
     private boolean isEnabled = false;
@@ -32,15 +37,6 @@ public class NEW_ElevatorSubsystem extends SubsystemBase implements ToggleableSu
 
     public NEW_ElevatorSubsystem(boolean enabled) {
         isEnabled = enabled;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return isEnabled;
-    }
-    
-    // Initialize Motors
-    private void initializeElevatorMotors() {
         if (!isEnabled) return;
 
         // System.out.println("elevatorSubsystem: Starting UP & Initializing elevator motors !!!!!!");
@@ -85,13 +81,13 @@ public class NEW_ElevatorSubsystem extends SubsystemBase implements ToggleableSu
         StatusSignal<Angle> position = masterMotor.getPosition();
         StatusSignal<AngularVelocity> velocity = masterMotor.getVelocity();
         StatusSignal<Voltage> appliedVolts = masterMotor.getMotorVoltage();
-        StatusSignal<Current> torqueCurrent = masterMotor.getTorqueCurrent();;
-        StatusSignal<Current> supplyCurrent = masterMotor.getSupplyCurrent();;
-        StatusSignal<Temperature> temp = masterMotor.getDeviceTemp();;
-        StatusSignal<Voltage> followerAppliedVolts = followerMotor.getMotorVoltage();;
-        StatusSignal<Current> followerTorqueCurrent = followerMotor.getTorqueCurrent();;
-        StatusSignal<Current> followerSupplyCurrent = followerMotor.getSupplyCurrent();;
-        StatusSignal<Temperature> followerTemp = followerMotor.getDeviceTemp();;
+        StatusSignal<Current> torqueCurrent = masterMotor.getTorqueCurrent();
+        StatusSignal<Current> supplyCurrent = masterMotor.getSupplyCurrent();
+        StatusSignal<Temperature> temp = masterMotor.getDeviceTemp();
+        StatusSignal<Voltage> followerAppliedVolts = followerMotor.getMotorVoltage();
+        StatusSignal<Current> followerTorqueCurrent = followerMotor.getTorqueCurrent();
+        StatusSignal<Current> followerSupplyCurrent = followerMotor.getSupplyCurrent();
+        StatusSignal<Temperature> followerTemp = followerMotor.getDeviceTemp();
 
         BaseStatusSignal.setUpdateFrequencyForAll(
             50.0,
@@ -108,5 +104,62 @@ public class NEW_ElevatorSubsystem extends SubsystemBase implements ToggleableSu
 
         torqueCurrent.setUpdateFrequency(250);
         ParentDevice.optimizeBusUtilizationForAll(masterMotor, followerMotor);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    @Override
+    public void periodic() {
+        Logger.recordOutput("ElevatorSubsystem/Current Position", getElevatorPosition());
+        Logger.recordOutput("ElevatorSubsystem/Target Position", this.targetPosition);
+        Logger.recordOutput("ElevatorSubsystem/At Target Position", this.isAtTargetPosition());
+    }
+
+    public double getElevatorPosition() {
+        if (!isEnabled) return 0;
+        return masterMotor.getPosition().getValueAsDouble();
+    }
+
+    public boolean isAtPosition(double position) {
+        return Math.abs(getElevatorPosition() - position) < ArmConstants.atPositionThreshold;
+    }
+
+    public boolean isAtTargetPosition() {
+        return isAtPosition(targetPosition);
+    }
+
+    private void moveElevator(double position) {
+        if(!isEnabled) return;
+
+        double appliedPosition = 
+            Utils.clamp(
+                position * ElevatorConstants.gearRatioModifier, 
+                ElevatorConstants.minElevatorPosition, 
+                ElevatorConstants.maxElevatorPosition
+            );
+        targetPosition = appliedPosition;
+        masterMotor.setControl(mmReq.withPosition(appliedPosition));
+    }
+
+    private void setMotionMagicSpeeds(double velocity, double acceleration) {
+        mmReq.Velocity = velocity;
+        mmReq.Acceleration = acceleration;
+    }
+
+    public Command moveElevatorSlowCommand(double targetPosition) {
+        return new InstantCommand(() -> setMotionMagicSpeeds(ElevatorConstants.slowedElevatorVelocity, ElevatorConstants.slowedElevatorAcceleration))
+            .andThen(this.run(() -> moveElevator(targetPosition))
+            .until(() -> isAtTargetPosition()))
+            .withName("MoveElevatorSlowSpeed");
+    }
+
+    public Command moveElevatorCommand(double targetPosition) {
+        return new InstantCommand(() -> setMotionMagicSpeeds(ElevatorConstants.normalElevatorVelocity, ElevatorConstants.normalElevatorAcceleration))
+            .andThen(this.run(() -> moveElevator(targetPosition))
+            .until(() -> isAtTargetPosition()))
+            .withName("MoveElevatorNormalSpeed");
     }
 }

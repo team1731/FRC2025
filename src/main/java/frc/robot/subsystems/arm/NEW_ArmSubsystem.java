@@ -88,18 +88,9 @@ public class NEW_ArmSubsystem extends SubsystemBase implements ToggleableSubsyst
 
     @Override
     public void periodic() {
-        // Do logs here
         Logger.recordOutput("ArmSubsystem/Current Position", getArmPosition());
         Logger.recordOutput("ArmSubsystem/Target Position", this.targetPosition);
         Logger.recordOutput("ArmSubsystem/At Target Position", this.isAtTargetPosition());
-    }
-
-    private void moveArm(double position) {
-        if (!isEnabled) return;
-        this.targetPosition = position;
-        double appliedPosition = position * ArmConstants.armGearRationModifier;
-        appliedPosition = Utils.clamp(position, ArmConstants.minArmPosition, ArmConstants.maxArmPosition);
-        armMotor.setControl(mmReq.withPosition(appliedPosition).withFeedForward(0.0));
     }
 
     public double getArmPosition(){
@@ -115,26 +106,34 @@ public class NEW_ArmSubsystem extends SubsystemBase implements ToggleableSubsyst
         return isAtPosition(targetPosition);
     }
 
-    public void setMotionMagicSpeeds(double velocity, double acceleration) {
+    private void moveArm(double position) {
+        if (!isEnabled) return;
+
+        double appliedPosition = Utils.clamp(
+            position * ArmConstants.armGearRationModifier, 
+            ArmConstants.minArmPosition, 
+            ArmConstants.maxArmPosition
+        );
+        targetPosition = appliedPosition;
+        armMotor.setControl(mmReq.withPosition(appliedPosition).withFeedForward(0.0));
+    }
+
+    private void setMotionMagicSpeeds(double velocity, double acceleration) {
         mmReq.Velocity = velocity;
         mmReq.Acceleration = acceleration;
     }
 
-    private Command moveArmCommand(double position) {
-        return this.run(() -> moveArm(position)).until(() -> isAtPosition(position));
-    }
-
     public Command moveArmSlowSpeed(double position) {
         return new InstantCommand(() -> setMotionMagicSpeeds(ArmConstants.slowedArmVelocity, ArmConstants.slowedArmAcceleration), this)
-            .andThen(moveArmCommand(position))
+            .andThen(this.run(() -> moveArm(position)))
             .until(() -> isAtPosition(position))
             .withName("MoveArmSlowSpeed");
     }
 
     public Command moveArmNormalSpeed(double position) {
         return new InstantCommand(() -> setMotionMagicSpeeds(ArmConstants.normalArmVelocity, ArmConstants.normalArmAcceleration), this)
-            .andThen(moveArmCommand(position))
-            .until(() -> isAtPosition(position))
+            .andThen(this.run(() -> moveArm(position)))
+            .until(() -> isAtTargetPosition())
             .withName("MoveArmNormalSpeed");
     }
 }

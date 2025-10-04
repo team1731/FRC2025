@@ -31,5 +31,7 @@ public final class ArmConstants {
     public final static double stowArmPosition = 19; // TODO are these correct?
     public final static double halfedArmPosition = 18;
 
+    public final static double willSmackReefThreshold = 0.20; // above this, arm will hit the reef if we are against it
+
     public final static double atPositionThreshold = 0.06;
 }
