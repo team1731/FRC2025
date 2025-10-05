@@ -28,6 +28,7 @@ public class NEW_HandClamperSubsystem extends SubsystemBase implements Toggleabl
 
     public NEW_HandClamperSubsystem(boolean enabled) {
         this.isEnabled = enabled;
+        if (!isEnabled) return;
 
         clampCancoder = new CANcoder(HandConstants.clamperCancoderDeviceId, "canivore2");
         CANcoderConfiguration cancoderConfigs = new CANcoderConfiguration();

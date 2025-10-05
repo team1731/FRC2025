@@ -31,6 +31,8 @@ public class NEW_ArmSubsystem extends SubsystemBase implements ToggleableSubsyst
 
     public NEW_ArmSubsystem(boolean enabled) {
         isEnabled = enabled;
+        if (!isEnabled) return;
+        
         armCANcoder = new CANcoder(ArmConstants.armCancoderDeviceId, "canivore2");
         CANcoderConfiguration cancoderConfigs = new CANcoderConfiguration();
         cancoderConfigs.MagnetSensor.MagnetOffset = -0.2138671875;     //-0.216552734375
@@ -115,7 +117,7 @@ public class NEW_ArmSubsystem extends SubsystemBase implements ToggleableSubsyst
             ArmConstants.maxArmPosition
         );
         targetPosition = appliedPosition;
-        armMotor.setControl(mmReq.withPosition(appliedPosition).withFeedForward(0.0));
+        armMotor.setControl(mmReq.withPosition(appliedPosition));
     }
 
     private void setMotionMagicSpeeds(double velocity, double acceleration) {
@@ -123,14 +125,14 @@ public class NEW_ArmSubsystem extends SubsystemBase implements ToggleableSubsyst
         mmReq.Acceleration = acceleration;
     }
 
-    public Command moveArmSlowSpeed(double position) {
+    public Command moveArmSlowCommand(double position) {
         return new InstantCommand(() -> setMotionMagicSpeeds(ArmConstants.slowedArmVelocity, ArmConstants.slowedArmAcceleration), this)
             .andThen(this.run(() -> moveArm(position)))
             .until(() -> isAtPosition(position))
             .withName("MoveArmSlowSpeed");
     }
 
-    public Command moveArmNormalSpeed(double position) {
+    public Command moveArmCommand(double position) {
         return new InstantCommand(() -> setMotionMagicSpeeds(ArmConstants.normalArmVelocity, ArmConstants.normalArmAcceleration), this)
             .andThen(this.run(() -> moveArm(position)))
             .until(() -> isAtTargetPosition())

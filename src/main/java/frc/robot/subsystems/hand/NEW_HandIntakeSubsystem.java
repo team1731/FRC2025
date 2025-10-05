@@ -23,6 +23,7 @@ public class NEW_HandIntakeSubsystem extends SubsystemBase implements Toggleable
 
     public NEW_HandIntakeSubsystem(boolean enabled) {
         this.isEnabled = enabled;
+        if (!isEnabled) return;
 
         intakeMotor = new TalonFX(HandConstants.intakeCanId, "canivore2");
         TalonFXConfiguration configs = new TalonFXConfiguration();
