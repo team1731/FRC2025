@@ -18,7 +18,7 @@ public class Superstructure {
 
     private Positions targetPosition = PositionsFactory.getCoralScoreL4Positions();
     private Level targetLevel = Level.L4;
-    private GamePiece targetPiece = GamePiece.CORAL;
+    // private GamePiece targetPiece = GamePiece.CORAL;
 
     public enum GamePiece {
         ALGAE,
@@ -239,9 +239,9 @@ public class Superstructure {
         return new InstantCommand(() -> targetLevel = level);
     }
 
-    public Command setGamePieceCommand(GamePiece piece) {
-        return new InstantCommand(() -> targetPiece = piece);
-    }
+    // public Command setGamePieceCommand(GamePiece piece) {
+    //     return new InstantCommand(() -> targetPiece = piece);
+    // }
 
     private Command setPositionsCommand(Positions positions) {
         return new InstantCommand(() -> targetPosition = positions);

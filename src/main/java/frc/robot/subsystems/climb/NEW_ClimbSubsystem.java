@@ -137,4 +137,10 @@ public class NEW_ClimbSubsystem extends SubsystemBase implements ToggleableSubsy
         .until(() -> isAtTargetPosition())
         .withName("MoveClimb");
     }
+
+    public Command setIsClimbing(boolean climbing) {
+        return runOnce(() -> this.isClimbing = climbing)
+        .onlyIf(() -> isEnabled)
+        .withName("SetIsClimbing");
+    }
 }

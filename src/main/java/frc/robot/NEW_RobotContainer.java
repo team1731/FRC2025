@@ -1,11 +1,14 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -15,18 +18,21 @@ import frc.robot.commands.DriveCommand.DriveMode;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Superstructure.*;
+import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.NEW_ArmSubsystem;
+import frc.robot.subsystems.climb.ClimbConstants;
 import frc.robot.subsystems.climb.NEW_ClimbSubsystem;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.NEW_ElevatorSubsystem;
 import frc.robot.subsystems.hand.NEW_HandClamperSubsystem;
 import frc.robot.subsystems.hand.NEW_HandIntakeSubsystem;
 import frc.robot.subsystems.leds.LEDSubsystem;
+import frc.robot.subsystems.vision.ReefTarget;
+import frc.robot.subsystems.vision.helpers.AprilTagTargetTracker;
 
 public class NEW_RobotContainer {
     private Superstructure superstructure;
-
-    private boolean enabled = false;
+    private final Telemetry logger = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
 
     /* Subsystems */
     private CommandSwerveDrivetrain driveSubsystem;
@@ -82,8 +88,6 @@ public class NEW_RobotContainer {
     private final JoystickButton opAlgae = new JoystickButton(sideButtons, JoystickConstants.op8);
 
     public NEW_RobotContainer(boolean enabled) {
-        this.enabled = enabled;
-
         configureSubsystems(enabled);
         configureButtonBindings();
     }
@@ -122,8 +126,8 @@ public class NEW_RobotContainer {
         }));
 
         // Game piece selection
-        opAlgae.whileTrue(superstructure.setGamePieceCommand(GamePiece.ALGAE))
-            .onFalse(superstructure.setGamePieceCommand(GamePiece.CORAL));
+        // opAlgae.whileTrue(superstructure.setGamePieceCommand(GamePiece.ALGAE))
+        //     .onFalse(superstructure.setGamePieceCommand(GamePiece.CORAL));
 
         // Level selection
         (dY.or(opL4)).whileTrue(superstructure.setLevelCommand(Level.L4)); //while pressed set to Level 4 
@@ -163,5 +167,51 @@ public class NEW_RobotContainer {
             superstructure.finishCoralScoreCommand(), 
             opAlgae
         ));
+
+        // Bring up the climb in ready position
+        dStart.onTrue(
+            climb.setIsClimbing(true)
+            .andThen(climb.moveClimbCommand(ClimbConstants.climbReadyPosition))
+            .andThen(arm.moveArmCommand(ArmConstants.halfedArmPosition))
+        );
+
+        // Climb up
+        dRightBumper.whileTrue(climb.moveClimbCommand(ClimbConstants.maxClimbPosition)) 
+        .onFalse(climb.stopCommand());
+
+        // Climb down
+        dPOVDown.whileTrue(climb.moveClimbCommand(ClimbConstants.minClimbPosition)) 
+        .onFalse(climb.stopCommand());
+
+        // TODO - FIX THESE
+        // opKnockAlgae.whileTrue(new InstantCommand(() -> SequenceManager.setShouldPluckAlgae(true)))
+        // .onFalse(new InstantCommand(() -> SequenceManager.setShouldPluckAlgae(false)));
+
+        // // Rezero the elevator
+        // opElevReset.onTrue(new SequentialCommandGroup(
+        // new InstantCommand(() -> SequenceManager.setShouldPreventL4(true)),
+        // new InstantCommand(() -> elevatorSubsystem.setElevatorUnstuck(true))))
+        // .onFalse(new SequentialCommandGroup(
+        //     new InstantCommand(() -> elevatorSubsystem.setElevatorUnstuck(false)),
+        //     new InstantCommand(() -> elevatorSubsystem.stopElevator()),
+        //     new InstantCommand(() -> System.out.println("Reset elevator postion"))));
+        
+        // opL4RestrictionToggle.onTrue(new InstantCommand(() -> SequenceManager.setShouldPreventL4(false)));
+
+        // Operator drive to target buttons
+        opPostA.whileTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.A)));
+        opPostB.whileTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.B)));
+        opPostC.whileTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.C)));
+        opPostD.whileTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.D)));
+        opPostE.whileTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.E)));
+        opPostF.whileTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.F)));
+        opPostG.whileTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.G)));
+        opPostH.whileTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.H)));
+        opPostI.whileTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.I)));
+        opPostJ.whileTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.J)));
+        opPostK.whileTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.K)));
+        opPostL.whileTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.L)));
+
+        driveSubsystem.registerTelemetry(logger::telemeterize);
     }
 }
