@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.4143914473684207,
-        "y": 7.306003289473683
+        "x": 1.3306352459016395,
+        "y": 7.23171106557377
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.954523026315788,
-        "y": 6.603618421052631
+        "x": 2.4337522122563735,
+        "y": 4.951530818632681
       },
       "isLocked": false,
       "linkedName": "Blu_1_p6_stop_NoVSLAM"
     },
     {
       "anchor": {
-        "x": 4.984046052631578,
-        "y": 5.218092105263159
+        "x": 3.3144634805613684,
+        "y": 4.230043241732025
       },
       "prevControl": {
-        "x": 4.743503289473684,
-        "y": 6.016694078947369
+        "x": 2.1697745901639345,
+        "y": 4.4265881147540975
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "FinishCoralFeederIntake",
-      "waypointRelativePos": 0.7603833865814721,
+      "waypointRelativePos": 0.0,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -42,11 +42,33 @@
           "name": "FinishCoralFeederIntake"
         }
       }
+    },
+    {
+      "name": "HoldCoral",
+      "waypointRelativePos": 0.010771992818671455,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "HoldCoral"
+        }
+      }
+    },
+    {
+      "name": "CoralL4Score",
+      "waypointRelativePos": 0.27468581687612276,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "CoralL4Score"
+        }
+      }
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 2.0,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -54,7 +76,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -121.42956561483851
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": "Blu_1_NoVSLAM",

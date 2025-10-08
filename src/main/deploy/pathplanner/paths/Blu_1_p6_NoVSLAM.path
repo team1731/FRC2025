@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.694736842105263,
-        "y": 4.967927631578948
+        "x": 3.7401639344262296,
+        "y": 5.025973360655737
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.8576480263157893,
-        "y": 5.6703125
+        "x": 2.903075118636756,
+        "y": 5.728358229076789
       },
       "isLocked": false,
       "linkedName": "Blu_1_p5_stop_NoVSLAM"
     },
     {
       "anchor": {
-        "x": 1.4143914473684207,
-        "y": 7.306003289473683
+        "x": 1.3306352459016395,
+        "y": 7.23171106557377
       },
       "prevControl": {
-        "x": 2.0975328947368412,
-        "y": 6.565131578947367
+        "x": 2.0137766932700596,
+        "y": 6.490839355047455
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,8 +45,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 2.0,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -60,7 +60,7 @@
   "folder": "Blu_1_NoVSLAM",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -58.671307132195814
+    "rotation": -59.9383693356424
   },
   "useDefaultConstraints": false
 }

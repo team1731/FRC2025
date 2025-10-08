@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.694736842105263,
-        "y": 4.967927631578948
+        "x": 3.7401639344262296,
+        "y": 5.025973360655737
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.434950657890699,
-        "y": 5.42014802631907
+        "x": 3.4803777502116655,
+        "y": 5.478193755395859
       },
       "isLocked": false,
       "linkedName": "Blu_1_p5_stop_NoVSLAM"
@@ -60,7 +60,7 @@
   "folder": "Tele_1_NoVSLAM",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -58.671307132195814
+    "rotation": -59.9383693356424
   },
   "useDefaultConstraints": true
 }

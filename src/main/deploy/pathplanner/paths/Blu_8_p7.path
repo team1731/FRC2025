@@ -3,6 +3,7 @@
   "waypoints": [
     {
       "anchor": {
+<<<<<<< Updated upstream
         "x": 1.3260000000000003,
         "y": 7.2035
       },
@@ -10,6 +11,15 @@
       "nextControl": {
         "x": 2.579988224015115,
         "y": 4.950723088090486
+=======
+        "x": 1.2946721311475409,
+        "y": 7.339600409836065
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.5486603551626557,
+        "y": 5.086823497926551
+>>>>>>> Stashed changes
       },
       "isLocked": false,
       "linkedName": "Blu_8_p6_stop"

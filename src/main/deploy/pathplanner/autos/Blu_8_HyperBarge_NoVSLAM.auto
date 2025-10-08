@@ -23,21 +23,9 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.2
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Blu_1_p2_NoVSLAM"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
           }
         },
         {
@@ -53,21 +41,9 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.2
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Blu_1_p4_NoVSLAM"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
           }
         },
         {
@@ -83,15 +59,21 @@
           }
         },
         {
-          "type": "wait",
+          "type": "path",
           "data": {
-            "waitTime": 0.2
+            "pathName": "Blu_1_p6_NoVSLAM"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Blu_1_p6_NoVSLAM"
+            "pathName": "Blu_1_p7_NoVSLAM"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FinishCoralScore"
           }
         }
       ]

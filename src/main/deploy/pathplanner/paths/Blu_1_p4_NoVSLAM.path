@@ -3,6 +3,7 @@
   "waypoints": [
     {
       "anchor": {
+<<<<<<< Updated upstream
         "x": 4.06575,
         "y": 5.18525
       },
@@ -10,18 +11,27 @@
       "nextControl": {
         "x": 3.088686961589052,
         "y": 6.017425414070785
+=======
+        "x": 4.024090996770332,
+        "y": 5.160907813546796
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.047027958359384,
+        "y": 5.993083227617581
+>>>>>>> Stashed changes
       },
       "isLocked": false,
       "linkedName": "Blu_1_p3_stop_NoVSLAM"
     },
     {
       "anchor": {
-        "x": 1.2989309210526314,
-        "y": 7.286759868421052
+        "x": 1.342622950819672,
+        "y": 7.279661885245901
       },
       "prevControl": {
-        "x": 2.541490093475402,
-        "y": 6.277353976688286
+        "x": 2.5851821232424426,
+        "y": 6.2702559935131355
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,8 +55,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 2.0,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
