@@ -13,8 +13,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.*;
 import frc.lib.Utils;
 import frc.robot.subsystems.ToggleableSubsystem;
 
@@ -114,16 +113,20 @@ public class NEW_ClimbSubsystem extends SubsystemBase implements ToggleableSubsy
         return isClimbing;
     }
 
-    public void stowClimb(){
-        if(!isEnabled) return;
-        moveClimb(ClimbConstants.climbHomePosition);
+    public Command moveClimbCommand(double desiredPosition) {
+        return run(() -> {
+            double appliedPosition = Utils.clamp(desiredPosition, ClimbConstants.minClimbPosition, ClimbConstants.maxClimbPosition);
+            this.targetPosition = appliedPosition;
+            this.climbMotor.setControl(mmReq.withPosition(appliedPosition));
+        })
+        .until(() -> isAtTargetPosition())
+        .onlyIf(() -> isEnabled)
+        .withName("MoveClimb");
     }
 
-    private void moveClimb(double desiredPosition) {
-        if (!isEnabled) return;
-        double appliedPosition = Utils.clamp(desiredPosition, ClimbConstants.minClimbPosition, ClimbConstants.maxClimbPosition);
-        this.targetPosition = appliedPosition;
-        this.climbMotor.setControl(mmReq.withPosition(appliedPosition));
+    public Command stowClimbCommand() {
+        return moveClimbCommand(ClimbConstants.climbHomePosition)
+        .withName("StowClimb");
     }
 
     public Command stopCommand() {
@@ -132,15 +135,8 @@ public class NEW_ClimbSubsystem extends SubsystemBase implements ToggleableSubsy
         .withName("Stop");
     }
 
-    public Command moveClimbCommand(double desiredPosition) {
-        return run(() -> moveClimb(desiredPosition))
-        .until(() -> isAtTargetPosition())
-        .withName("MoveClimb");
-    }
-
     public Command setIsClimbing(boolean climbing) {
-        return runOnce(() -> this.isClimbing = climbing)
-        .onlyIf(() -> isEnabled)
+        return new InstantCommand(() -> this.isClimbing = climbing)
         .withName("SetIsClimbing");
     }
 }

@@ -134,7 +134,7 @@ public class SequenceStateMachine extends StateMachine {
      */
 
 
-     public boolean raiseElevatorAndArmForBarge() {
+    public boolean raiseElevatorAndArmForBarge() {
         elevatorSubsystem.moveElevatorNormalSpeed(positions.raiseElevatorPosition, subsystemCallback, positions.raiseElevatorThreshold);
         armSubsystem.moveArmSlowSpeed(-8.0);
         return true;

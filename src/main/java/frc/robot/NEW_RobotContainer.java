@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -76,13 +75,13 @@ public class NEW_RobotContainer {
     private final JoystickButton opPostJ = new JoystickButton(centerButtons, JoystickConstants.opJ);
     private final JoystickButton opPostK = new JoystickButton(centerButtons, JoystickConstants.opK);
     private final JoystickButton opPostL = new JoystickButton(centerButtons, JoystickConstants.opL);
+
     private final GenericHID sideButtons = new Joystick(2);
     private final JoystickButton opL1 = new JoystickButton(sideButtons, JoystickConstants.op1);
     private final JoystickButton opL2 = new JoystickButton(sideButtons, JoystickConstants.op2);
     private final JoystickButton opL3 = new JoystickButton(sideButtons, JoystickConstants.op3);
     private final JoystickButton opL4 = new JoystickButton(sideButtons, JoystickConstants.op4);
     private final JoystickButton opL4RestrictionToggle = new JoystickButton(sideButtons, JoystickConstants.op5);
-    //private final JoystickButton opTargetModeToggle = new JoystickButton(sideButtons, JoystickConstants.op5);
     private final JoystickButton opElevReset = new JoystickButton(sideButtons, JoystickConstants.op6);
     private final JoystickButton opKnockAlgae = new JoystickButton(sideButtons, JoystickConstants.op7);
     private final JoystickButton opAlgae = new JoystickButton(sideButtons, JoystickConstants.op8);
@@ -105,13 +104,16 @@ public class NEW_RobotContainer {
         this.hand = new NEW_HandClamperSubsystem(enabled);
         this.intake = new NEW_HandIntakeSubsystem(enabled);
         this.climb = new NEW_ClimbSubsystem(enabled);
-        this.superstructure = new Superstructure(arm, elevator, hand, intake);
+        this.superstructure = new Superstructure(arm, elevator, hand, intake, climb);
 
         // Drivetrain will execute this command periodically 
-        // if not other command is active on the drivetrain
-        driveSubsystem.setDefaultCommand(
+        // if no other command is active on the drivetrain
+        this.driveSubsystem.setDefaultCommand(
             new DriveCommand(driveSubsystem, xboxController, sideButtons)
         );
+
+        // Sends swerve telemetry data onto NetworkTables
+        this.driveSubsystem.registerTelemetry(logger::telemeterize);
     }
 
     /**
@@ -125,9 +127,9 @@ public class NEW_RobotContainer {
             driveSubsystem.resetPose(resetPosition);
         }));
 
-        // Game piece selection
-        // opAlgae.whileTrue(superstructure.setGamePieceCommand(GamePiece.ALGAE))
-        //     .onFalse(superstructure.setGamePieceCommand(GamePiece.CORAL));
+        // Set algae mode
+        opAlgae.whileTrue(superstructure.setAlgaeModeCommand(true))
+            .onFalse(superstructure.setAlgaeModeCommand(false));
 
         // Level selection
         (dY.or(opL4)).whileTrue(superstructure.setLevelCommand(Level.L4)); //while pressed set to Level 4 
@@ -146,34 +148,15 @@ public class NEW_RobotContainer {
         .onFalse(new InstantCommand(() -> DriveCommand.setDriveMode(DriveMode.DEFAULT)));
 
         // Starts intaking sequence
-        dLeftTrigger.whileTrue(Commands.either(
-            superstructure.intakeAlgaeCommand(), 
-            superstructure.intakeCoralCommand(),
-            opAlgae
-        )).onFalse(Commands.either(
-            superstructure.finishAlgaeIntakeCommand(), 
-            superstructure.homeCommand(),
-            opAlgae
-        ));
+        dLeftTrigger.whileTrue(superstructure.intakeCommand())
+        .onFalse(superstructure.finishIntakeCommand());
 
         // Starts scoring sequence
-        dRightTrigger.whileTrue(Commands.either(
-            superstructure.prepAlgaeScoreCommand(),
-            superstructure.prepCoralScoreCommand(), 
-            opAlgae
-        )).onFalse(
-            Commands.either(
-            superstructure.finishAlgaeScoreCommand(),
-            superstructure.finishCoralScoreCommand(), 
-            opAlgae
-        ));
+        dRightTrigger.whileTrue(superstructure.scoreCommand())
+        .onFalse(superstructure.finishScoreCommand());
 
         // Bring up the climb in ready position
-        dStart.onTrue(
-            climb.setIsClimbing(true)
-            .andThen(climb.moveClimbCommand(ClimbConstants.climbReadyPosition))
-            .andThen(arm.moveArmCommand(ArmConstants.halfedArmPosition))
-        );
+        dStart.onTrue(superstructure.setClimbingCommand());
 
         // Climb up
         dRightBumper.whileTrue(climb.moveClimbCommand(ClimbConstants.maxClimbPosition)) 
@@ -183,18 +166,18 @@ public class NEW_RobotContainer {
         dPOVDown.whileTrue(climb.moveClimbCommand(ClimbConstants.minClimbPosition)) 
         .onFalse(climb.stopCommand());
 
-        // TODO - FIX THESE
-        // opKnockAlgae.whileTrue(new InstantCommand(() -> SequenceManager.setShouldPluckAlgae(true)))
-        // .onFalse(new InstantCommand(() -> SequenceManager.setShouldPluckAlgae(false)));
+        // Pluck Algae from the reef
+        opKnockAlgae.whileTrue(superstructure.setShouldPluckAlgaeCommand(true))
+        .onFalse(superstructure.setShouldPluckAlgaeCommand(false));
 
         // // Rezero the elevator
-        // opElevReset.onTrue(new SequentialCommandGroup(
-        // new InstantCommand(() -> SequenceManager.setShouldPreventL4(true)),
-        // new InstantCommand(() -> elevatorSubsystem.setElevatorUnstuck(true))))
-        // .onFalse(new SequentialCommandGroup(
-        //     new InstantCommand(() -> elevatorSubsystem.setElevatorUnstuck(false)),
-        //     new InstantCommand(() -> elevatorSubsystem.stopElevator()),
-        //     new InstantCommand(() -> System.out.println("Reset elevator postion"))));
+        opElevReset.onTrue(
+            superstructure.setShouldPreventL4Command(true)
+            .andThen(elevator.unjamElevatorCommand())
+        ).onFalse(
+            superstructure.setShouldPreventL4Command(false)
+            .andThen(elevator.stopElevatorCommand())
+        );
         
         // opL4RestrictionToggle.onTrue(new InstantCommand(() -> SequenceManager.setShouldPreventL4(false)));
 
@@ -211,7 +194,5 @@ public class NEW_RobotContainer {
         opPostJ.whileTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.J)));
         opPostK.whileTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.K)));
         opPostL.whileTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.L)));
-
-        driveSubsystem.registerTelemetry(logger::telemeterize);
     }
 }

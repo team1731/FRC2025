@@ -2,31 +2,19 @@ package frc.robot.subsystems.elevator;
 
 import org.littletonrobotics.junction.Logger;
 
-import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.StatusCode;
-import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
-import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.hardware.ParentDevice;
-import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.*;
+import com.ctre.phoenix6.configs.*;
+import com.ctre.phoenix6.controls.*;
+import com.ctre.phoenix6.hardware.*;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Temperature;
-import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.units.measure.*;
+import edu.wpi.first.wpilibj2.command.*;
 import frc.lib.Utils;
 import frc.robot.subsystems.ToggleableSubsystem;
 import frc.robot.subsystems.arm.ArmConstants;
 
+@Deprecated(forRemoval = false)
 public class NEW_ElevatorSubsystem extends SubsystemBase implements ToggleableSubsystem {
     private boolean isEnabled = false;
     private TalonFX masterMotor, followerMotor;
@@ -39,7 +27,6 @@ public class NEW_ElevatorSubsystem extends SubsystemBase implements ToggleableSu
         isEnabled = enabled;
         if (!isEnabled) return;
 
-        // System.out.println("elevatorSubsystem: Starting UP & Initializing elevator motors !!!!!!");
         masterMotor = new TalonFX(ElevatorConstants.elevatorCanId1, "canivore1");
         followerMotor = new TalonFX(ElevatorConstants.elevatorCanId2, "canivore1");
         followerMotor.setControl(new Follower(masterMotor.getDeviceID(), true));
@@ -72,6 +59,7 @@ public class NEW_ElevatorSubsystem extends SubsystemBase implements ToggleableSu
             if (status.isOK())
                 break;
         }
+
         if (!status.isOK()) {
             System.out.println("Could not configure device. Error: " + status.toString());
         }
@@ -151,15 +139,28 @@ public class NEW_ElevatorSubsystem extends SubsystemBase implements ToggleableSu
 
     public Command moveElevatorSlowCommand(double targetPosition) {
         return new InstantCommand(() -> setMotionMagicSpeeds(ElevatorConstants.slowedElevatorVelocity, ElevatorConstants.slowedElevatorAcceleration))
-            .andThen(this.run(() -> moveElevator(targetPosition))
-            .until(() -> isAtTargetPosition()))
-            .withName("MoveElevatorSlowSpeed");
+        .andThen(this.run(() -> moveElevator(targetPosition))
+        .until(() -> isAtTargetPosition()))
+        .withName("MoveElevatorSlowSpeed");
     }
 
     public Command moveElevatorCommand(double targetPosition) {
         return new InstantCommand(() -> setMotionMagicSpeeds(ElevatorConstants.normalElevatorVelocity, ElevatorConstants.normalElevatorAcceleration))
-            .andThen(this.run(() -> moveElevator(targetPosition))
-            .until(() -> isAtTargetPosition()))
-            .withName("MoveElevatorNormalSpeed");
+        .andThen(this.run(() -> moveElevator(targetPosition))
+        .until(() -> isAtTargetPosition()))
+        .withName("MoveElevatorNormalSpeed");
+    }
+
+    public Command stopElevatorCommand() {
+        return this.runOnce(() -> masterMotor.setControl(new NeutralOut()))
+        .withName("StopElevator");
+    }
+
+    public Command unjamElevatorCommand() {
+        return this.run(() -> {
+            masterMotor.setControl(new DutyCycleOut(-0.1));
+            masterMotor.setPosition(0.0);
+        })
+        .withName("UnjamElevator");
     }
 }

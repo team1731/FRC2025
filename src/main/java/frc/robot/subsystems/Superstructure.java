@@ -3,27 +3,30 @@ package frc.robot.subsystems;
 import java.util.Set;
 
 import edu.wpi.first.wpilibj2.command.*;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import frc.robot.state.sequencer.positions.*;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.NEW_ArmSubsystem;
+import frc.robot.subsystems.climb.NEW_ClimbSubsystem;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.NEW_ElevatorSubsystem;
 import frc.robot.subsystems.hand.*;
 
 public class Superstructure {
+    private SequenceManager manager;
+
     private NEW_ArmSubsystem arm;
     private NEW_ElevatorSubsystem elevator;
     private NEW_HandClamperSubsystem hand;
     private NEW_HandIntakeSubsystem intake;
+    private NEW_ClimbSubsystem climb;
 
     private Positions targetPosition = PositionsFactory.getCoralScoreL4Positions();
     private Level targetLevel = Level.L4;
-    // private GamePiece targetPiece = GamePiece.CORAL;
 
-    public enum GamePiece {
-        ALGAE,
-        CORAL
-    }
+    private boolean shouldPluckAlgae = false;
+    private boolean shouldPreventL4 = false;
+    private boolean algaeMode = false;
 
     public enum Level {
         L1(PositionsFactory.getCoralScoreL1Positions(), PositionsFactory.getAlgaeFloorPickupPositions(), PositionsFactory.getAlgaeHandoffPositions()),
@@ -39,19 +42,83 @@ public class Superstructure {
         }
     }
 
-    public Superstructure(NEW_ArmSubsystem arm, NEW_ElevatorSubsystem elevator, NEW_HandClamperSubsystem hand, NEW_HandIntakeSubsystem intake) {
+    public Superstructure(NEW_ArmSubsystem arm, NEW_ElevatorSubsystem elevator, NEW_HandClamperSubsystem hand, NEW_HandIntakeSubsystem intake, NEW_ClimbSubsystem climb) {
         this.arm = arm;
         this.elevator = elevator;
         this.hand = hand;
         this.intake = intake;
+        this.climb = climb;
+
+        this.manager = new SequenceManager(arm, elevator, hand, intake);
     }
 
-    public Command prepCoralScoreCommand() {
+    // ===========================
+    //        MAIN COMMANDS
+    // =========================== 
+
+    public Command intakeCommand() {
+        return Commands.either(
+            this.intakeAlgaeCommand(), 
+            this.intakeCoralCommand(), 
+            () -> algaeMode
+        ).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
+    }
+
+    public Command finishIntakeCommand() {
+        return Commands.either(
+            this.finishAlgaeIntakeCommand(), 
+            this.homeCommand(), 
+            () -> algaeMode
+        ).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
+    }
+
+    public Command scoreCommand() {
+        return Commands.either(
+            this.prepAlgaeScoreCommand(), 
+            this.prepCoralScoreCommand(), 
+            () -> algaeMode
+        ).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
+    }
+
+    public Command finishScoreCommand() {
+        return Commands.either(
+            this.finishAlgaeScoreCommand(), 
+            this.finishCoralScoreCommand(), 
+            () -> algaeMode
+        ).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
+    }
+
+    public Command homeCommand() {
+        return Commands.parallel(
+            arm.moveArmCommand(ArmConstants.armHomePosition, false),
+            elevator.moveElevatorCommand(ElevatorConstants.elevatorHomePosition),
+            hand.moveHandCommand(HandConstants.clamperHomePosition)
+        );
+    }
+
+    public Command resetCommand() {
+        return new InstantCommand(() -> CommandScheduler.getInstance().clearComposedCommands())
+            .andThen(homeCommand());
+    }
+
+    public Command setClimbingCommand() {
+        return climb.setIsClimbing(true)
+        .andThen(Commands.parallel(
+            climb.setIsClimbing(true),
+            arm.moveArmCommand(ArmConstants.halfedArmPosition, false)
+        ));
+    }
+
+    // ===========================
+    //    CORAL/ALGAE COMMANDS
+    // ===========================
+
+    private Command prepCoralScoreCommand() {
         return setPositionsCommand(targetLevel.coralPositions) // Set the positions based on target level
         .andThen(
             // If the arm is already out and the elevator is outside of the threshold, move arm to home position then move elevator
             Commands.either(
-                arm.moveArmCommand(ArmConstants.armHomePosition),
+                arm.moveArmCommand(ArmConstants.armHomePosition, false),
                 Commands.none(),  
                 () -> arm.getArmPosition() > ArmConstants.willSmackReefThreshold && 
                     elevator.getElevatorPosition() > targetPosition.raiseElevatorPosition + 3.0 ||
@@ -65,16 +132,12 @@ public class Superstructure {
                 elevator.getElevatorPosition() > targetPosition.raiseElevatorThreshold &&
                 elevator.getElevatorPosition() < targetPosition.raiseElevatorPosition
             ).andThen(
-                Commands.either(
-                    arm.moveArmSlowCommand(targetPosition.firstStageArmPosition),
-                    arm.moveArmCommand(targetPosition.firstStageArmPosition), 
-                    () -> targetLevel == Level.L1
-                )
+                arm.moveArmCommand(targetPosition.firstStageArmPosition, targetLevel == Level.L1)
             )
         ));
     }
 
-    public Command finishCoralScoreCommand() {
+    private Command finishCoralScoreCommand() {
         switch (targetLevel) {
             case L1:
                 // OPEN CLAMP
@@ -87,32 +150,32 @@ public class Superstructure {
                 // OUTTAKE CORAL
                 return elevator.moveElevatorCommand(targetPosition.lowerElevatorThreshold)
                 .alongWith(
-                    arm.moveArmCommand(targetPosition.secondStageArmPosition),
+                    arm.moveArmCommand(targetPosition.secondStageArmPosition, false),
                     hand.moveHandCommand(HandConstants.clamperCoralPosition),
                     intake.setVelocityCommand(-HandConstants.releaseVelocity)
                 );
             default: // L3 and L4 same logic
-                return arm.moveArmCommand(targetPosition.secondStageArmPosition)
+                return arm.moveArmCommand(targetPosition.secondStageArmPosition, false)
                 .andThen(
                     Commands.waitUntil(() -> arm.getArmPosition() > targetPosition.firstStageArmThreshold)
                     .andThen(
                         elevator.moveElevatorCommand(ElevatorConstants.elevatorHomePosition)
                         .alongWith(
                             Commands.waitUntil(() -> elevator.getElevatorPosition() < targetPosition.lowerElevatorThreshold)
-                            .andThen(arm.moveArmCommand(ArmConstants.armHomePosition))
+                            .andThen(arm.moveArmCommand(ArmConstants.armHomePosition, false))
                         )
                     )
                 );
         }
     }
 
-    public Command prepAlgaeScoreCommand() {
+    private Command prepAlgaeScoreCommand() {
         return setPositionsCommand(targetLevel.algaeScorePositions).andThen(
             switch (targetLevel) {
                 case L1: // Processor score
                     yield clearArmCommand()
                     .andThen(elevator.moveElevatorCommand(ElevatorConstants.elevatorHomePosition))
-                    .andThen(arm.moveArmCommand(targetPosition.firstStageArmPosition));
+                    .andThen(arm.moveArmCommand(targetPosition.firstStageArmPosition, false));
                 default: // Net score
                     // first home
                     // Move arm all the way back
@@ -124,22 +187,22 @@ public class Superstructure {
                         elevator.moveElevatorCommand(targetPosition.raiseElevatorPosition)
                         .alongWith(Commands.defer(() -> {
                             if (elevator.getElevatorPosition() < targetPosition.raiseElevatorThreshold) {
-                                return arm.moveArmSlowCommand(-8d);
+                                return arm.moveArmCommand(-8d, true);
                             } else {
-                                return arm.moveArmCommand(targetPosition.firstStageArmPosition)
+                                return arm.moveArmCommand(targetPosition.firstStageArmPosition, false)
                                 .alongWith(intake.setVelocityCommand(-HandConstants.releaseVelocity))
                                 .alongWith(
                                     Commands.waitUntil(() -> arm.getArmPosition() > targetPosition.firstStageArmThreshold)
                                     .andThen(hand.moveHandCommand(targetPosition.clamperJigglePosition))
                                 );
                             }
-                        }, Set.of(arm)))
+                        }, Set.of(arm, intake, hand)))
                     );
             }
         );
     }
 
-    public Command finishAlgaeScoreCommand() {
+    private Command finishAlgaeScoreCommand() {
         return setPositionsCommand(targetLevel.algaeScorePositions).andThen(
             switch (targetLevel) {
                 case L1: // Processor score
@@ -149,7 +212,7 @@ public class Superstructure {
                     yield elevator.moveElevatorCommand(ElevatorConstants.elevatorHomePosition)
                     .alongWith(Commands.waitUntil(() -> elevator.getElevatorPosition() < targetPosition.lowerElevatorThreshold)
                         .andThen(
-                            arm.moveArmCommand(ArmConstants.armHomePosition)
+                            arm.moveArmCommand(ArmConstants.armHomePosition, false)
                             .alongWith(
                                 hand.closeCommand(),
                                 intake.holdCommand()
@@ -160,22 +223,14 @@ public class Superstructure {
         );
     }
 
-    public Command homeCommand() {
-        return arm.moveArmCommand(ArmConstants.armHomePosition)
-            .alongWith(
-                elevator.moveElevatorCommand(ElevatorConstants.elevatorHomePosition),
-                hand.moveHandCommand(HandConstants.clamperHomePosition)
-            );
-    }
-
-    public Command intakeCoralCommand() {
+    private Command intakeCoralCommand() {
         return setPositionsCommand(targetLevel.coralPositions).andThen(homeCommand().andThen(
             hand.moveHandCommand(HandConstants.clamperCoralPosition)
             .alongWith(intake.setVelocityCommand(HandConstants.intakeCoralVelocity))
         ));
     }
 
-    public Command intakeAlgaeCommand() {
+    private Command intakeAlgaeCommand() {
         return setPositionsCommand(targetLevel.algaeIntakePositions).andThen(
             switch (targetLevel) {
                 case L1: // Floor pickup
@@ -184,7 +239,7 @@ public class Superstructure {
                     // Move arm and hand to floor pickup position, run intake
                     yield clearArmCommand().andThen(homeCommand())
                     .andThen(
-                        arm.moveArmCommand(targetPosition.firstStageArmPosition)
+                        arm.moveArmCommand(targetPosition.firstStageArmPosition, false)
                         .alongWith(
                             Commands.waitUntil(() -> arm.getArmPosition() > targetPosition.firstStageArmThreshold)
                             .andThen(hand.moveHandCommand(HandConstants.clamperAlgaePosition).alongWith(
@@ -214,18 +269,18 @@ public class Superstructure {
         );
     }
 
-    public Command finishAlgaeIntakeCommand() {
+    private Command finishAlgaeIntakeCommand() {
         return setPositionsCommand(targetLevel.algaeIntakePositions).andThen(
             switch (targetLevel) {
                 case L1: // Finish floor pickup
-                    yield arm.moveArmCommand(targetPosition.secondStageArmPosition)
+                    yield arm.moveArmCommand(targetPosition.secondStageArmPosition, false)
                     .deadlineFor(intake.setVelocityCommand(HandConstants.intakeAlgaeVelocity))
                     .andThen(intake.holdCommand());
                 default: // Finish reef L2 and L3 pickup
                     yield elevator.moveElevatorCommand(targetPosition.secondStageElevatorPosition)
                     .andThen(hand.moveHandCommand(HandConstants.clamperAlgaePosition))
                     .andThen(elevator.moveElevatorCommand(ElevatorConstants.elevatorHomePosition))
-                    .andThen(arm.moveArmCommand(targetPosition.secondStageArmPosition));
+                    .andThen(arm.moveArmCommand(targetPosition.secondStageArmPosition, false));
             }
         );
     }
@@ -234,23 +289,33 @@ public class Superstructure {
     //       Helper Commands
     // ===========================
 
+    public Command setShouldPreventL4Command(boolean preventL4) {
+        return new InstantCommand(() -> this.shouldPreventL4 = preventL4);
+    }
+
+    public Command setShouldPluckAlgaeCommand(boolean pluckAlgae) {
+        return new InstantCommand(() -> this.shouldPluckAlgae = pluckAlgae);
+    }
 
     public Command setLevelCommand(Level level) {
-        return new InstantCommand(() -> targetLevel = level);
+        return new InstantCommand(() -> this.targetLevel = level);
     }
 
-    // public Command setGamePieceCommand(GamePiece piece) {
-    //     return new InstantCommand(() -> targetPiece = piece);
-    // }
+    public Command setAlgaeModeCommand(boolean algaeMode) {
+        return new InstantCommand(() -> this.algaeMode = algaeMode);
+    }
 
     private Command setPositionsCommand(Positions positions) {
-        return new InstantCommand(() -> targetPosition = positions);
+        return new InstantCommand(() -> this.targetPosition = positions);
     }
 
+    // ==========================
+    //      CLEAR COMMANDS
+    // ==========================
 
     private Command clearArmCommand() {
         return Commands.either(
-            arm.moveArmCommand(ArmConstants.armHomePosition),
+            arm.moveArmCommand(ArmConstants.armHomePosition, false),
             Commands.none(),
             () -> arm.getArmPosition() > ArmConstants.willSmackReefThreshold && 
                 elevator.getElevatorPosition() > targetPosition.raiseElevatorPosition + 3.0 ||

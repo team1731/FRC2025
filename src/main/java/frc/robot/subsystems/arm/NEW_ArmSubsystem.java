@@ -9,6 +9,7 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -16,6 +17,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.Utils;
@@ -90,7 +92,7 @@ public class NEW_ArmSubsystem extends SubsystemBase implements ToggleableSubsyst
 
     @Override
     public void periodic() {
-        Logger.recordOutput("ArmSubsystem/Current Position", getArmPosition());
+        Logger.recordOutput("ArmSubsystem/Current Position", this.getArmPosition());
         Logger.recordOutput("ArmSubsystem/Target Position", this.targetPosition);
         Logger.recordOutput("ArmSubsystem/At Target Position", this.isAtTargetPosition());
     }
@@ -108,34 +110,42 @@ public class NEW_ArmSubsystem extends SubsystemBase implements ToggleableSubsyst
         return isAtPosition(targetPosition);
     }
 
-    private void moveArm(double position) {
-        if (!isEnabled) return;
-
-        double appliedPosition = Utils.clamp(
-            position * ArmConstants.armGearRationModifier, 
-            ArmConstants.minArmPosition, 
-            ArmConstants.maxArmPosition
-        );
-        targetPosition = appliedPosition;
-        armMotor.setControl(mmReq.withPosition(appliedPosition));
+    private Command moveArmCommand(double position) {
+        return this.run(() -> {
+            double appliedPosition = Utils.clamp(
+                position * ArmConstants.armGearRationModifier, 
+                ArmConstants.minArmPosition, 
+                ArmConstants.maxArmPosition
+            );
+            targetPosition = appliedPosition;
+            armMotor.setControl(mmReq.withPosition(appliedPosition));
+        }).until(() -> isAtTargetPosition());
     }
 
-    private void setMotionMagicSpeeds(double velocity, double acceleration) {
-        mmReq.Velocity = velocity;
-        mmReq.Acceleration = acceleration;
+    private Command setMotionMagicSpeedsCommand(double velocity, double acceleration) {
+        return new InstantCommand(() -> {
+            mmReq.Velocity = velocity;
+            mmReq.Acceleration = acceleration;
+        });
     }
 
-    public Command moveArmSlowCommand(double position) {
-        return new InstantCommand(() -> setMotionMagicSpeeds(ArmConstants.slowedArmVelocity, ArmConstants.slowedArmAcceleration), this)
-            .andThen(this.run(() -> moveArm(position)))
-            .until(() -> isAtPosition(position))
-            .withName("MoveArmSlowSpeed");
+    public Command moveArmCommand(double position, boolean slowSpeeds) {
+        return Commands.either(
+        setMotionMagicSpeedsCommand(ArmConstants.slowedArmVelocity, ArmConstants.slowedArmAcceleration),
+        setMotionMagicSpeedsCommand(ArmConstants.normalArmVelocity, ArmConstants.normalArmAcceleration),
+        () -> slowSpeeds)
+        .andThen(moveArmCommand(position))
+        .withName("MoveArm" + (slowSpeeds ? "NormalSpeed" : "SlowSpeed"));
     }
 
-    public Command moveArmCommand(double position) {
-        return new InstantCommand(() -> setMotionMagicSpeeds(ArmConstants.normalArmVelocity, ArmConstants.normalArmAcceleration), this)
-            .andThen(this.run(() -> moveArm(position)))
-            .until(() -> isAtTargetPosition())
-            .withName("MoveArmNormalSpeed");
+    public Command moveArmAlgaeCommand(double position) {
+        return setMotionMagicSpeedsCommand(ArmConstants.slowedArmVelocity, ArmConstants.slowedArmAcceleration)
+        .andThen(moveArmCommand(position))
+        .withName("MoveArmAlgaeSpeed");
+    }
+
+    public Command stopArmCommand() {
+        return this.runOnce(() -> armMotor.setControl(new NeutralOut()))
+        .withName("StopArm");
     }
 }
