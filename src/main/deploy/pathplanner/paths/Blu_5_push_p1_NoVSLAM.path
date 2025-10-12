@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 5.234705082133644,
-        "y": 4.93292905395974
+        "x": 5.2065,
+        "y": 4.97075
       },
       "prevControl": {
-        "x": 5.812007713712591,
-        "y": 5.11574155395974
+        "x": 5.783802631578947,
+        "y": 5.1535625
       },
       "nextControl": null,
       "isLocked": false,
@@ -54,7 +54,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -121.46013109179631
+    "rotation": -118.61045966596521
   },
   "reversed": false,
   "folder": "Blu_1_NoVSLAM",

@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.54859053588367,
-        "y": 5.096850731365899
+        "x": 6.600750000000001,
+        "y": 5.253499999999999
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.2291389296009605,
-        "y": 4.93292905395974
+        "x": 5.2065,
+        "y": 4.97075
       },
       "prevControl": {
-        "x": 5.806441561179907,
-        "y": 5.11574155395974
+        "x": 5.577,
+        "y": 5.5265
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,8 +45,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -54,7 +54,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -121.46013109179631
+    "rotation": -118.61045966596521
   },
   "reversed": false,
   "folder": "Blu_1_NoVSLAM",

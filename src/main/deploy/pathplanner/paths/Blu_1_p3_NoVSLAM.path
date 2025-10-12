@@ -3,34 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.2467213114754097,
-        "y": 7.219723360655737
+        "x": 1.31625,
+        "y": 7.379
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.4431208759451026,
-        "y": 7.064962856374374
+        "x": 2.4375,
+        "y": 6.7355
       },
       "isLocked": false,
       "linkedName": "Blu_1_p2_stop_NoVSLAM"
     },
     {
       "anchor": {
-<<<<<<< Updated upstream
         "x": 4.06575,
-        "y": 5.18525
+        "y": 5.117
       },
       "prevControl": {
-        "x": 3.7652536526766203,
-        "y": 5.411013825964748
-=======
-        "x": 4.024090996770332,
-        "y": 5.160907813546796
-      },
-      "prevControl": {
-        "x": 3.723594649446952,
-        "y": 5.386671639511544
->>>>>>> Stashed changes
+        "x": 3.5587500000000003,
+        "y": 5.9262500000000005
       },
       "nextControl": null,
       "isLocked": false,
@@ -65,7 +56,7 @@
     },
     {
       "name": "CoralL4Score",
-      "waypointRelativePos": 0.5368043087971271,
+      "waypointRelativePos": 0.4456575682382161,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -76,8 +67,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.5,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -85,7 +76,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -59.9531834029681
+    "rotation": -59.588918732874546
   },
   "reversed": false,
   "folder": "Blu_1_NoVSLAM",

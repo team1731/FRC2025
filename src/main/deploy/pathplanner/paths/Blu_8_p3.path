@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.2604440789473683,
-        "y": 7.238651315789473
+        "x": 1.29675,
+        "y": 7.164499999999999
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.4568436434170613,
-        "y": 7.083890811508109
+        "x": 1.493149564469693,
+        "y": 7.009739495718636
       },
       "isLocked": false,
       "linkedName": "Blu_8_p2_stop"
     },
     {
       "anchor": {
-        "x": 4.017,
-        "y": 5.155999999999999
+        "x": 4.06575,
+        "y": 5.14625
       },
       "prevControl": {
-        "x": 3.7145983134856926,
-        "y": 5.656664389362689
+        "x": 3.773250000000001,
+        "y": 5.86775
       },
       "nextControl": null,
       "isLocked": false,
@@ -29,7 +29,21 @@
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.5310173697270455,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 3.0,
+        "maxAcceleration": 2.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
@@ -68,7 +82,7 @@
   ],
   "globalConstraints": {
     "maxVelocity": 4.0,
-    "maxAcceleration": 2.0,
+    "maxAcceleration": 4.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -76,7 +90,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -59.9531834029681
+    "rotation": -60.832386620422206
   },
   "reversed": false,
   "folder": "Blu_8",

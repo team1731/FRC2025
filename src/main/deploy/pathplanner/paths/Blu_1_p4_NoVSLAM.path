@@ -3,35 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-<<<<<<< Updated upstream
         "x": 4.06575,
-        "y": 5.18525
+        "y": 5.117
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.088686961589052,
-        "y": 6.017425414070785
-=======
-        "x": 4.024090996770332,
-        "y": 5.160907813546796
-      },
-      "prevControl": null,
-      "nextControl": {
-        "x": 3.047027958359384,
-        "y": 5.993083227617581
->>>>>>> Stashed changes
+        "x": 3.6270000000000007,
+        "y": 5.75075
       },
       "isLocked": false,
       "linkedName": "Blu_1_p3_stop_NoVSLAM"
     },
     {
       "anchor": {
-        "x": 1.342622950819672,
-        "y": 7.279661885245901
+        "x": 1.3260000000000003,
+        "y": 7.3985
       },
       "prevControl": {
-        "x": 2.5851821232424426,
-        "y": 6.2702559935131355
+        "x": 2.5447499999999996,
+        "y": 5.945750000000001
       },
       "nextControl": null,
       "isLocked": false,
@@ -55,8 +45,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.5,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -64,13 +54,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -53.13010235415599
+    "rotation": -54.16496532381306
   },
   "reversed": false,
   "folder": "Blu_1_NoVSLAM",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -59.9531834029681
+    "rotation": -59.588918732874546
   },
   "useDefaultConstraints": false
 }

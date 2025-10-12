@@ -3,34 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.73318971960073,
-        "y": 4.996359634785431
+        "x": 3.7620141821323587,
+        "y": 4.961818364083073
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.8224869836882096,
-        "y": 5.931320766624835
+        "x": 2.8513114462198383,
+        "y": 5.896779495922477
       },
       "isLocked": false,
       "linkedName": "Blu_8_p5_stop"
     },
     {
       "anchor": {
-<<<<<<< Updated upstream
-        "x": 1.3260000000000003,
-        "y": 7.2035
+        "x": 1.33575,
+        "y": 7.184
       },
       "prevControl": {
-        "x": 1.8953987014229887,
-        "y": 6.670999404511479
-=======
-        "x": 1.2946721311475409,
-        "y": 7.339600409836065
-      },
-      "prevControl": {
-        "x": 1.8640708325705293,
-        "y": 6.807099814347544
->>>>>>> Stashed changes
+        "x": 1.9051487014229884,
+        "y": 6.651499404511479
       },
       "nextControl": null,
       "isLocked": false,
@@ -55,7 +46,7 @@
   ],
   "globalConstraints": {
     "maxVelocity": 4.0,
-    "maxAcceleration": 2.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -63,13 +54,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -51.76617482255302
+    "rotation": -54.06968673726948
   },
   "reversed": false,
   "folder": "Blu_8",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -58.671307132195814
+    "rotation": -61.768586231419164
   },
   "useDefaultConstraints": false
 }

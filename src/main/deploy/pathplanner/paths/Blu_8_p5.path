@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.3260000000000003,
-        "y": 7.223
+        "x": 1.31625,
+        "y": 7.2425
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5552288232945433,
-        "y": 6.002116821333258
+        "x": 2.545478823294543,
+        "y": 6.021616821333258
       },
       "isLocked": false,
       "linkedName": "Blu_8_p4_stop"
     },
     {
       "anchor": {
-        "x": 3.73318971960073,
-        "y": 4.996359634785431
+        "x": 3.7620141821323587,
+        "y": 4.961818364083073
       },
       "prevControl": {
-        "x": 2.96814276117681,
-        "y": 5.7281608334792695
+        "x": 3.3052499999999996,
+        "y": 5.9165
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,11 +32,11 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.0,
-      "maxWaypointRelativePos": 0.0,
+      "minWaypointRelativePos": 0.41191066997518955,
+      "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 3.0,
-        "maxAcceleration": 3.0,
+        "maxAcceleration": 2.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -82,7 +82,7 @@
   ],
   "globalConstraints": {
     "maxVelocity": 4.0,
-    "maxAcceleration": 2.0,
+    "maxAcceleration": 4.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -90,7 +90,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -58.671307132195814
+    "rotation": -61.768586231419164
   },
   "reversed": false,
   "folder": "Blu_8",
