@@ -4,14 +4,21 @@ import frc.lib.Utils;
 import frc.lib.hardware.motor.MotorIO;
 
 public abstract class SingleMotorServoSubsystem<M extends MotorIO> extends BaseSubsystem {
-    protected M leadMotor;
+    protected M leadMotor = null;
 
-    protected double desiredRotations = 0.0;
+    protected double targetRotations = 0.0;
     protected double epsilon = 0.1; // Tolerance for position control
 
-    public SingleMotorServoSubsystem(M io, boolean enabled) {
+    public SingleMotorServoSubsystem(boolean enabled, double tolerance) {
         super(enabled);
-        this.leadMotor = io;
+        this.epsilon = tolerance;
+        initializeHardware();
+    }
+
+    protected abstract void initializeHardware();
+
+    protected void setTolerance(double epsilon) {
+        this.epsilon = epsilon;
     }
     
     protected void setRotations(double rotations) {
@@ -19,7 +26,7 @@ public abstract class SingleMotorServoSubsystem<M extends MotorIO> extends BaseS
     }
 
     protected void setRotations(double rotations, int pidSlot) {
-        this.desiredRotations = rotations;
+        this.targetRotations = rotations;
         this.leadMotor.setPosition(rotations, pidSlot);
     }
 
@@ -27,12 +34,28 @@ public abstract class SingleMotorServoSubsystem<M extends MotorIO> extends BaseS
         this.leadMotor.setPercentOutput(desiredPercent);
     }
 
+    protected double getRawRotations() {
+        return leadMotor.getRotations();
+    }
+
+    protected double getTargetRotations() {
+        return this.targetRotations;
+    }
+
+    protected double getVelocity() {
+        return leadMotor.getVelocityRPS();
+    }
+
+    protected double getAppliedVoltage() {
+        return leadMotor.getAppliedVoltage();
+    }
+
     protected boolean atTargetPosition() {
-        return Utils.isWithin(leadMotor.getRotations(), desiredRotations, epsilon);
+        return Utils.isWithin(leadMotor.getRotations(), targetRotations, epsilon);
     }
 
     protected boolean atTargetPosition(double epsilon) {
-        return Utils.isWithin(leadMotor.getRotations(), desiredRotations, epsilon);
+        return Utils.isWithin(leadMotor.getRotations(), targetRotations, epsilon);
     }
 
     protected boolean atPosition(double desiredRotations) {

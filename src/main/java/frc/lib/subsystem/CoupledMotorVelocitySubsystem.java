@@ -8,6 +8,6 @@ public abstract class CoupledMotorVelocitySubsystem<M extends MotorIO> extends S
     public CoupledMotorVelocitySubsystem(M ioLead, M ioFollower, boolean enabled) {
         super(ioLead, enabled);
         this.followerMotor = ioFollower;
-        this.followerMotor.setFollowerTo(ioLead, ioLead.isInverted() != ioFollower.isInverted());
+        this.followerMotor.follow(ioLead, ioLead.isInverted() != ioFollower.isInverted());
     }
 }

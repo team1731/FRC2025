@@ -9,8 +9,8 @@ import frc.lib.hardware.motor.PortConfig;
 /**
  * Wrapper class for motors that use the Spark Max motor controller
  */
-public class MotorIOSparkMax extends MotorIOSparkBase<SparkMax, SparkMaxConfig> {
-    public MotorIOSparkMax(PortConfig config) {
+public class OLD_MotorIOSparkMax extends OLD_MotorIOSparkBase<SparkMax, SparkMaxConfig> {
+    public OLD_MotorIOSparkMax(PortConfig config) {
         super(
             config.kBus,
             new SparkMax(config.kPort, MotorType.kBrushless), 

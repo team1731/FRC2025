@@ -26,9 +26,9 @@ import frc.robot.state.sequencer.GamePiece;
 import frc.robot.state.sequencer.Level;
 import frc.robot.state.sequencer.SequenceManager;
 import frc.robot.subsystems.arm.ArmConstants;
-import frc.robot.subsystems.arm.ArmSubsystem;
+import frc.robot.subsystems.arm.OLD_ArmSubsystem;
 import frc.robot.subsystems.climb.ClimbConstants;
-import frc.robot.subsystems.climb.ClimbSubsystem;
+import frc.robot.subsystems.climb.OLD_ClimbSubsystem;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
@@ -96,19 +96,19 @@ public class RobotContainer {
   private CommandSwerveDrivetrain driveSubsystem;
   private LEDSubsystem ledSubsystem;
   private ElevatorSubsystem elevatorSubsystem;
-  private ArmSubsystem armSubsystem;
+  private OLD_ArmSubsystem armSubsystem;
   private HandClamperSubsystem handClamperSubsystem;
   private HandIntakeSubsystem handIntakeSubsystem;
-  private ClimbSubsystem climbSubsystem;
+  private OLD_ClimbSubsystem climbSubsystem;
 
   public RobotContainer(
       CommandSwerveDrivetrain s_driveSubsystem,
       LEDSubsystem s_ledstring,
       ElevatorSubsystem s_elevatorSubsystem,
-      ArmSubsystem s_ArmSubsystem,
+      OLD_ArmSubsystem s_ArmSubsystem,
       HandClamperSubsystem s_HandClamperSubsystem,
       HandIntakeSubsystem s_HandIntakeSubsystem,
-      ClimbSubsystem s_ClimbSubsystem
+      OLD_ClimbSubsystem s_ClimbSubsystem
     ) {
 
     driveSubsystem = s_driveSubsystem;

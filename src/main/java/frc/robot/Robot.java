@@ -38,8 +38,8 @@ import frc.robot.state.sequencer.GamePiece;
 import frc.robot.state.sequencer.Level;
 import frc.robot.state.sequencer.SequenceManager;
 import frc.robot.util.log.MessageLog;
-import frc.robot.subsystems.arm.ArmSubsystem;
-import frc.robot.subsystems.climb.ClimbSubsystem;
+import frc.robot.subsystems.arm.OLD_ArmSubsystem;
+import frc.robot.subsystems.climb.OLD_ClimbSubsystem;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
@@ -66,10 +66,10 @@ public class Robot extends TimedRobot {
 
 	private CommandSwerveDrivetrain driveSubsystem;
 	private ElevatorSubsystem elevatorSubsystem;
-	private ArmSubsystem armSubsystem;
+	private OLD_ArmSubsystem armSubsystem;
 	private HandClamperSubsystem handClamperSubsystem;
 	private HandIntakeSubsystem handIntakeSubsystem;
-	private ClimbSubsystem climbSubsystem;
+	private OLD_ClimbSubsystem climbSubsystem;
 	private boolean lastVSLAMConnectedCheck;
 	private Pose2d currentPose;
 	private final Field2d currentPoseField = new Field2d();
@@ -119,13 +119,13 @@ public class Robot extends TimedRobot {
 
 		elevatorSubsystem = new ElevatorSubsystem(true);
 
-		armSubsystem = new ArmSubsystem(true);
+		armSubsystem = new OLD_ArmSubsystem(true);
 
 		handClamperSubsystem = new HandClamperSubsystem(true);
 
 		handIntakeSubsystem = new HandIntakeSubsystem(true);
 
-		climbSubsystem = new ClimbSubsystem(true);
+		climbSubsystem = new OLD_ClimbSubsystem(true);
 		armSubsystem.setClimbSubsystem(climbSubsystem);
 
 		// Instantiate our robot container. This will perform all of our button bindings,

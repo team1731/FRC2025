@@ -5,19 +5,19 @@ import javax.security.auth.callback.Callback;
 import frc.robot.state.Input;
 import frc.robot.state.StateMachine;
 import frc.robot.state.StateMachineCallback;
-import frc.robot.state.sequencer.positions.Positions;
 import frc.robot.subsystems.arm.ArmConstants;
-import frc.robot.subsystems.arm.ArmSubsystem;
+import frc.robot.subsystems.arm.OLD_ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
+import frc.robot.subsystems.superstructure.Positions;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
 import frc.robot.subsystems.hand.HandConstants;
 
 public class SequenceStateMachine extends StateMachine {
     // subsystems
     private ElevatorSubsystem elevatorSubsystem;
-    private ArmSubsystem armSubsystem;
+    private OLD_ArmSubsystem armSubsystem;
     private HandIntakeSubsystem handIntakeSubsystem;
     private HandClamperSubsystem handClamperSubsystem;
 
@@ -33,7 +33,7 @@ public class SequenceStateMachine extends StateMachine {
     private boolean armResetDone = false;
 
 
-    public SequenceStateMachine(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem handClamperSubsystem, HandIntakeSubsystem handIntakeSubsystem) {
+    public SequenceStateMachine(ElevatorSubsystem elevatorSubsystem, OLD_ArmSubsystem armSubsystem, HandClamperSubsystem handClamperSubsystem, HandIntakeSubsystem handIntakeSubsystem) {
         this.elevatorSubsystem = elevatorSubsystem;
         this.armSubsystem = armSubsystem;
         this.handClamperSubsystem = handClamperSubsystem;

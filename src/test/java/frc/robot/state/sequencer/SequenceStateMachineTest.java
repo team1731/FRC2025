@@ -7,7 +7,6 @@ import static org.mockito.Mockito.verify;
 import org.junit.jupiter.api.Test;
 
 import frc.robot.state.StateMachineCallback;
-import frc.robot.state.sequencer.positions.Positions;
 import frc.robot.state.sequencer.Sequence;
 import frc.robot.state.sequencer.SequenceFactory;
 import frc.robot.state.sequencer.SequenceManager;
@@ -18,10 +17,11 @@ import frc.robot.state.sequencer.GamePiece;
 import frc.robot.state.sequencer.SequenceInput;
 import frc.robot.state.sequencer.SequenceState;
 import frc.robot.subsystems.arm.ArmConstants;
-import frc.robot.subsystems.arm.ArmSubsystem;
+import frc.robot.subsystems.arm.OLD_ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
+import frc.robot.subsystems.superstructure.Positions;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
 import frc.robot.subsystems.hand.HandConstants;
 

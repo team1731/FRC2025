@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -15,17 +14,17 @@ import frc.robot.Constants.JoystickConstants;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.DriveCommand.DriveMode;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.Superstructure;
-import frc.robot.subsystems.Superstructure.*;
-import frc.robot.subsystems.arm.ArmConstants;
-import frc.robot.subsystems.arm.NEW_ArmSubsystem;
+import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.climb.ClimbConstants;
+import frc.robot.subsystems.climb.ClimbSubsystem;
 import frc.robot.subsystems.climb.NEW_ClimbSubsystem;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.NEW_ElevatorSubsystem;
 import frc.robot.subsystems.hand.NEW_HandClamperSubsystem;
 import frc.robot.subsystems.hand.NEW_HandIntakeSubsystem;
 import frc.robot.subsystems.leds.LEDSubsystem;
+import frc.robot.subsystems.superstructure.Superstructure;
+import frc.robot.subsystems.superstructure.Superstructure.*;
 import frc.robot.subsystems.vision.ReefTarget;
 import frc.robot.subsystems.vision.helpers.AprilTagTargetTracker;
 
@@ -36,11 +35,11 @@ public class NEW_RobotContainer {
     /* Subsystems */
     private CommandSwerveDrivetrain driveSubsystem;
     private LEDSubsystem ledSubsystem;
-    private NEW_ArmSubsystem arm;
+    private ArmSubsystem arm;
     private NEW_ElevatorSubsystem elevator;
     private NEW_HandClamperSubsystem hand;
     private NEW_HandIntakeSubsystem intake;
-    private NEW_ClimbSubsystem climb;
+    private ClimbSubsystem climb;
 
     /* Driver Buttons */
     private final CommandXboxController xboxController = new CommandXboxController(0);
@@ -99,11 +98,11 @@ public class NEW_RobotContainer {
 				TunerConstants.FrontRight, TunerConstants.BackLeft, TunerConstants.BackRight);
 
         this.ledSubsystem = new LEDSubsystem(enabled);
-        this.arm = new NEW_ArmSubsystem(enabled);
+        this.arm = new ArmSubsystem(enabled);
         this.elevator = new NEW_ElevatorSubsystem(enabled);
         this.hand = new NEW_HandClamperSubsystem(enabled);
         this.intake = new NEW_HandIntakeSubsystem(enabled);
-        this.climb = new NEW_ClimbSubsystem(enabled);
+        this.climb = new ClimbSubsystem(enabled);
         this.superstructure = new Superstructure(arm, elevator, hand, intake, climb);
 
         // Drivetrain will execute this command periodically 
@@ -159,11 +158,11 @@ public class NEW_RobotContainer {
         dStart.onTrue(superstructure.setClimbingCommand());
 
         // Climb up
-        dRightBumper.whileTrue(climb.moveClimbCommand(ClimbConstants.maxClimbPosition)) 
+        dRightBumper.whileTrue(climb.moveClimbCommand(ClimbConstants.maxClimbPosition))
         .onFalse(climb.stopCommand());
 
         // Climb down
-        dPOVDown.whileTrue(climb.moveClimbCommand(ClimbConstants.minClimbPosition)) 
+        dPOVDown.whileTrue(climb.moveClimbCommand(ClimbConstants.minClimbPosition))
         .onFalse(climb.stopCommand());
 
         // Pluck Algae from the reef

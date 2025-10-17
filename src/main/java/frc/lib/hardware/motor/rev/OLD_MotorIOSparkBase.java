@@ -1,6 +1,6 @@
 package frc.lib.hardware.motor.rev;
 
-import frc.lib.PIDProfile;
+import frc.lib.PIDGains;
 import frc.lib.Utils;
 import frc.lib.hardware.motor.*;
 
@@ -12,13 +12,13 @@ import com.revrobotics.spark.config.SparkBaseConfig;
 /**
  * Wrapper class for rev motors that use a spark motor controller
  */
-public abstract class MotorIOSparkBase<M extends SparkBase, C extends SparkBaseConfig> extends MotorIO {
+public abstract class OLD_MotorIOSparkBase<M extends SparkBase, C extends SparkBaseConfig> extends OLD_MotorIO {
     protected M motor;
     protected SparkClosedLoopController motorCtrl;
     protected RelativeEncoder encoder;
     protected C config;
 
-    protected MotorIOSparkBase(String bus, M motor, C config, boolean inverted) {
+    protected OLD_MotorIOSparkBase(String bus, M motor, C config, boolean inverted) {
         super(new PortConfig(bus, motor.getDeviceId(), inverted));
         this.motor = motor;
         this.motorCtrl = motor.getClosedLoopController();
@@ -47,7 +47,7 @@ public abstract class MotorIOSparkBase<M extends SparkBase, C extends SparkBaseC
     }
 
     @Override
-    public void withGains(PIDProfile gains) {
+    public void withGains(PIDGains gains) {
         super.motorPIDGains.add(gains.getSlot(), gains);
         
         ClosedLoopSlot slot;
@@ -75,12 +75,12 @@ public abstract class MotorIOSparkBase<M extends SparkBase, C extends SparkBaseC
             this.config.softLimit.reverseSoftLimit(gains.softLimitMax);
         }
 
-        this.config.closedLoop.maxMotion
-            .maxVelocity(gains.maxVelocity, slot)
-            .maxAcceleration(gains.maxAcceleration, slot)
-            .positionMode(com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode.kMAXMotionTrapezoidal, slot)
-            .allowedClosedLoopError(gains.tolerance, slot)
-        ;
+        // this.config.closedLoop.maxMotion
+        //     .maxVelocity(gains.maxVelocity, slot)
+        //     .maxAcceleration(gains.maxAcceleration, slot)
+        //     .positionMode(com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode.kMAXMotionTrapezoidal, slot)
+        //     .allowedClosedLoopError(gains.tolerance, slot)
+        // ;
 
         this.motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
@@ -98,11 +98,11 @@ public abstract class MotorIOSparkBase<M extends SparkBase, C extends SparkBaseC
     @Override
     public void setVelocity(double desiredVelocityRPM, int pidSlot) {
         if (motorPIDGains.size() > 0) {
-            Utils.clamp(
-                desiredVelocityRPM, 
-                -motorPIDGains.get(pidSlot).maxVelocity,
-                motorPIDGains.get(pidSlot).maxVelocity
-            );
+            // Utils.clamp(
+            //     desiredVelocityRPM, 
+            //     -motorPIDGains.get(pidSlot).maxVelocity,
+            //     motorPIDGains.get(pidSlot).maxVelocity
+            // );
         }
 
         ClosedLoopSlot slot = getSlot(pidSlot);
@@ -129,8 +129,8 @@ public abstract class MotorIOSparkBase<M extends SparkBase, C extends SparkBaseC
 
     @Override
     @SuppressWarnings("unchecked")
-    public void setFollowerTo(MotorIO master, boolean reversed) {
-        this.config.follow(((MotorIOSparkBase<M, C>)master).motor);
+    public void setFollowerTo(OLD_MotorIO master, boolean reversed) {
+        this.config.follow(((OLD_MotorIOSparkBase<M, C>)master).motor);
         this.motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 

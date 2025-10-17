@@ -15,7 +15,7 @@ import frc.robot.state.sequencer.Level;
 import frc.robot.state.sequencer.SequenceInput;
 import frc.robot.state.sequencer.SequenceManager;
 import frc.robot.state.sequencer.SequenceStateMachine;
-import frc.robot.subsystems.arm.ArmSubsystem;
+import frc.robot.subsystems.arm.OLD_ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
@@ -25,12 +25,12 @@ public class AutoCommandLoader {
 
     // subsystems
     private ElevatorSubsystem elevatorSubsystem;
-    private ArmSubsystem armSubsystem;
+    private OLD_ArmSubsystem armSubsystem;
     private HandIntakeSubsystem handIntakeSubsystem;
     private HandClamperSubsystem handClamperSubsystem;
 
     
-    public AutoCommandLoader(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem handClamperSubsystem, HandIntakeSubsystem handIntakeSubsystem) {
+    public AutoCommandLoader(ElevatorSubsystem elevatorSubsystem, OLD_ArmSubsystem armSubsystem, HandClamperSubsystem handClamperSubsystem, HandIntakeSubsystem handIntakeSubsystem) {
         this.elevatorSubsystem = elevatorSubsystem;
         this.armSubsystem = armSubsystem;
         this.handClamperSubsystem = handClamperSubsystem;

@@ -5,14 +5,14 @@ import com.ctre.phoenix6.controls.*;
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.InvertedValue;
 
-import frc.lib.PIDProfile;
-import frc.lib.hardware.motor.MotorIO;
+import frc.lib.PIDGains;
+import frc.lib.hardware.motor.OLD_MotorIO;
 import frc.lib.hardware.motor.PortConfig;
 
 /**
  * Wrapper class for motors that use the TalonFXS motor controller
  */
-public class MotorIOTalonFXS extends MotorIO {
+public class OLD_MotorIOTalonFXS extends OLD_MotorIO {
     private TalonFXS motor;
     private TalonFXSConfiguration configuration;
     private TalonFXSConfigurator configurator;
@@ -23,7 +23,7 @@ public class MotorIOTalonFXS extends MotorIO {
     private PositionVoltage positionOutput = new PositionVoltage(0);
     private VelocityVoltage velocityOutput = new VelocityVoltage(0);
 
-    public MotorIOTalonFXS(PortConfig config) {
+    public OLD_MotorIOTalonFXS(PortConfig config) {
         super(config);
 
         this.motor = new TalonFXS(config.kPort);
@@ -53,7 +53,7 @@ public class MotorIOTalonFXS extends MotorIO {
     }
 
     @Override
-    public void withGains(PIDProfile gains) {
+    public void withGains(PIDGains gains) {
         super.motorPIDGains.add(gains.getSlot(), gains);
         
         switch (gains.pidSlot) {
@@ -135,7 +135,7 @@ public class MotorIOTalonFXS extends MotorIO {
     }
 
     @Override
-    public void setFollowerTo(MotorIO master, boolean reversed) {
+    public void setFollowerTo(OLD_MotorIO master, boolean reversed) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'setFollowerTo'");
     }

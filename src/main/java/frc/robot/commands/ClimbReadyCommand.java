@@ -2,13 +2,13 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.climb.ClimbConstants;
-import frc.robot.subsystems.climb.ClimbSubsystem;
+import frc.robot.subsystems.climb.OLD_ClimbSubsystem;
 
 public class ClimbReadyCommand extends Command {
     
-    ClimbSubsystem m_climbSubsystem;
+    OLD_ClimbSubsystem m_climbSubsystem;
 
-    public ClimbReadyCommand(ClimbSubsystem climbSubsystem) {
+    public ClimbReadyCommand(OLD_ClimbSubsystem climbSubsystem) {
         m_climbSubsystem = climbSubsystem;
         addRequirements(m_climbSubsystem);
     }

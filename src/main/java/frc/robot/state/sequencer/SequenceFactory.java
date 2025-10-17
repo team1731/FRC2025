@@ -1,7 +1,5 @@
 package frc.robot.state.sequencer;
 
-import frc.robot.state.sequencer.positions.Positions;
-import frc.robot.state.sequencer.positions.PositionsFactory;
 import frc.robot.state.sequencer.transitions.AlgaeFloorPickupTransitions;
 import frc.robot.state.sequencer.transitions.AlgaeHandoffTransitions;
 import frc.robot.state.sequencer.transitions.AlgaeReefPickupTransitions;
@@ -11,6 +9,8 @@ import frc.robot.state.sequencer.transitions.CoralScoreL1Transitions;
 import frc.robot.state.sequencer.transitions.CoralScoreTransitions;
 import frc.robot.state.sequencer.transitions.ResetTransitions;
 import frc.robot.state.sequencer.transitions.UnStuckElevator;
+import frc.robot.subsystems.superstructure.Positions;
+import frc.robot.subsystems.superstructure.PositionsFactory;
 
 public class SequenceFactory {
     public static Sequence getSequence(Level levelSelection, GamePiece pieceSelection, Action actionSelection) { 

@@ -5,8 +5,9 @@ import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.logging.SmartLogger;
+import frc.robot.subsystems.ToggleableSubsystem;
 
-public abstract class BaseSubsystem extends SubsystemBase {
+public abstract class BaseSubsystem extends SubsystemBase implements ToggleableSubsystem {
     private boolean enabled = false;
     protected SmartLogger logger;
 
@@ -18,6 +19,7 @@ public abstract class BaseSubsystem extends SubsystemBase {
     /**
      * Whether we want the subsystem's hardware to be commandable
      */
+    @Override
     public boolean isEnabled() {
         return enabled;
     }

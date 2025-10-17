@@ -14,7 +14,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 /**
  * Wrapper class for motors that use the TalonFX motor controller
  */
-public class MotorIOTalonFX extends MotorIO {
+public class OLD_MotorIOTalonFX extends OLD_MotorIO {
     protected TalonFX motor;
 
     protected TalonFXConfiguration configuration;
@@ -25,7 +25,7 @@ public class MotorIOTalonFX extends MotorIO {
     protected MotionMagicVoltage motionMagicOutput = new MotionMagicVoltage(0);
     protected VoltageOut voltageOutput = new VoltageOut(0);
 
-    public MotorIOTalonFX(PortConfig config) {
+    public OLD_MotorIOTalonFX(PortConfig config) {
         super(config);
         
         this.motor = new TalonFX(config.kPort);
@@ -63,7 +63,7 @@ public class MotorIOTalonFX extends MotorIO {
     }
 
     @Override
-    public void withGains(PIDProfile gains) {
+    public void withGains(PIDGains gains) {
         super.motorPIDGains.add(gains.getSlot(), gains);
         
         switch (gains.pidSlot) {
@@ -131,15 +131,15 @@ public class MotorIOTalonFX extends MotorIO {
 
     @Override
     public void setVelocity(double desiredRPM, int pidSlot) {
-        double desiredRPS = desiredRPM / 60.0;
-        if (motorPIDGains.get(pidSlot) != null) {
-            Utils.clamp(
-                desiredRPS, 
-                -motorPIDGains.get(pidSlot).maxVelocity,
-                motorPIDGains.get(pidSlot).maxVelocity
-            );
-        }
-        this.motor.setControl(velocityOutput.withSlot(pidSlot).withVelocity(desiredRPS));
+        // double desiredRPS = desiredRPM / 60.0;
+        // if (motorPIDGains.get(pidSlot) != null) {
+        //     Utils.clamp(
+        //         desiredRPS, 
+        //         -motorPIDGains.get(pidSlot).maxVelocity,
+        //         motorPIDGains.get(pidSlot).maxVelocity
+        //     );
+        // }
+        // this.motor.setControl(velocityOutput.withSlot(pidSlot).withVelocity(desiredRPS));
     }
 
     @Override
@@ -155,8 +155,8 @@ public class MotorIOTalonFX extends MotorIO {
     }
 
     @Override
-    public void setFollowerTo(MotorIO master, boolean reversed) {
-        this.motor.setControl(new Follower(((MotorIOTalonFX)master).motor.getDeviceID(), reversed));
+    public void setFollowerTo(OLD_MotorIO master, boolean reversed) {
+        this.motor.setControl(new Follower(((OLD_MotorIOTalonFX)master).motor.getDeviceID(), reversed));
     }
 
     @Override

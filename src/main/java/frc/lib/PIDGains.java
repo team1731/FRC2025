@@ -10,9 +10,9 @@ import edu.wpi.first.util.sendable.*;
 /**
  * Helper class that is used to store and utilize PID and other hardware constants
  * 
- * - Credit to team 1885 ILITE Robotics for the inital indea
+ * - Credit to team 1885 ILITE Robotics for the inital idea
  */
-public class PIDProfile implements Sendable {
+public class PIDGains implements Sendable {
     public int pidSlot = 0;
 
     public double kP = 0;
@@ -24,9 +24,7 @@ public class PIDProfile implements Sendable {
     public double kS = 0;
     public double kA = 0;
     public double kV = 0;
-
-    public double maxAcceleration = Double.POSITIVE_INFINITY;
-    public double maxVelocity = Double.POSITIVE_INFINITY;
+    public double kG = 0;
 
     public double tolerance = 0.1; // Set to 0.1 units at default
 
@@ -48,7 +46,7 @@ public class PIDProfile implements Sendable {
 
     private static int instances = 0;
 
-    public PIDProfile() {
+    public PIDGains() {
         SendableRegistry.add(this, this.getClass().getSimpleName(), instances);
         instances++;
     }
@@ -56,7 +54,7 @@ public class PIDProfile implements Sendable {
     /**
      * Sets the basic P, I, and D gains
      */
-    public PIDProfile setPID(double p, double i, double d) {
+    public PIDGains setPID(double p, double i, double d) {
         this.kP = p;
         this.kI = i;
         this.kD = d;
@@ -67,7 +65,7 @@ public class PIDProfile implements Sendable {
     /**
      * Sets the P gain to the desired value
      */
-    public PIDProfile setP(double gain) {
+    public PIDGains setP(double gain) {
         kP = gain;
         return this;
     }
@@ -82,7 +80,7 @@ public class PIDProfile implements Sendable {
     /**
      * Sets the I gain to the desired value along with the I zone
      */
-    public PIDProfile setI(double gain, double zone) {
+    public PIDGains setI(double gain, double zone) {
         kI = gain;
         kIZone = zone;
         return this;
@@ -91,7 +89,7 @@ public class PIDProfile implements Sendable {
     /**
      * Sets the I gain to the desired value
      */
-    public PIDProfile setI(double gain) {
+    public PIDGains setI(double gain) {
         kI = gain;
         return this;
     }
@@ -99,7 +97,7 @@ public class PIDProfile implements Sendable {
     /**
      * Sets the I zone to the desired range
      */
-    public PIDProfile setIZone(double zone) {
+    public PIDGains setIZone(double zone) {
         kIZone = zone;
         return this;
     }
@@ -121,7 +119,7 @@ public class PIDProfile implements Sendable {
     /**
      * Sets the D gain to the desired value
      */
-    public PIDProfile setD(double gain) {
+    public PIDGains setD(double gain) {
         kD = gain;
         return this;
     }
@@ -136,7 +134,7 @@ public class PIDProfile implements Sendable {
     /**
      * Sets the V gain to the desired value
      */
-    public PIDProfile setV(double gain) {
+    public PIDGains setV(double gain) {
         this.kV = gain;
         this.refreshFF();
         return this;
@@ -152,7 +150,7 @@ public class PIDProfile implements Sendable {
     /**
      * Sets the A gain to the desired value
      */
-    public PIDProfile setA(double gain) {
+    public PIDGains setA(double gain) {
         this.kA = gain;
         this.refreshFF();
         return this;
@@ -166,9 +164,9 @@ public class PIDProfile implements Sendable {
     }
 
     /**
-     * Sets the I gain to the desired value
+     * Sets the S gain to the desired value
      */
-    public PIDProfile setS(double gain) {
+    public PIDGains setS(double gain) {
         this.kS = gain;
         this.refreshFF();
         return this;
@@ -182,41 +180,24 @@ public class PIDProfile implements Sendable {
     }
 
     /**
-     * Sets the max acceleration to the desired value
+     * Sets the G gain to the desired value
      */
-    public PIDProfile setMaxAcceleration(double gain) {
-        maxAcceleration = gain;
-        useSmartMotion = true;
+    public PIDGains setG(double gain) {
+        this.kG = gain;
         return this;
     }
 
     /**
-     * Returns the max acceleration
+     * Returns the G gain
      */
-    public double getMaxAcceleration() {
-        return maxAcceleration;
-    }
-
-    /**
-     * Sets the max velocity to the desired value
-     */
-    public PIDProfile setMaxVelocity(double gain) {
-        maxVelocity = gain;
-        useSmartMotion = true;
-        return this;
-    }
-
-    /**
-     * Returns the max velocity
-     */
-    public double getMaxVelocity() {
-        return maxVelocity;
+    public double getG() {
+        return this.kG;
     }
 
     /**
      * Sets the pid slot to the desired slot
      */
-    public PIDProfile setSlot(int slot) {
+    public PIDGains setSlot(int slot) {
         pidSlot = slot;
         return this;
     }
@@ -231,7 +212,7 @@ public class PIDProfile implements Sendable {
     /**
      * Sets the position tolerance to the desired range
      */
-    public PIDProfile setTolerance(double tolerance) {
+    public PIDGains setTolerance(double tolerance) {
         this.tolerance = tolerance;
         return this;
     }
@@ -243,7 +224,7 @@ public class PIDProfile implements Sendable {
     /**
      * Useful for continually rotating mechanisms
      */
-    public PIDProfile setContinuousInput(double min, double max) {
+    public PIDGains setContinuousInput(double min, double max) {
         this.continuousMin = min;
         this.continuousMax = max;
         this.continuousInput = true;
@@ -257,7 +238,7 @@ public class PIDProfile implements Sendable {
     /**
      * Currently only works for neo motors
      */
-    public PIDProfile setSoftLimits(double min, double max) {
+    public PIDGains setSoftLimits(double min, double max) {
         this.softLimitMin = min;
         this.softLimitMax = max;
         this.softLimit = true;
@@ -281,7 +262,7 @@ public class PIDProfile implements Sendable {
     /**
      * Sets a scaling factor for the output
      */
-    public PIDProfile setScalingFactor(double scale) {
+    public PIDGains setScalingFactor(double scale) {
         this.scale = scale;
         return this;
     }
@@ -296,7 +277,7 @@ public class PIDProfile implements Sendable {
     /**
      * Sets a maximum current limit
      */
-    public PIDProfile setCurrentLimit(int limit) {
+    public PIDGains setCurrentLimit(int limit) {
         this.currentLimit = limit;
         return this;
     }
@@ -318,7 +299,7 @@ public class PIDProfile implements Sendable {
     /**
      * Creates a PID controller with the specified constants and configurations
      */
-    public ProfiledPIDController toProfiledPIDController() {
+    public ProfiledPIDController toProfiledPIDController(double maxVelocity, double maxAcceleration) {
         ProfiledPIDController pidCtrl = new ProfiledPIDController(kP, kI, kD, new Constraints(maxVelocity * scale, maxAcceleration * scale));
         pidCtrl.setTolerance(tolerance);
         pidCtrl.setIZone(kIZone);
@@ -357,14 +338,12 @@ public class PIDProfile implements Sendable {
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        builder.setSmartDashboardType("PIDGainsProfile");
+        builder.setSmartDashboardType("PIDGains");
         builder.addDoubleProperty("p", this::getP, this::setP);
         builder.addDoubleProperty("i", this::getI, this::setI);
         builder.addDoubleProperty("d", this::getD, this::setD);
         builder.addDoubleProperty("s", this::getS, this::setS);
         builder.addDoubleProperty("a", this::getA, this::setA);
         builder.addDoubleProperty("v", this::getV, this::setV);
-        builder.addDoubleProperty("maxVelocity", this::getMaxVelocity, this::setMaxVelocity);
-        builder.addDoubleProperty("maxAccel", this::getMaxAcceleration, this::setMaxAcceleration);
     }
 }

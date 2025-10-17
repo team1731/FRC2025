@@ -85,11 +85,11 @@ public class NEW_HandIntakeSubsystem extends SubsystemBase implements Toggleable
         Logger.recordOutput("HandIntakeSubsystem/Score Detection Switch Flipped", scoreDetectionSwitchFlipped());
     }
 
-    private boolean pieceDetectionSwitchFlipped() {
+    public boolean pieceDetectionSwitchFlipped() {
         return intakeMotor.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround;
     }
 
-    private boolean scoreDetectionSwitchFlipped() {
+    public boolean scoreDetectionSwitchFlipped() {
         return intakeMotor.getForwardLimit().getValue() == ForwardLimitValue.ClosedToGround;
     }
 
@@ -111,6 +111,10 @@ public class NEW_HandIntakeSubsystem extends SubsystemBase implements Toggleable
 
     public Command intakeAlgaeCommand() {
         return this.setVelocityCommand(HandConstants.intakeAlgaeVelocity);
+    }
+
+    public Command scoreCommand() {
+        return this.setVelocityCommand(-HandConstants.releaseVelocity);
     }
 
     public Command holdCommand() {

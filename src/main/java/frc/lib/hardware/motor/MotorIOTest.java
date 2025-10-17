@@ -1,6 +1,6 @@
 package frc.lib.hardware.motor;
 
-import frc.lib.PIDProfile;
+import frc.lib.PIDGains;
 import frc.lib.hardware.motor.ctre.*;
 import frc.lib.hardware.motor.rev.*;
 import frc.lib.logging.SmartLogger;
@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.*;
  * Test class that treats a motor as a subsystem; useful for easy initial testing of motors and prototypes
  */
 public class MotorIOTest extends SubsystemBase {
-    protected MotorIO testMotor; // accesible to other test motors
+    protected OLD_MotorIO testMotor; // accesible to other test motors
     private double desiredOutput = 0d;
     private SmartLogger logger;
     private OutputType outputType = OutputType.kNone;
@@ -23,15 +23,15 @@ public class MotorIOTest extends SubsystemBase {
         kNone
     }
 
-    public MotorIOTest(PortConfig config, Class<? extends MotorIO> cls) {
-        if (cls.getSimpleName().equals(MotorIOSparkFlex.class.getSimpleName())) {
-            this.testMotor = new MotorIOSparkFlex(config);
-        } else if (cls.getSimpleName().equals(MotorIOSparkMax.class.getSimpleName())) {
-            this.testMotor = new MotorIOSparkMax(config);
-        } else if (cls.getSimpleName().equals(MotorIOTalonFX.class.getSimpleName())) {
-            this.testMotor = new MotorIOTalonFX(config);
-        } else if (cls.getSimpleName().equals(MotorIOTalonFXS.class.getSimpleName())) {
-            this.testMotor = new MotorIOTalonFXS(config);
+    public MotorIOTest(PortConfig config, Class<? extends OLD_MotorIO> cls) {
+        if (cls.getSimpleName().equals(OLD_MotorIOSparkFlex.class.getSimpleName())) {
+            this.testMotor = new OLD_MotorIOSparkFlex(config);
+        } else if (cls.getSimpleName().equals(OLD_MotorIOSparkMax.class.getSimpleName())) {
+            this.testMotor = new OLD_MotorIOSparkMax(config);
+        } else if (cls.getSimpleName().equals(OLD_MotorIOTalonFX.class.getSimpleName())) {
+            this.testMotor = new OLD_MotorIOTalonFX(config);
+        } else if (cls.getSimpleName().equals(OLD_MotorIOTalonFXS.class.getSimpleName())) {
+            this.testMotor = new OLD_MotorIOTalonFXS(config);
         }
 
         this.logger = new SmartLogger("TestMotor/" + cls.getSimpleName() + "[" + config.kPort + "]");
@@ -56,7 +56,7 @@ public class MotorIOTest extends SubsystemBase {
     /**
      * Adds PID gains to this test motor
      */
-    public MotorIOTest withGains(PIDProfile profile) {
+    public MotorIOTest withGains(PIDGains profile) {
         this.testMotor.withGains(profile);
         return this;
     }

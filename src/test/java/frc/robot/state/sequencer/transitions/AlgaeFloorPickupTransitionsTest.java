@@ -17,13 +17,13 @@ import frc.robot.state.sequencer.SequenceInput;
 import frc.robot.state.sequencer.SequenceManager;
 import frc.robot.state.sequencer.SequenceState;
 import frc.robot.state.sequencer.SequenceStateMachine;
-import frc.robot.state.sequencer.positions.Positions;
 import frc.robot.subsystems.arm.ArmConstants;
-import frc.robot.subsystems.arm.ArmSubsystem;
+import frc.robot.subsystems.arm.OLD_ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
 import frc.robot.subsystems.hand.HandConstants;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
+import frc.robot.subsystems.superstructure.Positions;
 
 public class AlgaeFloorPickupTransitionsTest {
     // @Test

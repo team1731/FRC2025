@@ -1,18 +1,18 @@
-package frc.robot.state.sequencer.positions;
+package frc.robot.subsystems.superstructure;
 
-import frc.robot.state.sequencer.positions.PositionConstants.ALGAE_INTAKE.ALGAE_FLOOR;
-import frc.robot.state.sequencer.positions.PositionConstants.ALGAE_INTAKE.ALGAE_REEF_L2;
-import frc.robot.state.sequencer.positions.PositionConstants.ALGAE_INTAKE.ALGAE_REEF_L3;
-import frc.robot.state.sequencer.positions.PositionConstants.ALGAE_SCORE.ALGAE_HANDOFF;
-import frc.robot.state.sequencer.positions.PositionConstants.ALGAE_SCORE.ALGAE_SCORE_BARGE;
-import frc.robot.state.sequencer.positions.PositionConstants.CORAL_INTAKE.CORAL_FEEDER;
-import frc.robot.state.sequencer.positions.PositionConstants.CORAL_INTAKE.CORAL_FLOOR_UPRIGHT;
-import frc.robot.state.sequencer.positions.PositionConstants.CORAL_SCORE.CORAL_L1;
-import frc.robot.state.sequencer.positions.PositionConstants.CORAL_SCORE.CORAL_L1_ALT;
-import frc.robot.state.sequencer.positions.PositionConstants.CORAL_SCORE.CORAL_L2;
-import frc.robot.state.sequencer.positions.PositionConstants.CORAL_SCORE.CORAL_L3;
-import frc.robot.state.sequencer.positions.PositionConstants.CORAL_SCORE.CORAL_L4;
-import frc.robot.state.sequencer.positions.PositionConstants.RESET.UNSTUCK;
+import frc.robot.subsystems.superstructure.PositionConstants.ALGAE_INTAKE.ALGAE_FLOOR;
+import frc.robot.subsystems.superstructure.PositionConstants.ALGAE_INTAKE.ALGAE_REEF_L2;
+import frc.robot.subsystems.superstructure.PositionConstants.ALGAE_INTAKE.ALGAE_REEF_L3;
+import frc.robot.subsystems.superstructure.PositionConstants.ALGAE_SCORE.ALGAE_HANDOFF;
+import frc.robot.subsystems.superstructure.PositionConstants.ALGAE_SCORE.ALGAE_SCORE_BARGE;
+import frc.robot.subsystems.superstructure.PositionConstants.CORAL_INTAKE.CORAL_FEEDER;
+import frc.robot.subsystems.superstructure.PositionConstants.CORAL_INTAKE.CORAL_FLOOR_UPRIGHT;
+import frc.robot.subsystems.superstructure.PositionConstants.CORAL_SCORE.CORAL_L1;
+import frc.robot.subsystems.superstructure.PositionConstants.CORAL_SCORE.CORAL_L1_ALT;
+import frc.robot.subsystems.superstructure.PositionConstants.CORAL_SCORE.CORAL_L2;
+import frc.robot.subsystems.superstructure.PositionConstants.CORAL_SCORE.CORAL_L3;
+import frc.robot.subsystems.superstructure.PositionConstants.CORAL_SCORE.CORAL_L4;
+import frc.robot.subsystems.superstructure.PositionConstants.RESET.UNSTUCK;
 
 
 public class PositionsFactory {

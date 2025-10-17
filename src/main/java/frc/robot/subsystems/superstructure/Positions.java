@@ -1,4 +1,4 @@
-package frc.robot.state.sequencer.positions;
+package frc.robot.subsystems.superstructure;
 
 public class Positions {
     public double raiseElevatorPosition;

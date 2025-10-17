@@ -19,7 +19,7 @@ public abstract class SingleMotorVelocitySubsystem<M extends MotorIO> extends Ba
 
     protected void setVelocityRPM(double desiredRPM, int pidSlot) {
         this.desiredVelocityRPM = desiredRPM;
-        this.leadMotor.setVelocity(desiredRPM, pidSlot);
+        this.leadMotor.setVelocityRPS(desiredRPM, pidSlot);
     }
 
     protected void setPercentOutput(double desiredPercent) {

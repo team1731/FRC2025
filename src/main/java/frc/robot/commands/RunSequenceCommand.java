@@ -5,7 +5,7 @@ import frc.robot.state.sequencer.SequenceInput;
 import frc.robot.state.sequencer.SequenceStateMachine;
 import frc.robot.state.sequencer.Sequence;
 import frc.robot.state.sequencer.SequenceManager;
-import frc.robot.subsystems.arm.ArmSubsystem;
+import frc.robot.subsystems.arm.OLD_ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
@@ -13,7 +13,7 @@ import frc.robot.subsystems.hand.HandIntakeSubsystem;
 public class RunSequenceCommand extends Command {
     SequenceStateMachine m_scoreStateMachine;
     ElevatorSubsystem m_elevatorSubsystem;
-    ArmSubsystem m_armSubsystem;
+    OLD_ArmSubsystem m_armSubsystem;
     HandClamperSubsystem m_clamperSubsystem;
     HandIntakeSubsystem m_intakeSubsystem;
     boolean m_sequenceStarted = false;
@@ -24,7 +24,7 @@ public class RunSequenceCommand extends Command {
         m_sequenceDone = true;
     };
 
-    public RunSequenceCommand(ElevatorSubsystem elevatorSubsystem, ArmSubsystem armSubsystem, HandClamperSubsystem clamperSubsystem, HandIntakeSubsystem intakeSubsystem) {
+    public RunSequenceCommand(ElevatorSubsystem elevatorSubsystem, OLD_ArmSubsystem armSubsystem, HandClamperSubsystem clamperSubsystem, HandIntakeSubsystem intakeSubsystem) {
         m_scoreStateMachine = SequenceManager.getStateMachine(elevatorSubsystem, armSubsystem, clamperSubsystem, intakeSubsystem);
         m_elevatorSubsystem = elevatorSubsystem;
         m_armSubsystem = armSubsystem;

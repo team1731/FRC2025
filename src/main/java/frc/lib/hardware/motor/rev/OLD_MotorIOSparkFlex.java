@@ -9,8 +9,8 @@ import frc.lib.hardware.motor.PortConfig;
 /**
  * Wrapper class for motors that use the Spark Flex motor controller
  */
-public class MotorIOSparkFlex extends MotorIOSparkBase<SparkFlex, SparkFlexConfig> {
-    public MotorIOSparkFlex(PortConfig config) {
+public class OLD_MotorIOSparkFlex extends OLD_MotorIOSparkBase<SparkFlex, SparkFlexConfig> {
+    public OLD_MotorIOSparkFlex(PortConfig config) {
         super(
             config.kBus,
             new SparkFlex(config.kPort, MotorType.kBrushless), 

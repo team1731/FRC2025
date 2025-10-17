@@ -14,7 +14,6 @@ import frc.lib.Utils;
 import frc.robot.subsystems.ToggleableSubsystem;
 import frc.robot.subsystems.arm.ArmConstants;
 
-@Deprecated(forRemoval = false)
 public class NEW_ElevatorSubsystem extends SubsystemBase implements ToggleableSubsystem {
     private boolean isEnabled = false;
     private TalonFX masterMotor, followerMotor;
@@ -137,18 +136,23 @@ public class NEW_ElevatorSubsystem extends SubsystemBase implements ToggleableSu
         mmReq.Acceleration = acceleration;
     }
 
-    public Command moveElevatorSlowCommand(double targetPosition) {
+    public Command moveSlowCommand(double targetPosition) {
         return new InstantCommand(() -> setMotionMagicSpeeds(ElevatorConstants.slowedElevatorVelocity, ElevatorConstants.slowedElevatorAcceleration))
         .andThen(this.run(() -> moveElevator(targetPosition))
         .until(() -> isAtTargetPosition()))
         .withName("MoveElevatorSlowSpeed");
     }
 
-    public Command moveElevatorCommand(double targetPosition) {
+    public Command moveCommand(double targetPosition) {
         return new InstantCommand(() -> setMotionMagicSpeeds(ElevatorConstants.normalElevatorVelocity, ElevatorConstants.normalElevatorAcceleration))
         .andThen(this.run(() -> moveElevator(targetPosition))
         .until(() -> isAtTargetPosition()))
         .withName("MoveElevatorNormalSpeed");
+    }
+
+    public Command homeCommand() {
+        return moveCommand(ElevatorConstants.elevatorHomePosition)
+        .withName("Home");
     }
 
     public Command stopElevatorCommand() {
