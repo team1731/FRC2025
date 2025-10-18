@@ -21,8 +21,8 @@ import frc.robot.subsystems.ToggleableSubsystem;
 
 public class ClimbSubsystem extends SubsystemBase implements ToggleableSubsystem{
         
-    private TalonFX climbMotor;
-    private CANcoder climbCancoder;
+    // private TalonFX climbMotor;
+    // private CANcoder climbCancoder;
     private MotionMagicVoltage mmReq = new MotionMagicVoltage(0);
     private final NeutralOut brake = new NeutralOut();
 
@@ -64,12 +64,12 @@ public class ClimbSubsystem extends SubsystemBase implements ToggleableSubsystem
             desiredPosition = position;
         }
 
-        climbMotor.setControl(mmReq.withPosition(desiredPosition).withFeedForward(arbitraryFeedForward));
+        // climbMotor.setControl(mmReq.withPosition(desiredPosition).withFeedForward(arbitraryFeedForward));
     }
 
     public void stopClimb(){
         if(!enabled) return;
-        climbMotor.setControl(brake);
+        // climbMotor.setControl(brake);
     }
 
     public void stowClimb(){
@@ -80,57 +80,57 @@ public class ClimbSubsystem extends SubsystemBase implements ToggleableSubsystem
     public void initializeClimbMotor(){
         if (!enabled) return;
         
-        System.out.println("ClimbSubsystem: Starting Up & Initializing Climb Motor !!!!");
+        // System.out.println("ClimbSubsystem: Starting Up & Initializing Climb Motor !!!!");
 
-        climbCancoder = new CANcoder(ClimbConstants.climbCancoderDeviceId, "canivore1");
-        CANcoderConfiguration cancoderConfig = new CANcoderConfiguration();
-        cancoderConfig.MagnetSensor.MagnetOffset = -0.315185546875; 
-        cancoderConfig.MagnetSensor.SensorDirection = ClimbConstants.climbCanConderDirection;
-        cancoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.900146484375;
-        climbCancoder.getConfigurator().apply(cancoderConfig);
+        // climbCancoder = new CANcoder(ClimbConstants.climbCancoderDeviceId, "canivore1");
+        // CANcoderConfiguration cancoderConfig = new CANcoderConfiguration();
+        // cancoderConfig.MagnetSensor.MagnetOffset = -0.315185546875; 
+        // cancoderConfig.MagnetSensor.SensorDirection = ClimbConstants.climbCanConderDirection;
+        // cancoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.900146484375;
+        // climbCancoder.getConfigurator().apply(cancoderConfig);
 
-        climbMotor = new TalonFX(ClimbConstants.climbCanId, "canivore1");
-        TalonFXConfiguration config = new TalonFXConfiguration();
-        climbMotor.getConfigurator().apply(config);
+        // climbMotor = new TalonFX(ClimbConstants.climbCanId, "canivore1");
+        // TalonFXConfiguration config = new TalonFXConfiguration();
+        // climbMotor.getConfigurator().apply(config);
         
-         /* Configure current limits */
-        MotionMagicConfigs mm = config.MotionMagic;
-        mm.MotionMagicCruiseVelocity = 70; // 5 rotations per second cruise
-        mm.MotionMagicAcceleration = 250; // Ta200ke approximately 0.5 seconds to reach max vel
-        // Take approximately 0.2 seconds to reach max accel
-        mm.MotionMagicJerk = 0;
+        //  /* Configure current limits */
+        // MotionMagicConfigs mm = config.MotionMagic;
+        // mm.MotionMagicCruiseVelocity = 70; // 5 rotations per second cruise
+        // mm.MotionMagicAcceleration = 250; // Ta200ke approximately 0.5 seconds to reach max vel
+        // // Take approximately 0.2 seconds to reach max accel
+        // mm.MotionMagicJerk = 0;
 
-        Slot0Configs slot0 = config.Slot0;
-        slot0.kP = 240;
-        slot0.kI = 0;
-        slot0.kD = 0.0078125;
-        slot0.kV = 0.009375; 
-        slot0.kS = 0.02; // Approximately 0.25V to get the mechanism moving
+        // Slot0Configs slot0 = config.Slot0;
+        // slot0.kP = 240;
+        // slot0.kI = 0;
+        // slot0.kD = 0.0078125;
+        // slot0.kV = 0.009375; 
+        // slot0.kS = 0.02; // Approximately 0.25V to get the mechanism moving
 
-        FeedbackConfigs fdb = config.Feedback;
-        fdb.FeedbackRemoteSensorID = climbCancoder.getDeviceID();
-        fdb.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-        fdb.RotorToSensorRatio = 640; 
-        fdb.SensorToMechanismRatio = 1;
+        // FeedbackConfigs fdb = config.Feedback;
+        // fdb.FeedbackRemoteSensorID = climbCancoder.getDeviceID();
+        // fdb.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+        // fdb.RotorToSensorRatio = 640; 
+        // fdb.SensorToMechanismRatio = 1;
         
-        //for testing
-        config.CurrentLimits.StatorCurrentLimit = 80;
-        config.CurrentLimits.StatorCurrentLimitEnable = true;
+        // //for testing
+        // config.CurrentLimits.StatorCurrentLimit = 80;
+        // config.CurrentLimits.StatorCurrentLimitEnable = true;
 
-         // Apply the configs to Motor 
-        config.MotorOutput.Inverted = ClimbConstants.climbMotorDirection;
-        StatusCode status = StatusCode.StatusCodeNotInitialized;
-        for (int i = 0; i < 5; ++i) {
-            status = climbMotor.getConfigurator().apply(config);
-            if (status.isOK())
-                break;
-        }
-        if (!status.isOK()) {
-            System.out.println("Could not configure device. Error: " + status.toString());
-        }
+        //  // Apply the configs to Motor 
+        // config.MotorOutput.Inverted = ClimbConstants.climbMotorDirection;
+        // StatusCode status = StatusCode.StatusCodeNotInitialized;
+        // for (int i = 0; i < 5; ++i) {
+        //     status = climbMotor.getConfigurator().apply(config);
+        //     if (status.isOK())
+        //         break;
+        // }
+        // if (!status.isOK()) {
+        //     System.out.println("Could not configure device. Error: " + status.toString());
+        // }
 
-        climbMotor.setPosition(0);
-        climbMotor.setNeutralMode(NeutralModeValue.Brake);
+        // climbMotor.setPosition(0);
+        // climbMotor.setNeutralMode(NeutralModeValue.Brake);
     }
 
     public void periodic(){
@@ -151,7 +151,8 @@ public class ClimbSubsystem extends SubsystemBase implements ToggleableSubsystem
     public double getClimbPosition(){
         if (!enabled) 
             return 0;
-        return climbMotor.getPosition().getValueAsDouble();
+        // return climbMotor.getPosition().getValueAsDouble();
+        return 0;
     }
 
     public boolean isAtPosition(double position){
@@ -160,17 +161,17 @@ public class ClimbSubsystem extends SubsystemBase implements ToggleableSubsystem
     }
 
     public void log(){
-                SmartDashboard.putNumber("climb motor position", climbMotor.getPosition().getValueAsDouble());
-        SmartDashboard.putNumber("desired climb position", desiredPosition);
-        SmartDashboard.putNumber("climb motor closedLoopError",
-            climbMotor.getClosedLoopError().getValueAsDouble());
-        SmartDashboard.putNumber("climb motor closedLoopReference",
-            climbMotor.getClosedLoopReference().getValueAsDouble());
-        SmartDashboard.putNumber("climb motor closedLoopOutput",
-            climbMotor.getClosedLoopOutput().getValueAsDouble());
-        SmartDashboard.putNumber("climb motor statorCurrent",
-            climbMotor.getStatorCurrent().getValueAsDouble());
-        SmartDashboard.putNumber("arbitrary feed forward",
-            arbitraryFeedForward);
+        //         SmartDashboard.putNumber("climb motor position", climbMotor.getPosition().getValueAsDouble());
+        // SmartDashboard.putNumber("desired climb position", desiredPosition);
+        // SmartDashboard.putNumber("climb motor closedLoopError",
+        //     climbMotor.getClosedLoopError().getValueAsDouble());
+        // SmartDashboard.putNumber("climb motor closedLoopReference",
+        //     climbMotor.getClosedLoopReference().getValueAsDouble());
+        // SmartDashboard.putNumber("climb motor closedLoopOutput",
+        //     climbMotor.getClosedLoopOutput().getValueAsDouble());
+        // SmartDashboard.putNumber("climb motor statorCurrent",
+        //     climbMotor.getStatorCurrent().getValueAsDouble());
+        // SmartDashboard.putNumber("arbitrary feed forward",
+        //     arbitraryFeedForward);
     }
 }

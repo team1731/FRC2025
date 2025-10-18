@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.545478823294543,
-        "y": 6.021616821333258
+        "x": 2.725483815676622,
+        "y": 5.9045719268637065
       },
       "isLocked": false,
       "linkedName": "Blu_8_p4_stop"
     },
     {
       "anchor": {
-        "x": 3.7620141821323587,
-        "y": 4.961818364083073
+        "x": 3.714,
+        "y": 4.968
       },
       "prevControl": {
-        "x": 3.3052499999999996,
-        "y": 5.9165
+        "x": 3.5333426423113514,
+        "y": 5.140808909240686
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,7 +32,7 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.41191066997518955,
+      "minWaypointRelativePos": 0.5111662531017267,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 3.0,
@@ -70,7 +70,7 @@
     },
     {
       "name": "CoralL4Score",
-      "waypointRelativePos": 0.31956912028725354,
+      "waypointRelativePos": 0.36823821339950014,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -78,6 +78,12 @@
           "name": "CoralL4Score"
         }
       }
+    },
+    {
+      "name": "FinishCoralScore",
+      "waypointRelativePos": 0.9042183622828809,
+      "endWaypointRelativePos": null,
+      "command": null
     }
   ],
   "globalConstraints": {
