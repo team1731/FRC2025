@@ -74,7 +74,7 @@
   "folder": "Blu_8",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -60.832386620422206
+    "rotation": -59.953
   },
   "useDefaultConstraints": false
 }
