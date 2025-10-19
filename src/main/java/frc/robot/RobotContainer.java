@@ -148,7 +148,9 @@ public class RobotContainer {
       new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)));
 
     // Sets arm to score
-    // dRightTrigger.whileTrue();
+    dRightTrigger.whileTrue(new SequentialCommandGroup(
+      new InstantCommand(() -> SequenceManager.setActionSelection(Action.SCORE)),
+      new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem)));
    
     // Climb up
     dRightBumper.whileTrue(new InstantCommand(() -> climbSubsystem.moveClimb(ClimbConstants.maxClimbPosition))) 
@@ -167,20 +169,20 @@ public class RobotContainer {
     dB.whileTrue(new SequentialCommandGroup(
       new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L3)),
       new InstantCommand(() -> SequenceManager.setActionSelection(opAlgae.getAsBoolean() ? Action.INTAKE : Action.SCORE)),
-      new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem))) //while pressed set to Level 3
-      .onFalse(new InstantCommand(() -> SequenceManager.resetLevelToL4())); //if not pressed set default to Level 4 
+      new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem))); //while pressed set to Level 3
+      // .onFalse(new InstantCommand(() -> SequenceManager.resetLevelToL4())); //if not pressed set default to Level 4 
     
     dA.whileTrue(new SequentialCommandGroup(
       new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L2)),
       new InstantCommand(() -> SequenceManager.setActionSelection(opAlgae.getAsBoolean() ? Action.INTAKE : Action.SCORE)),
-      new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem))) //while pressed set to Level 2
-      .onFalse(new InstantCommand(() -> SequenceManager.resetLevelToL4())); //if not pressed set default to Level 4
+      new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem))); //while pressed set to Level 2
+      // .onFalse(new InstantCommand(() -> SequenceManager.resetLevelToL4())); //if not pressed set default to Level 4
 
     dX.whileTrue(new SequentialCommandGroup(
       new InstantCommand(() -> SequenceManager.setLevelSelection(Level.L1)),
       new InstantCommand(() -> SequenceManager.setActionSelection(Action.SCORE)),
-      new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem))) //while pressed set to Level 1
-      .onFalse(new InstantCommand(() -> SequenceManager.resetLevelToL4())); //if not pressed set defaullt to Level 4 
+      new RunSequenceCommand(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem))); //while pressed set to Level 1
+      // .onFalse(new InstantCommand(() -> SequenceManager.resetLevelToL4())); //if not pressed set defaullt to Level 4 
 
     dLeftBumper.whileTrue(new InstantCommand(() -> DriveCommand.setDriveMode(DriveMode.TARGETING)))
       .onFalse(new InstantCommand(() -> DriveCommand.setDriveMode(DriveMode.DEFAULT)));
