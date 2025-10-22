@@ -3,38 +3,52 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.33575,
-        "y": 7.42775
+        "x": 1.3260000000000003,
+        "y": 7.3985
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.7085756578947375,
-        "y": 5.306098684210527
+        "x": 2.4472500000000004,
+        "y": 6.404000000000001
       },
       "isLocked": false,
-      "linkedName": "Blu_1_p6_stop_NoVSLAM"
+      "linkedName": "Blu_1_p4_stop_NoVSLAM"
     },
     {
       "anchor": {
-        "x": 3.3523906318818892,
-        "y": 4.149161868796939
+        "x": 3.775347439037229,
+        "y": 4.922583353393088
       },
       "prevControl": {
-        "x": 2.2138579033729013,
-        "y": 4.0933180238469795
+        "x": 3.297597439037229,
+        "y": 5.9073333533930885
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Blu_1_p5_stop_NoVSLAM"
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.0,
+      "maxWaypointRelativePos": 0.0,
+      "constraints": {
+        "maxVelocity": 3.0,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
       "name": "FinishCoralFeederIntake",
-      "waypointRelativePos": 0.0,
+      "waypointRelativePos": 0.19950372208437,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -45,7 +59,7 @@
     },
     {
       "name": "HoldCoral",
-      "waypointRelativePos": 0.010771992818671455,
+      "waypointRelativePos": 0.21538461538461656,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -56,7 +70,7 @@
     },
     {
       "name": "CoralL4Score",
-      "waypointRelativePos": 0.4972704714640169,
+      "waypointRelativePos": 0.3999999999999995,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -67,8 +81,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 2.0,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -76,13 +90,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -60.70863782901579
   },
   "reversed": false,
-  "folder": "Blu_1_NoVSLAM",
+  "folder": "Blu_8_NoVSLAM",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -53.860447679620044
+    "rotation": -54.16496532381306
   },
   "useDefaultConstraints": false
 }

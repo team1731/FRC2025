@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.33575,
-        "y": 7.42775
+        "x": 1.31625,
+        "y": 7.379
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.7085756578947375,
-        "y": 5.306098684210527
+        "x": 2.4375,
+        "y": 6.7355
       },
       "isLocked": false,
-      "linkedName": "Blu_1_p6_stop_NoVSLAM"
+      "linkedName": "Blu_1_p2_stop_NoVSLAM"
     },
     {
       "anchor": {
-        "x": 3.3523906318818892,
-        "y": 4.149161868796939
+        "x": 4.06575,
+        "y": 5.117
       },
       "prevControl": {
-        "x": 2.2138579033729013,
-        "y": 4.0933180238469795
+        "x": 3.5587500000000003,
+        "y": 5.9262500000000005
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Blu_1_p3_stop_NoVSLAM"
     }
   ],
   "rotationTargets": [],
@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "FinishCoralFeederIntake",
-      "waypointRelativePos": 0.0,
+      "waypointRelativePos": 0.3500897666068223,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -45,7 +45,7 @@
     },
     {
       "name": "HoldCoral",
-      "waypointRelativePos": 0.010771992818671455,
+      "waypointRelativePos": 0.38958707360861755,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -55,8 +55,8 @@
       }
     },
     {
-      "name": "CoralL4Score",
-      "waypointRelativePos": 0.4972704714640169,
+      "name": "CoralL4ScoreWithFinish",
+      "waypointRelativePos": 0.4456575682382161,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -68,7 +68,7 @@
   ],
   "globalConstraints": {
     "maxVelocity": 4.0,
-    "maxAcceleration": 2.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -76,13 +76,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -59.588918732874546
   },
   "reversed": false,
-  "folder": "Blu_1_NoVSLAM",
+  "folder": "Blu_8_NoVSLAM",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -53.860447679620044
+    "rotation": -53.392925187392436
   },
   "useDefaultConstraints": false
 }
