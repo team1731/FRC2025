@@ -125,7 +125,7 @@ public class Robot extends TimedRobot {
 
 		handIntakeSubsystem = new HandIntakeSubsystem(true);
 
-		climbSubsystem = new ClimbSubsystem(false);
+		climbSubsystem = new ClimbSubsystem(true);
 		armSubsystem.setClimbSubsystem(climbSubsystem);
 
 		// Instantiate our robot container. This will perform all of our button bindings,

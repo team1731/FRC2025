@@ -45,7 +45,7 @@ public class ClimbSubsystem extends SubsystemBase implements ToggleableSubsystem
     }
 
     public boolean isClimbing() {
-       System.out.println("ClimbSubsystem: Moved into climbing state");
+       //System.out.println("ClimbSubsystem: Moved into climbing state");
         return isClimbing;
     }
 
@@ -84,7 +84,7 @@ public class ClimbSubsystem extends SubsystemBase implements ToggleableSubsystem
 
         climbCancoder = new CANcoder(ClimbConstants.climbCancoderDeviceId, "canivore1");
         CANcoderConfiguration cancoderConfig = new CANcoderConfiguration();
-        cancoderConfig.MagnetSensor.MagnetOffset = -0.951416015625; 
+        cancoderConfig.MagnetSensor.MagnetOffset = -0.967529296875; 
         cancoderConfig.MagnetSensor.SensorDirection = ClimbConstants.climbCanConderDirection;
         cancoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1.0;
         climbCancoder.getConfigurator().apply(cancoderConfig);
