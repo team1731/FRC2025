@@ -3,6 +3,7 @@ package frc.lib.hardware;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.controls.*;
 import com.ctre.phoenix6.hardware.*;
@@ -17,7 +18,7 @@ import frc.robot.Robot;
 
 public class MotorIOTalonFX extends MotorIO {
     protected TalonFX motor;
-    private TalonFXConfiguration cfg;
+    private TalonFXConfiguration cfg = new TalonFXConfiguration();
     private TalonFXConfigurator configurator;
     private TalonFXSimState simState;
 
@@ -41,6 +42,10 @@ public class MotorIOTalonFX extends MotorIO {
         this.simState.setSupplyVoltage(Robot.isReal() ? RobotController.getBatteryVoltage() : 12d);
 
         applyConfigs();
+    }
+
+    public TalonFX getMotor() {
+        return this.motor;
     }
 
     @Override
@@ -133,7 +138,7 @@ public class MotorIOTalonFX extends MotorIO {
         this.cfg.MotorOutput.NeutralMode = mode;
     }
 
-    public void setMotionMagicSpeeds(double velocity, double acceleration) {
+    public void setDynamicMotionMagicSpeeds(double velocity, double acceleration) {
         this.mmOutput.Velocity = velocity;
         this.mmOutput.Acceleration = acceleration;
     }
@@ -217,6 +222,22 @@ public class MotorIOTalonFX extends MotorIO {
 
     public TalonFXConfiguration getConfiguration() {
         return this.cfg;
+    }
+
+    public void withHardwareLimitSwitchConfigs(HardwareLimitSwitchConfigs configs) {
+        this.configurator.apply(configs);
+    }
+
+    public void withVoltageConfigs(VoltageConfigs configs) {
+        this.configurator.apply(configs);
+    }
+
+    public StatusSignal<ForwardLimitValue> getForwardLimit() {
+        return this.motor.getForwardLimit();
+    }
+
+    public StatusSignal<ReverseLimitValue> getReverseLimit() {
+        return this.motor.getReverseLimit();
     }
 
     public void applyConfigs() {

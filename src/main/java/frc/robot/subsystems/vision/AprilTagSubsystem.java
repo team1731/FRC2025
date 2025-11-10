@@ -11,7 +11,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.ToggleableSubsystem;
+import frc.robot.subsystems.IToggleableSubsystem;
 import frc.robot.subsystems.leds.LEDSubsystem;
 import frc.robot.subsystems.vision.camera.BasicCamera;
 import frc.robot.subsystems.vision.camera.Camera;
@@ -20,7 +20,7 @@ import frc.robot.subsystems.vision.helpers.AutoLineupHelper;
 import frc.robot.subsystems.vision.helpers.AutoLineupHelper.LineupInstruction;
 
  
- public class AprilTagSubsystem extends SubsystemBase implements ToggleableSubsystem {
+ public class AprilTagSubsystem extends SubsystemBase implements IToggleableSubsystem {
     public static class AprilTagTarget {
         public Camera camera;
         public PhotonTrackedTarget target;

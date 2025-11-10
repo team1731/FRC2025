@@ -19,10 +19,10 @@ import frc.robot.state.sequencer.SequenceState;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.OLD_ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorConstants;
-import frc.robot.subsystems.elevator.ElevatorSubsystem;
-import frc.robot.subsystems.hand.HandIntakeSubsystem;
+import frc.robot.subsystems.elevator.OLD_ElevatorSubsystem;
+import frc.robot.subsystems.hand.OLD_HandIntakeSubsystem;
 import frc.robot.subsystems.superstructure.Positions;
-import frc.robot.subsystems.hand.HandClamperSubsystem;
+import frc.robot.subsystems.hand.OLD_HandClamperSubsystem;
 import frc.robot.subsystems.hand.HandConstants;
 
 public class SequenceStateMachineTest {

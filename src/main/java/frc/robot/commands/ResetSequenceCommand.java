@@ -6,16 +6,16 @@ import frc.robot.state.sequencer.SequenceStateMachine;
 import frc.robot.state.sequencer.Sequence;
 import frc.robot.state.sequencer.SequenceManager;
 import frc.robot.subsystems.arm.OLD_ArmSubsystem;
-import frc.robot.subsystems.elevator.ElevatorSubsystem;
-import frc.robot.subsystems.hand.HandClamperSubsystem;
-import frc.robot.subsystems.hand.HandIntakeSubsystem;
+import frc.robot.subsystems.elevator.OLD_ElevatorSubsystem;
+import frc.robot.subsystems.hand.OLD_HandClamperSubsystem;
+import frc.robot.subsystems.hand.OLD_HandIntakeSubsystem;
 
 public class ResetSequenceCommand extends Command {
     SequenceStateMachine m_scoreStateMachine;
-    ElevatorSubsystem m_elevatorSubsystem;
+    OLD_ElevatorSubsystem m_elevatorSubsystem;
     OLD_ArmSubsystem m_armSubsystem;
-    HandClamperSubsystem m_clamperSubsystem;
-    HandIntakeSubsystem m_intakeSubsystem;
+    OLD_HandClamperSubsystem m_clamperSubsystem;
+    OLD_HandIntakeSubsystem m_intakeSubsystem;
     boolean m_sequenceDone = false;
 
     private CommandCallback stateMachineCallback = () -> {
@@ -23,7 +23,7 @@ public class ResetSequenceCommand extends Command {
         m_sequenceDone = true;
     };
 
-    public ResetSequenceCommand(ElevatorSubsystem elevatorSubsystem, OLD_ArmSubsystem armSubsystem, HandClamperSubsystem clamperSubsystem, HandIntakeSubsystem intakeSubsystem) {
+    public ResetSequenceCommand(OLD_ElevatorSubsystem elevatorSubsystem, OLD_ArmSubsystem armSubsystem, OLD_HandClamperSubsystem clamperSubsystem, OLD_HandIntakeSubsystem intakeSubsystem) {
         m_scoreStateMachine = SequenceManager.getStateMachine(elevatorSubsystem, armSubsystem, clamperSubsystem, intakeSubsystem);
         m_elevatorSubsystem = elevatorSubsystem;
         m_armSubsystem = armSubsystem;

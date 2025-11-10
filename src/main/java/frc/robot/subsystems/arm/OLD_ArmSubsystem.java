@@ -19,12 +19,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.state.StateMachineCallback;
 import frc.robot.state.sequencer.SequenceInput;
-import frc.robot.subsystems.ToggleableSubsystem;
+import frc.robot.subsystems.IToggleableSubsystem;
 import frc.robot.subsystems.climb.ClimbConstants;
 import frc.robot.subsystems.climb.OLD_ClimbSubsystem;
 
-@Deprecated
-public class OLD_ArmSubsystem extends SubsystemBase implements ToggleableSubsystem{
+public class OLD_ArmSubsystem extends SubsystemBase implements IToggleableSubsystem{
     private TalonFX armMotor;
     private CANcoder armCANcoder;
     private DynamicMotionMagicVoltage mmReq = new DynamicMotionMagicVoltage(

@@ -5,9 +5,9 @@ import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.logging.SmartLogger;
-import frc.robot.subsystems.ToggleableSubsystem;
+import frc.robot.subsystems.IToggleableSubsystem;
 
-public abstract class BaseSubsystem extends SubsystemBase implements ToggleableSubsystem {
+public abstract class BaseSubsystem extends SubsystemBase implements IToggleableSubsystem {
     private boolean enabled = false;
     protected SmartLogger logger;
 
@@ -92,7 +92,7 @@ public abstract class BaseSubsystem extends SubsystemBase implements ToggleableS
         periodicOutput();
         periodicTelemetry();
         if (logger != null) {
-            logger.log("Actively Commanded", !getCurrentCommand().equals(Commands.none()));
+            logger.log("Actively Commanded", isCurrentlyCommanded());
             logger.log("Has Default Command", !getDefaultCommand().equals(Commands.none()));
             logger.log("Active Command", getCurrentCommand().getName());
             logger.log("Default Command", getDefaultCommand().getName());

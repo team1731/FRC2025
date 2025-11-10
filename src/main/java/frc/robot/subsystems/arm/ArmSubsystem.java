@@ -44,13 +44,8 @@ public class ArmSubsystem extends SingleMotorServoSubsystem<MotorIOTalonFX> {
 
     private Command setMotionMagicSpeedsCommand(double velocity, double acceleration) {
         return runOnce(() -> {
-                leadMotor.setMotionMagicSpeeds(velocity, acceleration);
+                leadMotor.setDynamicMotionMagicSpeeds(velocity, acceleration);
         });
-    }
-
-    private Command moveMotorCommand(double position) {
-        return run(() -> setRotations(Utils.clamp(position, ArmConstants.minArmPosition, ArmConstants.maxArmPosition)))
-        .until(() -> atTargetPosition());
     }
 
     public Command moveCommand(double position, boolean slowSpeed) {
@@ -58,13 +53,13 @@ public class ArmSubsystem extends SingleMotorServoSubsystem<MotorIOTalonFX> {
             setMotionMagicSpeedsCommand(ArmConstants.slowedArmVelocity, ArmConstants.slowedArmAcceleration), 
             setMotionMagicSpeedsCommand(ArmConstants.normalArmVelocity, ArmConstants.normalArmAcceleration),
             () -> slowSpeed
-        ).andThen(moveMotorCommand(position))
-        .withName("MoveArm" + (slowSpeed ? "NormalSpeed" : "SlowSpeed"));
+        ).andThen(setPositionCommand(Utils.clamp(position, ArmConstants.minArmPosition, ArmConstants.maxArmPosition)))
+        .withName("MoveArm" + (slowSpeed ? "SlowSpeed" : "NormalSpeed"));
     }
 
     public Command moveAlgaeCommand(double position) {
         return setMotionMagicSpeedsCommand(ArmConstants.slowedArmVelocity, ArmConstants.slowedArmAcceleration)
-        .andThen(moveMotorCommand(position))
+        .andThen(setPositionCommand(Utils.clamp(position, ArmConstants.minArmPosition, ArmConstants.maxArmPosition)))
         .withName("MoveArmAlgaeSpeed");
     }
 

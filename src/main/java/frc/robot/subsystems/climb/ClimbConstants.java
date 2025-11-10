@@ -16,6 +16,8 @@ public class ClimbConstants {
     public final static PortConfig climbPortConfig = new PortConfig(climbCANBus, climbCanId, climbMotorDirection != InvertedValue.Clockwise_Positive);
 
     // Climb config
+    public final static SensorDirectionValue climbCanConderDirection = SensorDirectionValue.Clockwise_Positive;
+
     public final static CANcoderConfiguration cancoderConfig = new CANcoderConfiguration().withMagnetSensor(
         new MagnetSensorConfigs()
             .withMagnetOffset(-0.315185546875)
@@ -35,10 +37,7 @@ public class ClimbConstants {
         .setPID(240d, 0d, 0.0078125d)
         .setV(0.009375d)
         .setS(0.02);
-
-    // motor direction
-    public final static SensorDirectionValue climbCanConderDirection = SensorDirectionValue.Clockwise_Positive;
-
+    
     // output
     //public final static double idleOutput = 0;
 

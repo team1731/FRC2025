@@ -19,7 +19,7 @@ public class ClimbSubsystem extends SingleMotorServoSubsystem<MotorIOTalonFX> {
         this.leadMotor = new MotorIOTalonFX(ClimbConstants.climbPortConfig);
         this.leadMotor.withCANCoder(
             ClimbConstants.climbCancoderDeviceId, 
-            ClimbConstants.climbCANBus, 
+            ClimbConstants.climbCANBus,
             ClimbConstants.cancoderConfig
         );
 
@@ -44,10 +44,18 @@ public class ClimbSubsystem extends SingleMotorServoSubsystem<MotorIOTalonFX> {
         return isClimbing;    
     }
 
-    public Command moveClimbCommand(double position) {
-        return run(() -> {
-            setRotations(Utils.clamp(position, ClimbConstants.minClimbPosition, ClimbConstants.maxClimbPosition));
-        }).until(() -> atTargetPosition());
+    private Command moveClimbCommand(double position) {
+        return setPositionCommand(Utils.clamp(position, ClimbConstants.minClimbPosition, ClimbConstants.maxClimbPosition));
+    }
+
+    public Command moveToMaxPositionCommand() {
+        return moveClimbCommand(ClimbConstants.maxClimbPosition)
+        .withName("MoveMax");
+    }
+
+    public Command moveToMinPositionCommand() {
+        return moveClimbCommand(ClimbConstants.minClimbPosition)
+        .withName("MoveMin");
     }
 
     public Command readyCommand() {

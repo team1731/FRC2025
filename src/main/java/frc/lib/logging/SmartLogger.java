@@ -8,7 +8,7 @@ import edu.wpi.first.util.struct.StructSerializable;
  * Class to easily log to AdvantageKit under a named folder
  */
 public class SmartLogger {
-    private String logFolder = "/CustomsLogs/";
+    private String logFolder = "/SmartLogs/";
 
     public SmartLogger(String name) {
         this.logFolder = logFolder + name + "/";

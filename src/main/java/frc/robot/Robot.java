@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Micro;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Optional;
@@ -30,21 +32,27 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.AutoConstants;
-import frc.robot.autos.AutoCommandLoader;
-import frc.robot.autos.AutoFactory;
 import frc.robot.autos.AutoLoader;
+import frc.robot.autos.OLD_AutoCommandLoader;
+import frc.robot.autos.OLD_AutoFactory;
+import frc.robot.autos.OLD_AutoLoader;
 import frc.robot.generated.TunerConstants;
 import frc.robot.state.sequencer.GamePiece;
 import frc.robot.state.sequencer.Level;
 import frc.robot.state.sequencer.SequenceManager;
 import frc.robot.util.log.MessageLog;
+import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.arm.OLD_ArmSubsystem;
+import frc.robot.subsystems.climb.ClimbSubsystem;
 import frc.robot.subsystems.climb.OLD_ClimbSubsystem;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
-import frc.robot.subsystems.hand.HandIntakeSubsystem;
+import frc.robot.subsystems.elevator.OLD_ElevatorSubsystem;
+import frc.robot.subsystems.hand.OLD_HandIntakeSubsystem;
 import frc.robot.subsystems.leds.LEDSubsystem;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
+import frc.robot.subsystems.hand.HandIntakeSubsystem;
+import frc.robot.subsystems.hand.OLD_HandClamperSubsystem;
 import frc.robot.subsystems.vision.AprilTagSubsystem;
 import frc.robot.subsystems.vision.VSLAMSubsystem;
 
@@ -55,21 +63,29 @@ import frc.robot.subsystems.vision.VSLAMSubsystem;
  * project.
  */
 public class Robot extends TimedRobot {
-	private PathPlannerAuto m_autonomousCommand;
-	private SendableChooser<String> autoChooser;
-	private AutoCommandLoader autoCommandLoader;
-	private String autoCode;
+	// private PathPlannerAuto m_autonomousCommand;
+	// private SendableChooser<String> autoChooser;
+	// private OLD_AutoCommandLoader autoCommandLoader;
+	// private String autoCode;
 	private String currentKeypadCommand = "";
 	private boolean redAlliance = false;
 	private int stationNumber = 0;
 	public static long millis = System.currentTimeMillis();
 
-	private CommandSwerveDrivetrain driveSubsystem;
-	private ElevatorSubsystem elevatorSubsystem;
-	private OLD_ArmSubsystem armSubsystem;
-	private HandClamperSubsystem handClamperSubsystem;
-	private HandIntakeSubsystem handIntakeSubsystem;
-	private OLD_ClimbSubsystem climbSubsystem;
+	// SUBSYSTEM DECLARATION
+	private RobotContainer container;
+	// private CommandSwerveDrivetrain driveSubsystem;
+	// private LEDSubsystem ledSubsystem;
+	// private ElevatorSubsystem elevatorSubsystem;
+	// private ArmSubsystem armSubsystem;
+	// private HandClamperSubsystem handClamperSubsystem;
+	// private HandIntakeSubsystem handIntakeSubsystem;
+	// private ClimbSubsystem climbSubsystem;
+
+	private Command m_autonomousCommand = null;
+
+	private AutoLoader autoLoader;
+	
 	private boolean lastVSLAMConnectedCheck;
 	private Pose2d currentPose;
 	private final Field2d currentPoseField = new Field2d();
@@ -80,8 +96,6 @@ public class Robot extends TimedRobot {
 	public Robot() {
 	}
 
-	// SUBSYSTEM DECLARATION
-	private LEDSubsystem ledSubsystem;
 
 	// NOTE: FOR TESTING PURPOSES ONLY!
 	// private final Joystick driver = new Joystick(0);
@@ -112,35 +126,30 @@ public class Robot extends TimedRobot {
 		/*
 		 * Instantiate subsystems and provide them to the robot container
 		 */
-		driveSubsystem = new CommandSwerveDrivetrain(true, TunerConstants.DrivetrainConstants, TunerConstants.FrontLeft,
-				TunerConstants.FrontRight, TunerConstants.BackLeft, TunerConstants.BackRight);
+		// driveSubsystem = new CommandSwerveDrivetrain(true, TunerConstants.DrivetrainConstants, TunerConstants.FrontLeft,
+		// 		TunerConstants.FrontRight, TunerConstants.BackLeft, TunerConstants.BackRight);
 
-		ledSubsystem = new LEDSubsystem(true);
-
-		elevatorSubsystem = new ElevatorSubsystem(true);
-
-		armSubsystem = new OLD_ArmSubsystem(true);
-
-		handClamperSubsystem = new HandClamperSubsystem(true);
-
-		handIntakeSubsystem = new HandIntakeSubsystem(true);
-
-		climbSubsystem = new OLD_ClimbSubsystem(true);
-		armSubsystem.setClimbSubsystem(climbSubsystem);
+		// ledSubsystem = new LEDSubsystem(true);
+		// elevatorSubsystem = new ElevatorSubsystem(true);
+		// armSubsystem = new ArmSubsystem(true);
+		// handClamperSubsystem = new HandClamperSubsystem(true);
+		// handIntakeSubsystem = new HandIntakeSubsystem(true);
+		// climbSubsystem = new ClimbSubsystem(true);
 
 		// Instantiate our robot container. This will perform all of our button bindings,
-		new RobotContainer(driveSubsystem, ledSubsystem, elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem, climbSubsystem);
+		container = new RobotContainer();
+		autoLoader = new AutoLoader(container.getVSLAMSubsystem());
 		
 		/*
 		 * Complete initialization setup/configuration
 		 */
-		initSubsystems();
-		System.out.println("creating state machine in robot");
-		autoChooser = AutoLoader.loadAutoChooser();
-		autoCommandLoader = new AutoCommandLoader(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem);
-		autoCommandLoader.registerAutoEventCommands();
-		autoPreload();
-		setupSmartDashboard();
+		// initSubsystems();
+		// System.out.println("creating state machine in robot");
+		// autoChooser = OLD_AutoLoader.loadAutoChooser();
+		// autoCommandLoader = new OLD_AutoCommandLoader(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem);
+		// autoCommandLoader.registerAutoEventCommands();
+		// autoPreload();
+		// setupSmartDashboard();
 		PathPlannerLogging.setLogCurrentPoseCallback((pose) -> {
 			currentPose = pose;
 			currentPoseField.setRobotPose(pose);
@@ -156,7 +165,7 @@ public class Robot extends TimedRobot {
 	}
 
 	private void setupSmartDashboard() {
-		SmartDashboard.putData(AutoConstants.kAutoCodeKey, autoChooser);
+		// SmartDashboard.putData(AutoConstants.kAutoCodeKey, autoChooser);
 		SmartDashboard.putString("Build Info - Branch", "N/A");
 		SmartDashboard.putString("Build Info - Commit Hash", "N/A");
 		SmartDashboard.putString("Build Info - Date", "N/A");
@@ -218,7 +227,7 @@ public class Robot extends TimedRobot {
 //   █ ▀▀ ██ ██ ███ ████ ███ ████ ███ █ █ ██ ████ ██████ ▀▀ ██ ▀▀▄██ ▄▄▄██ █████ ███ █ ▀▀ ██ ██ 
 //   █ ██ ██▄▀▀▄███ ████ ▀▀▀ ███▀ ▀██ ██▄ █▀ ▀███ ██████ █████ ██ ██ ▀▀▀██ ▀▀ ██ ▀▀▀ █ ██ ██ ▀▀ 
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-	private void autoPreload() {
+	// private void autoPreload() {
 		//m_autonomousCommand = null;
 		//if(autoChooser == null) return;
 
@@ -228,58 +237,58 @@ public class Robot extends TimedRobot {
 		 * 2. Alliance changed
 		 * 3. VSLAM connection status changed
 		 */
-		String selectedAutoCode = null;
-		boolean autoCodeChanged = false;
-		if (autoChooser != null) {
-		    selectedAutoCode = autoChooser.getSelected();
-		} 
-		if(selectedAutoCode == null) {
-			selectedAutoCode = autoCode == null ? Constants.AutoConstants.kAutoDefault : autoCode;
-		}
-		if(!selectedAutoCode.equals(autoCode)) {
-			System.out.println("New Auto Code read from dashboard. OLD: " + autoCode + ", NEW: " + selectedAutoCode);
-			System.out.println("\nPreloading AUTO CODE --> " + selectedAutoCode);
-			autoCodeChanged = true;
-		}
+		// String selectedAutoCode = null;
+		// boolean autoCodeChanged = false;
+		// if (autoChooser != null) {
+		//     selectedAutoCode = autoChooser.getSelected();
+		// } 
+		// if(selectedAutoCode == null) {
+		// 	selectedAutoCode = autoCode == null ? Constants.AutoConstants.kAutoDefault : autoCode;
+		// }
+		// if(!selectedAutoCode.equals(autoCode)) {
+		// 	System.out.println("New Auto Code read from dashboard. OLD: " + autoCode + ", NEW: " + selectedAutoCode);
+		// 	System.out.println("\nPreloading AUTO CODE --> " + selectedAutoCode);
+		// 	autoCodeChanged = true;
+		// }
 
-		boolean allianceChanged = false;
-		boolean isRedAlliance = Robot.isRedAlliance();
-		if(redAlliance != isRedAlliance) {
-			System.out.println("\n\n===============>>>>>>>>>>>>>>  WE ARE " + (isRedAlliance ? "RED" : "BLUE")
-					+ " ALLIANCE  <<<<<<<<<<<<=========================");
-			redAlliance = isRedAlliance;
-		//	driveSubsystem.configureInitialPosition();
-			allianceChanged = true;
-		}
+		// boolean allianceChanged = false;
+		// boolean isRedAlliance = Robot.isRedAlliance();
+		// if(redAlliance != isRedAlliance) {
+		// 	System.out.println("\n\n===============>>>>>>>>>>>>>>  WE ARE " + (isRedAlliance ? "RED" : "BLUE")
+		// 			+ " ALLIANCE  <<<<<<<<<<<<=========================");
+		// 	redAlliance = isRedAlliance;
+		// //	driveSubsystem.configureInitialPosition();
+		// 	allianceChanged = true;
+		// }
 		
-		boolean vslamConnectionStatusChanged = false;
-		boolean isVSLAMConnected = (driveSubsystem.getVSLAMSubsytem() != null)? driveSubsystem.getVSLAMSubsytem().isConnected() : false; 
-		if(isVSLAMConnected != lastVSLAMConnectedCheck) {
-			System.out.println("VSLAM connection status changed. VSLAM connection status: " + (isVSLAMConnected? "Connected" : "Disconnected"));
-			vslamConnectionStatusChanged = true;
-			lastVSLAMConnectedCheck = isVSLAMConnected;
-		}
+		// boolean vslamConnectionStatusChanged = false;
+		// boolean isVSLAMConnected = (driveSubsystem.getVSLAMSubsytem() != null)? driveSubsystem.getVSLAMSubsytem().isConnected() : false; 
+		// if(isVSLAMConnected != lastVSLAMConnectedCheck) {
+		// 	System.out.println("VSLAM connection status changed. VSLAM connection status: " + (isVSLAMConnected? "Connected" : "Disconnected"));
+		// 	vslamConnectionStatusChanged = true;
+		// 	lastVSLAMConnectedCheck = isVSLAMConnected;
+		// }
 
 		/*
 		 * If any of these above conditions changed, kick off creation of a new auto command
 		 */
-		if(autoCodeChanged || allianceChanged || vslamConnectionStatusChanged) {
-			m_autonomousCommand = null;
-			m_autonomousCommand = (PathPlannerAuto) AutoFactory.getAutonomousCommand(selectedAutoCode, redAlliance, isVSLAMConnected);		
+		// if(autoCodeChanged || allianceChanged || vslamConnectionStatusChanged) {
+			// m_autonomousCommand = null;
+			// m_autonomousCommand = (PathPlannerAuto) OLD_AutoFactory.getAutonomousCommand(selectedAutoCode, redAlliance, isVSLAMConnected);		
 			
-			if (m_autonomousCommand.getStartingPose() != null) {
-			Pose2d startingPose = isRedAlliance? new Pose2d(17.55 - m_autonomousCommand.getStartingPose().getX(), 8.05 - m_autonomousCommand.getStartingPose().getY(),m_autonomousCommand.getStartingPose().getRotation().rotateBy(Rotation2d.k180deg)): m_autonomousCommand.getStartingPose();
-            driveSubsystem.resetPose(startingPose);
-			}
+			// if (m_autonomousCommand.getStartingPose() != null) {
+			// Pose2d startingPose = isRedAlliance? new Pose2d(17.55 - m_autonomousCommand.getStartingPose().getX(), 8.05 - m_autonomousCommand.getStartingPose().getY(),m_autonomousCommand.getStartingPose().getRotation().rotateBy(Rotation2d.k180deg)): m_autonomousCommand.getStartingPose();
+            // driveSubsystem.resetPose(startingPose);
+			// }
 
-			if (m_autonomousCommand != null){
-				autoCode = selectedAutoCode;
-				System.out.println("\n\n=====>>>>>>>>>> PRELOADED AUTONOMOUS COMMAND: " + m_autonomousCommand + "<<<<<<<<<<<<=====/n/n");
-			} else {
-				System.out.println("\nAUTO CODE " + selectedAutoCode + " IS NOT IMPLEMENTED -- STAYING WITH AUTO CODE " + autoCode);
-			}
-		}
-	}
+			// if (m_autonomousCommand != null){
+			// 	autoCode = selectedAutoCode;
+			// 	System.out.println("\n\n=====>>>>>>>>>> PRELOADED AUTONOMOUS COMMAND: " + m_autonomousCommand + "<<<<<<<<<<<<=====/n/n");
+			// } else {
+			// 	System.out.println("\nAUTO CODE " + selectedAutoCode + " IS NOT IMPLEMENTED -- STAYING WITH AUTO CODE " + autoCode);
+			// }
+		// }
+	// }
 
 
 //   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
@@ -287,13 +296,13 @@ public class Robot extends TimedRobot {
 //   ██ ███ █ █ ██ ████ ██████▄▄▄▀▀██ ██ ██ ▄▄▀██▄▄▄▀▀██▄▀▀▀▄██▄▄▄▀▀███ ████ ▄▄▄██ █ █ ██▄▄▄▀▀
 //   █▀ ▀██ ██▄ █▀ ▀███ ██████ ▀▀▀ ██▄▀▀▄██ ▀▀ ██ ▀▀▀ ████ ████ ▀▀▀ ███ ████ ▀▀▀██ ███ ██ ▀▀▀ 
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-	private void initSubsystems() {
-		driveSubsystem.configureAutoBindings();
-		driveSubsystem.configureInitialPosition();
-		AprilTagFields.kDefaultField.loadAprilTagLayoutField(); 
-		AprilTagSubsystem aprilTagSubsystem = driveSubsystem.getAprilTagSubsystem();
-		aprilTagSubsystem.setLEDSubsystem(ledSubsystem);
-	}
+	// private void initSubsystems() {
+		// driveSubsystem.configureAutoBindings();
+		// driveSubsystem.configureInitialPosition();
+		// AprilTagFields.kDefaultField.loadAprilTagLayoutField(); 
+		// AprilTagSubsystem aprilTagSubsystem = driveSubsystem.getAprilTagSubsystem();
+		// aprilTagSubsystem.setLEDSubsystem(ledSubsystem);
+	// }
 
 	/**
    * This function is called every robot packet, no matter the mode. Use this for items like
@@ -315,11 +324,11 @@ public class Robot extends TimedRobot {
 		// block in order for anything in the Command-based framework to work.
 		CommandScheduler.getInstance().run();
 
-		VSLAMSubsystem vslamSubsystem = driveSubsystem.getVSLAMSubsytem();
-		if(vslamSubsystem != null) {
-            SmartDashboard.putBoolean("VSLAM Connected", vslamSubsystem.isConnected());
-			SmartDashboard.putBoolean("VSLAM Tracking", vslamSubsystem.isTracking());
-        }
+		// VSLAMSubsystem vslamSubsystem = driveSubsystem.getVSLAMSubsytem();
+		// if(vslamSubsystem != null) {
+        //     SmartDashboard.putBoolean("VSLAM Connected", vslamSubsystem.isConnected());
+		// 	SmartDashboard.putBoolean("VSLAM Tracking", vslamSubsystem.isTracking());
+        // }
 	}
 
 	/** This function is called once each time the robot enters Disabled mode. */
@@ -330,7 +339,7 @@ public class Robot extends TimedRobot {
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	@Override
 	public void disabledInit() {
-		driveSubsystem.getAprilTagSubsystem().startAutoLineup();
+		// driveSubsystem.getAprilTagSubsystem().startAutoLineup();
 	}
 
 
@@ -341,13 +350,15 @@ public class Robot extends TimedRobot {
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	@Override
 	public void disabledPeriodic() {
-		VSLAMSubsystem vslamSubsystem = driveSubsystem.getVSLAMSubsytem();
-		if(vslamSubsystem != null) {
-            SmartDashboard.putBoolean("VSLAM Connected", vslamSubsystem.isConnected());
-        }
+		// VSLAMSubsystem vslamSubsystem = driveSubsystem.getVSLAMSubsytem();
+		// if(vslamSubsystem != null) {
+        //     SmartDashboard.putBoolean("VSLAM Connected", vslamSubsystem.isConnected());
+        // }
 		
 		// call during periodic to detect changes in auto selection
-		autoPreload();
+		// autoPreload();
+
+		autoLoader.update();
 
 		if (Robot.isReal()) {
 			try {
@@ -367,7 +378,7 @@ public class Robot extends TimedRobot {
 	}
 
 
-/** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
+/** This autonomous runs the autonomous command selected by your {@link OLD_RobotContainer} class. */
 //   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 //   █ ▄▄▀██ ██ █▄▄ ▄▄██ ▄▄▄ ██ ▀██ ██ ▄▄▄ ██ ▄▀▄ ██ ▄▄▄ ██ ██ ██ ▄▄▄ ███▄ ▄██ ▀██ █▄ ▄█▄▄ ▄▄
 //   █ ▀▀ ██ ██ ███ ████ ███ ██ █ █ ██ ███ ██ █ █ ██ ███ ██ ██ ██▄▄▄▀▀████ ███ █ █ ██ ████ ██
@@ -375,21 +386,21 @@ public class Robot extends TimedRobot {
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	@Override
 	public void autonomousInit() {
-		System.out.println("AUTO INIT");
-		driveSubsystem.getAprilTagSubsystem().stopAutoLineup();
-
+		// System.out.println("AUTO INIT");
+		// driveSubsystem.getAprilTagSubsystem().stopAutoLineup();
 		CommandScheduler.getInstance().cancelAll();
-		
-		climbSubsystem.stowClimb();
 		autoStartTime = Timer.getFPGATimestamp();
 
-		if (m_autonomousCommand == null) {
-			System.out.println("SOMETHING WENT WRONG - UNABLE TO RUN AUTONOMOUS! CHECK SOFTWARE!");
-		} else {
-			System.out.println("------------> RUNNING AUTONOMOUS COMMAND: " + m_autonomousCommand + " <----------");
-			m_autonomousCommand.schedule();
-		}
-		System.out.println("autonomousInit: End");
+		m_autonomousCommand = autoLoader.getSelectedAuto();
+		m_autonomousCommand.schedule();
+
+		// if (m_autonomousCommand == null) {
+		// 	System.out.println("SOMETHING WENT WRONG - UNABLE TO RUN AUTONOMOUS! CHECK SOFTWARE!");
+		// } else {
+		// 	System.out.println("------------> RUNNING AUTONOMOUS COMMAND: " + m_autonomousCommand + " <----------");
+		// 	m_autonomousCommand.schedule();
+		// }
+		// System.out.println("autonomousInit: End");
 	}
 
 
@@ -412,11 +423,11 @@ public class Robot extends TimedRobot {
 		//SmartDashboard.putNumber("AutoRunningTime", Timer.getFPGATimestamp()- autoStartTime);
 
 
-		if (m_autonomousCommand != null && (Timer.getFPGATimestamp()- autoStartTime) >= 0.25 && (currentPose.getTranslation().getDistance(targetPose.getTranslation()) > 1.0)) {
-			System.out.println("distance is" + currentPose.getTranslation().getDistance(targetPose.getTranslation()));
-			m_autonomousCommand.cancel();
-			System.out.println("Had to Kill the auto because the target pose and current pose were apart by more than a foot");
-		}
+		// if (m_autonomousCommand != null && (Timer.getFPGATimestamp()- autoStartTime) >= 0.25 && (currentPose.getTranslation().getDistance(targetPose.getTranslation()) > 1.0)) {
+		// 	System.out.println("distance is" + currentPose.getTranslation().getDistance(targetPose.getTranslation()));
+		// 	m_autonomousCommand.cancel();
+		// 	System.out.println("Had to Kill the auto because the target pose and current pose were apart by more than a foot");
+		// }
 	}
 
 //   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
@@ -426,7 +437,7 @@ public class Robot extends TimedRobot {
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	@Override
 	public void teleopInit() {
-		driveSubsystem.getAprilTagSubsystem().stopAutoLineup();
+		// driveSubsystem.getAprilTagSubsystem().stopAutoLineup();
 
 		// Record both DS control and joystick data in TELEOP
 		MessageLog.getLogger();
@@ -437,12 +448,13 @@ public class Robot extends TimedRobot {
 		// cancel any outstanding auto commands
 		CommandScheduler.getInstance().cancelAll();
 
-		if (m_autonomousCommand != null) {
-			m_autonomousCommand.cancel();
-		}
+		// if (m_autonomousCommand != null) {
+		// 	m_autonomousCommand.cancel();
+		// }
 		currentKeypadCommand = "";
 		SmartDashboard.getString("keypadCommand", currentKeypadCommand);
-		climbSubsystem.stowClimb();
+		// climbSubsystem.stowClimb();
+		container.teleopInit();
 	}
 
 //   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
@@ -484,7 +496,7 @@ public class Robot extends TimedRobot {
 	public void testInit() {
 		// Cancels all running commands at the start of test mode.
 		CommandScheduler.getInstance().cancelAll();
-		driveSubsystem.getAprilTagSubsystem().stopAutoLineup();
+		// driveSubsystem.getAprilTagSubsystem().stopAutoLineup();
 	}
 
 	/** This function is called periodically during test mode. */

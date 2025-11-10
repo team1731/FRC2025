@@ -8,18 +8,18 @@ import frc.robot.state.StateMachineCallback;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.OLD_ArmSubsystem;
 import frc.robot.subsystems.elevator.ElevatorConstants;
-import frc.robot.subsystems.elevator.ElevatorSubsystem;
-import frc.robot.subsystems.hand.HandIntakeSubsystem;
+import frc.robot.subsystems.elevator.OLD_ElevatorSubsystem;
+import frc.robot.subsystems.hand.OLD_HandIntakeSubsystem;
 import frc.robot.subsystems.superstructure.Positions;
-import frc.robot.subsystems.hand.HandClamperSubsystem;
+import frc.robot.subsystems.hand.OLD_HandClamperSubsystem;
 import frc.robot.subsystems.hand.HandConstants;
 
 public class SequenceStateMachine extends StateMachine {
     // subsystems
-    private ElevatorSubsystem elevatorSubsystem;
+    private OLD_ElevatorSubsystem elevatorSubsystem;
     private OLD_ArmSubsystem armSubsystem;
-    private HandIntakeSubsystem handIntakeSubsystem;
-    private HandClamperSubsystem handClamperSubsystem;
+    private OLD_HandIntakeSubsystem handIntakeSubsystem;
+    private OLD_HandClamperSubsystem handClamperSubsystem;
 
     // sequence tracking
     private Sequence currentSequence;
@@ -33,7 +33,7 @@ public class SequenceStateMachine extends StateMachine {
     private boolean armResetDone = false;
 
 
-    public SequenceStateMachine(ElevatorSubsystem elevatorSubsystem, OLD_ArmSubsystem armSubsystem, HandClamperSubsystem handClamperSubsystem, HandIntakeSubsystem handIntakeSubsystem) {
+    public SequenceStateMachine(OLD_ElevatorSubsystem elevatorSubsystem, OLD_ArmSubsystem armSubsystem, OLD_HandClamperSubsystem handClamperSubsystem, OLD_HandIntakeSubsystem handIntakeSubsystem) {
         this.elevatorSubsystem = elevatorSubsystem;
         this.armSubsystem = armSubsystem;
         this.handClamperSubsystem = handClamperSubsystem;

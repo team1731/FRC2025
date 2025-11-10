@@ -19,11 +19,13 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
-import frc.robot.subsystems.ToggleableSubsystem;
+import frc.robot.subsystems.IToggleableSubsystem;
 import frc.robot.subsystems.vision.AprilTagSubsystem;
 import frc.robot.subsystems.vision.VSLAMSubsystem;
 import static edu.wpi.first.units.Units.*;
-import frc.robot.autos.AutoFactory;
+
+import frc.robot.autos.AutoLoader;
+import frc.robot.autos.OLD_AutoFactory;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -36,7 +38,7 @@ import com.pathplanner.lib.path.PathConstraints;
  * subsystem
  * so it can be used in command-based projects easily.
  */
-public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements ToggleableSubsystem {
+public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements IToggleableSubsystem {
     private boolean enabled;
     private final SwerveRequest.ApplyRobotSpeeds autoRequest = new SwerveRequest.ApplyRobotSpeeds();
 
@@ -301,7 +303,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements To
                     new PIDConstants(10, 0, 0),
                     new PIDConstants(10, 0, 0)),
                 config,
-                () -> AutoFactory.isFlipRedBlue(),
+                () -> AutoLoader.flipForRed(),
                 this);
         } catch(Exception e) {
             System.out.println("CommandSwerveDrivetrain error - failed to configure auto bindings");

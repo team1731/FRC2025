@@ -4,34 +4,52 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.*;
+import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Constants;
-import frc.robot.Robot;
 import frc.robot.Constants.AutoConstants;
+import frc.robot.subsystems.vision.VSLAMSubsystem;
+import frc.robot.Robot;
 
 public class AutoLoader {
-    private static final SendableChooser<String> autoChooser = new SendableChooser<>();
+    private static SendableChooser<String> autoChooser = new SendableChooser<>();
     private static HashMap<String, String> autoPaths;
 
-    public static HashMap<String, String> getAutoPaths() {
-        return autoPaths;
-    }
+    private static boolean isVSLAMConnected = false;
+    private static boolean isRedAlliance = false;
+    private static boolean flipForRed = false;
 
-    public static SendableChooser<String> loadAutoChooser() {
+    private static String selectedAuto = "";
+
+    private VSLAMSubsystem vslamSubsystem;
+
+    public AutoLoader(VSLAMSubsystem vslamSubsystem) {
+        this.vslamSubsystem = vslamSubsystem;
+
         String[] autoModes = getAutoModes();
 		for (String autoMode : autoModes) {
 			autoChooser.addOption(autoMode, autoMode);
-			System.out.println("Added autoMode '" + autoMode + "' to autoChooser.");
 		}
 		
 		// pre-load the default auto
-		autoChooser.setDefaultOption(Constants.AutoConstants.kAutoDefault, Constants.AutoConstants.kAutoDefault);
-        
-        return autoChooser;
+        String defaultAuto = Constants.AutoConstants.kAutoDefault;
+		autoChooser.setDefaultOption(defaultAuto, defaultAuto);
+
+        // Put on SmartDashboard
+        SmartDashboard.putData(AutoConstants.kAutoCodeKey, autoChooser);
     }
-    
+
+    public static boolean flipForRed() {
+        return flipForRed;
+    }
+
     private static String[] getAutoModes() {
         autoPaths = findPaths(new File(Filesystem.getLaunchDirectory(),
             (Robot.isReal() ? "home/lvuser" : "src/main") + "/deploy/pathplanner/autos"));
@@ -74,4 +92,58 @@ public class AutoLoader {
         }
         return autoPaths;
     }
+
+    private Command autoPreloadCommand() {
+        return Commands.none();
+    }
+
+    public Command getSelectedAuto() {
+        return autoPreloadCommand().andThen(new PathPlannerAuto(selectedAuto));
+    }
+
+    public void update() {
+        isVSLAMConnected = vslamSubsystem.isConnected();
+        isRedAlliance = this.isRedAlliance();
+
+        String auto = autoChooser.getSelected();
+
+        // Check for alliance
+        if (!auto.startsWith("Red_") && !auto.startsWith("Blu_")) {
+            auto = (isRedAlliance ? "Red" : "Blu") + "_" + auto;
+        }
+
+        // Check for VSLAM connection
+        if(!isVSLAMConnected) {
+            auto =  auto + AutoConstants.kNoVSLAMPostfix;
+        }
+        
+        if (autoPaths.keySet().contains(auto)) { // If the auto exists as a red/blue auto already, don't flip it
+            flipForRed = false;
+        } else if (isRedAlliance && auto.startsWith("Red_")) { // If red auto doesn't exist, use blue auto and flip it
+            auto = auto.replace("Red_", "Blu_");
+            assert autoPaths.keySet().contains(auto) : "ERROR: you need to create " + auto;
+            flipForRed = true;
+        } else { // Auto doesn't exist, use default auto
+            System.out
+                .println("ERROR: no such auto path name found in src/main/deploy/pathplanner/autos: " + auto + 
+                    ", switching to default auto " + AutoConstants.kAutoDefault);
+            auto = "Blu_" + AutoConstants.kAutoDefault + (!isVSLAMConnected? AutoConstants.kNoVSLAMPostfix : "");
+            flipForRed = isRedAlliance;
+        }
+
+        selectedAuto = auto;
+
+        // View choice on smartdashboard
+        SmartDashboard.putString("SelectedAuto", selectedAuto);
+        SmartDashboard.putBoolean("FlipForRed", flipForRed);
+        SmartDashboard.putBoolean("IsRedAlliance", isRedAlliance);
+    }
+
+    private boolean isRedAlliance(){
+		Optional<Alliance> alliance = DriverStation.getAlliance();
+		if (alliance.isPresent()) {
+			return alliance.get() == DriverStation.Alliance.Red;
+		}
+		return false;
+	}
 }

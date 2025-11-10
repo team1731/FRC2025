@@ -6,30 +6,40 @@ import frc.lib.hardware.motor.MotorIO;
 public abstract class SingleMotorVelocitySubsystem<M extends MotorIO> extends BaseSubsystem {
     protected M leadMotor;
 
-    protected double desiredVelocityRPM = 0.0;
+    protected double targetVelocityRPM = 0.0;
 
-    protected SingleMotorVelocitySubsystem(M io, boolean enabled) {
+    protected SingleMotorVelocitySubsystem(boolean enabled) {
         super(enabled);
-        this.leadMotor = io;
+        initializeHardware();
     }
 
-    protected void setVelocityRPM(double desiredRPM) {
-        this.setVelocityRPM(desiredRPM, 0);
+    protected abstract void initializeHardware();
+
+    protected void setVelocityRPM(double targetRPM) {
+        this.setVelocityRPM(targetRPM, 0);
     }
 
-    protected void setVelocityRPM(double desiredRPM, int pidSlot) {
-        this.desiredVelocityRPM = desiredRPM;
-        this.leadMotor.setVelocityRPS(desiredRPM, pidSlot);
+    protected void setVelocityRPM(double targetRPM, int pidSlot) {
+        this.targetVelocityRPM = targetRPM;
+        this.leadMotor.setVelocityRPS(targetRPM, pidSlot);
     }
 
-    protected void setPercentOutput(double desiredPercent) {
-        this.desiredVelocityRPM = desiredPercent * 6000d; // TODO - Adjust max velocity based on motor
-        this.leadMotor.setPercentOutput(desiredPercent);
+    protected void setPercentOutput(double targetPercent) {
+        this.targetVelocityRPM = targetPercent * 6000d; // TODO - Adjust max velocity based on motor
+        this.leadMotor.setPercentOutput(targetPercent);
     }
 
-    protected void setVoltage(double desiredVoltage) {
-        this.desiredVelocityRPM = desiredVoltage * 500d; // TODO - Adjust max velocity based on motor
-        this.leadMotor.setVoltage(desiredVoltage);
+    protected void setVoltage(double targetVoltage) {
+        this.targetVelocityRPM = targetVoltage * 500d; // TODO - Adjust max velocity based on motor
+        this.leadMotor.setVoltage(targetVoltage);
+    }
+
+    protected double getVelocityRPM() {
+        return this.leadMotor.getVelocityRPS();
+    }
+
+    protected double getTargetVelocityRPM() {
+        return this.leadMotor.getRotations();
     }
 
     protected Command setVelocityCommand(double desiredRPM) {
@@ -42,5 +52,9 @@ public abstract class SingleMotorVelocitySubsystem<M extends MotorIO> extends Ba
 
     protected Command setVoltageCommand(double desiredVoltage) {
         return this.run(() -> this.setVoltage(desiredVoltage));
+    }
+
+    protected Command stopCommand() {
+        return this.runOnce(() -> this.setVelocityRPM(0.0));
     }
 }

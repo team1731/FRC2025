@@ -1,5 +1,7 @@
 package frc.lib.hardware.motor;
 
+import com.ctre.phoenix6.signals.InvertedValue;
+
 /**
  * Helper class that holds the basic configuration for a motor
  */
@@ -12,6 +14,10 @@ public class PortConfig {
         this.kBus = bus;
         this.kPort = port;
         this.kInverted = inverted;
+    }
+
+    public PortConfig(String bus, int port, InvertedValue inverted) {
+        this(bus, port, inverted != InvertedValue.Clockwise_Positive);
     }
 
     public PortConfig(String bus, int port) {

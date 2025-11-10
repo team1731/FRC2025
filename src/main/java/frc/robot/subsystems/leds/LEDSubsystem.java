@@ -1,7 +1,7 @@
 package frc.robot.subsystems.leds;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.ToggleableSubsystem;
+import frc.robot.subsystems.IToggleableSubsystem;
 
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.CANdle.LEDStripType;
@@ -9,7 +9,7 @@ import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 import com.ctre.phoenix.led.CANdleConfiguration;
 
 
-public class LEDSubsystem extends SubsystemBase implements ToggleableSubsystem {
+public class LEDSubsystem extends SubsystemBase implements IToggleableSubsystem {
 
     private boolean enabled;
     private CANdle candle; 

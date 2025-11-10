@@ -1,5 +1,6 @@
 package frc.lib.subsystem;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.Utils;
 import frc.lib.hardware.motor.MotorIO;
 
@@ -12,6 +13,7 @@ public abstract class SingleMotorServoSubsystem<M extends MotorIO> extends BaseS
     public SingleMotorServoSubsystem(boolean enabled, double tolerance) {
         super(enabled);
         this.epsilon = tolerance;
+        if (!isEnabled()) return;
         initializeHardware();
     }
 
@@ -64,5 +66,10 @@ public abstract class SingleMotorServoSubsystem<M extends MotorIO> extends BaseS
 
     protected boolean atPosition(double desiredRotations, double epsilon) {
         return Utils.isWithin(leadMotor.getRotations(), desiredRotations, epsilon);
+    }
+
+    protected Command setPositionCommand(double position) {
+        return this.run(() -> setRotations(position))
+        .until(() -> atTargetPosition());
     }
 }

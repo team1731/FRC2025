@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.climb.ClimbSubsystem;
-import frc.robot.subsystems.elevator.NEW_ElevatorSubsystem;
+import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.*;
 
 public class Superstructure {
@@ -32,7 +32,7 @@ public class Superstructure {
         }
     }
 
-    public Superstructure(ArmSubsystem arm, NEW_ElevatorSubsystem elevator, NEW_HandClamperSubsystem hand, NEW_HandIntakeSubsystem intake, ClimbSubsystem climb) {
+    public Superstructure(ArmSubsystem arm, ElevatorSubsystem elevator, HandClamperSubsystem hand, HandIntakeSubsystem intake, ClimbSubsystem climb) {
         this.climb = climb;
         this.planner = new MotionPlanner(arm, elevator, hand, intake);
     }

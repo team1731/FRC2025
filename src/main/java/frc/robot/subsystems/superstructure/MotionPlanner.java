@@ -1,19 +1,17 @@
 package frc.robot.subsystems.superstructure;
 
 import edu.wpi.first.wpilibj2.command.*;
-import frc.robot.subsystems.arm.ArmConstants;
-import frc.robot.subsystems.arm.ArmSubsystem;
-import frc.robot.subsystems.elevator.NEW_ElevatorSubsystem;
-import frc.robot.subsystems.hand.HandConstants;
+import frc.robot.subsystems.arm.*;
+import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.*;
 
 public class MotionPlanner {
     private ArmSubsystem arm;
-    private NEW_ElevatorSubsystem elevator;
-    private NEW_HandClamperSubsystem hand;
-    private NEW_HandIntakeSubsystem intake;
+    private ElevatorSubsystem elevator;
+    private HandClamperSubsystem hand;
+    private HandIntakeSubsystem intake;
 
-    public MotionPlanner(ArmSubsystem arm, NEW_ElevatorSubsystem elevator, NEW_HandClamperSubsystem hand, NEW_HandIntakeSubsystem intake) {
+    public MotionPlanner(ArmSubsystem arm, ElevatorSubsystem elevator, HandClamperSubsystem hand, HandIntakeSubsystem intake) {
         this.arm = arm;
         this.elevator = elevator;
         this.hand = hand;
@@ -25,16 +23,16 @@ public class MotionPlanner {
     // =========================
 
     public boolean elevatorAboveThreshold(double threshold) {
-        return elevator.getElevatorPosition() > threshold;
+        return elevator.getPosition() > threshold;
     }
 
     public boolean elevatorBelowThreshold(double threshold) {
-        return elevator.getElevatorPosition() < threshold;
+        return elevator.getPosition() < threshold;
     }
 
     public boolean elevatorWithinRange(Positions pos) {
-        return elevator.getElevatorPosition() > pos.raiseElevatorThreshold - 3.0 &&
-               elevator.getElevatorPosition() < pos.raiseElevatorPosition + 3.0;
+        return elevator.getPosition() > pos.raiseElevatorThreshold - 3.0 &&
+               elevator.getPosition() < pos.raiseElevatorPosition + 3.0;
     }
 
     public boolean armPastThreshold(double threshold) {
@@ -50,19 +48,19 @@ public class MotionPlanner {
     }
 
     public boolean hasPiece() {
-        return intake.pieceDetectionSwitchFlipped();
+        return intake.hasPiece();
     }
 
     public boolean alignedToScore() {
-        return intake.scoreDetectionSwitchFlipped();
+        return intake.alignedToPole();
     }
 
     // =========================
     //     Movement Commands
     // =========================
 
-    public Command moveElevator(double position) {
-        return elevator.moveCommand(position);
+    public Command moveElevator(double position, boolean slowed) {
+        return elevator.moveCommand(position, slowed);
     }
 
     public Command homeElevator() {
@@ -86,7 +84,7 @@ public class MotionPlanner {
     }
 
     public Command openHand(double position) {
-        return hand.moveHandCommand(position);
+        return hand.openCommand(position);
     }
 
     public Command closeClamp() {
@@ -115,7 +113,7 @@ public class MotionPlanner {
 
     public Command clearHand(Positions pos) {
         return Commands.either(
-            hand.moveHandCommand(HandConstants.clamperHomePosition),
+            hand.closeCommand(),
             Commands.none(),
             () -> hand.getPosition() > 0.02 && elevatorWithinRange(pos)
         );
@@ -152,11 +150,11 @@ public class MotionPlanner {
     }
 
     public Command moveElevatorFirstStage(Positions pos) {
-        return moveElevator(pos.raiseElevatorPosition);
+        return moveElevator(pos.raiseElevatorPosition, false);
     }
 
     public Command moveElevatorSecondStage(Positions pos) {
-        return moveElevator(pos.secondStageElevatorPosition);
+        return moveElevator(pos.secondStageElevatorPosition, false);
     }
 
     public Command moveArmFirstStage(Positions pos) {
@@ -180,7 +178,7 @@ public class MotionPlanner {
     }
 
     public Command openClampCoral() {
-        return openHand(HandConstants.clamperCoralPosition);
+        return hand.holdCoralCommand();
     }
 
     public Command openClampReefAlgae(Positions pos) {
@@ -192,7 +190,7 @@ public class MotionPlanner {
     }
 
     public Command clampAlgaeHold() {
-        return openHand(HandConstants.clamperAlgaePosition);
+        return hand.holdAlgaeCommand();
     }
 
     public Command raiseElevatorThenArmWithThreshold(Positions pos, boolean slow) {
@@ -292,15 +290,15 @@ public class MotionPlanner {
     public Command finishCoralScoreL2() {
         return Commands.parallel(
             moveArmSecondStage(PositionsFactory.getCoralScoreL2Positions()),
-            moveElevator(PositionsFactory.getCoralScoreL2Positions().lowerElevatorThreshold),
+            moveElevator(PositionsFactory.getCoralScoreL2Positions().lowerElevatorThreshold, false),
             openClampCoral(),
-            intake.scoreCommand()
+            intake.releaseCommand()
         );
     }
 
     public Command finishCoralScoreL1() {
         return openClampCoral()
-        .alongWith(intake.scoreCommand());
+        .alongWith(intake.releaseCommand());
     }
 
     public Command finishReefAlgaeIntake(Positions pos) {
@@ -329,7 +327,7 @@ public class MotionPlanner {
     //                     // Step 3: Open clamp
     //                     elevator.moveCommand(targetPosition.raiseElevatorPosition)
     //                     .alongWith(Commands.defer(() -> {
-    //                         if (elevator.getElevatorPosition() < targetPosition.raiseElevatorThreshold) {
+    //                         if (elevator.getPosition() < targetPosition.raiseElevatorThreshold) {
     //                             return arm.moveCommand(-8d, true);
     //                         } else {
     //                             return arm.moveCommand(targetPosition.firstStageArmPosition, false)
@@ -350,7 +348,7 @@ public class MotionPlanner {
                 .andThen(
                     moveArmFirstStage(PositionsFactory.getAlgaeScoreBargePositions())
                     .alongWith(
-                        intake.scoreCommand()
+                        intake.releaseCommand()
                     )
                 )
             )
@@ -362,6 +360,6 @@ public class MotionPlanner {
     }
 
     public Command finishProcessorScore() {
-        return intake.scoreCommand().alongWith(closeClamp());
+        return intake.releaseCommand().alongWith(closeClamp());
     }
 }

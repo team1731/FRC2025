@@ -7,15 +7,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutoConstants;
 
-public class AutoFactory {
+public class OLD_AutoFactory {
     private static boolean flipRedBlue;
 
     public static boolean isFlipRedBlue() {
         return flipRedBlue;
-      }
+    }
     
     public static Command getAutonomousCommand(String autoName, boolean redAlliance, boolean isVSLAMConnected) {
-        HashMap<String, String> autoPaths = AutoLoader.getAutoPaths();
+        HashMap<String, String> autoPaths = OLD_AutoLoader.getAutoPaths();
 
         String alliancePathName = autoName;
         if (!autoName.startsWith("Red_") && !autoName.startsWith("Blu_")) {
