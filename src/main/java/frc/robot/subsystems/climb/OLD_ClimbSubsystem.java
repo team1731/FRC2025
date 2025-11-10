@@ -16,7 +16,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.IToggleableSubsystem;
+import frc.lib.frc1731.subsystem.IToggleableSubsystem;
 
 
 public class OLD_ClimbSubsystem extends SubsystemBase implements IToggleableSubsystem{

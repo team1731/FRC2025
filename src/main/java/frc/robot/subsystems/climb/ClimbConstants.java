@@ -3,8 +3,8 @@ package frc.robot.subsystems.climb;
 import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.signals.*;
 
-import frc.lib.PIDGains;
-import frc.lib.hardware.motor.PortConfig;
+import frc.lib.frc1731.PIDGains;
+import frc.lib.frc1731.hardware.motor.PortConfig;
 
 public class ClimbConstants {
     

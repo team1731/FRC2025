@@ -1,6 +1,6 @@
 package frc.robot;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -10,12 +10,10 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.*;
 import frc.robot.Constants.JoystickConstants;
-import frc.robot.commands.DriveCommand;
-import frc.robot.commands.DriveCommand.DriveMode;
-import frc.robot.generated.TunerConstants;
+import frc.robot.commands.SimulatedCommand;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.climb.*;
-import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
+import frc.robot.subsystems.drive.SwerveSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.hand.HandClamperSubsystem;
 import frc.robot.subsystems.hand.HandIntakeSubsystem;
@@ -23,38 +21,36 @@ import frc.robot.subsystems.leds.LEDSubsystem;
 import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.subsystems.superstructure.Superstructure.*;
 import frc.robot.subsystems.vision.ReefTarget;
-import frc.robot.subsystems.vision.VSLAMSubsystem;
 import frc.robot.subsystems.vision.helpers.AprilTagTargetTracker;
 
 public class RobotContainer {
     private Superstructure superstructure;
-    private final Telemetry logger = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
 
     /* Subsystems */
-    private CommandSwerveDrivetrain driveSubsystem;
-    private LEDSubsystem ledSubsystem;
-    private ArmSubsystem arm;
-    private ElevatorSubsystem elevator;
-    private HandClamperSubsystem hand;
-    private HandIntakeSubsystem intake;
-    private ClimbSubsystem climb;
+    protected static SwerveSubsystem swerve;
+    protected static LEDSubsystem led;
+    protected static ArmSubsystem arm;
+    protected static ElevatorSubsystem elevator;
+    protected static HandClamperSubsystem hand;
+    protected static HandIntakeSubsystem intake;
+    protected static ClimbSubsystem climb;
 
     /* Driver Buttons */
     private final CommandXboxController xboxController = new CommandXboxController(0);
     private final Trigger dStart = xboxController.start();
-    private final Trigger dBack = xboxController.back();
+    // private final Trigger dBack = xboxController.back();
     private final Trigger dY = xboxController.y();
     private final Trigger dB = xboxController.b();
     private final Trigger dA = xboxController.a();
     private final Trigger dX = xboxController.x();
-    private final Trigger dLeftStick = xboxController.leftStick();
+    // private final Trigger dLeftStick = xboxController.leftStick();
     private final Trigger dLeftBumper = xboxController.leftBumper();
     private final Trigger dRightBumper = xboxController.rightBumper();
     private final Trigger dLeftTrigger = xboxController.leftTrigger();
     private final Trigger dRightTrigger = xboxController.rightTrigger();
-    private final Trigger dPOVUp = xboxController.povUp();
+    // private final Trigger dPOVUp = xboxController.povUp();
     private final Trigger dPOVDown = xboxController.povDown();
-    private final Trigger dPOVLeft = xboxController.povLeft();
+    // private final Trigger dPOVLeft = xboxController.povLeft();
     private final Trigger dPOVRight = xboxController.povRight();
 
     /* Operator Buttons */
@@ -77,50 +73,58 @@ public class RobotContainer {
     private final JoystickButton opL2 = new JoystickButton(sideButtons, JoystickConstants.op2);
     private final JoystickButton opL3 = new JoystickButton(sideButtons, JoystickConstants.op3);
     private final JoystickButton opL4 = new JoystickButton(sideButtons, JoystickConstants.op4);
-    private final JoystickButton opL4RestrictionToggle = new JoystickButton(sideButtons, JoystickConstants.op5); // TODO - Implement
+    private final JoystickButton opL4RestrictionToggle = new JoystickButton(sideButtons, JoystickConstants.op5);
     private final JoystickButton opElevReset = new JoystickButton(sideButtons, JoystickConstants.op6);
     private final JoystickButton opKnockAlgae = new JoystickButton(sideButtons, JoystickConstants.op7);
     private final JoystickButton opAlgae = new JoystickButton(sideButtons, JoystickConstants.op8);
 
     public RobotContainer() {
         configureSubsystems();
+        configureNamedCommands();
         configureButtonBindings();
     }
 
     /**
      * Configure all active subsystems on the robot and set default commands
      */
-    public void configureSubsystems() {
-        this.driveSubsystem = new CommandSwerveDrivetrain(true, TunerConstants.DrivetrainConstants, TunerConstants.FrontLeft,
-				TunerConstants.FrontRight, TunerConstants.BackLeft, TunerConstants.BackRight);
+    private void configureSubsystems() {
+        swerve = new SwerveSubsystem(true);
+        led = new LEDSubsystem(true);
+        arm = new ArmSubsystem(true);
+        elevator = new ElevatorSubsystem(true);
+        hand = new HandClamperSubsystem(true);
+        intake = new HandIntakeSubsystem(true);
+        climb = new ClimbSubsystem(true);
+        superstructure = new Superstructure(arm, elevator, hand, intake, climb);
 
-        this.ledSubsystem = new LEDSubsystem(true);
-        this.arm = new ArmSubsystem(true);
-        this.elevator = new ElevatorSubsystem(true);
-        this.hand = new HandClamperSubsystem(true);
-        this.intake = new HandIntakeSubsystem(true);
-        this.climb = new ClimbSubsystem(true);
-        this.superstructure = new Superstructure(arm, elevator, hand, intake, climb);
+        swerve.getAprilTagSubsystem().setLEDSubsystem(led);
 
         // Drivetrain will execute this command periodically 
         // if no other command is active on the drivetrain
-        this.driveSubsystem.setDefaultCommand(
-            new DriveCommand(driveSubsystem, xboxController, sideButtons)
-        );
+        swerve.setDefaultCommand(swerve.drive(xboxController, () -> true));
+    }
 
-        // Sends swerve telemetry data onto NetworkTables
-        this.driveSubsystem.registerTelemetry(logger::telemeterize);
+    private void configureNamedCommands() {
+        NamedCommands.registerCommand("HoldCoral", new SimulatedCommand(RobotContainer.hand.holdCoralCommand(), 0));
+        NamedCommands.registerCommand("CoralFeederIntake", new SimulatedCommand(superstructure.intakeCommand(false), 0));
+        NamedCommands.registerCommand("FinishCoralFeederIntake", new SimulatedCommand(superstructure.finishIntakeCommand(), 0));
+        NamedCommands.registerCommand("CoralL4Score", new SimulatedCommand(superstructure.scoreCommand(false, Level.L4), 1d));
+        NamedCommands.registerCommand("FinishCoralScore", new SimulatedCommand(superstructure.finishScoreCommand(), 0.5d));
+        NamedCommands.registerCommand("AlgaeReefL2Intake", new SimulatedCommand(superstructure.intakeCommand(false, Level.L2), 1d));
+        NamedCommands.registerCommand("AlgaeReefL3Intake", new SimulatedCommand(superstructure.intakeCommand(false, Level.L3), 1d));
+        NamedCommands.registerCommand("FinishAlgaeIntake", new SimulatedCommand(superstructure.finishIntakeCommand(), 1d));
+        NamedCommands.registerCommand("AlgaeBargeScore", new SimulatedCommand(superstructure.scoreCommand(true, Level.L4), 2d));
     }
 
     /**
      * Configure the button bindings
      */
-    public void configureButtonBindings() {
+    private void configureButtonBindings() {
         // Reset robot pose and heading
         dPOVRight.onTrue(new InstantCommand(() -> {
             Pose2d resetPosition = Robot.isRedAlliance() ? new Pose2d(10.38, 3.01, new Rotation2d(Math.toRadians(0)))
                 : new Pose2d(7.168, 5.006, new Rotation2d(Math.toRadians(180)));
-            driveSubsystem.resetPose(resetPosition);
+            swerve.resetPose(resetPosition);
         }));
 
         // Set algae mode
@@ -140,8 +144,7 @@ public class RobotContainer {
         .onFalse(superstructure.setLevelCommand(Level.L4)); //if not pressed set defaullt to Level 4 
 
         // Starts the targetting sequence
-        dLeftBumper.whileTrue(new InstantCommand(() -> DriveCommand.setDriveMode(DriveMode.TARGETING)))
-        .onFalse(new InstantCommand(() -> DriveCommand.setDriveMode(DriveMode.DEFAULT)));
+        dLeftBumper.whileTrue(swerve.driveToTargetCommand(xboxController));
 
         // Starts intaking sequence
         dLeftTrigger.whileTrue(superstructure.intakeCommand())
@@ -187,10 +190,6 @@ public class RobotContainer {
         opPostJ.whileTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.J)));
         opPostK.whileTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.K)));
         opPostL.whileTrue(new InstantCommand(() -> AprilTagTargetTracker.setReefTarget(ReefTarget.L)));
-    }
-
-    public VSLAMSubsystem getVSLAMSubsystem() {
-        return driveSubsystem.getVSLAMSubsytem();
     }
 
     public void teleopInit() {

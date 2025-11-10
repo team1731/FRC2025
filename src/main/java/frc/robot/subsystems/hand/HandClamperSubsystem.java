@@ -1,8 +1,8 @@
 package frc.robot.subsystems.hand;
 
-import frc.lib.Utils;
-import frc.lib.hardware.MotorIOTalonFX;
-import frc.lib.subsystem.SingleMotorServoSubsystem;
+import frc.lib.frc1731.Utils;
+import frc.lib.frc1731.hardware.MotorIOTalonFX;
+import frc.lib.frc1731.subsystem.SingleMotorServoSubsystem;
 
 import static frc.robot.subsystems.hand.HandConstants.*;
 

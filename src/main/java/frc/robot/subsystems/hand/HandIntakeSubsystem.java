@@ -1,7 +1,7 @@
 package frc.robot.subsystems.hand;
 
-import frc.lib.hardware.MotorIOTalonFX;
-import frc.lib.subsystem.SingleMotorVelocitySubsystem;
+import frc.lib.frc1731.hardware.MotorIOTalonFX;
+import frc.lib.frc1731.subsystem.SingleMotorVelocitySubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import static frc.robot.subsystems.hand.HandConstants.*;

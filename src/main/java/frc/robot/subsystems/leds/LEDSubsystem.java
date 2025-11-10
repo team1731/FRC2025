@@ -1,7 +1,7 @@
 package frc.robot.subsystems.leds;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.IToggleableSubsystem;
+import frc.lib.frc1731.subsystem.IToggleableSubsystem;
 
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.CANdle.LEDStripType;

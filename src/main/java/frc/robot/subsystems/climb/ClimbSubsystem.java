@@ -3,9 +3,9 @@ package frc.robot.subsystems.climb;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.lib.Utils;
-import frc.lib.hardware.MotorIOTalonFX;
-import frc.lib.subsystem.SingleMotorServoSubsystem;
+import frc.lib.frc1731.Utils;
+import frc.lib.frc1731.hardware.MotorIOTalonFX;
+import frc.lib.frc1731.subsystem.SingleMotorServoSubsystem;
 
 public class ClimbSubsystem extends SingleMotorServoSubsystem<MotorIOTalonFX> {
     private boolean isClimbing = false;

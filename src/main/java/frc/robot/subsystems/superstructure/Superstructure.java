@@ -41,6 +41,14 @@ public class Superstructure {
     //        MAIN COMMANDS
     // =========================== 
 
+    public Command intakeCommand(boolean algaeMode, Level level) {
+        return this.setAlgaeModeCommand(algaeMode).andThen(this.setLevelCommand(level)).andThen(intakeCommand());
+    }
+
+    public Command intakeCommand(boolean algaeMode) {
+        return this.setAlgaeModeCommand(algaeMode).andThen(intakeCommand());
+    }
+
     public Command intakeCommand() {
         return Commands.either(
             switch (targetLevel) {
@@ -61,6 +69,10 @@ public class Superstructure {
             planner.homeAll(),
             () -> algaeMode
         ).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
+    }
+
+    public Command scoreCommand(boolean algae, Level level) {
+        return this.setAlgaeModeCommand(algae).andThen(this.setLevelCommand(level)).andThen(scoreCommand());
     }
 
     public Command scoreCommand() {

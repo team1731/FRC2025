@@ -4,9 +4,9 @@ import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.signals.*;
 
 import edu.wpi.first.wpilibj2.command.*;
-import frc.lib.Utils;
-import frc.lib.hardware.MotorIOTalonFX;
-import frc.lib.subsystem.CoupledMotorServoSubsystem;
+import frc.lib.frc1731.Utils;
+import frc.lib.frc1731.hardware.MotorIOTalonFX;
+import frc.lib.frc1731.subsystem.CoupledMotorServoSubsystem;
 
 import static frc.robot.subsystems.elevator.ElevatorConstants.*;
 

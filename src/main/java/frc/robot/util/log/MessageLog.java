@@ -28,5 +28,4 @@ public class MessageLog {
   public static Logger getLogger() {
     return logger;
   }
-
 }

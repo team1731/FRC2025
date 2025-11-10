@@ -3,9 +3,9 @@ package frc.robot.subsystems.arm;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj2.command.*;
-import frc.lib.Utils;
-import frc.lib.hardware.MotorIOTalonFX;
-import frc.lib.subsystem.SingleMotorServoSubsystem;
+import frc.lib.frc1731.Utils;
+import frc.lib.frc1731.hardware.MotorIOTalonFX;
+import frc.lib.frc1731.subsystem.SingleMotorServoSubsystem;
 
 public class ArmSubsystem extends SingleMotorServoSubsystem<MotorIOTalonFX> {
     public ArmSubsystem(boolean enabled) {

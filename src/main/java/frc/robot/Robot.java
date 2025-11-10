@@ -4,57 +4,35 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Micro;
-
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Scanner;
 
-import com.pathplanner.lib.commands.FollowPathCommand;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.util.PathPlannerLogging;
+import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.inputs.LoggedPowerDistribution;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
-import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
+import com.pathplanner.lib.commands.FollowPathCommand;
+
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.Constants.AutoConstants;
-import frc.robot.autos.AutoLoader;
-import frc.robot.autos.OLD_AutoCommandLoader;
-import frc.robot.autos.OLD_AutoFactory;
-import frc.robot.autos.OLD_AutoLoader;
-import frc.robot.generated.TunerConstants;
-import frc.robot.state.sequencer.GamePiece;
-import frc.robot.state.sequencer.Level;
-import frc.robot.state.sequencer.SequenceManager;
+import frc.lib.frc1731.field.FieldLayout;
+import frc.lib.frc1731.field.ReefscapeFieldLayout;
 import frc.robot.util.log.MessageLog;
-import frc.robot.subsystems.arm.ArmSubsystem;
-import frc.robot.subsystems.arm.OLD_ArmSubsystem;
-import frc.robot.subsystems.climb.ClimbSubsystem;
-import frc.robot.subsystems.climb.OLD_ClimbSubsystem;
-import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
-import frc.robot.subsystems.elevator.ElevatorSubsystem;
-import frc.robot.subsystems.elevator.OLD_ElevatorSubsystem;
-import frc.robot.subsystems.hand.OLD_HandIntakeSubsystem;
-import frc.robot.subsystems.leds.LEDSubsystem;
-import frc.robot.subsystems.hand.HandClamperSubsystem;
-import frc.robot.subsystems.hand.HandIntakeSubsystem;
-import frc.robot.subsystems.hand.OLD_HandClamperSubsystem;
 import frc.robot.subsystems.vision.AprilTagSubsystem;
-import frc.robot.subsystems.vision.VSLAMSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -62,45 +40,23 @@ import frc.robot.subsystems.vision.VSLAMSubsystem;
  * the package after creating this project, you must also update the build.gradle file in the
  * project.
  */
-public class Robot extends TimedRobot {
-	// private PathPlannerAuto m_autonomousCommand;
-	// private SendableChooser<String> autoChooser;
-	// private OLD_AutoCommandLoader autoCommandLoader;
-	// private String autoCode;
+public class Robot extends LoggedRobot {
 	private String currentKeypadCommand = "";
-	private boolean redAlliance = false;
 	private int stationNumber = 0;
 	public static long millis = System.currentTimeMillis();
 
-	// SUBSYSTEM DECLARATION
 	private RobotContainer container;
-	// private CommandSwerveDrivetrain driveSubsystem;
-	// private LEDSubsystem ledSubsystem;
-	// private ElevatorSubsystem elevatorSubsystem;
-	// private ArmSubsystem armSubsystem;
-	// private HandClamperSubsystem handClamperSubsystem;
-	// private HandIntakeSubsystem handIntakeSubsystem;
-	// private ClimbSubsystem climbSubsystem;
-
 	private Command m_autonomousCommand = null;
-
 	private AutoLoader autoLoader;
+
+	public static final FieldLayout kFieldLayout = new ReefscapeFieldLayout();
 	
-	private boolean lastVSLAMConnectedCheck;
-	private Pose2d currentPose;
-	private final Field2d currentPoseField = new Field2d();
-	private Pose2d targetPose;
-	private final Field2d targetPoseField = new Field2d();
-	private double autoStartTime;
+	// private Pose2d currentPose;
+	// private final Field2d currentPoseField = new Field2d();
+	// private Pose2d targetPose;
+	// private final Field2d targetPoseField = new Field2d();
 
-	public Robot() {
-	}
-
-
-	// NOTE: FOR TESTING PURPOSES ONLY!
-	// private final Joystick driver = new Joystick(0);
-	// private final JoystickButton blinker = null; //new JoystickButton(driver,
-	// XboxController.Button.kX.value);
+	public Robot() {}
 
 	/**
    * This function is run when the robot is first started up and should be used for any
@@ -116,77 +72,41 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		DataLogManager.start();
-		//LogWriter.setupLogging();
 		MessageLog.start();
-		System.out.println("\n\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  EVENT: " + DriverStation.getEventName()
-				+ " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n");
 		AprilTagSubsystem.setupPortForwarding();
 		LiveWindow.disableAllTelemetry();
 
-		/*
-		 * Instantiate subsystems and provide them to the robot container
-		 */
-		// driveSubsystem = new CommandSwerveDrivetrain(true, TunerConstants.DrivetrainConstants, TunerConstants.FrontLeft,
-		// 		TunerConstants.FrontRight, TunerConstants.BackLeft, TunerConstants.BackRight);
-
-		// ledSubsystem = new LEDSubsystem(true);
-		// elevatorSubsystem = new ElevatorSubsystem(true);
-		// armSubsystem = new ArmSubsystem(true);
-		// handClamperSubsystem = new HandClamperSubsystem(true);
-		// handIntakeSubsystem = new HandIntakeSubsystem(true);
-		// climbSubsystem = new ClimbSubsystem(true);
-
 		// Instantiate our robot container. This will perform all of our button bindings,
 		container = new RobotContainer();
-		autoLoader = new AutoLoader(container.getVSLAMSubsystem());
-		
-		/*
-		 * Complete initialization setup/configuration
-		 */
-		// initSubsystems();
-		// System.out.println("creating state machine in robot");
-		// autoChooser = OLD_AutoLoader.loadAutoChooser();
-		// autoCommandLoader = new OLD_AutoCommandLoader(elevatorSubsystem, armSubsystem, handClamperSubsystem, handIntakeSubsystem);
-		// autoCommandLoader.registerAutoEventCommands();
-		// autoPreload();
-		// setupSmartDashboard();
-		PathPlannerLogging.setLogCurrentPoseCallback((pose) -> {
-			currentPose = pose;
-			currentPoseField.setRobotPose(pose);
-			SmartDashboard.putData("PathPlanner current pose", currentPoseField);
-		});
 
-		PathPlannerLogging.setLogTargetPoseCallback((pose) -> {
-			targetPose = pose;
-			targetPoseField.setRobotPose(pose);
-			SmartDashboard.putData("PathPlanner target pose", targetPoseField);
-		});
+		// Auto Loader MUST be initialized after RobotContainer
+		autoLoader = new AutoLoader();
+
 		FollowPathCommand.warmupCommand().schedule();
+		setupLogging();
+
+		kFieldLayout.logToShuffleboard(isSimulation());
 	}
 
-	private void setupSmartDashboard() {
-		// SmartDashboard.putData(AutoConstants.kAutoCodeKey, autoChooser);
-		SmartDashboard.putString("Build Info - Branch", "N/A");
-		SmartDashboard.putString("Build Info - Commit Hash", "N/A");
-		SmartDashboard.putString("Build Info - Date", "N/A");
-
+	private void setupLogging() {
 		/*
 		 * Note: do not think this is implemented in the gradle build, if we want to
 		 * print this we will need to carry that over
 		 */
+		String buildBranch = "N/A";
+		String buildCommitHash = "N/A";
+		String buildDate = "N/A";
+
 		try {
 			File buildInfoFile = new File(Filesystem.getDeployDirectory(), "DeployedBranchInfo.txt");
 			if (buildInfoFile.exists() && buildInfoFile.canRead()) {
 				Scanner reader = new Scanner(buildInfoFile);
 				int i = 0;
 				while (reader.hasNext()) {
-					if (i == 0) {
-						SmartDashboard.putString("Build Info - Branch", reader.nextLine());
-					} else if (i == 1) {
-						SmartDashboard.putString("Build Info - Commit Hash", reader.nextLine());
-					} else {
-						SmartDashboard.putString("Build Info - Date", reader.nextLine());
-					}
+					if (i == 0) { buildBranch = reader.nextLine();
+					} else if (i == 1) { buildCommitHash = reader.nextLine();
+					} else { buildDate = reader.nextLine(); }
+
 					i++;
 				}
 				reader.close();
@@ -195,6 +115,24 @@ public class Robot extends TimedRobot {
 			System.err.println("DeployedBranchInfo.txt not found");
 			fnf.printStackTrace();
 		}
+
+		Logger.recordMetadata("Build Info - Branch", buildBranch);
+		Logger.recordMetadata("Build Info - Commit Hash", buildCommitHash);
+		Logger.recordMetadata("Build Info - Date", buildDate);
+		Logger.recordMetadata("Event", DriverStation.getEventName());
+		Logger.recordMetadata("Game", "2025Reefscape");
+        Logger.recordMetadata("Robot", "MacDyver");
+        Logger.recordMetadata("Team", "Team1731");
+
+        if (Robot.isReal()) { // If running on a real robot
+            String time = DateTimeFormatter.ofPattern("yy-MM-dd_HH-mm-ss").format(LocalDateTime.now());
+            String path = "/U/"+time+".wpilog";
+            Logger.addDataReceiver(new WPILOGWriter(path)); // Log to a USB stick
+            LoggedPowerDistribution.getInstance(1, ModuleType.kRev); // Enables power distribution logging
+        }
+        
+        Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+        Logger.start();
 		SmartDashboard.updateValues();
 	}
 
@@ -323,12 +261,7 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
 		// block in order for anything in the Command-based framework to work.
 		CommandScheduler.getInstance().run();
-
-		// VSLAMSubsystem vslamSubsystem = driveSubsystem.getVSLAMSubsytem();
-		// if(vslamSubsystem != null) {
-        //     SmartDashboard.putBoolean("VSLAM Connected", vslamSubsystem.isConnected());
-		// 	SmartDashboard.putBoolean("VSLAM Tracking", vslamSubsystem.isTracking());
-        // }
+		autoLoader.update();
 	}
 
 	/** This function is called once each time the robot enters Disabled mode. */
@@ -349,17 +282,7 @@ public class Robot extends TimedRobot {
 //   ██ ▀▀ █▀ ▀██ ▀▀▀ █ ██ ██ ▀▀ ██ ▀▀ ██ ▀▀▀██ ▀▀ ████ █████ ▀▀▀██ ██ █▀ ▀██ ▀▀▀ ██ ▀▀ █▀ ▀██ ▀▀▄
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	@Override
-	public void disabledPeriodic() {
-		// VSLAMSubsystem vslamSubsystem = driveSubsystem.getVSLAMSubsytem();
-		// if(vslamSubsystem != null) {
-        //     SmartDashboard.putBoolean("VSLAM Connected", vslamSubsystem.isConnected());
-        // }
-		
-		// call during periodic to detect changes in auto selection
-		// autoPreload();
-
-		autoLoader.update();
-
+	public void disabledPeriodic() {		
 		if (Robot.isReal()) {
 			try {
 				OptionalInt stationNumberInt = getStationNumber();
@@ -389,9 +312,9 @@ public class Robot extends TimedRobot {
 		// System.out.println("AUTO INIT");
 		// driveSubsystem.getAprilTagSubsystem().stopAutoLineup();
 		CommandScheduler.getInstance().cancelAll();
-		autoStartTime = Timer.getFPGATimestamp();
+		// autoStartTime = Timer.getFPGATimestamp();
 
-		m_autonomousCommand = autoLoader.getSelectedAuto();
+		m_autonomousCommand = autoLoader.getSelectedAutoName();
 		m_autonomousCommand.schedule();
 
 		// if (m_autonomousCommand == null) {
@@ -441,10 +364,9 @@ public class Robot extends TimedRobot {
 
 		// Record both DS control and joystick data in TELEOP
 		MessageLog.getLogger();
-		System.out.println("TELEOP INIT");
 		// resetting to appropriate defaults post auto
-		SequenceManager.setLevelSelection(Level.L4);
-		SequenceManager.setGamePieceSelection(GamePiece.CORAL);
+		// SequenceManager.setLevelSelection(Level.L4);
+		// SequenceManager.setGamePieceSelection(GamePiece.CORAL);
 		// cancel any outstanding auto commands
 		CommandScheduler.getInstance().cancelAll();
 

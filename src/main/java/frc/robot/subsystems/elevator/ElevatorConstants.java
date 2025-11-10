@@ -3,8 +3,8 @@ package frc.robot.subsystems.elevator;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.signals.InvertedValue;
 
-import frc.lib.PIDGains;
-import frc.lib.hardware.motor.PortConfig;
+import frc.lib.frc1731.PIDGains;
+import frc.lib.frc1731.hardware.motor.PortConfig;
 
 public final class ElevatorConstants {
     // Port Configs
