@@ -1,4 +1,4 @@
-package frc.lib.frc1731.logging;
+package frc.lib.frc1731;
 
 import org.littletonrobotics.junction.Logger;
 

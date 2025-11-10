@@ -1,4 +1,4 @@
-package frc.robot.util.log;
+package frc.lib.frc1731.util.log;
 
 import edu.wpi.first.wpilibj.DataLogManager;
 import frc.robot.Constants.LogConstants;

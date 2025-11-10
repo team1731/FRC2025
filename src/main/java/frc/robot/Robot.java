@@ -31,7 +31,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.frc1731.field.FieldLayout;
 import frc.lib.frc1731.field.ReefscapeFieldLayout;
-import frc.robot.util.log.MessageLog;
+import frc.lib.frc1731.util.log.MessageLog;
 import frc.robot.subsystems.vision.AprilTagSubsystem;
 
 /**

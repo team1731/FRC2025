@@ -1,7 +1,7 @@
-package frc.robot.util;
+package frc.lib.frc1731.util;
 
 import edu.wpi.first.math.trajectory.Trajectory;
-import frc.robot.util.log.MessageLog;
+import frc.lib.frc1731.util.log.MessageLog;
 
 public class Utils {
 	public static void printTrajectory(String name, Trajectory trajectory) {

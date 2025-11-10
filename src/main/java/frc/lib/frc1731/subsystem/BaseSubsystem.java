@@ -2,9 +2,9 @@ package frc.lib.frc1731.subsystem;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+import frc.lib.frc1731.SmartLogger;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.lib.frc1731.logging.SmartLogger;
 
 public abstract class BaseSubsystem extends SubsystemBase implements IToggleableSubsystem {
     private boolean enabled = false;

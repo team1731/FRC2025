@@ -1,4 +1,4 @@
-package frc.robot.util.log.loggers;
+package frc.lib.frc1731.util.log.loggers;
 
 public class ArmPathRecording {
     public final double proximal_pos;

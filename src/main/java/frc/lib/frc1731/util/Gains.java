@@ -1,4 +1,4 @@
-package frc.robot.util;
+package frc.lib.frc1731.util;
 
 /**
  *  Class that organizes gains used when assigning values to slots

@@ -1,4 +1,4 @@
-package frc.robot.util;
+package frc.lib.frc1731.util;
 
 public class AutoSwerveDebug {
 	public double curTime;

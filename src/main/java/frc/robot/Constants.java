@@ -3,8 +3,8 @@ package frc.robot;
 import java.util.Map;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import frc.robot.util.log.LogWriter.Log;
-import frc.robot.util.log.LogWriter.LogMode;
+import frc.lib.frc1731.util.log.LogWriter.Log;
+import frc.lib.frc1731.util.log.LogWriter.LogMode;
 
 public final class Constants {
     public static final double stickDeadband = 0.1;

@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.frc1731.subsystem.BaseSubsystem;
 import frc.robot.AutoLoader;
 import frc.robot.Robot;
-import frc.robot.Telemetry;
 import frc.robot.subsystems.drive.generated.CommandSwerveDrivetrain;
 import frc.robot.subsystems.drive.generated.TunerConstants;
 import frc.robot.subsystems.vision.AprilTagSubsystem;
