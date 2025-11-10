@@ -1,4 +1,4 @@
-package frc.lib.frc1731.util;
+package frc.lib.frc1731.debug;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;

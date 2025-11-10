@@ -5,15 +5,15 @@ import com.ctre.phoenix6.signals.*;
 
 import frc.lib.frc1731.PIDGains;
 import frc.lib.frc1731.hardware.motor.PortConfig;
+import frc.robot.Constants;
 
 public class ClimbConstants {
     
     // climb can ID
     public final static int climbCanId = 31;
-    public final static String climbCANBus = "canivore1";
     public final static int climbCancoderDeviceId = 28; 
     public final static InvertedValue climbMotorDirection = InvertedValue.Clockwise_Positive;
-    public final static PortConfig climbPortConfig = new PortConfig(climbCANBus, climbCanId, climbMotorDirection != InvertedValue.Clockwise_Positive);
+    public final static PortConfig climbPortConfig = new PortConfig(Constants.CANBUS_NAME, climbCanId, climbMotorDirection != InvertedValue.Clockwise_Positive);
 
     // Climb config
     public final static SensorDirectionValue climbCanConderDirection = SensorDirectionValue.Clockwise_Positive;

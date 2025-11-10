@@ -5,6 +5,7 @@ import com.ctre.phoenix6.signals.*;
 
 import frc.lib.frc1731.PIDGains;
 import frc.lib.frc1731.hardware.motor.PortConfig;
+import frc.robot.Constants;
 
 public final class HandConstants {
     // Motor Configs
@@ -12,13 +13,11 @@ public final class HandConstants {
     public final static int clamperCancoderDeviceId = 16;
     public final static int intakeCanId = 38;
 
-    public final static String canBus = "canivore2";
-
     public final static InvertedValue clamperMotorDirection = InvertedValue.CounterClockwise_Positive;
     public final static InvertedValue intakeMotorDirection = InvertedValue.CounterClockwise_Positive;
 
-    public final static PortConfig clamperPortConfig = new PortConfig(canBus, clamperCanId, clamperMotorDirection);
-    public final static PortConfig intakePortConfig = new PortConfig(canBus, intakeCanId, intakeMotorDirection);
+    public final static PortConfig clamperPortConfig = new PortConfig(Constants.CANBUS_2_NAME, clamperCanId, clamperMotorDirection);
+    public final static PortConfig intakePortConfig = new PortConfig(Constants.CANBUS_2_NAME, intakeCanId, intakeMotorDirection);
 
     // Intake Configs
     public final static double intakeStatorCurrentLimit = 20.0;

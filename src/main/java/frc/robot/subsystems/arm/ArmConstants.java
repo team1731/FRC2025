@@ -5,14 +5,14 @@ import com.ctre.phoenix6.signals.*;
 
 import frc.lib.frc1731.PIDGains;
 import frc.lib.frc1731.hardware.motor.PortConfig;
+import frc.robot.Constants;
 
 public final class ArmConstants {
     //Arm Can ID
-    public static final String armCANBus = "canivore2";
     public final static int armCanId = 33;
     public final static InvertedValue armMotorDirection = InvertedValue.Clockwise_Positive;
     public final static int armCancoderDeviceId = 15; 
-    public final static PortConfig armPortConfig = new PortConfig(armCANBus, armCanId, armMotorDirection != InvertedValue.Clockwise_Positive);
+    public final static PortConfig armPortConfig = new PortConfig(Constants.CANBUS_NAME, armCanId, armMotorDirection != InvertedValue.Clockwise_Positive);
     public final static double armGearRationModifier = (9.0/800.0); // modifies arm ticks into values for absolute encoder
 
     // Configurations

@@ -4,34 +4,27 @@
 
 package frc.robot;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.Scanner;
+import java.util.*;
 
 import org.littletonrobotics.junction.LoggedRobot;
-import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.inputs.LoggedPowerDistribution;
-import org.littletonrobotics.junction.networktables.NT4Publisher;
-import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import com.pathplanner.lib.commands.FollowPathCommand;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.lib.frc1731.RobotClock;
 import frc.lib.frc1731.field.FieldLayout;
 import frc.lib.frc1731.field.ReefscapeFieldLayout;
-import frc.lib.frc1731.util.log.MessageLog;
+import frc.lib.frc1731.log.AKLogger;
+import frc.lib.frc1731.log.MessageLog;
 import frc.robot.subsystems.vision.AprilTagSubsystem;
 
 /**
@@ -50,11 +43,8 @@ public class Robot extends LoggedRobot {
 	private AutoLoader autoLoader;
 
 	public static final FieldLayout kFieldLayout = new ReefscapeFieldLayout();
-	
-	// private Pose2d currentPose;
-	// private final Field2d currentPoseField = new Field2d();
-	// private Pose2d targetPose;
-	// private final Field2d targetPoseField = new Field2d();
+	public static final Trigger IS_ENABLED = new Trigger(() -> DriverStation.isEnabled());
+	public static final RobotClock CLOCK = new RobotClock();
 
 	public Robot() {}
 
@@ -83,59 +73,10 @@ public class Robot extends LoggedRobot {
 		autoLoader = new AutoLoader();
 
 		FollowPathCommand.warmupCommand().schedule();
-		setupLogging();
+		AKLogger.start();
 
 		kFieldLayout.logToShuffleboard(isSimulation());
 	}
-
-	private void setupLogging() {
-		/*
-		 * Note: do not think this is implemented in the gradle build, if we want to
-		 * print this we will need to carry that over
-		 */
-		String buildBranch = "N/A";
-		String buildCommitHash = "N/A";
-		String buildDate = "N/A";
-
-		try {
-			File buildInfoFile = new File(Filesystem.getDeployDirectory(), "DeployedBranchInfo.txt");
-			if (buildInfoFile.exists() && buildInfoFile.canRead()) {
-				Scanner reader = new Scanner(buildInfoFile);
-				int i = 0;
-				while (reader.hasNext()) {
-					if (i == 0) { buildBranch = reader.nextLine();
-					} else if (i == 1) { buildCommitHash = reader.nextLine();
-					} else { buildDate = reader.nextLine(); }
-
-					i++;
-				}
-				reader.close();
-			}
-		} catch (FileNotFoundException fnf) {
-			System.err.println("DeployedBranchInfo.txt not found");
-			fnf.printStackTrace();
-		}
-
-		Logger.recordMetadata("Build Info - Branch", buildBranch);
-		Logger.recordMetadata("Build Info - Commit Hash", buildCommitHash);
-		Logger.recordMetadata("Build Info - Date", buildDate);
-		Logger.recordMetadata("Event", DriverStation.getEventName());
-		Logger.recordMetadata("Game", "2025Reefscape");
-        Logger.recordMetadata("Robot", "MacDyver");
-        Logger.recordMetadata("Team", "Team1731");
-
-        if (Robot.isReal()) { // If running on a real robot
-            String time = DateTimeFormatter.ofPattern("yy-MM-dd_HH-mm-ss").format(LocalDateTime.now());
-            String path = "/U/"+time+".wpilog";
-            Logger.addDataReceiver(new WPILOGWriter(path)); // Log to a USB stick
-            LoggedPowerDistribution.getInstance(1, ModuleType.kRev); // Enables power distribution logging
-        }
-        
-        Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
-        Logger.start();
-		SmartDashboard.updateValues();
-	}
-
 
 //   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 //   █▄ ▄██ ▄▄▄ ████ ▄▄▀██ ▄▄▄██ ▄▄▀███ ▄▄▀██ █████ ████▄ ▄█ ▄▄▀██ ▀██ ██ ▄▄▀██ ▄▄▄
@@ -149,98 +90,6 @@ public class Robot extends LoggedRobot {
 		}
 		return false;
 	}
-
-// ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
-// ██ ▄▄ ██ ▄▄▄█▄▄ ▄▄████ ▄▄▄ █▄▄ ▄▄█ ▄▄▀█▄▄ ▄▄█▄ ▄██ ▄▄▄ ██ ▀██ ████ ▀██ ██ ██ ██ ▄▀▄ ██ ▄▄▀██ ▄▄▄██ ▄▄▀
-// ██ █▀▀██ ▄▄▄███ ██████▄▄▄▀▀███ ███ ▀▀ ███ ████ ███ ███ ██ █ █ ████ █ █ ██ ██ ██ █ █ ██ ▄▄▀██ ▄▄▄██ ▀▀▄
-// ██ ▀▀▄██ ▀▀▀███ ██████ ▀▀▀ ███ ███ ██ ███ ███▀ ▀██ ▀▀▀ ██ ██▄ ████ ██▄ ██▄▀▀▄██ ███ ██ ▀▀ ██ ▀▀▀██ ██ 
-// ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-	private OptionalInt getStationNumber() {
-		return DriverStation.getLocation();
-	}
-
-
-//   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
-//   █ ▄▄▀██ ██ █▄▄ ▄▄██ ▄▄▄ ███▄ ▄██ ▀██ █▄ ▄█▄▄ ▄▄████ ▄▄ ██ ▄▄▀██ ▄▄▄██ █████ ▄▄▄ █ ▄▄▀██ ▄▄▀
-//   █ ▀▀ ██ ██ ███ ████ ███ ████ ███ █ █ ██ ████ ██████ ▀▀ ██ ▀▀▄██ ▄▄▄██ █████ ███ █ ▀▀ ██ ██ 
-//   █ ██ ██▄▀▀▄███ ████ ▀▀▀ ███▀ ▀██ ██▄ █▀ ▀███ ██████ █████ ██ ██ ▀▀▀██ ▀▀ ██ ▀▀▀ █ ██ ██ ▀▀ 
-//   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-	// private void autoPreload() {
-		//m_autonomousCommand = null;
-		//if(autoChooser == null) return;
-
-		/*
-		 * Check for conditions that could require a change to the auto command
-		 * 1. Different auto selected by the drive team
-		 * 2. Alliance changed
-		 * 3. VSLAM connection status changed
-		 */
-		// String selectedAutoCode = null;
-		// boolean autoCodeChanged = false;
-		// if (autoChooser != null) {
-		//     selectedAutoCode = autoChooser.getSelected();
-		// } 
-		// if(selectedAutoCode == null) {
-		// 	selectedAutoCode = autoCode == null ? Constants.AutoConstants.kAutoDefault : autoCode;
-		// }
-		// if(!selectedAutoCode.equals(autoCode)) {
-		// 	System.out.println("New Auto Code read from dashboard. OLD: " + autoCode + ", NEW: " + selectedAutoCode);
-		// 	System.out.println("\nPreloading AUTO CODE --> " + selectedAutoCode);
-		// 	autoCodeChanged = true;
-		// }
-
-		// boolean allianceChanged = false;
-		// boolean isRedAlliance = Robot.isRedAlliance();
-		// if(redAlliance != isRedAlliance) {
-		// 	System.out.println("\n\n===============>>>>>>>>>>>>>>  WE ARE " + (isRedAlliance ? "RED" : "BLUE")
-		// 			+ " ALLIANCE  <<<<<<<<<<<<=========================");
-		// 	redAlliance = isRedAlliance;
-		// //	driveSubsystem.configureInitialPosition();
-		// 	allianceChanged = true;
-		// }
-		
-		// boolean vslamConnectionStatusChanged = false;
-		// boolean isVSLAMConnected = (driveSubsystem.getVSLAMSubsytem() != null)? driveSubsystem.getVSLAMSubsytem().isConnected() : false; 
-		// if(isVSLAMConnected != lastVSLAMConnectedCheck) {
-		// 	System.out.println("VSLAM connection status changed. VSLAM connection status: " + (isVSLAMConnected? "Connected" : "Disconnected"));
-		// 	vslamConnectionStatusChanged = true;
-		// 	lastVSLAMConnectedCheck = isVSLAMConnected;
-		// }
-
-		/*
-		 * If any of these above conditions changed, kick off creation of a new auto command
-		 */
-		// if(autoCodeChanged || allianceChanged || vslamConnectionStatusChanged) {
-			// m_autonomousCommand = null;
-			// m_autonomousCommand = (PathPlannerAuto) OLD_AutoFactory.getAutonomousCommand(selectedAutoCode, redAlliance, isVSLAMConnected);		
-			
-			// if (m_autonomousCommand.getStartingPose() != null) {
-			// Pose2d startingPose = isRedAlliance? new Pose2d(17.55 - m_autonomousCommand.getStartingPose().getX(), 8.05 - m_autonomousCommand.getStartingPose().getY(),m_autonomousCommand.getStartingPose().getRotation().rotateBy(Rotation2d.k180deg)): m_autonomousCommand.getStartingPose();
-            // driveSubsystem.resetPose(startingPose);
-			// }
-
-			// if (m_autonomousCommand != null){
-			// 	autoCode = selectedAutoCode;
-			// 	System.out.println("\n\n=====>>>>>>>>>> PRELOADED AUTONOMOUS COMMAND: " + m_autonomousCommand + "<<<<<<<<<<<<=====/n/n");
-			// } else {
-			// 	System.out.println("\nAUTO CODE " + selectedAutoCode + " IS NOT IMPLEMENTED -- STAYING WITH AUTO CODE " + autoCode);
-			// }
-		// }
-	// }
-
-
-//   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
-//   █▄ ▄██ ▀██ █▄ ▄█▄▄ ▄▄████ ▄▄▄ ██ ██ ██ ▄▄▀██ ▄▄▄ ██ ███ ██ ▄▄▄ █▄▄ ▄▄██ ▄▄▄██ ▄▀▄ ██ ▄▄▄ 
-//   ██ ███ █ █ ██ ████ ██████▄▄▄▀▀██ ██ ██ ▄▄▀██▄▄▄▀▀██▄▀▀▀▄██▄▄▄▀▀███ ████ ▄▄▄██ █ █ ██▄▄▄▀▀
-//   █▀ ▀██ ██▄ █▀ ▀███ ██████ ▀▀▀ ██▄▀▀▄██ ▀▀ ██ ▀▀▀ ████ ████ ▀▀▀ ███ ████ ▀▀▀██ ███ ██ ▀▀▀ 
-//   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-	// private void initSubsystems() {
-		// driveSubsystem.configureAutoBindings();
-		// driveSubsystem.configureInitialPosition();
-		// AprilTagFields.kDefaultField.loadAprilTagLayoutField(); 
-		// AprilTagSubsystem aprilTagSubsystem = driveSubsystem.getAprilTagSubsystem();
-		// aprilTagSubsystem.setLEDSubsystem(ledSubsystem);
-	// }
 
 	/**
    * This function is called every robot packet, no matter the mode. Use this for items like
@@ -262,6 +111,7 @@ public class Robot extends LoggedRobot {
 		// block in order for anything in the Command-based framework to work.
 		CommandScheduler.getInstance().run();
 		autoLoader.update();
+		CLOCK.update();
 	}
 
 	/** This function is called once each time the robot enters Disabled mode. */
@@ -285,7 +135,7 @@ public class Robot extends LoggedRobot {
 	public void disabledPeriodic() {		
 		if (Robot.isReal()) {
 			try {
-				OptionalInt stationNumberInt = getStationNumber();
+				OptionalInt stationNumberInt = DriverStation.getLocation();
 				if (stationNumberInt.isPresent()) {
 					int stationNumber = stationNumberInt.getAsInt();
 					if (this.stationNumber != stationNumber) {
@@ -309,21 +159,14 @@ public class Robot extends LoggedRobot {
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	@Override
 	public void autonomousInit() {
-		// System.out.println("AUTO INIT");
-		// driveSubsystem.getAprilTagSubsystem().stopAutoLineup();
 		CommandScheduler.getInstance().cancelAll();
-		// autoStartTime = Timer.getFPGATimestamp();
-
+		CLOCK.setAutoStartTime(Timer.getFPGATimestamp());
 		m_autonomousCommand = autoLoader.getSelectedAutoName();
-		m_autonomousCommand.schedule();
-
-		// if (m_autonomousCommand == null) {
-		// 	System.out.println("SOMETHING WENT WRONG - UNABLE TO RUN AUTONOMOUS! CHECK SOFTWARE!");
-		// } else {
-		// 	System.out.println("------------> RUNNING AUTONOMOUS COMMAND: " + m_autonomousCommand + " <----------");
-		// 	m_autonomousCommand.schedule();
-		// }
-		// System.out.println("autonomousInit: End");
+		if (m_autonomousCommand != null) {
+			m_autonomousCommand.schedule();
+		} else {
+			System.err.println("SOMETHING WENT WRONG - UNABLE TO RUN AUTONOMOUS! CHECK SOFTWARE!");
+		}
 	}
 
 
@@ -337,20 +180,14 @@ public class Robot extends LoggedRobot {
 		if (doSD()) {
 			System.out.println("AUTO PERIODIC");
 		}
-		//SmartDashboard.putString("Path running", PathPlannerAuto.currentPathName);
+
+		SmartDashboard.putString("Path running", PathPlannerAuto.currentPathName);
 		//SmartDashboard.putNumber("current Pose X", currentPose.getX());
 		//SmartDashboard.putNumber ("current Pose Y", currentPose.getY());
 		//SmartDashboard.putNumber("target pose X",targetPose.getX());
 		//SmartDashboard.putNumber("target Pose Y", targetPose.getY());
 		//SmartDashboard.putNumber("PP Error", currentPose.getTranslation().getDistance(targetPose.getTranslation()));
 		//SmartDashboard.putNumber("AutoRunningTime", Timer.getFPGATimestamp()- autoStartTime);
-
-
-		// if (m_autonomousCommand != null && (Timer.getFPGATimestamp()- autoStartTime) >= 0.25 && (currentPose.getTranslation().getDistance(targetPose.getTranslation()) > 1.0)) {
-		// 	System.out.println("distance is" + currentPose.getTranslation().getDistance(targetPose.getTranslation()));
-		// 	m_autonomousCommand.cancel();
-		// 	System.out.println("Had to Kill the auto because the target pose and current pose were apart by more than a foot");
-		// }
 	}
 
 //   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
@@ -360,22 +197,14 @@ public class Robot extends LoggedRobot {
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	@Override
 	public void teleopInit() {
-		// driveSubsystem.getAprilTagSubsystem().stopAutoLineup();
-
 		// Record both DS control and joystick data in TELEOP
 		MessageLog.getLogger();
-		// resetting to appropriate defaults post auto
-		// SequenceManager.setLevelSelection(Level.L4);
-		// SequenceManager.setGamePieceSelection(GamePiece.CORAL);
+
 		// cancel any outstanding auto commands
 		CommandScheduler.getInstance().cancelAll();
 
-		// if (m_autonomousCommand != null) {
-		// 	m_autonomousCommand.cancel();
-		// }
 		currentKeypadCommand = "";
 		SmartDashboard.getString("keypadCommand", currentKeypadCommand);
-		// climbSubsystem.stowClimb();
 		container.teleopInit();
 	}
 
@@ -402,11 +231,9 @@ public class Robot extends LoggedRobot {
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	@Override
 	public void teleopPeriodic() {
-
-		// if(doSD()){
-		// System.out.println("TELEOP PERIODIC");
-		// }
-
+		if(doSD()){
+			System.out.println("TELEOP PERIODIC");
+		}
 	}
 
 //   ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
@@ -418,7 +245,7 @@ public class Robot extends LoggedRobot {
 	public void testInit() {
 		// Cancels all running commands at the start of test mode.
 		CommandScheduler.getInstance().cancelAll();
-		// driveSubsystem.getAprilTagSubsystem().stopAutoLineup();
+		container.teleopInit();
 	}
 
 	/** This function is called periodically during test mode. */
@@ -428,8 +255,5 @@ public class Robot extends LoggedRobot {
 //   ███ ████ ▀▀▀██ ▀▀▀ ███ ██████ █████ ▀▀▀██ ██ █▀ ▀██ ▀▀▀ ██ ▀▀ █▀ ▀██ ▀▀▄
 //   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 	@Override
-	public void testPeriodic() {
-
-	}
-
+	public void testPeriodic() {}
 }

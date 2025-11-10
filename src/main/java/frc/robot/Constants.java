@@ -2,14 +2,13 @@ package frc.robot;
 
 import java.util.Map;
 
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import frc.lib.frc1731.util.log.LogWriter.Log;
-import frc.lib.frc1731.util.log.LogWriter.LogMode;
+import frc.lib.frc1731.log.LogWriter.*;
 
 public final class Constants {
     public static final double stickDeadband = 0.1;
     public static final int kTICKS = 33024; // 16.125 * 2048;
     public static final String CANBUS_NAME = "canivore1";
+    public static final String CANBUS_2_NAME = "canivore1";
 
     public static final class JoystickConstants {
         public static final int opA = 1;
@@ -57,20 +56,6 @@ public final class Constants {
         public static final String kNoVSLAMPostfix = "_NoVSLAM";
         public static final String kAutoDefault = "1_Barge"; // Note: when setting the default auto, do not include Blu_/Red_ prefixes
         public static final String kAutoCodeKey = "Auto Selector";
-
-        public static final double kMaxSpeedMetersPerSecond = 0.5; // disabled for testing = 3;
-        public static final double kMaxAccelerationMetersPerSecondSquared = 0.5; // disabled for testing = 3;
-        public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
-        public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
-
-        public static final double kPXController = 3.0;
-        public static final double kPYController = 3.0;
-        public static final double kPThetaController = 2;
-
-        // Constraint for the motion profilied robot angle controller
-        public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
-            new TrapezoidProfile.Constraints(
-                kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
     }
 
     public static final class OpConstants {

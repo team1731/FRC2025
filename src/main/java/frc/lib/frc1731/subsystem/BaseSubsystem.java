@@ -2,15 +2,13 @@ package frc.lib.frc1731.subsystem;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
-import frc.lib.frc1731.SmartLogger;
+import frc.lib.frc1731.log.SmartLogger;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public abstract class BaseSubsystem extends SubsystemBase implements IToggleableSubsystem {
     private boolean enabled = false;
     protected SmartLogger logger;
-
-    // protected SubsystemModeInitCallback modeInitCallback = null; // TODO - Figure this out
 
     protected BaseSubsystem(boolean enabled) {
         this.enabled = enabled;
@@ -92,11 +90,9 @@ public abstract class BaseSubsystem extends SubsystemBase implements IToggleable
     public void periodic () {
         periodicOutput();
         periodicTelemetry();
-        if (logger != null) {
-            logger.log("Actively Commanded", isCurrentlyCommanded());
-            logger.log("Has Default Command", !getDefaultCommand().equals(Commands.none()));
-            logger.log("Active Command", getCurrentCommand().getName());
-            logger.log("Default Command", getDefaultCommand().getName());
-        }
+        logger.log("Command/Actively Commanded", isCurrentlyCommanded());
+        logger.log("Command/Has Default Command", !getDefaultCommand().equals(Commands.none()));
+        logger.log("Command/Active Command", getCurrentCommand().getName());
+        logger.log("Command/Default Command", getDefaultCommand().getName());
     }
 }

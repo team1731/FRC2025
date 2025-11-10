@@ -1,4 +1,4 @@
-package frc.lib.frc1731.util.log;
+package frc.lib.frc1731.log;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 /**
  * Writes data to a CSV file
  */
-public class ReflectingCSVWriter<T> implements Logger {
+public class ReflectingCSVWriter<T> implements ILogger {
 	ConcurrentLinkedDeque<String> mLinesToWrite = new ConcurrentLinkedDeque<>();
 	PrintWriter mOutput = null;
 	Field[] mFields;

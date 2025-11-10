@@ -1,6 +1,6 @@
-package frc.lib.frc1731.util.log;
+package frc.lib.frc1731.log;
 
-public interface Logger {
+public interface ILogger {
     public void suspend();
 	public void resume();
 	public boolean isSuspended();

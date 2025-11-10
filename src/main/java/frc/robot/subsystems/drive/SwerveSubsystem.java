@@ -16,10 +16,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.frc1731.subsystem.BaseSubsystem;
 import frc.robot.AutoLoader;
 import frc.robot.Robot;
@@ -48,8 +46,6 @@ public class SwerveSubsystem extends BaseSubsystem {
 
     private final Telemetry telemetry = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
 
-    private static Trigger isRobotEnabled = new Trigger(() -> DriverStation.isEnabled());
-
     private DrivetrainVisionCallback visionCallback = (Pose2d pose, double timestamp, Matrix<N3,N1> visionMeasurementStdDevs) -> {
         drivetrain.addVisionMeasurement(pose, timestamp, visionMeasurementStdDevs);  // comment this out to disable vslam
     };
@@ -58,9 +54,9 @@ public class SwerveSubsystem extends BaseSubsystem {
         super(enabled);
         if(!enabled) return;
 
-        drivetrain = TunerConstants.createDrivetrain();
-        driveAtTarget.HeadingController.setPID(10,0,0);
-	    driveAtTarget.HeadingController.enableContinuousInput(-Math.PI/2, Math.PI/2);
+        this.drivetrain = TunerConstants.createDrivetrain();
+        driveAtTargetControl.HeadingController.setPID(10,0,0);
+	    driveAtTargetControl.HeadingController.enableContinuousInput(-Math.PI/2, Math.PI/2);
 
         if(kUseAprilTags) {
             aprilTagSubsystem = new AprilTagSubsystem(true);
@@ -76,7 +72,7 @@ public class SwerveSubsystem extends BaseSubsystem {
         configureAutoBuilder();
         drivetrain.registerTelemetry(telemetry::telemeterize);
 
-        isRobotEnabled.whileTrue(new InstantCommand(() -> aprilTagSubsystem.stopAutoLineup()))
+        Robot.IS_ENABLED.whileTrue(new InstantCommand(() -> aprilTagSubsystem.stopAutoLineup()))
         .onFalse(new InstantCommand(() -> aprilTagSubsystem.startAutoLineup()));
     }
 
@@ -247,7 +243,7 @@ public class SwerveSubsystem extends BaseSubsystem {
             if (aprilTagTargetTracker.hasVisibleTarget() || ((lostTargetCount < 5) && lockedOnce == true)) {
                 // note to self since this is confusing... Y becomes X and X becomes Y and that change happens earlier for driving at target
                 drivetrain.setControl(
-                        driveAtTarget.withVelocityX(aprilTagTargetTracker.getCalculatedX() * kMaxSpeed)
+                        driveAtTargetControl.withVelocityX(aprilTagTargetTracker.getCalculatedX() * kMaxSpeed)
                                 .withVelocityY(  aprilTagTargetTracker.getCalculatedY() *kMaxSpeed)
                                 .withTargetDirection(aprilTagTargetTracker.getRotationTarget()));
             } else {

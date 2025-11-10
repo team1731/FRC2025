@@ -1,9 +1,9 @@
-package frc.lib.frc1731.util.log;
+package frc.lib.frc1731.log;
 
 import edu.wpi.first.wpilibj.Timer;
 
 public class MessageLog {
-  private static Logger logger;
+  private static ILogger logger;
 
   static class Message {
     public double time;
@@ -25,7 +25,7 @@ public class MessageLog {
     logger.add(new Message(message));
   }
 
-  public static Logger getLogger() {
+  public static ILogger getLogger() {
     return logger;
   }
 }

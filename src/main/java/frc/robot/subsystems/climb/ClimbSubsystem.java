@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.frc1731.Utils;
 import frc.lib.frc1731.hardware.MotorIOTalonFX;
 import frc.lib.frc1731.subsystem.SingleMotorServoSubsystem;
+import frc.robot.Constants;
 
 public class ClimbSubsystem extends SingleMotorServoSubsystem<MotorIOTalonFX> {
     private boolean isClimbing = false;
@@ -19,7 +20,7 @@ public class ClimbSubsystem extends SingleMotorServoSubsystem<MotorIOTalonFX> {
         this.leadMotor = new MotorIOTalonFX(ClimbConstants.climbPortConfig);
         this.leadMotor.withCANCoder(
             ClimbConstants.climbCancoderDeviceId, 
-            ClimbConstants.climbCANBus,
+            Constants.CANBUS_NAME,
             ClimbConstants.cancoderConfig
         );
 

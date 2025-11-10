@@ -1,4 +1,4 @@
-package frc.lib.frc1731.util.log;
+package frc.lib.frc1731.log;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -13,7 +13,7 @@ import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 
 
-public class DataLogWriter<T> implements Logger {
+public class DataLogWriter<T> implements ILogger {
     private DataLog dataLog;
     private String topic;
     private Field[] fields;

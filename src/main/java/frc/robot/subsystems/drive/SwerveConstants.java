@@ -41,7 +41,8 @@ public class SwerveConstants {
 
     private static final double kDriveToTargetMaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     private static final double kDriveToTargetDeadband = 0.01; // Add a 1% deadband
-    public static final SwerveRequest.FieldCentricFacingAngle driveAtTarget = new SwerveRequest.FieldCentricFacingAngle()
+
+    public static final SwerveRequest.FieldCentricFacingAngle driveAtTargetControl = new SwerveRequest.FieldCentricFacingAngle()
         .withRotationalDeadband(VisionConstants.MAX_ANGULAR_SPEED * kDriveToTargetDeadband) // Add a 1% deadband
 		.withDriveRequestType(DriveRequestType.OpenLoopVoltage)
         .withDeadband((kDriveToTargetMaxSpeed * kDeadband));

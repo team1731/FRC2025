@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.*;
 import frc.lib.frc1731.Utils;
 import frc.lib.frc1731.hardware.MotorIOTalonFX;
 import frc.lib.frc1731.subsystem.SingleMotorServoSubsystem;
+import frc.robot.Constants;
 
 public class ArmSubsystem extends SingleMotorServoSubsystem<MotorIOTalonFX> {
     public ArmSubsystem(boolean enabled) {
@@ -17,7 +18,7 @@ public class ArmSubsystem extends SingleMotorServoSubsystem<MotorIOTalonFX> {
         this.leadMotor = new MotorIOTalonFX(ArmConstants.armPortConfig);
         this.leadMotor.withCANCoder(
             ArmConstants.armCancoderDeviceId, 
-            ArmConstants.armCANBus,
+            Constants.CANBUS_NAME,
             ArmConstants.armCANCoderConfig
         );
         

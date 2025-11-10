@@ -5,11 +5,10 @@ import com.ctre.phoenix6.signals.InvertedValue;
 
 import frc.lib.frc1731.PIDGains;
 import frc.lib.frc1731.hardware.motor.PortConfig;
+import frc.robot.Constants;
 
 public final class ElevatorConstants {
     // Port Configs
-    public final static String canBus = "canivore1";
-
     public final static int masterCanId1 = 21;
     public final static int followerCanId2 = 22;
 
@@ -17,14 +16,14 @@ public final class ElevatorConstants {
     public final static InvertedValue elevatorMotor2Direction = InvertedValue.Clockwise_Positive;
 
     public final static PortConfig leadPortConfig = new PortConfig(
-        ElevatorConstants.canBus, 
-        ElevatorConstants.masterCanId1, 
+        Constants.CANBUS_NAME,
+        ElevatorConstants.masterCanId1,
         ElevatorConstants.elevatorMotor1Direction
     );
 
     public final static PortConfig followerPortConfig = new PortConfig(
-        ElevatorConstants.canBus, 
-        ElevatorConstants.followerCanId2, 
+        Constants.CANBUS_NAME,
+        ElevatorConstants.followerCanId2,
         ElevatorConstants.elevatorMotor2Direction
     );
 

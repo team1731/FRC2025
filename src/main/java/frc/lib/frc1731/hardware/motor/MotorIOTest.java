@@ -1,10 +1,9 @@
 package frc.lib.frc1731.hardware.motor;
 
 import frc.lib.frc1731.PIDGains;
-import frc.lib.frc1731.SmartLogger;
 import frc.lib.frc1731.hardware.motor.ctre.*;
 import frc.lib.frc1731.hardware.motor.rev.*;
-
+import frc.lib.frc1731.log.SmartLogger;
 import edu.wpi.first.wpilibj2.command.*;
 
 /**

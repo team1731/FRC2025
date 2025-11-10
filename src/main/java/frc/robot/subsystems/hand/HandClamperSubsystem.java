@@ -3,6 +3,7 @@ package frc.robot.subsystems.hand;
 import frc.lib.frc1731.Utils;
 import frc.lib.frc1731.hardware.MotorIOTalonFX;
 import frc.lib.frc1731.subsystem.SingleMotorServoSubsystem;
+import frc.robot.Constants;
 
 import static frc.robot.subsystems.hand.HandConstants.*;
 
@@ -16,7 +17,7 @@ public class HandClamperSubsystem extends SingleMotorServoSubsystem<MotorIOTalon
     @Override
     protected void initializeHardware() {
         this.leadMotor = new MotorIOTalonFX(clamperPortConfig);
-        this.leadMotor.withCANCoder(clamperCancoderDeviceId, canBus, CANCoderConfigs);
+        this.leadMotor.withCANCoder(clamperCancoderDeviceId, Constants.CANBUS_2_NAME, CANCoderConfigs);
         this.leadMotor.withMotionMagicConfigs(mmConfigs);
         this.leadMotor.withPIDGains(clamperGains);
         this.leadMotor.withFeedbackConfigs(clamperFeedbackConfigs);

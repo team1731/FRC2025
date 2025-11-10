@@ -1,4 +1,4 @@
-package frc.lib.frc1731.util.log;
+package frc.lib.frc1731.log;
 
 import edu.wpi.first.wpilibj.DataLogManager;
 import frc.robot.Constants.LogConstants;
@@ -26,7 +26,7 @@ public class LogWriter {
         return LogConstants.loggers.get(LogWriter.Log.ARM_PATH_RECORDING).booleanValue();
     }
 
-    public static class MockLogger implements Logger {
+    public static class MockLogger implements ILogger {
         public void suspend() {}
 	    public void resume() {}
 	    public boolean isSuspended() { return false; }
@@ -41,7 +41,7 @@ public class LogWriter {
         }
     }
 
-    public static Logger getLogger(Log log, Class typeClass) {
+    public static ILogger getLogger(Log log, Class typeClass) {
         Boolean logEnabled = LogConstants.loggers.get(log);
         if(!LogConstants.loggingEnabled || logEnabled == null || !logEnabled.booleanValue()) {
             return new MockLogger(); // disabled, ignore logging attempts

@@ -9,11 +9,27 @@ public class RobotClock extends Timer {
     private double lastTime = 0.0;
     private double curTime = 0.0;
 
+    private double autoStartTime = 0.0;
+
     /**
      * Change in time between last frame and the current one
      */
     public double dt() {
         return curTime - lastTime;
+    }
+
+    /**
+     * Set the time that the autonomous period started
+     */
+    public void setAutoStartTime(double time) {
+        autoStartTime = time;
+    }
+
+    /**
+     * The time that the autonomous period started
+     */
+    public double getAutoStartTime() {
+        return autoStartTime;
     }
 
     /**
