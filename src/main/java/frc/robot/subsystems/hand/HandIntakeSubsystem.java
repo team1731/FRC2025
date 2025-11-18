@@ -1,7 +1,7 @@
 package frc.robot.subsystems.hand;
 
 import frc.lib.frc1731.hardware.MotorIOTalonFX;
-import frc.lib.frc1731.subsystem.SingleMotorVelocitySubsystem;
+import frc.lib.frc1731.subsystem.VelocitySubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import static frc.robot.subsystems.hand.HandConstants.*;
@@ -10,34 +10,36 @@ import com.ctre.phoenix6.signals.ForwardLimitValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.ReverseLimitValue;
 
-public class HandIntakeSubsystem extends SingleMotorVelocitySubsystem<MotorIOTalonFX> {
+public class HandIntakeSubsystem extends VelocitySubsystem<MotorIOTalonFX> {
     public HandIntakeSubsystem(boolean enabled) {
         super(enabled);
+        super.withSimulation(intakeSimConstants, intakeGains.logOnAdvantageScope());
+
     }
 
     @Override
     protected void initializeHardware() {
-        this.leadMotor = new MotorIOTalonFX(intakePortConfig);
-        this.leadMotor.withPIDGains(intakeGains);
-        this.leadMotor.withVoltageConfigs(intakeVoltageConfigs);
-        this.leadMotor.withHardwareLimitSwitchConfigs(intakeLimitSwitchConfigs);
-        this.leadMotor.withStatorCurrentLimit(intakeStatorCurrentLimit);
-        this.leadMotor.setNeutralMode(NeutralModeValue.Brake);
-        this.leadMotor.applyConfigs();
+        this.motor = new MotorIOTalonFX(intakePortConfig);
+        this.motor.withPIDGains(intakeGains);
+        this.motor.withVoltageConfigs(intakeVoltageConfigs);
+        this.motor.withHardwareLimitSwitchConfigs(intakeLimitSwitchConfigs);
+        this.motor.withStatorCurrentLimit(intakeStatorCurrentLimit);
+        this.motor.setNeutralMode(NeutralModeValue.Brake);
+        this.motor.applyConfigs();
     }
 
     @Override
     public void periodicTelemetry() {
-        logger.log("Current Velocity RPM", getVelocityRPM());
-        logger.log("Target Velocity RPM", getTargetVelocityRPM());
+        logger.log("Current Velocity RPS", getVelocityRPS());
+        logger.log("Target Velocity RPS", getTargetVelocityRPS());
     }
 
     public boolean hasPiece() {
-        return leadMotor.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround;
+        return motor.getReverseLimit().getValue() == ReverseLimitValue.ClosedToGround;
     }
 
     public boolean alignedToPole() {
-        return leadMotor.getForwardLimit().getValue() == ForwardLimitValue.ClosedToGround;
+        return motor.getForwardLimit().getValue() == ForwardLimitValue.ClosedToGround;
     }
 
     public Command intakeCoralCommand() {

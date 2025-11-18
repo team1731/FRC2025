@@ -1,43 +1,50 @@
 package frc.robot.subsystems.climb;
 
+import static edu.wpi.first.units.Units.*;
+
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.lib.frc1731.Utils;
 import frc.lib.frc1731.hardware.MotorIOTalonFX;
-import frc.lib.frc1731.subsystem.SingleMotorServoSubsystem;
+import frc.lib.frc1731.subsystem.PivotMotorSubsystem;
 import frc.robot.Constants;
 
-public class ClimbSubsystem extends SingleMotorServoSubsystem<MotorIOTalonFX> {
+public class ClimbSubsystem extends PivotMotorSubsystem<MotorIOTalonFX> {
     private boolean isClimbing = false;
 
     public ClimbSubsystem(boolean enabled) {
-        super(enabled, ClimbConstants.climbAtPositionThreshold);
+        super(enabled);
+        super.setMotorTolerance(ClimbConstants.climbAtPositionThreshold);
+        super.withSimulation(
+            ClimbConstants.simConstants, 
+            ClimbConstants.climbPIDGains
+        );
     }
 
     @Override
-    protected void initializeHardware() {
-        this.leadMotor = new MotorIOTalonFX(ClimbConstants.climbPortConfig);
-        this.leadMotor.withCANCoder(
+    protected void configureHardware() {
+        this.motor = new MotorIOTalonFX(ClimbConstants.climbPortConfig);
+        this.motor.withCANCoder(
             ClimbConstants.climbCancoderDeviceId, 
             Constants.CANBUS_NAME,
             ClimbConstants.cancoderConfig
         );
 
-        this.leadMotor.withMotionProfile(70d, 250d, 0d);
-        this.leadMotor.withStatorCurrentLimit(80d);
-        this.leadMotor.withPIDGains(ClimbConstants.climbPIDGains);
-        this.leadMotor.withFeedbackConfigs(ClimbConstants.feedbackConfigs);
-        this.leadMotor.setNeutralMode(NeutralModeValue.Brake);
+        this.motor.withMotionProfile(70d, 250d, 0d);
+        this.motor.withStatorCurrentLimit(80d);
+        this.motor.withPIDGains(ClimbConstants.climbPIDGains);
+        this.motor.withFeedbackConfigs(ClimbConstants.feedbackConfigs);
+        this.motor.setNeutralMode(NeutralModeValue.Brake);
 
-        this.leadMotor.applyConfigs();
+        this.motor.applyConfigs();
     }
 
     @Override
     public void periodicTelemetry() {
-        logger.log("Current Position", getRawRotations());
-        logger.log("Target Position", getTargetRotations());
-        logger.log("At Target Position", getTargetRotations());
+        logger.log("Current Position", getPosition().in(Rotations));
+        logger.log("Target Position", getTargetPosition().in(Rotations));
+        logger.log("At Target Position", atTargetPosition());
         logger.log("Is Climbing", this.isClimbing);
     }
 
@@ -45,8 +52,8 @@ public class ClimbSubsystem extends SingleMotorServoSubsystem<MotorIOTalonFX> {
         return isClimbing;    
     }
 
-    private Command moveClimbCommand(double position) {
-        return setPositionCommand(Utils.clamp(position, ClimbConstants.minClimbPosition, ClimbConstants.maxClimbPosition));
+    private Command moveClimbCommand(Angle position) {
+        return setPositionCommand(position);
     }
 
     public Command moveToMaxPositionCommand() {
@@ -65,7 +72,7 @@ public class ClimbSubsystem extends SingleMotorServoSubsystem<MotorIOTalonFX> {
     }
 
     public Command stopCommand() {
-        return runOnce(() -> leadMotor.brake())
+        return runOnce(() -> motor.brake())
         .withName("Stop");
     }
 

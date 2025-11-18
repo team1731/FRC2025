@@ -1,17 +1,13 @@
 package frc.robot.subsystems.leds;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.lib.frc1731.subsystem.IToggleableSubsystem;
-
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 import com.ctre.phoenix.led.CANdleConfiguration;
 
+import frc.lib.frc1731.subsystem.BaseSubsystem;
 
-public class LEDSubsystem extends SubsystemBase implements IToggleableSubsystem {
-
-    private boolean enabled;
+public class LEDSubsystem extends BaseSubsystem {
     private CANdle candle; 
     private CANdleConfiguration candleConfig;
 
@@ -22,14 +18,9 @@ public class LEDSubsystem extends SubsystemBase implements IToggleableSubsystem 
     private static final int[] GREEN = { 0, 0, 255, 0 };
     private static final int[] YELLOW = { 0, 255, 255, 0 }; //TODO: (SF) not right RGB values
     private static final int[] WHITE = { 0, 0, 0, 1 }; //need to check this is how we get white LEDs
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
     
     public LEDSubsystem(boolean enabled){
-        this.enabled = enabled;
+        super(enabled);
         if(!enabled) return;
         initializeLED();
     }
@@ -100,5 +91,10 @@ public class LEDSubsystem extends SubsystemBase implements IToggleableSubsystem 
     }
     public void turnLineupColorsOff(){
         setColor(LEDConstants.LedColor.OFF, 0, LEDConstants.maxStringLength);
+    }
+
+    @Override
+    public void periodicTelemetry() {
+        // No periodic telemetry for LEDs
     }
 }

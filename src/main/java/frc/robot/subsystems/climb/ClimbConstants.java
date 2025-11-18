@@ -1,8 +1,12 @@
 package frc.robot.subsystems.climb;
 
+import static edu.wpi.first.units.Units.Rotations;
+
 import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.signals.*;
 
+import edu.wpi.first.units.measure.Angle;
+import frc.lib.frc1678.sim.PivotSim;
 import frc.lib.frc1731.PIDGains;
 import frc.lib.frc1731.hardware.motor.PortConfig;
 import frc.robot.Constants;
@@ -37,18 +41,29 @@ public class ClimbConstants {
         .setPID(240d, 0d, 0.0078125d)
         .setV(0.009375d)
         .setS(0.02);
+
+    // Simulation configs
+    public final static PivotSim.PivotSimConstants simConstants = new PivotSim.PivotSimConstants() // Todo - Fix
+        .withMotor(edu.wpi.first.math.system.plant.DCMotor.getKrakenX60(1))
+        .withConstraints(
+            Rotations.of(-10d).in(Rotations), 
+            Rotations.of(10d).in(Rotations), 
+            0d,
+            0.5d
+        )
+        .withPhysics(1d/640d, 0.5d, false); // gear ratio, moment of inertia
     
     // output
     //public final static double idleOutput = 0;
 
     // positions
-    public final static double minClimbPosition = 0;
-    public final static double maxClimbPosition = 0.7;
-    public final static double climbHomePosition = 0;
-    public final static double climbReadyPosition = 0.365;
-    public final static double climbStowPosition = 0.47;
-    public final static double climbResetThreshold = .1; // indicates when climb is being reset and isClimbing should be set to false
-    public final static double climbArmStowThreshold = .5; // indicates when arm should move out of the way
+    public final static Angle minClimbPosition = Rotations.of(0);
+    public final static Angle maxClimbPosition = Rotations.of(0.7);
+    public final static Angle climbHomePosition = Rotations.of(0);
+    public final static Angle climbReadyPosition = Rotations.of(0.365);
+    public final static Angle climbStowPosition = Rotations.of(0.47);
+    public final static Angle climbResetThreshold = Rotations.of(0.1); // indicates when climb is being reset and isClimbing should be set to false
+    public final static Angle climbArmStowThreshold = Rotations.of(0.5); // indicates when arm should move out of the way
     
-    public final static double climbAtPositionThreshold = 2d;
+    public final static Angle climbAtPositionThreshold = Rotations.of(2d);
 }

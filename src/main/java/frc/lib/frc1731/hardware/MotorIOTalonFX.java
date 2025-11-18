@@ -10,17 +10,21 @@ import com.ctre.phoenix6.hardware.*;
 import com.ctre.phoenix6.signals.*;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.lib.frc1731.PIDGains;
 import frc.lib.frc1731.hardware.motor.MotorIO;
 import frc.lib.frc1731.hardware.motor.PortConfig;
-import frc.robot.Robot;
 
 public class MotorIOTalonFX extends MotorIO {
     protected TalonFX motor;
     private TalonFXConfiguration cfg = new TalonFXConfiguration();
     private TalonFXConfigurator configurator;
     private TalonFXSimState simState;
+
+    private final DCMotorSim motorSim;
 
     private DynamicMotionMagicVoltage mmOutput = new DynamicMotionMagicVoltage(0d, 0d, 0d, 0d);
 
@@ -39,7 +43,17 @@ public class MotorIOTalonFX extends MotorIO {
             InvertedValue.Clockwise_Positive;
 
         this.simState = motor.getSimState();
-        this.simState.setSupplyVoltage(Robot.isReal() ? RobotController.getBatteryVoltage() : 12d);
+
+        this.simState.setRawRotorPosition(0d);
+        this.simState.setRotorVelocity(0d);
+        this.simState.setRotorAcceleration(0d);
+
+        this.motorSim = new DCMotorSim(
+            LinearSystemId.createDCMotorSystem(
+                DCMotor.getKrakenX60(1), 0.001, 1d
+            ),
+            DCMotor.getKrakenX60(1)
+        );
 
         applyConfigs();
     }
@@ -51,6 +65,11 @@ public class MotorIOTalonFX extends MotorIO {
     @Override
     public void follow(MotorIO master, boolean invertedFromMaster) {
         this.motor.setControl(new Follower(((MotorIOTalonFX)master).motor.getDeviceID(), invertedFromMaster));
+    }
+
+    @Override
+    public void withFollower(MotorIO follower, boolean invertedFromMaster) {
+        follower.follow(this, invertedFromMaster);
     }
 
     @Override
@@ -130,6 +149,10 @@ public class MotorIOTalonFX extends MotorIO {
         softLimitMotor.ReverseSoftLimitThreshold = min;
 
         this.cfg.withSoftwareLimitSwitch(softLimitMotor);
+
+        // this.simState.setForwardLimit(true);
+        // this.simState.setReverseLimit(true);
+
         applyConfigs();
     }
 
@@ -146,11 +169,13 @@ public class MotorIOTalonFX extends MotorIO {
     @Override
     public void setPercentOutput(double percent) {
         this.motor.setControl(new DutyCycleOut(percent));
+        this.motorSim.setInputVoltage(percent * RobotController.getBatteryVoltage());
     }
 
     @Override
     public void setVelocityRPS(double rps, int pidSlot) {
         this.motor.setControl(new VelocityVoltage(rps).withSlot(pidSlot));
+        this.motorSim.setAngularVelocity(rps * (2*Math.PI) * 1.2d); // 1.2 is the friction factor
     }
 
     @Override
@@ -243,4 +268,14 @@ public class MotorIOTalonFX extends MotorIO {
     public void applyConfigs() {
         this.configurator.apply(cfg);
     }
+
+    // public void updateSimulation(double dt) {
+    //     this.simState.setSupplyVoltage(RobotController.getBatteryVoltage());
+
+    //     this.motorSim.setInputVoltage(simState.getMotorVoltage());
+    //     this.motorSim.update(dt);
+
+    //     this.simState.setRawRotorPosition(motorSim.getAngularPosition());
+    //     this.simState.setRotorVelocity(motorSim.getAngularVelocityRPM() / 60d);
+    // }
 }

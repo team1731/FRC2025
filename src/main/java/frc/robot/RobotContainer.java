@@ -1,5 +1,7 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.*;
+
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -81,7 +83,17 @@ public class RobotContainer {
     public RobotContainer() {
         configureSubsystems();
         configureNamedCommands();
-        configureButtonBindings();
+        // configureButtonBindings();
+
+        dA.whileTrue(intake.intakeCoralCommand()).onFalse(intake.holdCommand());
+        dB.whileTrue(intake.releaseCommand()).onFalse(intake.holdCommand());
+
+        // dLeftTrigger.onTrue(arm.moveCommand(20, false));
+        // dRightTrigger.onTrue(arm.moveCommand(14, false));
+        // dLeftBumper.onTrue(arm.moveCommand(0, false));
+
+        dLeftTrigger.onTrue(elevator.setPositionCommand(Rotations.of(30), false));
+        dRightTrigger.onTrue(elevator.setPositionCommand(Rotations.zero(), false));
     }
 
     /**
@@ -119,6 +131,7 @@ public class RobotContainer {
     /**
      * Configure the button bindings
      */
+    @SuppressWarnings("unused")
     private void configureButtonBindings() {
         // Reset robot pose and heading
         dPOVRight.onTrue(new InstantCommand(() -> {

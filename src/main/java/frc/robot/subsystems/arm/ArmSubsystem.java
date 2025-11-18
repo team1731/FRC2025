@@ -1,71 +1,75 @@
 package frc.robot.subsystems.arm;
 
+import static edu.wpi.first.units.Units.*;
+
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.wpilibj2.command.*;
-import frc.lib.frc1731.Utils;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import frc.lib.frc1678.sim.PivotSim.PivotSimConstants;
 import frc.lib.frc1731.hardware.MotorIOTalonFX;
-import frc.lib.frc1731.subsystem.SingleMotorServoSubsystem;
+import frc.lib.frc1731.subsystem.PivotMotorSubsystem;
 import frc.robot.Constants;
 
-public class ArmSubsystem extends SingleMotorServoSubsystem<MotorIOTalonFX> {
+public class ArmSubsystem extends PivotMotorSubsystem<MotorIOTalonFX> {
     public ArmSubsystem(boolean enabled) {
-        super(enabled, ArmConstants.atPositionThreshold);
+        super(enabled);
+        super.setMotorTolerance(ArmConstants.atPositionThreshold);
+        super.withSimulation(
+                new PivotSimConstants()
+                    .withMotor(DCMotor.getKrakenX60(1))
+                    .withConstraints(
+                        toMechanism(Rotations.of(-3)).in(Degrees), 
+                        toMechanism(Rotations.of(26)).in(Degrees), 
+                        ArmConstants.armHomePosition,
+                        Units.inchesToMeters(21d)
+                    ).withPhysics(1d/ArmConstants.armGearRationModifier, 0.19704, false)
+            , ArmConstants.armPIDGains);
     }
 
     @Override
-    protected void initializeHardware() {
-        this.leadMotor = new MotorIOTalonFX(ArmConstants.armPortConfig);
-        this.leadMotor.withCANCoder(
+    protected void configureHardware() {
+        this.motor = new MotorIOTalonFX(ArmConstants.armPortConfig);
+        this.motor.withCANCoder(
             ArmConstants.armCancoderDeviceId, 
             Constants.CANBUS_NAME,
             ArmConstants.armCANCoderConfig
         );
         
-        this.leadMotor.withPIDGains(ArmConstants.armPIDGains);
+        this.motor.withPIDGains(ArmConstants.armPIDGains);
 
-        this.leadMotor.withMotionProfile(ArmConstants.normalArmVelocity, ArmConstants.normalArmAcceleration, ArmConstants.armJerk);
-        this.leadMotor.withStatorCurrentLimit(ArmConstants.armCurrentLimit);
-        this.leadMotor.withFeedbackConfigs(ArmConstants.armFeedbackConfig);
-        this.leadMotor.setNeutralMode(NeutralModeValue.Brake);
+        this.motor.withMotionProfile(ArmConstants.normalArmVelocity, ArmConstants.normalArmAcceleration, ArmConstants.armJerk);
+        this.motor.withStatorCurrentLimit(ArmConstants.armCurrentLimit);
+        this.motor.withFeedbackConfigs(ArmConstants.armFeedbackConfig);
+        this.motor.setNeutralMode(NeutralModeValue.Brake);
 
-        this.leadMotor.applyConfigs();
+        this.motor.applyConfigs();
     }
 
     @Override
     public void periodicTelemetry() {
-        logger.log("Current Rotations", getRawRotations());
-        logger.log("Target Rotations", getTargetRotations());
-        logger.log("At Target Position", atTargetPosition());
+        logger.log("Current Arm Degrees", getPosition().in(Degrees));
+        logger.log("Target Arm Degrees", getTargetPosition().in(Degrees));
+        logger.log("At Target Degrees", atTargetPosition());
+
+        logger.log("Current Motor Rotations", getMotorPosition().in(Rotations));
+        logger.log("Target Motor Rotations", getTargetMotorPosition().in(Rotations));
+        logger.log("At Target Motor Rotations", getTargetMotorPosition().isNear(getMotorPosition(), getTolerance()));
     }
 
-    public double getArmPosition() {
-        return getRawRotations();
-    }
-
-    private Command setMotionMagicSpeedsCommand(double velocity, double acceleration) {
-        return runOnce(() -> {
-                leadMotor.setDynamicMotionMagicSpeeds(velocity, acceleration);
-        });
-    }
-
-    public Command moveCommand(double position, boolean slowSpeed) {
+    public Command moveCommand(Angle position, boolean slowSpeed) {
         return Commands.either(
-            setMotionMagicSpeedsCommand(ArmConstants.slowedArmVelocity, ArmConstants.slowedArmAcceleration), 
-            setMotionMagicSpeedsCommand(ArmConstants.normalArmVelocity, ArmConstants.normalArmAcceleration),
+            setMotionProfileSpeeds(ArmConstants.slowedArmVelocity, ArmConstants.slowedArmAcceleration), 
+            setMotionProfileSpeeds(ArmConstants.normalArmVelocity, ArmConstants.normalArmAcceleration),
             () -> slowSpeed
-        ).andThen(setPositionCommand(Utils.clamp(position, ArmConstants.minArmPosition, ArmConstants.maxArmPosition)))
+        ).andThen(setPositionCommand(position))
         .withName("MoveArm" + (slowSpeed ? "SlowSpeed" : "NormalSpeed"));
     }
 
-    public Command moveAlgaeCommand(double position) {
-        return setMotionMagicSpeedsCommand(ArmConstants.slowedArmVelocity, ArmConstants.slowedArmAcceleration)
-        .andThen(setPositionCommand(Utils.clamp(position, ArmConstants.minArmPosition, ArmConstants.maxArmPosition)))
-        .withName("MoveArmAlgaeSpeed");
-    }
-
-    public Command stopArmCommand() {
-        return runOnce(() -> leadMotor.brake())
-        .withName("StopArm");
+    public Command moveCommand(double position, boolean slowSpeed) {
+        return this.moveCommand(Degrees.of(position), slowSpeed);
     }
 }

@@ -1,43 +1,41 @@
 package frc.robot.subsystems.hand;
 
-import frc.lib.frc1731.Utils;
 import frc.lib.frc1731.hardware.MotorIOTalonFX;
-import frc.lib.frc1731.subsystem.SingleMotorServoSubsystem;
+import frc.lib.frc1731.subsystem.PivotMotorSubsystem;
 import frc.robot.Constants;
 
+import static edu.wpi.first.units.Units.Rotations;
 import static frc.robot.subsystems.hand.HandConstants.*;
 
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class HandClamperSubsystem extends SingleMotorServoSubsystem<MotorIOTalonFX> {
+public class HandClamperSubsystem extends PivotMotorSubsystem<MotorIOTalonFX> {
     public HandClamperSubsystem(boolean enabled) {
-        super(enabled, clamperPositionTolerance);
+        super(enabled);
+        super.setTolerance(clamperPositionTolerance);
     }
 
     @Override
-    protected void initializeHardware() {
-        this.leadMotor = new MotorIOTalonFX(clamperPortConfig);
-        this.leadMotor.withCANCoder(clamperCancoderDeviceId, Constants.CANBUS_2_NAME, CANCoderConfigs);
-        this.leadMotor.withMotionMagicConfigs(mmConfigs);
-        this.leadMotor.withPIDGains(clamperGains);
-        this.leadMotor.withFeedbackConfigs(clamperFeedbackConfigs);
-        this.leadMotor.withStatorCurrentLimit(clamperStatorCurrentLimit);
-        this.leadMotor.applyConfigs();
+    protected void configureHardware() {
+        this.motor = new MotorIOTalonFX(clamperPortConfig);
+        this.motor.withCANCoder(clamperCancoderDeviceId, Constants.CANBUS_2_NAME, CANCoderConfigs);
+        this.motor.withMotionMagicConfigs(mmConfigs);
+        this.motor.withPIDGains(clamperGains);
+        this.motor.withFeedbackConfigs(clamperFeedbackConfigs);
+        this.motor.withStatorCurrentLimit(clamperStatorCurrentLimit);
+        this.motor.applyConfigs();
     }
 
     @Override
     public void periodicTelemetry() {
-        logger.log("Current Position", getRawRotations());
-        logger.log("Target Position", getTargetRotations());
+        logger.log("Current Position", getPosition().in(Rotations));
+        logger.log("Target Position", getTargetPosition().in(Rotations));
         logger.log("At Target Position", atTargetPosition());
     }
-
-    public double getPosition() {
-        return getRawRotations();
-    }
     
-    public Command openCommand(double position) {
-        return super.setPositionCommand(Utils.clamp(position, HandConstants.minClamperPosition, HandConstants.maxClamperPosition))
+    public Command openCommand(Angle position) {
+        return super.setPositionCommand(position)
         .withName("Open");
     }
 

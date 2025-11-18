@@ -6,7 +6,7 @@ import frc.lib.frc1731.log.SmartLogger;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public abstract class BaseSubsystem extends SubsystemBase implements IToggleableSubsystem {
+public abstract class BaseSubsystem extends SubsystemBase {
     private boolean enabled = false;
     protected SmartLogger logger;
 
@@ -18,7 +18,6 @@ public abstract class BaseSubsystem extends SubsystemBase implements IToggleable
     /**
      * Whether we want the subsystem's hardware to be commandable
      */
-    @Override
     public boolean isEnabled() {
         return enabled;
     }

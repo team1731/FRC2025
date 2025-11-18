@@ -1,8 +1,14 @@
 package frc.robot.subsystems.hand;
 
+import static edu.wpi.first.units.Units.*;
+
 import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.signals.*;
 
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.measure.Angle;
+import frc.lib.frc1678.sim.PivotSim;
+import frc.lib.frc1678.sim.RollerSim.RollerSimConstants;
 import frc.lib.frc1731.PIDGains;
 import frc.lib.frc1731.hardware.motor.PortConfig;
 import frc.robot.Constants;
@@ -31,6 +37,11 @@ public final class HandConstants {
     public final static VoltageConfigs intakeVoltageConfigs = new VoltageConfigs()
         .withPeakForwardVoltage(12)
         .withPeakReverseVoltage(-12);
+
+    public final static RollerSimConstants intakeSimConstants = new RollerSimConstants()
+        .withDCMotor(DCMotor.getKrakenX60(1))
+        .withGearing(1d)
+        .withMOI(0.0005); // Estimated MOI of the intake
 
     /* Voltage-based velocity requires a feed forward to account for the back-emf of the motor */
     public final static PIDGains intakeGains = new PIDGains()
@@ -68,6 +79,16 @@ public final class HandConstants {
         .withRotorToSensorRatio(125)
         .withSensorToMechanismRatio(1);
 
+    public final static PivotSim.PivotSimConstants simConstants = new PivotSim.PivotSimConstants() // Todo - Fix
+        .withMotor(edu.wpi.first.math.system.plant.DCMotor.getKrakenX60(1))
+        .withConstraints(
+            Rotations.of(-10d).in(Rotations), 
+            Rotations.of(10d).in(Rotations), 
+            0d,
+            0.5d
+        )
+        .withPhysics(1d/640d, 0.5d, false); // gear ratio, moment of inertia, is inverted
+
     // Intake Constants
     public final static double intakeCoralVelocity = 5000/60;
     public final static double intakeAlgaeVelocity = 5000/60;
@@ -77,17 +98,17 @@ public final class HandConstants {
     public final static double defaultReleaseRuntime = 1.0;
 
     // Clamper Constants
-    public final static double minClamperPosition = 0;
-    public final static double maxClamperPosition = 0.22;
+    public final static Angle minClamperPosition = Rotations.of(0);
+    public final static Angle maxClamperPosition = Rotations.of(0.22);
 
-    public final static double clamperHomePosition = 0.0;
-    public final static double clamperCoralPosition = 0.019; //0.018554 --> start of competition value
-    public final static double clamperAlgaePosition = 0.05;
-    public final static double clamperPluckAlgaePosition = 0.05;
-    public final static double clamperReefIntakePosition = 0.11; // note: this should be wide for intaking algae from the reef
-    public final static double clamperDumpCoralPosition = 0.2; // note: this should be wide for dumping coral onto the reef
-    public final static double clamperHoldCoral = -0.03; //DutyCycleOut
+    public final static Angle clamperHomePosition = Rotations.of(0.0);
+    public final static Angle clamperCoralPosition = Rotations.of(0.019); //0.018554 --> start of competition value
+    public final static Angle clamperAlgaePosition = Rotations.of(0.05);
+    public final static Angle clamperPluckAlgaePosition = Rotations.of(0.05);
+    public final static Angle clamperReefIntakePosition = Rotations.of(0.11); // note: this should be wide for intaking algae from the reef
+    public final static Angle clamperDumpCoralPosition = Rotations.of(0.2); // note: this should be wide for dumping coral onto the reef
+    public final static Angle clamperHoldCoral = Rotations.of(-0.03); //DutyCycleOut
 
     // Position tolerance thresholds
-    public final static double clamperPositionTolerance = 0.002;
+    public final static Angle clamperPositionTolerance = Rotations.of(0.002);
 }

@@ -1,8 +1,11 @@
 package frc.robot.subsystems.arm;
 
+import static edu.wpi.first.units.Units.Rotations;
+
 import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.signals.*;
 
+import edu.wpi.first.units.measure.Angle;
 import frc.lib.frc1731.PIDGains;
 import frc.lib.frc1731.hardware.motor.PortConfig;
 import frc.robot.Constants;
@@ -61,5 +64,5 @@ public final class ArmConstants {
 
     public final static double willSmackReefThreshold = 0.20; // above this, arm will hit the reef if we are against it
 
-    public final static double atPositionThreshold = 0.06;
+    public final static Angle atPositionThreshold = Rotations.of(0.06); // Motor rotations
 }

@@ -1,14 +1,16 @@
 package frc.robot.subsystems.superstructure;
 
+import static edu.wpi.first.units.Units.Rotations;
+
 import frc.robot.subsystems.hand.HandConstants;
 
 public final class PositionConstants {
-    public final static double clamperClosedPosition = HandConstants.clamperHomePosition;
-    public final static double coralIntakeWidth = HandConstants.clamperCoralPosition;
-    public final static double algaeIntakeWidth = HandConstants.clamperAlgaePosition;
-    public final static double reefIntakeWidth = HandConstants.clamperReefIntakePosition;
-    public final static double dumpCoralWidth = HandConstants.clamperDumpCoralPosition;
-    public final static double pluckAlgaeWidth = HandConstants.clamperPluckAlgaePosition;
+    public final static double clamperClosedPosition = HandConstants.clamperHomePosition.in(Rotations);
+    public final static double coralIntakeWidth = HandConstants.clamperCoralPosition.in(Rotations);
+    public final static double algaeIntakeWidth = HandConstants.clamperAlgaePosition.in(Rotations);
+    public final static double reefIntakeWidth = HandConstants.clamperReefIntakePosition.in(Rotations);
+    public final static double dumpCoralWidth = HandConstants.clamperDumpCoralPosition.in(Rotations);
+    public final static double pluckAlgaeWidth = HandConstants.clamperPluckAlgaePosition.in(Rotations);
 
     /*
      * !!!!!!!!!!!!!!!!!!!!!!!!

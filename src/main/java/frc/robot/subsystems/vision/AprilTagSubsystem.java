@@ -10,17 +10,15 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.lib.frc1731.subsystem.IToggleableSubsystem;
+import frc.lib.frc1731.subsystem.BaseSubsystem;
 import frc.robot.subsystems.leds.LEDSubsystem;
 import frc.robot.subsystems.vision.camera.BasicCamera;
 import frc.robot.subsystems.vision.camera.Camera;
 import frc.robot.subsystems.vision.camera.CameraChoice;
 import frc.robot.subsystems.vision.helpers.AutoLineupHelper;
 import frc.robot.subsystems.vision.helpers.AutoLineupHelper.LineupInstruction;
-
  
- public class AprilTagSubsystem extends SubsystemBase implements IToggleableSubsystem {
+public class AprilTagSubsystem extends BaseSubsystem {
     public static class AprilTagTarget {
         public Camera camera;
         public PhotonTrackedTarget target;
@@ -29,21 +27,15 @@ import frc.robot.subsystems.vision.helpers.AutoLineupHelper.LineupInstruction;
     private Camera camera1;
     private Camera camera2;
     private int visionInitCount;
-    private boolean enabled;
     private boolean initialized = false;
     private LEDSubsystem ledSubsystem;
     private AutoLineupHelper autoLineupHelper;
 
 
     public AprilTagSubsystem(boolean enabled) {
-        this.enabled = enabled;
+        super(enabled);
         visionInitCount = 0;
         initializeCameras(); // using default processing type
-    }
- 
-    @Override
-    public boolean isEnabled() {
-        return enabled;
     }
 
     public Camera getCamera1() {
@@ -137,7 +129,7 @@ import frc.robot.subsystems.vision.helpers.AutoLineupHelper.LineupInstruction;
     }
     
     @Override
-    public void periodic() {
+    public void periodicTelemetry() {
         if(!initialized) {
             if (visionInitCount++ >= 100) { // 20ms @ 50
                 initializeCameras();
@@ -177,4 +169,4 @@ import frc.robot.subsystems.vision.helpers.AutoLineupHelper.LineupInstruction;
             return camera2;
         }
     }
- }
+}

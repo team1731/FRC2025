@@ -6,6 +6,7 @@ import com.pathplanner.lib.config.PIDConstants;
 import edu.wpi.first.math.controller.*;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.util.sendable.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Helper class that is used to store and utilize PID and other hardware constants
@@ -330,11 +331,41 @@ public class PIDGains implements Sendable {
     }
 
     /**
+     * Duplicates this PIDGains object and returns a new copy
+     */
+    public PIDGains duplicate() {
+        PIDGains copy = new PIDGains();
+        copy.setPID(kP, kI, kD);
+        copy.kIZone = this.kIZone;
+        copy.kS = this.kS;
+        copy.kA = this.kA;
+        copy.kV = this.kV;
+        copy.kG = this.kG;
+        copy.tolerance = this.tolerance;
+        copy.continuousInput = this.continuousInput;
+        copy.continuousMin = this.continuousMin;
+        copy.continuousMax = this.continuousMax;
+        copy.softLimit = this.softLimit;
+        copy.softLimitMin = this.softLimitMin;
+        copy.softLimitMax = this.softLimitMax;
+        copy.scale = this.scale;
+        copy.currentLimit = this.currentLimit;
+        copy.useSmartMotion = this.useSmartMotion;
+        return copy;
+    }
+
+    public PIDGains logOnAdvantageScope() {
+        SmartDashboard.putData("PIDGains[" + instances + "]", this);
+        return this;
+    }
+
+    /**
      * Resets the feedforward object with the updated values for S, V, and A
      */
     private void refreshFF() {
         this.feedForward = new SimpleMotorFeedforward(kS, kV, kA);
     }
+
 
     @Override
     public void initSendable(SendableBuilder builder) {

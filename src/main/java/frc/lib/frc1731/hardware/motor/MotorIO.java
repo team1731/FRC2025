@@ -18,6 +18,8 @@ public abstract class MotorIO {
 
     public abstract void follow(MotorIO master, boolean invertedFromMaster);
 
+    public abstract void withFollower(MotorIO follower, boolean invertedFromMaster);
+
     public abstract void withMotionProfile(double velocity, double acceleration, double jerk);
 
     public void withCANCoder(int deviceID, String bus, CANcoderConfiguration configuration) {

@@ -1,5 +1,7 @@
 package frc.robot.subsystems.superstructure;
 
+import static edu.wpi.first.units.Units.*;
+
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.subsystems.arm.*;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
@@ -22,29 +24,33 @@ public class MotionPlanner {
     //       Safety Checks
     // =========================
 
+    private double getElevatorRotations() {
+        return elevator.getMotorRotations().in(Rotations);
+    }
+
     public boolean elevatorAboveThreshold(double threshold) {
-        return elevator.getPosition() > threshold;
+        return getElevatorRotations() > threshold;
     }
 
     public boolean elevatorBelowThreshold(double threshold) {
-        return elevator.getPosition() < threshold;
+        return getElevatorRotations() < threshold;
     }
 
     public boolean elevatorWithinRange(Positions pos) {
-        return elevator.getPosition() > pos.raiseElevatorThreshold - 3.0 &&
-               elevator.getPosition() < pos.raiseElevatorPosition + 3.0;
+        return getElevatorRotations() > pos.raiseElevatorThreshold - 3.0 &&
+            getElevatorRotations() < pos.raiseElevatorPosition + 3.0;
     }
 
     public boolean armPastThreshold(double threshold) {
-        return arm.getArmPosition() > threshold;
+        return arm.getMotorPosition().in(Rotations) > threshold;
     }
 
     public boolean armBelowThreshold(double threshold) {
-        return arm.getArmPosition() < threshold;
+        return arm.getMotorPosition().in(Rotations) < threshold;
     }
 
     public boolean armPastSmackReefThreshold() {
-        return arm.getArmPosition() > ArmConstants.willSmackReefThreshold;
+        return arm.getMotorPosition().in(Rotations) > ArmConstants.willSmackReefThreshold;
     }
 
     public boolean hasPiece() {
@@ -60,7 +66,7 @@ public class MotionPlanner {
     // =========================
 
     public Command moveElevator(double position, boolean slowed) {
-        return elevator.moveCommand(position, slowed);
+        return elevator.setPositionCommand(Rotations.of(position), slowed);
     }
 
     public Command homeElevator() {
@@ -84,7 +90,7 @@ public class MotionPlanner {
     }
 
     public Command openHand(double position) {
-        return hand.openCommand(position);
+        return hand.openCommand(Rotations.of(position));
     }
 
     public Command closeClamp() {
@@ -115,7 +121,7 @@ public class MotionPlanner {
         return Commands.either(
             hand.closeCommand(),
             Commands.none(),
-            () -> hand.getPosition() > 0.02 && elevatorWithinRange(pos)
+            () -> hand.getMotorPosition().in(Rotations) > 0.02 && elevatorWithinRange(pos)
         );
     }
 

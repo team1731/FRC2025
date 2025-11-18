@@ -34,6 +34,8 @@ public class SwerveSubsystem extends BaseSubsystem {
     private AprilTagSubsystem aprilTagSubsystem;
     private VSLAMSubsystem vslamSubsystem;
 
+    private final Telemetry telemetry = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
+
     private ChassisSpeeds targetSpeeds = new ChassisSpeeds();
 
     private AprilTagTargetTracker aprilTagTargetTracker;
@@ -43,8 +45,6 @@ public class SwerveSubsystem extends BaseSubsystem {
 
     private double lostTargetCount = 0;
     private boolean lockedOnce = true;
-
-    private final Telemetry telemetry = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
 
     private DrivetrainVisionCallback visionCallback = (Pose2d pose, double timestamp, Matrix<N3,N1> visionMeasurementStdDevs) -> {
         drivetrain.addVisionMeasurement(pose, timestamp, visionMeasurementStdDevs);  // comment this out to disable vslam
